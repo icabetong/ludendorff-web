@@ -13,7 +13,7 @@ Keeper is our capstone project that is a client app used in asset tracking and m
 
 ## Versioning
 
-We use [SemVer](http://www.semver.org) for versioning. For the versions available, see the [tags on this repository](https://github.com/icabetong/keeper-android/tags)
+We use [SemVer](http://www.semver.org) for versioning. For the versions available, see the [tags on this repository](https://github.com/icabetong/keeper-js/tags)
 
 ## Licenses
 
