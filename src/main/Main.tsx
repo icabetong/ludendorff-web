@@ -1,11 +1,7 @@
 import React from 'react';
 
-class Main extends React.Component {
-    render() {
-        return (
-            <div></div>
-        )
-    }
+class Main extends React.Component<{}, {}> {
+    render() { return <div></div> }
 }
 
-export { Main };
+export default Main

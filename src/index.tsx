@@ -1,29 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import { Core } from './core/Core';
-import reportWebVitals from './reportWebVitals';
 import firebase from 'firebase/app';
+import "firebase/auth";
+import './index.css';
+import Main from './main/Main';
 
 const config = {
-    apiKey: "AIzaSyA77qCOBnBaYbMR_LgETYkXCmN8AqRgzQU",
-    authDomain: "keeper-io.firebaseapp.com",
-    projectId: "keeper-io",
-    storageBucket: "keeper-io.appspot.com",
-    messagingSenderId: "783396412369",
-    appId: "1:783396412369:web:8a563577005b3cab251ef0",
-    measurementId: "G-KTPGYYQSJ5"
+    apiKey: process.env.BACKEND_API_KEY,
+    authDomain: process.env.BACKEND_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGE_SENDER_ID,
+    appId: process.env.APP_ID,
+    measurementId: process.env.MEASUREMENT_ID
 }
 firebase.initializeApp(config);
+export const auth = firebase.auth();
 
 ReactDOM.render(
   <React.StrictMode>
-    <Core />
+    <Main/>
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
