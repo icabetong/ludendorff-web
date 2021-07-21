@@ -7,7 +7,7 @@ Keeper is our capstone project that is a client app used in asset tracking and m
 ## Built with
 
 * ReactJS
-* TailwindCSS
+* SCSS
 * TypeScript
 * Other cool open-source libraries (see Acknowledgements)
 

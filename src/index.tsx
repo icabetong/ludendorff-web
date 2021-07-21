@@ -4,7 +4,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 
-import './index.css';
+import './index.scss';
 import { MainComponent } from './main/Main';
 import { AuthProvider } from './auth/AuthProvider';
 

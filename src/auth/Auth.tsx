@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import firebase from 'firebase/app';
+import './Auth.scss';
 
 const AuthComponent = () => {
     const [email, setEmail] = useState<string>("");
