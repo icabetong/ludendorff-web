@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import firebase from 'firebase/app';
-import "firebase/auth";
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+
 import './index.css';
-import Main from './main/Main';
+import { MainComponent } from './main/Main';
+import { AuthProvider } from './auth/AuthProvider';
 
 const config = {
     apiKey: process.env.REACT_APP_BACKEND_API_KEY,
@@ -15,11 +18,14 @@ const config = {
     measurementId: process.env.REACT_APP_MEASUREMENT_ID
 }
 firebase.initializeApp(config);
-export const auth = firebase.auth();
+export const auth = firebase.auth()
+export const firestore = firebase.firestore()
 
 ReactDOM.render(
   <React.StrictMode>
-    <Main/>
+    <AuthProvider>
+      <MainComponent/>
+    </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

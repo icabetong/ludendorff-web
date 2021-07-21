@@ -1,48 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
+import firebase from 'firebase/app';
 
-type AuthState = {
-    email: string,
-    password: string
-}
+const AuthComponent = () => {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
 
-class AuthComponent extends React.Component<{}, AuthState> {
-    constructor(props: any) {
-        super(props)
+    const onAuthTriggered = (event: React.SyntheticEvent) => {
+        event.preventDefault();
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((user) => {
 
-        this.state = {
-            email: " ",
-            password: " "
-        }
+            }).catch((error) => {
+
+            });
     }
 
-    onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ email: event.target.value })
+    const onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEmail(event.target.value)
     }
-    onPasswordInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ password: event.target.value })
+    const onPasswordInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(event.target.value)
     }
 
-    render() {
-        return (
-            <div>
-                <form>
-                    <input
-                        type="text"
-                        name="_inputEmail"
-                        value={this.state.email}
-                        onChange={this.onEmailInputChanged}
-                    />
-                    <br/>
-                    <input
-                        type="text"
-                        name="_inputPassword"
-                        value={this.state.password}
-                        onChange={this.onPasswordInputChanged}
-                    />
-                </form>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <form onSubmit={onAuthTriggered}>
+                <input
+                    type="text"
+                    name="_inputEmail"
+                    value={email}
+                    onChange={onEmailInputChanged}
+                />
+                <br/>
+                <input
+                    type="text"
+                    name="_inputPassword"
+                    value={password}
+                    onChange={onPasswordInputChanged}
+                />
+                <input type="submit" value="Sign-in"/>
+            </form>
+        </div>
+    );
 }
 
 export default AuthComponent
