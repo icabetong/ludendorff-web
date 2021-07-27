@@ -25,7 +25,10 @@ const AuthComponent = () => {
 
     return (
         <div>
+            <h2 className="header">Hello.<br/>Welcome Back.</h2>
             <form onSubmit={onAuthTriggered}>
+                <label htmlFor="_inputEmail">Email: </label>
+                <br/>
                 <input
                     type="text"
                     name="_inputEmail"
@@ -33,12 +36,16 @@ const AuthComponent = () => {
                     onChange={onEmailInputChanged}
                 />
                 <br/>
+                <label htmlFor="_inputPassword">Password: </label>
+                <br/>
                 <input
                     type="text"
                     name="_inputPassword"
                     value={password}
                     onChange={onPasswordInputChanged}
                 />
+                <br/>
+                <br/>
                 <input type="submit" value="Sign-in"/>
             </form>
         </div>
