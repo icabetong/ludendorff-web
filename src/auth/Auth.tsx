@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, TextField, Grid } from '@material-ui/core';
 import firebase from 'firebase/app';
 import './Auth.scss';
 
@@ -9,11 +10,9 @@ const AuthComponent = () => {
     const onAuthTriggered = (event: React.SyntheticEvent) => {
         event.preventDefault();
         firebase.auth().signInWithEmailAndPassword(email, password)
-            .then((user) => {
+            .catch((error) => {
 
-            }).catch((error) => {
-
-            });
+            })
     }
 
     const onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,31 +23,28 @@ const AuthComponent = () => {
     }
 
     return (
-        <div>
-            <h2 className="header">Hello.<br/>Welcome Back.</h2>
-            <form onSubmit={onAuthTriggered}>
-                <label htmlFor="_inputEmail">Email: </label>
-                <br/>
-                <input
-                    type="text"
-                    name="_inputEmail"
-                    value={email}
-                    onChange={onEmailInputChanged}
-                />
-                <br/>
-                <label htmlFor="_inputPassword">Password: </label>
-                <br/>
-                <input
-                    type="text"
-                    name="_inputPassword"
-                    value={password}
-                    onChange={onPasswordInputChanged}
-                />
-                <br/>
-                <br/>
-                <input type="submit" value="Sign-in"/>
-            </form>
-        </div>
+        <Grid container direction="column" alignItems="center" justify="center" style={{minHeight: '100vh'}}>
+            <Grid item>
+                <form onSubmit={onAuthTriggered}>
+                    <TextField
+                        id="_inputEmail"
+                        type="text"
+                        value={email}
+                        label="Email"
+                        onChange={onEmailInputChanged}/>
+                    <br/>
+                    <TextField
+                        id="_inputPassword"
+                        type="password"
+                        value={password}
+                        label="Password"
+                        onChange={onPasswordInputChanged}/>
+                    <p>
+                        <Button type="submit" variant="contained" color="primary">Sign in</Button>
+                    </p>
+                </form>
+            </Grid>
+        </Grid>
     );
 }
 
