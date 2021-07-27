@@ -5,13 +5,18 @@ export class Category {
     categoryName?: string
     count: number = 0
 
+    minimize(): CategoryCore {
+        return CategoryCore.from(this)
+    }
+
     constructor() {
         this.categoryId = generateID()
     }
 
-    minimize(): CategoryCore {
-        return CategoryCore.from(this)
-    }
+    static COLLECTION = "categories"
+    static FIELD_CATEGORY_ID = "categoryId"
+    static FIELD_CATEGORY_NAME = "categoryName"
+    static FIELD_COUNT = "count"
 }
 
 export class CategoryCore {
