@@ -8,6 +8,7 @@ const AuthComponent = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
+    const [error, setError] = useState<firebase.auth.Error | null>(null);
 
     const onAuthTriggered = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -16,15 +17,20 @@ const AuthComponent = () => {
             .then(() => {
                 setIsAuthenticating(false);
             })
-            .catch((error) => {
+            .catch((error: firebase.auth.Error) => {
+                setError(error);
                 setIsAuthenticating(false);
             })
     }
 
     const onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (error != null)
+            setPassword("");
+        setError(null);
         setEmail(event.target.value)
     }
     const onPasswordInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setError(null);
         setPassword(event.target.value)
     }
 
@@ -44,12 +50,20 @@ const AuthComponent = () => {
                             <Typography variant="h5">Welcome Back.</Typography>
                         </div>
                         <div className="container">
+                            {
+                                error != null && 
+                                <Typography variant="body2">
+                                    { error.message }
+                                </Typography>
+                            }
+                            <br/>
                             <TextInput
-                                style={{ marginBottom: '1em' }}
+                                style={{ marginBottom: '1em', marginTop: '1em' }}
                                 id="_inputEmail"
                                 type="text"
                                 value={email}
                                 label="Email"
+                                error={error}
                                 disabled={isAuthenticating}
                                 onChange={onEmailInputChanged}/>
                             <br/>
@@ -58,16 +72,18 @@ const AuthComponent = () => {
                                 type="password"
                                 value={password}
                                 label="Password"
+                                error={error}
                                 disabled={isAuthenticating}
                                 onChange={onPasswordInputChanged}/>
                         </div>
-                        <div className="container action">
+                        <div className="container">
                             <Button 
                                 type="submit" 
                                 variant="contained" 
                                 color="primary"
+                                fullWidth={true}
                                 disabled={isAuthenticating}>
-                                    Sign in
+                                { isAuthenticating ? "Authenticating" : "Sign in" }
                             </Button>
                         </div>
                     </Grid>
