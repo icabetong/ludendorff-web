@@ -12,7 +12,30 @@ const theme = createTheme({
         }
     },
     typography: {
-
+        fontFamily: [
+            'Inter',
+            'apple-system',
+            'Segoe UI',
+            'Roboto',
+            'Oxygen',
+            'Ubuntu',
+            'Cantarell',
+            'Fira Sans',
+            'Droid Sans',
+            'Helvetica Neue',
+            'sans-serif'
+        ].join(','),
+    },
+    overrides: {
+        MuiTypography: {
+            h6: {
+                fontWeight: 600,
+                fontFamily: 'Inter'
+            },
+            h5: {
+                fontWeight: 700
+            }
+        }
     }
 })
 
