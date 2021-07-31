@@ -5,12 +5,36 @@ export const TextInput = (props) => {
         <TextField
             variant="outlined"
             size="small"
-            style={props.style}
-            id={props.id}
-            type={props.type}
-            value={props.value}
-            label={props.label}
+            autoComplete={props.autoComplete}
+            autoFocus={props.autoFocus}
+            classes={props.classes}
+            color={props.color}
+            defaultValue={props.defaultValue}
             disabled={props.disabled}
-            onChange={props.onChange}/>
+            error={props.error}
+            FormHelperTextProps={props.FormHelperTextProps}
+            fullWidth={props.fullWidth}
+            helperText={props.helperText}
+            id={props.id}
+            inputLabelProps={props.inputLabelProps}
+            inputProps={props.inputProps}
+            InputProps={props.InputProps}
+            inputRef={props.inputRef}
+            label={props.label}
+            margin={props.margin}
+            maxRows={props.maxRows}
+            minRows={props.minRows}
+            multiline={props.multiline}
+            name={props.name}
+            onChange={props.onChange}
+            placeholder={props.placeholder}
+            required={props.required}
+            rows={props.rows}
+            rowsMax={props.rowsMax}
+            select={props.select}
+            SelectProps={props.SelectProps}
+            style={props.style}
+            type={props.type}
+            value={props.value}/>
     )
 }
