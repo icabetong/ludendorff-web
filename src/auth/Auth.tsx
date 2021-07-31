@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Grid, Typography, Container } from '@material-ui/core';
+import { Button, Grid, Typography, Container, Paper } from '@material-ui/core';
 import { TextInput } from '../components/TextInput';
 import firebase from 'firebase/app';
 import './Auth.scss';
@@ -44,48 +44,50 @@ const AuthComponent = () => {
                     alignItems="center" 
                     justifyContent="center" 
                     style={{minHeight: '100vh'}}>
-                    <Grid xs={12} item>
-                        <div className="container">
-                            <Typography variant="h5">Hello.</Typography>
-                            <Typography variant="h5">Welcome Back.</Typography>
-                        </div>
-                        <div className="container">
-                            {
-                                error != null && 
-                                <Typography variant="body2">
-                                    { error.message }
-                                </Typography>
-                            }
-                            <br/>
-                            <TextInput
-                                style={{ marginBottom: '1em', marginTop: '1em' }}
-                                id="_inputEmail"
-                                type="text"
-                                value={email}
-                                label="Email"
-                                error={error}
-                                disabled={isAuthenticating}
-                                onChange={onEmailInputChanged}/>
-                            <br/>
-                            <TextInput
-                                id="_inputPassword"
-                                type="password"
-                                value={password}
-                                label="Password"
-                                error={error}
-                                disabled={isAuthenticating}
-                                onChange={onPasswordInputChanged}/>
-                        </div>
-                        <div className="container">
-                            <Button 
-                                type="submit" 
-                                variant="contained" 
-                                color="primary"
-                                fullWidth={true}
-                                disabled={isAuthenticating}>
-                                { isAuthenticating ? "Authenticating" : "Sign in" }
-                            </Button>
-                        </div>
+                    <Grid xs={12} item >
+                        <Paper className="container-wrapper">
+                            <div className="container">
+                                <Typography variant="h5">Hello.</Typography>
+                                <Typography variant="h5">Welcome Back.</Typography>
+                            </div>
+                            <div className="container">
+                                {
+                                    error != null && 
+                                    <Typography variant="body2" color="error">
+                                        { error.message }
+                                    </Typography>
+                                }
+                                <br/>
+                                <TextInput
+                                    style={{ marginBottom: '1em', marginTop: '1em' }}
+                                    id="_inputEmail"
+                                    type="text"
+                                    value={email}
+                                    label="Email"
+                                    error={error}
+                                    disabled={isAuthenticating}
+                                    onChange={onEmailInputChanged}/>
+                                <br/>
+                                <TextInput
+                                    id="_inputPassword"
+                                    type="password"
+                                    value={password}
+                                    label="Password"
+                                    error={error}
+                                    disabled={isAuthenticating}
+                                    onChange={onPasswordInputChanged}/>
+                            </div>
+                            <div className="container">
+                                <Button 
+                                    type="submit" 
+                                    variant="contained" 
+                                    color="primary"
+                                    fullWidth={true}
+                                    disabled={isAuthenticating}>
+                                    { isAuthenticating ? "Authenticating" : "Sign in" }
+                                </Button>
+                            </div>
+                        </Paper>
                     </Grid>
                 </Grid>
             </form>

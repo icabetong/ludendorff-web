@@ -4,11 +4,18 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 import AuthComponent from '../auth/Auth';
 import { AuthContext } from '../auth/AuthProvider';
 import CoreComponent from '../core/Core';
+import { CssBaseline } from '@material-ui/core';
 
 const theme = createTheme({
     palette: {
         primary: {
             main: '#3d5afe'
+        },
+        error: {
+            main: '#B00020'
+        },
+        background: {
+            default: '#e0e0e0'
         }
     },
     typography: {
@@ -48,6 +55,7 @@ export const MainComponent = () => {
     return (
         <div>
             <ThemeProvider theme={theme}>
+                <CssBaseline/>
                 <BrowserRouter>
                     <Route exact path="/">
                         {user ? <CoreComponent/> : <AuthComponent/> }
