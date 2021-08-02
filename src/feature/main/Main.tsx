@@ -5,16 +5,16 @@ import AuthComponent from '../auth/Auth'
 import CoreComponent from '../core/Core'
 import { CssBaseline } from '@material-ui/core'
 
-const theme = createTheme({
+const lightTheme = createTheme({
     palette: {
         primary: {
-            main: '#3d5afe'
+            main: '#6272a4'
         },
         error: {
-            main: '#B00020'
+            main: '#ffb86c'
         },
         background: {
-            default: '#e0e0e0'
+            default: '#f8f8f2'
         }
     },
     typography: {
@@ -51,7 +51,7 @@ const theme = createTheme({
 export const MainComponent = () => {
     return (
         <div>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={lightTheme}>
                 <CssBaseline/>
                 <BrowserRouter>
                     <Switch>
