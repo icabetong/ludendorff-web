@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Grid, Typography, Container, Paper } from '@material-ui/core';
-import { TextInput } from '../components/TextInput';
-import firebase from 'firebase/app';
-import './Auth.scss';
+import React, { useState } from 'react'
+import { RouteComponentProps } from 'react-router'
+import { Button, Grid, Typography, Container, Paper } from '@material-ui/core'
+import firebase from 'firebase/app'
 
-const AuthComponent = () => {
+import { TextInput } from '../components/TextInput'
+import './Auth.scss'
+
+const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
@@ -16,6 +18,7 @@ const AuthComponent = () => {
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then(() => {
                 setIsAuthenticating(false);
+                history.push("/")
             })
             .catch((error: firebase.auth.Error) => {
                 setError(error);
@@ -33,7 +36,7 @@ const AuthComponent = () => {
         setError(null);
         setPassword(event.target.value)
     }
-
+    
     return (
         <Container>
             <form onSubmit={onAuthTriggered}>
