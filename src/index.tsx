@@ -5,7 +5,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 
 import './index.scss';
-import { MainComponent } from './feature/main/Main';
+import { CoreComponent } from './feature/core/Core';
 import { AuthProvider } from './feature/auth/AuthProvider';
 
 const config = {
@@ -24,7 +24,7 @@ export const firestore = firebase.firestore()
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <MainComponent/>
+      <CoreComponent/>
     </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')
