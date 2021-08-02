@@ -10,7 +10,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
-    const [error, setError] = useState<firebase.auth.Error | null>(null);
+    const [error, setError] = useState<firebase.auth.Error | undefined>(undefined);
 
     const onAuthTriggered = (event: React.SyntheticEvent) => {
         event.preventDefault();
@@ -29,11 +29,11 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
     const onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (error != null)
             setPassword("");
-        setError(null);
+        setError(undefined);
         setEmail(event.target.value)
     }
     const onPasswordInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setError(null);
+        setError(undefined);
         setPassword(event.target.value)
     }
     
@@ -67,7 +67,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                     type="text"
                                     value={email}
                                     label="Email"
-                                    error={error}
+                                    error={error ? true : false }
                                     disabled={isAuthenticating}
                                     onChange={onEmailInputChanged}/>
                                 <br/>
@@ -76,7 +76,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                     type="password"
                                     value={password}
                                     label="Password"
-                                    error={error}
+                                    error={error ? true : false }
                                     disabled={isAuthenticating}
                                     onChange={onPasswordInputChanged}/>
                             </div>

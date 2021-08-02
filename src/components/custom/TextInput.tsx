@@ -1,6 +1,6 @@
-import TextField from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 
-export const TextInput = (props) => {
+export const TextInput = (props: TextFieldProps) => {
     return(
         <TextField
             variant="outlined"
@@ -16,7 +16,6 @@ export const TextInput = (props) => {
             fullWidth={props.fullWidth}
             helperText={props.helperText}
             id={props.id}
-            inputLabelProps={props.inputLabelProps}
             inputProps={props.inputProps}
             InputProps={props.InputProps}
             inputRef={props.inputRef}
