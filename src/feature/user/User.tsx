@@ -1,5 +1,5 @@
 import { Department, DepartmentCore } from "../department/Department";
-import { generateID } from "../infrastructure/Backend";
+import { generateID } from "../../api/Backend";
 
 export class User {
     userId: string

@@ -1,5 +1,5 @@
 import { Category, CategoryCore } from '../category/Category';
-import { generateID } from '../infrastructure/Backend';
+import { generateID } from '../../api/Backend';
 
 export class Asset {
     assetId: string

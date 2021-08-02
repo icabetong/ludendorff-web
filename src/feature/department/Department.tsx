@@ -1,4 +1,4 @@
-import { generateID } from "../infrastructure/Backend"
+import { generateID } from "../../api/Backend"
 import { User, UserCore } from "../user/User"
 
 export class Department {

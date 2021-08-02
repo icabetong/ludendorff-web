@@ -5,8 +5,8 @@ import 'firebase/auth'
 import 'firebase/firestore'
 
 import './index.scss';
-import { MainComponent } from './main/Main';
-import { AuthProvider } from './auth/AuthProvider';
+import { MainComponent } from './feature/main/Main';
+import { AuthProvider } from './feature/auth/AuthProvider';
 
 const config = {
     apiKey: process.env.REACT_APP_BACKEND_API_KEY,

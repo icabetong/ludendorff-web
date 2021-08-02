@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router'
 import { Button, Grid, Typography, Container, Paper } from '@material-ui/core'
 import firebase from 'firebase/app'
 
-import { TextInput } from '../components/TextInput'
+import { TextInput } from '../../components/custom/TextInput'
 import './Auth.scss'
 
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
