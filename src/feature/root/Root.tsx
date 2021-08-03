@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { Redirect } from "react-router"
 
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider"
-import "./Core.scss";
+import "./Root.scss";
 
 const RootContainerComponent = () => {
     return(
