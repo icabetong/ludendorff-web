@@ -3,8 +3,8 @@ import { RouteComponentProps } from 'react-router'
 import { Button, Grid, Typography, Container, Paper } from '@material-ui/core'
 import firebase from 'firebase/app'
 
-import { TextInput } from '../../components/custom/TextInput'
 import './Auth.scss'
+import { TextInput } from '../../components/TextInput'
 
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
     const [email, setEmail] = useState<string>("");
@@ -57,7 +57,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                 {
                                     error != null && 
                                     <Typography variant="body2" color="error">
-                                        { error.message }
+                                        {error.message}
                                     </Typography>
                                 }
                                 <br/>
@@ -67,7 +67,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                     type="text"
                                     value={email}
                                     label="Email"
-                                    error={error ? true : false }
+                                    error={!!error}
                                     disabled={isAuthenticating}
                                     onChange={onEmailInputChanged}/>
                                 <br/>
@@ -76,7 +76,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                     type="password"
                                     value={password}
                                     label="Password"
-                                    error={error ? true : false }
+                                    error={!!error}
                                     disabled={isAuthenticating}
                                     onChange={onPasswordInputChanged}/>
                             </div>

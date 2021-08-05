@@ -1,5 +1,5 @@
 import { Department, DepartmentCore } from "../department/Department";
-import { generateID } from "../../api/Backend";
+import { newId } from "../../shared/IdUtils";
 
 export class User {
     userId: string
@@ -11,6 +11,10 @@ export class User {
     position?: string
     department?: DepartmentCore
 
+    constructor(userId: string = newId()) {
+        this.userId = userId
+    }
+
     hasPermission(permission: number): Boolean {
         return (this.permissions & permission) === permission
     }
@@ -19,8 +23,16 @@ export class User {
         return this.firstName + ' ' + this.lastName
     }
 
-    constructor(userId: string = generateID()) {
-        this.userId = userId
+    static from(document: any): User {
+        let user = new User(document.userId)
+        user.firstName = document.firstName
+        user.lastName = document.lastName
+        user.email = document.email
+        user.permissions = document.permissions
+        user.position = document.position
+        user.department = document.department
+
+        return user
     }
 
     static COLLECTION = "users"
@@ -48,7 +60,7 @@ export class UserCore {
     imageUrl?: string
     position?: string
 
-    constructor(userId: string = generateID()) {
+    constructor(userId: string = newId()) {
         this.userId = userId
     }
 }
