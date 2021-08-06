@@ -1,3 +1,5 @@
+import { firestore } from "../../index"
+
 import { User, UserCore } from "../user/User";
 import { newId } from "../../shared/IdUtils";
 
@@ -49,6 +51,31 @@ export class DepartmentCore {
 
 export class DepartmentRepository {
     static async create(department: Department): Promise<void> {
+        return await firestore.collection(Department.COLLECTION)
+            .doc(department.departmentId)
+            .set(department)
+    }
 
+    static async update(department: Department): Promise<void> {
+        return await firestore.collection(Department.COLLECTION)
+            .doc(department.departmentId)
+            .set(department)
+    }
+
+    static async remove(department: Department): Promise<void> {
+        return await firestore.collection(Department.COLLECTION)
+            .doc(department.departmentId)
+            .delete()
+    }
+
+    static async fetch(): Promise<Department[]> {
+        let departments: Department[] = [];
+
+        let task = await firestore.collection(Department.COLLECTION).get()
+        task.docs.forEach((document) => {
+            departments.push(Department.from(document.data()))
+        })
+
+        return departments
     }
 }

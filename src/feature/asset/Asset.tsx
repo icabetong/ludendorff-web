@@ -104,15 +104,14 @@ export class AssetRepository {
     }
 
     static async fetch(): Promise<Asset[]> {
-        let result: Asset[] = [];
+        let assets: Asset[] = [];
 
-        let task = await firestore.collection(Asset.COLLECTION)
-            .get()
+        let task = await firestore.collection(Asset.COLLECTION).get()
         task.docs.forEach(document =>
-            result.push(Asset.from(document.data()))
+            assets.push(Asset.from(document.data()))
         )
 
-        return result
+        return assets
     }
 }
 

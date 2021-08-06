@@ -73,4 +73,15 @@ export class CategoryRepository {
             .doc(category.categoryId)
             .delete()
     }
+
+    static async fetch(): Promise<Category[]> {
+        let categories: Category[] = [];
+
+        let task = await firestore.collection(Category.COLLECTION).get();
+        task.docs.forEach(doc => 
+            categories.push(Category.from(doc.data()))
+        )
+
+        return categories;
+    }
 }

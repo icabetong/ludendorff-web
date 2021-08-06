@@ -29,7 +29,7 @@ export const AuthProvider: React.FC = ({ children }) => {
             setAuthState(new AuthFetched(firebaseUser));
         });
         return unsubscribe;
-    }, [authState]);
+    }, []);
 
     return (
         <AuthContext.Provider value={ authState }>

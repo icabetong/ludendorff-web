@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
-import {Asset, AssetRepository} from "./Asset";
+import React, { useEffect, useState } from "react";
+import { Asset, AssetRepository } from "./Asset";
 
-export const AssetComponent: React.FC = () => {
+export const AssetComponent = () => {
     const [assets, setAssets] = useState<Asset[]>([]);
 
     useEffect(() => {
@@ -9,16 +9,12 @@ export const AssetComponent: React.FC = () => {
             .then((data) => {
                 setAssets(data)
             })
-    }, [assets]);
+    }, []);
 
     return (
         <div>
-            {assets.map((asset: Asset) =>
-                <div>
-                    <div>{asset.assetName}</div>
-                    <div>{asset.assetId}</div>
-                </div>
-            )}
+            { assets.map((asset: Asset) => { return <div key={asset.assetId}>{asset.assetName}</div> })}
         </div>
-    );
+    )
+
 }
