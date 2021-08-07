@@ -1,6 +1,6 @@
 import { firestore } from "../../index"
 
-import { User, UserCore } from "../user/User";
+import { UserCore } from "../user/User";
 import { newId } from "../../shared/IdUtils";
 
 export class Department {
@@ -30,7 +30,7 @@ export class Department {
     static FIELD_DEPARTMENT_ID = "departmentId"
     static FIELD_DEPARTMENT_NAME = "departmentName"
     static FIELD_MANAGER_SNN = "managerSNN"
-    static FIELD_MANAGER_ID = Department.FIELD_MANAGER_SNN + '.' + User.FIELD_USER_ID
+    static FIELD_MANAGER_ID = Department.FIELD_MANAGER_SNN + ".userId"
     static FIELD_COUNT = "count"
 }
 

@@ -2,11 +2,12 @@ import { useContext, useState } from "react"
 import { Redirect } from "react-router"
 import { CircularProgress, Grid } from "@material-ui/core"
 
+import "./Root.scss";
 import { AuthContext, AuthPending } from "../auth/AuthProvider"
 import { HomeComponent } from "../home/HomeComponent"
 import { AssetComponent } from "../asset/AssetComponent"
 import { UserComponent } from "../user/UserComponent"
-import "./Root.scss";
+import { ErrorComponent } from "../error/ErrorComponent"
 
 enum Destination {
     HOME, SCAN, ASSETS, USERS, ASSIGNMENTS
@@ -17,7 +18,6 @@ type RootContainerComponentProps = {
 }
 
 const RootContainerComponent = (props: RootContainerComponentProps) => {
-    
     switch(props.destination) {
         case Destination.HOME:
             return <HomeComponent/>
@@ -26,7 +26,7 @@ const RootContainerComponent = (props: RootContainerComponentProps) => {
         case Destination.USERS:
             return <UserComponent/>
         default:
-            return <LoadingScreenComponent/>
+            return <ErrorComponent/>
     }
 }
 
@@ -46,8 +46,8 @@ const RootComponent = () => {
     const authState = useContext(AuthContext);
     const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
 
-    const onNavigate = () => {
-        // todo
+    const onNavigate = (newDestination: Destination) => {
+        setDestination(newDestination)
     }
 
     if (authState instanceof AuthPending) {
@@ -56,7 +56,9 @@ const RootComponent = () => {
         if (authState.user != null) {
             return (
                 <div>
-                    <button onClick={onNavigate}>Change</button>
+                    <button onClick={() => onNavigate(Destination.HOME)}>Home</button>
+                    <button onClick={() => onNavigate(Destination.ASSETS)}>Assets</button>
+                    <button onClick={() => onNavigate(Destination.USERS)}>Users</button>
                     <RootContainerComponent destination={destination}/>
                 </div>
             )

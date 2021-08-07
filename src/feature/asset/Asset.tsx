@@ -1,16 +1,16 @@
 import firebase from "firebase";
 import { firestore } from "../../index"
+import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
 
 import { Category, CategoryCore } from '../category/Category';
 import { newId } from "../../shared/IdUtils";
 
-const FieldValue = firebase.firestore.FieldValue
-const Timestamp = firebase.firestore.Timestamp
+const FieldValue = firebase.firestore.FieldValue;
 
 export class Asset {
     assetId: string
     assetName?: string
-    dateCreated?: typeof Timestamp
+    dateCreated?: Timestamp
     status?: Status
     category?: CategoryCore
     specifications?: Map<String, String>
@@ -103,15 +103,22 @@ export class AssetRepository {
         return batch.commit()
     }
 
-    static async fetch(): Promise<Asset[]> {
+    static async fetch(startWith: DocumentSnapshot<DocumentData> | null): Promise<[Asset[], DocumentSnapshot]> {
         let assets: Asset[] = [];
 
-        let task = await firestore.collection(Asset.COLLECTION).get()
-        task.docs.forEach(document =>
-            assets.push(Asset.from(document.data()))
-        )
+        let query = firestore.collection(Asset.COLLECTION)
+            .orderBy(Asset.FIELD_ASSET_NAME, "asc")
+            .limit(15)
+            
+        if (startWith)
+            query = query.startAfter(startWith)   
 
-        return assets
+        let task = await query.get()
+        task.docs.forEach(document => {
+            assets.push(Asset.from(document.data()))
+        })
+
+        return [assets, task.docs[task.docs.length - 1]]
     }
 }
 

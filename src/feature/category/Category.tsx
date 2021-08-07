@@ -78,8 +78,8 @@ export class CategoryRepository {
         let categories: Category[] = [];
 
         let task = await firestore.collection(Category.COLLECTION).get();
-        task.docs.forEach(doc => 
-            categories.push(Category.from(doc.data()))
+        task.docs.forEach(document => 
+            categories.push(Category.from(document.data()))
         )
 
         return categories;

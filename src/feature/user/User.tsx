@@ -1,3 +1,4 @@
+import { firestore } from "../../index";
 import { Department, DepartmentCore } from "../department/Department";
 import { newId } from "../../shared/IdUtils";
 
@@ -62,5 +63,18 @@ export class UserCore {
 
     constructor(userId: string = newId()) {
         this.userId = userId
+    }
+}
+
+export class UserRepository {
+    static async fetch(): Promise<User[]> {
+        let users: User[] = []
+
+        let task = await firestore.collection(User.COLLECTION).get()
+        task.docs.forEach(document => {
+            users.push(User.from(document.data()))
+        })
+
+        return users
     }
 }
