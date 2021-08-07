@@ -1,5 +1,5 @@
-import firebase from "firebase";
-import { firestore } from "../../index"
+import firebase from "firebase/app";
+import { firestore } from "../../index";
 import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
 
 import { Category, CategoryCore } from '../category/Category';
@@ -72,9 +72,10 @@ export enum Status {
 export class AssetRepository {
 
     static async create(asset: Asset): Promise<void> {
-        let batch = firestore.batch()
-        batch.set(firestore.collection(Asset.COLLECTION)
-            .doc(asset.assetId), asset)
+        let batch = firestore.batch();
+
+        batch.set(firestore.collection(Asset.COLLECTION).doc(asset.assetId), asset);
+
         batch.update(firestore.collection(Category.COLLECTION)
             .doc(asset.category?.categoryId), Category.FIELD_COUNT, FieldValue.increment(1))
 
@@ -114,7 +115,7 @@ export class AssetRepository {
             query = query.startAfter(startWith)   
 
         let task = await query.get()
-        task.docs.forEach(document => {
+        task.docs.forEach((document: DocumentSnapshot) => {
             assets.push(Asset.from(document.data()))
         })
 
