@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { Redirect } from "react-router"
-import { CircularProgress, Grid } from "@material-ui/core"
+import { CircularProgress, Grid, Container, Paper } from "@material-ui/core"
 
 import "./Root.scss";
 import { AuthContext, AuthPending } from "../auth/AuthProvider"
@@ -8,10 +8,7 @@ import { HomeComponent } from "../home/HomeComponent"
 import { AssetComponent } from "../asset/AssetComponent"
 import { UserComponent } from "../user/UserComponent"
 import { ErrorComponent } from "../error/ErrorComponent"
-
-enum Destination {
-    HOME, SCAN, ASSETS, USERS, ASSIGNMENTS
-}
+import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
 
 type RootContainerComponentProps = {
     destination: Destination
@@ -42,6 +39,28 @@ const LoadingScreenComponent = () => {
     )
 }
 
+type InnerComponentPropsType = {
+    onNavigate: Function,
+    children: JSX.Element
+}
+
+const InnerComponent = (props: InnerComponentPropsType) => {
+    return (
+        <Container disableGutters={true} className="inner-component-root">
+            <Grid container direction="row" className="grid-component-root">
+                <Grid container item xs={2}>
+                    <NavigationComponent onNavigate={props.onNavigate}/>
+                </Grid>
+                <Grid container item xs={10}>
+                    <Paper className="main-content">
+                        {props.children}
+                    </Paper>
+                </Grid>
+            </Grid>
+        </Container>
+    );
+}
+
 const RootComponent = () => {
     const authState = useContext(AuthContext);
     const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
@@ -56,10 +75,9 @@ const RootComponent = () => {
         if (authState.user != null) {
             return (
                 <div>
-                    <button onClick={() => onNavigate(Destination.HOME)}>Home</button>
-                    <button onClick={() => onNavigate(Destination.ASSETS)}>Assets</button>
-                    <button onClick={() => onNavigate(Destination.USERS)}>Users</button>
-                    <RootContainerComponent destination={destination}/>
+                    <InnerComponent onNavigate={onNavigate}>
+                        <RootContainerComponent destination={destination}/>
+                    </InnerComponent>
                 </div>
             )
         } else return <Redirect to="/auth"/>

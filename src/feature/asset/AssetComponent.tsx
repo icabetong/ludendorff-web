@@ -3,6 +3,7 @@ import { Asset, AssetRepository } from "./Asset";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 export const AssetComponent: React.FC = () => {
+
     const [assets, setAssets] = useState<Asset[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);

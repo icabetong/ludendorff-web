@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 
@@ -47,7 +48,7 @@ const lightTheme = createTheme({
         secondary: secondaryColors,
         error: errorColors,
         background: {
-            default: '#1e1f29'
+            default: '#f8f8f2'
         }
     },
     typography: {
@@ -78,18 +79,32 @@ const darkTheme = createTheme({
     }
 })
 
+type ThemeContextType = {
+    themeIsDark: Boolean,
+    setTheme: Function
+}
+
+export const ThemeContext = React.createContext<ThemeContextType>({
+    themeIsDark: false,
+    setTheme: () => {}
+});
+
 export const CoreComponent = () => {
+    const [isThemeDark, setDarkTheme] = useState<Boolean>(false);
+    
     return (
         <div>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline/>
-                <BrowserRouter>
-                    <Switch>
-                        <Route path="/" exact component={RootComponent}/>
-                        <Route path="/auth" component={AuthComponent}/>
-                    </Switch>
-                </BrowserRouter>
-            </ThemeProvider>
+            <ThemeProvider theme={isThemeDark ? darkTheme : lightTheme}>
+                <ThemeContext.Provider value={{themeIsDark: isThemeDark, setTheme: setDarkTheme}}>
+                    <CssBaseline/>                    
+                        <BrowserRouter>
+                            <Switch>
+                                <Route path="/" exact component={RootComponent}/>
+                                <Route path="/auth" component={AuthComponent}/>
+                            </Switch>
+                        </BrowserRouter>
+                </ThemeContext.Provider>
+           </ThemeProvider>
         </div>
     )
 }
