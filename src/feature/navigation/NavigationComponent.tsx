@@ -12,11 +12,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
 import QrcodeIcon from "@heroicons/react/outline/QrcodeIcon";
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
-import UserIcon from "@heroicons/react/outline/UserIcon";
+import UserGroupIcon from "@heroicons/react/outline/UserGroupIcon";
 import IdentificationIcon from "@heroicons/react/outline/IdentificationIcon";
 import CogIcon from "@heroicons/react/outline/CogIcon";
-
-import "./Navigation.scss";
 
 export enum Destination {
     HOME, 
@@ -34,11 +32,11 @@ type NavigationItemType = {
 }
 
 const destinations: NavigationItemType[] = [
-    { icon: <HomeIcon className="icon"/>, title: "Home", destination: Destination.HOME },
-    { icon: <QrcodeIcon className="icon"/>, title: "Scan", destination: Destination.SCAN },
-    { icon: <DesktopComputerIcon className="icon"/>, title: "Assets", destination: Destination.ASSETS },
-    { icon: <UserIcon className="icon"/>, title: "Users", destination: Destination.USERS },
-    { icon: <IdentificationIcon className="icon"/>, title: "Assignments", destination: Destination.ASSIGNMENTS }
+    { icon: <HomeIcon/>, title: "Home", destination: Destination.HOME },
+    { icon: <QrcodeIcon/>, title: "Scan", destination: Destination.SCAN },
+    { icon: <DesktopComputerIcon/>, title: "Assets", destination: Destination.ASSETS },
+    { icon: <UserGroupIcon/>, title: "Users", destination: Destination.USERS },
+    { icon: <IdentificationIcon />, title: "Assignments", destination: Destination.ASSIGNMENTS }
 ]
 
 const minorDestinations: NavigationItemType[] = [
@@ -100,7 +98,7 @@ const NavigationList = (props: NavigationListPropsType) => {
                         <ListItemIcon>{nav.icon}</ListItemIcon>
                         <Hidden smDown>
                             <ListItemText primary={
-                                <Typography variant="body2">{nav.title}</Typography>
+                                <Typography variant="body2" noWrap>{nav.title}</Typography>
                             }/>
                         </Hidden>
                     </ListItem> 

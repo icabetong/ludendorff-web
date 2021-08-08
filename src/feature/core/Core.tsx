@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles'
 
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root'
-import { CssBaseline } from '@material-ui/core'
+import { CssBaseline, responsiveFontSizes } from '@material-ui/core'
 
 const secondaryColors = {
     main: '#ff5555',
@@ -32,7 +32,8 @@ const typographyOverrides = {
         fontFamily: 'Inter'
     },
     h5: {
-        fontWeight: 700
+        fontWeight: 600,
+        fontSize: '2em'
     },
     body1: {
         fontSize: '1.1em',
@@ -80,7 +81,8 @@ const darkTheme = createTheme({
         secondary: secondaryColors,
         error: errorColors,
         background: {
-            default: '#1e1f29'
+            default: '#1e1f29',
+            paper: '#44475a'
         }
     },
     typography: {

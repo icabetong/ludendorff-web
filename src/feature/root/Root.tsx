@@ -1,10 +1,8 @@
 import { useContext, useState } from "react";
 import { Redirect } from "react-router";
-import { CircularProgress, Grid, Container, Paper, Fab } from "@material-ui/core";
+import { CircularProgress, Grid, Container, Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
-import "./Root.scss";
 import { AuthContext, AuthPending } from "../auth/AuthProvider";
 import { HomeComponent } from "../home/HomeComponent";
 import { ScanComponent } from "../scan/ScanComponent";
@@ -58,6 +56,10 @@ type RootContainerComponentPropsType = {
 
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     const useStyles = makeStyles((theme) => ({
+        root: {
+            minWidth: '100vw',
+            minHeight: '100vh'
+        },
         container: {
             minWidth: '100%',
             minHeight: '100%',
@@ -65,22 +67,24 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         icon: {
             maxWidth: '2em',
             maxHeight: '2em',
+        },
+        content: {
+            width: '100%',
+            height: '100%'
         }
     }));
     const classes = useStyles();
 
     return (
-        <Container disableGutters={true} className="inner-component-root">
-            <Grid container direction="row" className="grid-component-root">
-                <Grid container item xs={1} md={2} justifyContent="center">
+        <Container disableGutters={true} className={classes.root}>
+            <Grid container direction="row" className={classes.root}>
+                <Grid container item xs={1} md={2} justifyContent="center" wrap="nowrap">
                     <Container disableGutters={true} className={classes.container}>
-                        <Paper className={classes.container}>
-                            <NavigationComponent onNavigate={props.onNavigate} currentDestination={props.currentDestination}/>
-                        </Paper>
+                        <NavigationComponent onNavigate={props.onNavigate} currentDestination={props.currentDestination}/>
                     </Container>
                 </Grid>
                 <Grid container item xs={11} md={10}>
-                    <Paper className="main-content">
+                    <Paper className={classes.content} variant="outlined" square>
                         {props.children}
                     </Paper>
                 </Grid>
