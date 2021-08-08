@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Box from "@material-ui/core/Box";
+import { HeaderBarComponent } from "../../components/HeaderBar";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 import { Assignment, AssignmentRepository } from "./Assignment";
 
@@ -12,7 +14,9 @@ export const AssignmentComponent: React.FC = () => {
     }, [triggerFetch])
     
     return (
-        <div></div>
+        <Box>
+            <HeaderBarComponent title="Assignments"/>
+        </Box>
     )
 }
 

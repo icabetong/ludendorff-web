@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, List, ListItem, ListItemText } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Typography from "@material-ui/core/Typography";
+import { HeaderBarComponent } from "../../components/HeaderBar";
 import { Asset, AssetRepository } from "./Asset";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 export const AssetComponent: React.FC = () => {
-
     const [assets, setAssets] = useState<Asset[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
@@ -38,19 +42,17 @@ export const AssetComponent: React.FC = () => {
 
     return (
         <Box>
-            <Typography variant="h5">Assets</Typography>
+            <HeaderBarComponent title="Assets"/>
             <List>{
                 assets.map((asset: Asset) => {
                     return (
                         <ListItem button key={asset.assetId}>
                             <ListItemText primary={asset.assetName} secondary={
-                                <React.Fragment>
-                                    <Typography
-                                        variant="body2"
-                                        color="textPrimary">
-                                            {asset.category?.categoryName}
-                                    </Typography>
-                                </React.Fragment>
+                                <Typography
+                                    variant="body2"
+                                    color="textPrimary">
+                                        {asset.category?.categoryName}
+                                </Typography>
                             }></ListItemText>
                         </ListItem>
                     )
