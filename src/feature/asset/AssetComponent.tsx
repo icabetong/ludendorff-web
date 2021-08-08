@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
+import { ListItemContent } from "../../components/ListItemContent";
 import { HeaderBarComponent } from "../../components/HeaderBar";
 import { Asset, AssetRepository } from "./Asset";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
@@ -47,13 +47,7 @@ export const AssetComponent: React.FC = () => {
                 assets.map((asset: Asset) => {
                     return (
                         <ListItem button key={asset.assetId}>
-                            <ListItemText primary={asset.assetName} secondary={
-                                <Typography
-                                    variant="body2"
-                                    color="textPrimary">
-                                        {asset.category?.categoryName}
-                                </Typography>
-                            }></ListItemText>
+                            <ListItemContent title={asset.assetName} summary={asset.category?.categoryName}/>
                         </ListItem>
                     )
                 })    

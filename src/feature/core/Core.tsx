@@ -34,7 +34,18 @@ const typographyOverrides = {
     h5: {
         fontWeight: 700
     },
+    body1: {
+        fontSize: '1.1em',
+        fontWeight: 600,
+    },
     body2: {
+        fontWeight: 600
+    },
+    subtitle1: {
+        fontSize: '1em'
+    },
+    subtitle2: {
+        fontSize: '1em',
         fontWeight: 500
     }
 }
