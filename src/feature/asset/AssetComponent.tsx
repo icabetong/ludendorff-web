@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Box, Typography, List, ListItem, ListItemText } from "@material-ui/core";
 import { Asset, AssetRepository } from "./Asset";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
@@ -36,11 +37,28 @@ export const AssetComponent: React.FC = () => {
     }
 
     return (
-        <div>
-            { assets.map((asset: Asset) => { return <div key={asset.assetId}>{asset.assetName}</div> })}
+        <Box>
+            <Typography variant="h5">Assets</Typography>
+            <List>{
+                assets.map((asset: Asset) => {
+                    return (
+                        <ListItem button key={asset.assetId}>
+                            <ListItemText primary={asset.assetName} secondary={
+                                <React.Fragment>
+                                    <Typography
+                                        variant="body2"
+                                        color="textPrimary">
+                                            {asset.category?.categoryName}
+                                    </Typography>
+                                </React.Fragment>
+                            }></ListItemText>
+                        </ListItem>
+                    )
+                })    
+            }</List>
             <button onClick={onDecrementPageNumber}>Previous</button>
             <button onClick={onIncrementPageNumber}>Next</button>
-        </div>
+        </Box>
     )
 
 }

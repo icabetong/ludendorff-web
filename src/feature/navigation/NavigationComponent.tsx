@@ -25,6 +25,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     destinations.map((destination) => {
                         return (
                             <ListItem button key={destination} onClick={() => props.onNavigate(destination)}>
+                                <ListItemIcon><HomeIcon className="icon"/></ListItemIcon>
                                 <ListItemText primary={destination}/>
                             </ListItem>
                         )
