@@ -32,7 +32,7 @@ const typographyOverrides = {
         fontFamily: 'Inter'
     },
     h5: {
-        fontWeight: 600,
+        fontWeight: 700,
         fontSize: '2em'
     },
     body1: {

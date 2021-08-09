@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Button, Grid, Typography, Container, Paper } from '@material-ui/core'
-import firebase from 'firebase/app'
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
-import './Auth.scss'
+import firebase from "firebase/app";
+import { auth } from "../../index";
+
 import { TextInput } from '../../components/TextInput'
 
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
@@ -15,7 +21,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
     const onAuthTriggered = (event: React.SyntheticEvent) => {
         event.preventDefault();
         setIsAuthenticating(true);
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        auth.signInWithEmailAndPassword(email, password)
             .then(() => {
                 setIsAuthenticating(false);
                 history.push("/")
@@ -36,6 +42,19 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
         setError(undefined);
         setPassword(event.target.value)
     }
+
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            minHeight: '100vh',
+        },
+        containerPaper: {
+            padding: '2em',
+        },
+        container: {
+            padding: '1em 0em',
+        }
+    }));
+    const classes = useStyles();
     
     return (
         <Container>
@@ -46,14 +65,14 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                     direction="column" 
                     alignItems="center" 
                     justifyContent="center" 
-                    style={{minHeight: '100vh'}}>
-                    <Grid xs={12} item >
-                        <Paper className="container-wrapper">
-                            <div className="container">
+                    className={classes.root}>
+                    <Grid xs={12} item>
+                        <Paper className={classes.containerPaper}>
+                            <div className={classes.container}>
                                 <Typography variant="h5">Hello.</Typography>
                                 <Typography variant="h5">Welcome Back.</Typography>
                             </div>
-                            <div className="container">
+                            <div className={classes.container}>
                                 {
                                     error != null && 
                                     <Typography variant="body2" color="error">
@@ -80,7 +99,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                                     disabled={isAuthenticating}
                                     onChange={onPasswordInputChanged}/>
                             </div>
-                            <div className="container">
+                            <div className={classes.container}>
                                 <Button 
                                     type="submit" 
                                     variant="contained" 
