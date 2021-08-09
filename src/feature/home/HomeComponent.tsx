@@ -1,11 +1,14 @@
-import React from "react";
 import { Box } from "@material-ui/core";
-import { HeaderBarComponent } from "../../components/HeaderBar";
+import { ComponentHeader } from "../../components/ComponentHeader";
 
-export const HomeComponent: React.FC = () => {
+type HomeComponentPropsType = {
+    onDrawerToggle: () => void
+}
+
+export const HomeComponent = (props: HomeComponentPropsType) => {
     return (
         <Box>
-            <HeaderBarComponent title="Home"/>
+            <ComponentHeader title="Home" onDrawerToggle={props.onDrawerToggle}/>
         </Box>
     )
 }

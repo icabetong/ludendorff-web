@@ -1,11 +1,14 @@
-import React from "react";
 import Box from "@material-ui/core/Box";
-import { HeaderBarComponent } from "../../components/HeaderBar"; 
+import { ComponentHeader } from "../../components/ComponentHeader";
 
-export const ScanComponent = () => {
+type ScanComponentPropsType = {
+    onDrawerToggle: () => void
+}
+
+export const ScanComponent = (props: ScanComponentPropsType) => {
     return (
         <Box>
-            <HeaderBarComponent title="Scan"/>
+            <ComponentHeader title="Scan" onDrawerToggle={props.onDrawerToggle}/>
         </Box>
     )
 }

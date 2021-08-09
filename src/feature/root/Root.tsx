@@ -1,7 +1,11 @@
 import { useContext, useState } from "react";
 import { Redirect } from "react-router";
-import { CircularProgress, Grid, Container, Paper } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@material-ui/core/";
+import Drawer from "@material-ui/core/Drawer";
+import Grid from "@material-ui/core/Grid";
+import Hidden from "@material-ui/core/Hidden";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { AuthContext, AuthPending } from "../auth/AuthProvider";
 import { HomeComponent } from "../home/HomeComponent";
@@ -14,23 +18,24 @@ import { Destination, NavigationComponent } from "../navigation/NavigationCompon
 import { SettingsComponent } from "../settings/SettingsComponent";
 
 type InnerComponentPropsType = {
-    destination: Destination
+    destination: Destination,
+    onDrawerToggle: () => void,
 }
 
 const InnerComponent = (props: InnerComponentPropsType) => {
     switch(props.destination) {
         case Destination.HOME:
-            return <HomeComponent/>
+            return <HomeComponent onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SCAN:
-            return <ScanComponent/>
+            return <ScanComponent onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSETS:
-            return <AssetComponent/>
+            return <AssetComponent onDrawerToggle={props.onDrawerToggle}/>
         case Destination.USERS:
-            return <UserComponent/>
+            return <UserComponent onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSIGNMENTS:
-            return <AssignmentComponent/>
+            return <AssignmentComponent onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SETTINGS:
-            return <SettingsComponent/>
+            return <SettingsComponent onDrawerToggle={props.onDrawerToggle}/>
         default:
             return <ErrorComponent/>
     }
@@ -51,14 +56,24 @@ const LoadingScreenComponent = () => {
 type RootContainerComponentPropsType = {
     onNavigate: (destination: Destination) => void,
     currentDestination: Destination,
-    children: JSX.Element,
 }
 
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
+    const drawerWidth = 240;
     const useStyles = makeStyles((theme) => ({
         root: {
-            minWidth: '100vw',
-            minHeight: '100vh'
+            display: 'flex',
+            width: '100vw',
+            height: '100vh'
+        },
+        drawer: {
+            [theme.breakpoints.up('sm')]: {
+                width: drawerWidth,
+                flexShrink: 0,
+            }
+        },
+        drawerPaper: {
+            width: drawerWidth,
         },
         container: {
             minWidth: '100%',
@@ -69,27 +84,63 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             maxHeight: '2em',
         },
         content: {
+            flexGrow: 1,
+        },
+        contentPaper: {
             width: '100%',
             height: '100%'
         }
     }));
     const classes = useStyles();
+    const theme = useTheme();
+
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+    const onToggleDrawerState = () => {
+        setDrawerOpen(!drawerOpen);
+    }
+
+    const drawerItems = (
+        <NavigationComponent 
+            onNavigate={props.onNavigate} 
+            currentDestination={props.currentDestination}/>
+    )
 
     return (
-        <Container disableGutters={true} className={classes.root}>
-            <Grid container direction="row" className={classes.root}>
-                <Grid container item xs={1} md={2} justifyContent="center" wrap="nowrap">
-                    <Container disableGutters={true} className={classes.container}>
-                        <NavigationComponent onNavigate={props.onNavigate} currentDestination={props.currentDestination}/>
-                    </Container>
-                </Grid>
-                <Grid container item xs={11} md={10}>
-                    <Paper className={classes.content} variant="outlined" square>
-                        {props.children}
-                    </Paper>
-                </Grid>
-            </Grid>
-        </Container>
+        <div className={classes.root}>
+            <nav className={classes.drawer}>
+                <Hidden smUp implementation="css">
+                    <Drawer 
+                        variant="temporary"
+                        anchor={theme.direction === "rtl" ? 'right' : 'left' }
+                        open={drawerOpen}
+                        onClose={onToggleDrawerState}
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}
+                        ModalProps={{
+                            keepMounted: true,
+                        }}>
+                        {drawerItems}
+                    </Drawer>
+                </Hidden>
+                <Hidden xsDown implementation="css">
+                    <Drawer 
+                        className={classes.drawer}
+                        variant="permanent"
+                        classes={{
+                            paper: classes.drawerPaper,
+                        }}>
+                        {drawerItems}
+                    </Drawer>
+                </Hidden>
+            </nav>
+            <div className={classes.content}>
+                <Paper variant="outlined" square className={classes.contentPaper}>
+                    <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState}/>
+                </Paper>    
+            </div>
+        </div>
     );
 }
 
@@ -106,9 +157,9 @@ const RootComponent = () => {
     } else {
         if (authState.user != null) {
             return (
-                <RootContainerComponent onNavigate={onNavigate} currentDestination={destination}>
-                    <InnerComponent destination={destination} />
-                </RootContainerComponent>
+                <RootContainerComponent 
+                    onNavigate={onNavigate} 
+                    currentDestination={destination}/>
             )
         } else return <Redirect to="/auth"/>
     }

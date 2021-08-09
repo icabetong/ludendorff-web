@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import Box from "@material-ui/core/Box";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -7,10 +7,14 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import Switch from "@material-ui/core/Switch";
 import ColorSwatchIcon from "@heroicons/react/outline/ColorSwatchIcon";
 import { ListItemContent } from "../../components/ListItemContent";
-import { HeaderBarComponent } from "../../components/HeaderBar";
+import { ComponentHeader } from "../../components/ComponentHeader";
 import { ThemeContext } from "../core/Core";
 
-export const SettingsComponent: React.FC = () => {
+type SettingsComponentPropsType = {
+    onDrawerToggle: () => void,
+}
+
+export const SettingsComponent = (props: SettingsComponentPropsType) => {
     const theme = useContext(ThemeContext);
     const [isDarkEnabled, setDarkEnabled] = useState<boolean>(false);
 
@@ -21,7 +25,7 @@ export const SettingsComponent: React.FC = () => {
 
     return (
         <Box>
-            <HeaderBarComponent title="Settings"/>
+            <ComponentHeader title="Settings" onDrawerToggle={props.onDrawerToggle}/>
             <List>
                 <ListItem button onClick={() => onTriggerThemeChanged()}>
                     <ListItemIcon><ColorSwatchIcon/></ListItemIcon>

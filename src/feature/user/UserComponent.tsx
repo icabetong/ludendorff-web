@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import { HeaderBarComponent } from "../../components/HeaderBar";
 import { User, UserRepository } from "./User";
+import { ComponentHeader } from "../../components/ComponentHeader"
 
-export const UserComponent: React.FC = () => {
+type UserComponentPropsType = {
+    onDrawerToggle: () => void
+}
+
+export const UserComponent = (props: UserComponentPropsType) => {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -15,7 +19,7 @@ export const UserComponent: React.FC = () => {
 
     return (
         <Box>
-            <HeaderBarComponent title="Users"/>
+            <ComponentHeader title="Users" onDrawerToggle={props.onDrawerToggle}/>
             { users.map((user: User) => { return <div key={user.userId}>{user.getDisplayName()}</div>}) }
         </Box>
     )

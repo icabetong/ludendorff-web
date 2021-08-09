@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Typography from "@material-ui/core/Typography";
 import { ListItemContent } from "../../components/ListItemContent";
-import { HeaderBarComponent } from "../../components/HeaderBar";
+import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository } from "./Asset";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
-export const AssetComponent: React.FC = () => {
+type AssetComponentPropsType = {
+    onDrawerToggle: () => void
+}
+
+export const AssetComponent = (props: AssetComponentPropsType) => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
@@ -42,7 +45,7 @@ export const AssetComponent: React.FC = () => {
 
     return (
         <Box>
-            <HeaderBarComponent title="Assets"/>
+            <ComponentHeader title="Assets" onDrawerToggle={props.onDrawerToggle}/>
             <List>{
                 assets.map((asset: Asset) => {
                     return (
