@@ -19,7 +19,7 @@ import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
 import firebase from "firebase/app";
 
 export enum Destination {
-    HOME, 
+    HOME = 1, 
     SCAN, 
     ASSETS, 
     USERS, 
@@ -71,6 +71,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     destination={props.currentDestination}
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
+                    key={0}
                     navigation={{icon: <ExitToAppRoundedIcon/>, title: "Sign-out"}}
                     isActive={false}
                     action={() => triggerSignOut()}/>
@@ -80,6 +81,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 }
 
 type NavigationListItemPropsType = {
+    key: any,
     navigation: NavigationItemType,
     action: () => void,
     isActive: boolean
@@ -100,7 +102,7 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
         <ListItem 
                 button
                 className={classes.container} 
-                key={props.navigation.destination} 
+                key={props.key} 
                 selected={props.isActive}
                 onClick={props.action}>
                 <ListItemIcon>{props.navigation.icon}</ListItemIcon>
@@ -123,9 +125,10 @@ const NavigationList = (props: NavigationListPropsType) => {
         <React.Fragment>{
             props.items.map((navigation: NavigationItemType) => {
                 return <NavigationListItem
+                            key={navigation.destination}
                             navigation={navigation}
                             action={() => props.onNavigate(navigation.destination!!)}
-                            isActive={props.destination == navigation.destination} />
+                            isActive={props.destination === navigation.destination} />
                 
             })
         }</React.Fragment>
