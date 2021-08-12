@@ -59,7 +59,11 @@ const lightTheme = createTheme({
         secondary: secondaryColors,
         error: errorColors,
         background: {
-            default: '#f8f8f2'
+            default: '#f8f8f2',
+            paper: '#ffffff'
+        },
+        text: {
+            primary: '#000000'
         }
     },
     typography: {
@@ -81,6 +85,9 @@ const darkTheme = createTheme({
         background: {
             default: '#1e1f29',
             paper: '#44475a'
+        },
+        text: {
+            primary: '#ffffff'
         }
     },
     typography: {
@@ -92,22 +99,23 @@ const darkTheme = createTheme({
 })
 
 type ThemeContextType = {
-    themeIsDark: Boolean,
+    darkThemeEnabled: boolean,
     setTheme: Function
 }
 
 export const ThemeContext = React.createContext<ThemeContextType>({
-    themeIsDark: false,
+    darkThemeEnabled: false,
     setTheme: () => {}
 });
 
 export const CoreComponent = () => {
-    const [isThemeDark, setDarkTheme] = useState<Boolean>(false);
+    const [isThemeDark, setDarkTheme] = useState<boolean>(false);
     
     return (
         <div>
-            <ThemeProvider theme={isThemeDark ? darkTheme : lightTheme}>
-                <ThemeContext.Provider value={{themeIsDark: isThemeDark, setTheme: setDarkTheme}}>
+            {console.log(isThemeDark)}
+            <ThemeContext.Provider value={{darkThemeEnabled: isThemeDark, setTheme: setDarkTheme}}>
+                <ThemeProvider theme={!!isThemeDark ? darkTheme : lightTheme}>
                     <CssBaseline/>                    
                         <Router history={history}>
                             <Switch>
@@ -116,8 +124,8 @@ export const CoreComponent = () => {
                                 <Route path="/error" component={ErrorComponent}/>
                             </Switch>
                         </Router>
-                </ThemeContext.Provider>
-           </ThemeProvider>
+                </ThemeProvider>
+           </ThemeContext.Provider>
         </div>
     )
 }

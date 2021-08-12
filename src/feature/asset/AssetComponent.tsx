@@ -63,7 +63,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         { field: Asset.FIELD_ASSET_NAME, headerName: 'Name', flex: 1 },
         { field: Asset.FIELD_CATEGORY, headerName: 'Category', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
         { field: Asset.FIELD_DATE_CREATED, headerName: 'Date Created', flex: 0.5 },
-        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.5 }
+        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.25 }
     ]
 
     return (
@@ -89,9 +89,10 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                         )
                     })    
                 }</List>
+                <button onClick={onDecrementPageNumber}>Previous</button>
+                <button onClick={onIncrementPageNumber}>Next</button>
             </Hidden>
-            <button onClick={onDecrementPageNumber}>Previous</button>
-            <button onClick={onIncrementPageNumber}>Next</button>
+            
         </Box>
     )
 

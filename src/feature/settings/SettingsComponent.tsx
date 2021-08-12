@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import Box from "@material-ui/core/Box";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -16,25 +16,23 @@ type SettingsComponentPropsType = {
 
 export const SettingsComponent = (props: SettingsComponentPropsType) => {
     const theme = useContext(ThemeContext);
-    const [isDarkEnabled, setDarkEnabled] = useState<boolean>(false);
 
-    const onTriggerThemeChanged = () => {
-        theme.setTheme(isDarkEnabled);
-        setDarkEnabled(!isDarkEnabled);
+    const onTriggerThemeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        theme.setTheme(event.target.checked);
     }
 
     return (
         <Box>
             <ComponentHeader title="Settings" onDrawerToggle={props.onDrawerToggle}/>
             <List>
-                <ListItem button onClick={() => onTriggerThemeChanged()}>
+                <ListItem>
                     <ListItemIcon><ColorSwatchIcon/></ListItemIcon>
                     <ListItemContent title="Dark Theme" summary="Make the interface darker and easier on the eyes."/>
                     <ListItemSecondaryAction>
                         <Switch
                             edge="end"
-                            value={isDarkEnabled}
-                            onChange={() => onTriggerThemeChanged()}/>
+                            checked={theme.darkThemeEnabled}
+                            onChange={onTriggerThemeChanged}/>
                     </ListItemSecondaryAction>
                 </ListItem>
             </List>
