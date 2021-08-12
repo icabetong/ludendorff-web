@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import { makeStyles } from "@material-ui/core/styles";
+import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository } from "./Asset";
@@ -43,21 +46,52 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         setPageNumber(pageNumber - 1);
     }
 
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            height: '100%',
+            width: '100%'
+        },
+        wrapper: {
+            height: '80%'
+        }
+    }));
+    const classes = useStyles();
+
+    const columns = [
+        { field: Asset.FIELD_ASSET_ID, headerName: 'ID', hide: true },
+        { field: Asset.FIELD_ASSET_NAME, headerName: 'Name', flex: 1 },
+        { field: Asset.FIELD_CATEGORY, headerName: 'Category', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
+        { field: Asset.FIELD_DATE_CREATED, headerName: 'Date Created', flex: 0.5 },
+        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.5 }
+    ]
+
     return (
-        <Box>
+        <Container className={classes.root}>
             <ComponentHeader title="Assets" onDrawerToggle={props.onDrawerToggle}/>
-            <List>{
-                assets.map((asset: Asset) => {
-                    return (
-                        <ListItem button key={asset.assetId}>
-                            <ListItemContent title={asset.assetName} summary={asset.category?.categoryName}/>
-                        </ListItem>
-                    )
-                })    
-            }</List>
+            <Hidden xsDown>
+                <div className={classes.wrapper}>
+                    <DataGrid
+                        columns={columns}
+                        rows={assets}
+                        getRowId={(r) => r.assetId}
+                        pageSize={15}
+                        hideFooterPagination/>
+                </div>
+            </Hidden>
+            <Hidden smUp>
+                <List>{
+                    assets.map((asset: Asset) => {
+                        return (
+                            <ListItem button key={asset.assetId}>
+                                <ListItemContent title={asset.assetName} summary={asset.category?.categoryName}/>
+                            </ListItem>
+                        )
+                    })    
+                }</List>
+            </Hidden>
             <button onClick={onDecrementPageNumber}>Previous</button>
             <button onClick={onIncrementPageNumber}>Next</button>
-        </Box>
+        </Container>
     )
 
 }

@@ -8,13 +8,13 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import HomeRoundedIcon from "@material-ui/icons/HomeRounded";
-import CropFreeRoundedIcon from "@material-ui/icons/CropFreeRounded";
-import DesktopWindowsRoundedIcon from "@material-ui/icons/DesktopWindowsRounded";
-import GroupRoundedIcon from "@material-ui/icons/GroupRounded";
-import AssignmentIndRoundedIcon from "@material-ui/icons/AssignmentIndRounded";
-import SettingsRoundedIcon from "@material-ui/icons/SettingsRounded";
-import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
+import HomeIcon from "@heroicons/react/outline/HomeIcon";
+import QrcodeIcon from "@heroicons/react/outline/QrcodeIcon";
+import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
+import UserGroupIcon from "@heroicons/react/outline/UserGroupIcon";
+import IdentificationIcon from "@heroicons/react/outline/IdentificationIcon";
+import CogIcon from "@heroicons/react/outline/CogIcon";
+import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
 
 import firebase from "firebase/app";
 
@@ -34,15 +34,15 @@ type NavigationItemType = {
 }
 
 const destinations: NavigationItemType[] = [
-    { icon: <HomeRoundedIcon/>, title: "Home", destination: Destination.HOME },
-    { icon: <CropFreeRoundedIcon/>, title: "Scan", destination: Destination.SCAN },
-    { icon: <DesktopWindowsRoundedIcon/>, title: "Assets", destination: Destination.ASSETS },
-    { icon: <GroupRoundedIcon/>, title: "Users", destination: Destination.USERS },
-    { icon: <AssignmentIndRoundedIcon />, title: "Assignments", destination: Destination.ASSIGNMENTS }
+    { icon: <HomeIcon/>, title: "Home", destination: Destination.HOME },
+    { icon: <QrcodeIcon/>, title: "Scan", destination: Destination.SCAN },
+    { icon: <DesktopComputerIcon/>, title: "Assets", destination: Destination.ASSETS },
+    { icon: <UserGroupIcon/>, title: "Users", destination: Destination.USERS },
+    { icon: <IdentificationIcon/>, title: "Assignments", destination: Destination.ASSIGNMENTS }
 ]
 
 const minorDestinations: NavigationItemType[] = [
-    { icon: <SettingsRoundedIcon/>, title: "Settings", destination: Destination.SETTINGS },
+    { icon: <CogIcon/>, title: "Settings", destination: Destination.SETTINGS },
 ]
 
 type NavigationComponentPropsType =  {
@@ -72,7 +72,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
                     itemKey={0}
-                    navigation={{icon: <ExitToAppRoundedIcon/>, title: "Sign-out"}}
+                    navigation={{icon: <LogoutIcon/>, title: "Sign-out"}}
                     isActive={false}
                     action={() => triggerSignOut()}/>
             </List>

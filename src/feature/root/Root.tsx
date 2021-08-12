@@ -43,12 +43,15 @@ const InnerComponent = (props: InnerComponentPropsType) => {
 }
 
 const LoadingScreenComponent = () => {
-    const style = {
-        minHeight: '100vh'
-    }
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            minHeight: '100vh'
+        }
+    }));
+    const classes = useStyles();
 
     return (
-        <Grid container direction="row" alignItems="center" justifyContent="center" style={style}>
+        <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.root}>
             <CircularProgress/>
         </Grid>
     )
@@ -162,10 +165,7 @@ const RootComponent = () => {
                     onNavigate={onNavigate} 
                     currentDestination={destination}/>
             )
-        } else {
-            console.log("redirected");
-            return <Redirect to="/auth"/>
-        }
+        } else return <Redirect to="/auth"/>
     } else return <Redirect to="/error"/>
 }
 export default withRouter(RootComponent);
