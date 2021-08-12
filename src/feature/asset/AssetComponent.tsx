@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -11,22 +12,18 @@ import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import TextField from "@material-ui/core/TextField";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
 
-import TagIcon from "@heroicons/react/outline/TagIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import DotsVerticalIcon from "@heroicons/react/outline/DotsVerticalIcon";
 
-import { TextInput } from "../../components/TextInput";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
@@ -62,8 +59,15 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         },
         editorContainer: {
             width: '100%',
-            margin: '0.8em'
+            margin: '0.8em',
         },
+        editor: {
+            marginTop: '0.6em',
+            marginBottom: '0.6em'
+        },
+        textField: {
+            width: '100%'
+        }
     }));
     const classes = useStyles();
     const theme = useTheme();
@@ -84,17 +88,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
 
-    const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-
-    const onTriggerInflateMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    }
-
-    const onTriggerCloseMenu = () => {
-        setAnchorEl(null);
-    }
+    const [isEditorOpened, setEditorOpened] = useState<boolean>(false);;
 
     useEffect(() => {
         AssetRepository.fetch(documentHistory[documentHistory.length - 1])
@@ -143,6 +137,12 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const onEditorStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => { 
         setEditorStatus(event.target.value as Status);
     }
+    const onEditorCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let index = parseInt(event.target.value);
+        if (index < categories.length) {
+            setEditorCategory(categories[index]);
+        }
+    }
 
     return (
         <Box className={classes.root}>
@@ -152,7 +152,9 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 buttonText={ t("add") }
                 buttonIcon={<PlusIcon className={clsx(classes.icon, classes.actionButtonIcon) }/>}
                 buttonOnClick={() => setEditorOpened(true) }
-                />
+                menuItems={[
+                    <MenuItem>{ t("categories") }</MenuItem>
+                ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <Button onClick={() => setEditorOpened(true)}>Open</Button>
@@ -184,41 +186,41 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 onClose={() => setEditorOpened(false) }>
                 <DialogTitle>{ t("asset_create") }</DialogTitle>
                 <DialogContent dividers={true}>
-                    <div className={classes.editorContainer}>
-                        <TextInput
+                    <Container disableGutters>
+                        <TextField
                             autoFocus
-                            id="_editorAssetName"
+                            id="editor-asset-name"
                             type="text"
                             label={ t("asset_name") }
-                            value={editorAssetName}/>
-                    </div>
-                    <div className={classes.editorContainer}>
-                        <FormControl component="fieldset">
+                            value={editorAssetName}
+                            variant="outlined"
+                            size="small"
+                            className={clsx(classes.textField, classes.editor)}/>
+                        <FormControl component="fieldset" className={classes.editor}>
                             <FormLabel component="legend">{ t("status") }</FormLabel>
-                            <RadioGroup aria-label={ t("status") } name="_editorStatus" value={editorStatus} onChange={onEditorStatusChanged}>
+                            <RadioGroup aria-label={ t("status") } name="editor-status" value={editorStatus} onChange={onEditorStatusChanged}>
                                 <FormControlLabel value={Status.OPERATIONAL} control={<Radio/>} label={ t("status_operational") } />
                                 <FormControlLabel value={Status.IDLE} control={<Radio/>} label={ t("status_idle") }/>
                                 <FormControlLabel value={Status.UNDER_MAINTENANCE} control={<Radio/>} label={ t("status_under_maintenance") } />
                                 <FormControlLabel value={Status.RETIRED} control={<Radio/>} label={ t("status_retired") } />
                             </RadioGroup>
                         </FormControl>
-                    </div>
-                    <div className={classes.editorContainer}>
-                        <TextInput
+                        <TextField
                             select
                             id="editor-category"
                             label={ t("category") }
-                            value={editorCategory}
-                            defaultValue={categories && categories[0]}>
-                            {   categories.map((category: Category) => (
-                                    <MenuItem key={category.categoryId}>{category.categoryName}</MenuItem>
-                                ))
+                            variant="outlined"
+                            size="small"
+                            value={editorCategory?.categoryName}
+                            defaultValue={categories && categories[0]}
+                            onChange={onEditorCategoryChanged}
+                            className={clsx(classes.textField, classes.editor)}>
+                            {   categories.map((category: Category, index: number) => {
+                                    return <MenuItem key={category.categoryId} value={index}>{category.categoryName}</MenuItem>
+                                })
                             }
-                        </TextInput>
-                    </div>
-                    <div className={classes.editorContainer}>
-
-                    </div>
+                        </TextField>
+                    </Container>
                 </DialogContent>
                 <DialogActions>
                     <Button color="primary" onClick={() => resetEditorForms() }>{ t("cancel") }</Button>

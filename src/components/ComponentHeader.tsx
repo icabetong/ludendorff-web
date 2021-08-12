@@ -1,13 +1,15 @@
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
+import Menu from "@material-ui/core/Menu";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
+import DotsVerticalIcon from "@heroicons/react/outline/DotsVerticalIcon";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
-
 
 type ComponentHeaderPropsType = {
     title: string,
@@ -30,6 +32,9 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                 display: 'none'
             },
         },
+        overflowButton: {
+            marginLeft: theme.spacing(2)
+        },
         title: {
             width: '100%',
         },
@@ -40,6 +45,13 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
         },
     }));
     const classes = useStyles();
+
+    const [anchor, setAnchor] = useState<null | HTMLElement>(null);
+    const menuOpen = Boolean(anchor);
+    const anchorProperties = {
+        vertical: 'top',
+        horizontal: 'right'
+    } as const
 
     return (
         <AppBar position="static" className={classes.appBar} color="transparent" elevation={0}>
@@ -61,13 +73,36 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         {props.title}
                     </Typography>
                 </Hidden>
-                <Button 
-                    variant="outlined"
-                    color="primary"
-                    startIcon={props.buttonIcon}
-                    onClick={props.buttonOnClick}>
-                    {props.buttonText}
-                </Button>
+                { props.buttonText &&
+                    <Button 
+                        variant="outlined"
+                        color="primary"
+                        startIcon={props.buttonIcon}
+                        onClick={props.buttonOnClick}>
+                        {props.buttonText}
+                    </Button>
+                }
+                <div>
+                    <IconButton
+                        className={classes.overflowButton}
+                        aria-haspopup="true"
+                        onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}>
+                        <DotsVerticalIcon className={classes.icon}/>
+                    </IconButton>
+                    <Menu
+                        keepMounted
+                        anchorEl={anchor}
+                        anchorOrigin={anchorProperties}
+                        transformOrigin={anchorProperties}
+                        open={menuOpen}
+                        onClose={() => setAnchor(null)}>
+                        {props.menuItems && 
+                            props.menuItems.map((menuItem) => {
+                            return menuItem
+                            })
+                        }
+                    </Menu>
+                </div>
             </Toolbar>
         </AppBar>
     )
