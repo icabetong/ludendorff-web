@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { RouteComponentProps } from 'react-router'
+import React, { useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
@@ -12,7 +13,7 @@ import { auth } from "../../index";
 
 import { TextInput } from '../../components/TextInput'
 
-const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
+const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
@@ -24,7 +25,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
         auth.signInWithEmailAndPassword(email, password)
             .then(() => {
                 setIsAuthenticating(false);
-                history.push("/")
+                history.push('/');
             })
             .catch((error: firebase.auth.Error) => {
                 setError(error);
@@ -117,4 +118,4 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
     );
 }
 
-export default AuthComponent
+export default withRouter(AuthComponent)

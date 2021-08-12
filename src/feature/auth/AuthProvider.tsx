@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/app';
+
 import { auth } from "../../index"
+import history from "../navigation/History";
 
 export class AuthFetched {
     user: firebase.User | null
@@ -22,17 +24,21 @@ export class AuthPending {
 export const AuthContext = React.createContext<AuthFetched | AuthPending>(new AuthPending())
 
 export const AuthProvider: React.FC = ({ children }) => {
-    const [authState, setAuthState] = useState<AuthFetched | AuthPending>(new AuthPending())
+    const [authState, setAuthState] = useState<AuthFetched | AuthPending>(new AuthPending());
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+        const authStateListener = auth.onAuthStateChanged((firebaseUser) => {
             setAuthState(new AuthFetched(firebaseUser));
+            if (firebaseUser != null)
+                history.push("/");
         });
-        return unsubscribe;
+        return () => {
+            authStateListener();
+        }
     }, []);
 
     return (
-        <AuthContext.Provider value={ authState }>
+        <AuthContext.Provider value={authState}>
             {children}
         </AuthContext.Provider>
     );

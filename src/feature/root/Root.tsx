@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Redirect } from "react-router";
+import { withRouter } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core/";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
@@ -7,7 +8,7 @@ import Hidden from "@material-ui/core/Hidden";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-import { AuthContext, AuthPending } from "../auth/AuthProvider";
+import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
 import { HomeComponent } from "../home/HomeComponent";
 import { ScanComponent } from "../scan/ScanComponent";
 import { AssetComponent } from "../asset/AssetComponent";
@@ -154,14 +155,17 @@ const RootComponent = () => {
 
     if (authState instanceof AuthPending) {
         return <LoadingScreenComponent/>
-    } else {
+    } else if (authState instanceof AuthFetched) {
         if (authState.user != null) {
             return (
                 <RootContainerComponent 
                     onNavigate={onNavigate} 
                     currentDestination={destination}/>
             )
-        } else return <Redirect to="/auth"/>
-    }
+        } else {
+            console.log("redirected");
+            return <Redirect to="/auth"/>
+        }
+    } else return <Redirect to="/error"/>
 }
-export default RootComponent
+export default withRouter(RootComponent);

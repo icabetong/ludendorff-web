@@ -71,7 +71,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     destination={props.currentDestination}
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
-                    key={0}
+                    itemKey={0}
                     navigation={{icon: <ExitToAppRoundedIcon/>, title: "Sign-out"}}
                     isActive={false}
                     action={() => triggerSignOut()}/>
@@ -81,7 +81,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 }
 
 type NavigationListItemPropsType = {
-    key: any,
+    itemKey: any,
     navigation: NavigationItemType,
     action: () => void,
     isActive: boolean
@@ -102,7 +102,7 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
         <ListItem 
                 button
                 className={classes.container} 
-                key={props.key} 
+                key={props.itemKey} 
                 selected={props.isActive}
                 onClick={props.action}>
                 <ListItemIcon>{props.navigation.icon}</ListItemIcon>
@@ -125,7 +125,7 @@ const NavigationList = (props: NavigationListPropsType) => {
         <React.Fragment>{
             props.items.map((navigation: NavigationItemType) => {
                 return <NavigationListItem
-                            key={navigation.destination}
+                            itemKey={navigation.destination}
                             navigation={navigation}
                             action={() => props.onNavigate(navigation.destination!!)}
                             isActive={props.destination === navigation.destination} />
