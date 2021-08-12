@@ -37,10 +37,6 @@ const typographyOverrides = {
         fontWeight: 700,
         fontSize: '2em'
     },
-    body1: {
-        fontSize: '1.1em',
-        fontWeight: 600,
-    },
     body2: {
         fontWeight: 600
     },

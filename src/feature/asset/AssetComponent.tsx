@@ -52,7 +52,8 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             width: '100%'
         },
         wrapper: {
-            height: '80%'
+            height: '80%',
+            padding: '1.4em'
         }
     }));
     const classes = useStyles();

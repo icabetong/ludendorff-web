@@ -1,5 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -34,15 +41,15 @@ type NavigationItemType = {
 }
 
 const destinations: NavigationItemType[] = [
-    { icon: <HomeIcon/>, title: "Home", destination: Destination.HOME },
-    { icon: <QrcodeIcon/>, title: "Scan", destination: Destination.SCAN },
-    { icon: <DesktopComputerIcon/>, title: "Assets", destination: Destination.ASSETS },
-    { icon: <UserGroupIcon/>, title: "Users", destination: Destination.USERS },
-    { icon: <IdentificationIcon/>, title: "Assignments", destination: Destination.ASSIGNMENTS }
+    { icon: <HomeIcon/>, title: "home", destination: Destination.HOME },
+    { icon: <QrcodeIcon/>, title: "scan", destination: Destination.SCAN },
+    { icon: <DesktopComputerIcon/>, title: "assets", destination: Destination.ASSETS },
+    { icon: <UserGroupIcon/>, title: "users", destination: Destination.USERS },
+    { icon: <IdentificationIcon/>, title: "assignments", destination: Destination.ASSIGNMENTS }
 ]
 
 const minorDestinations: NavigationItemType[] = [
-    { icon: <CogIcon/>, title: "Settings", destination: Destination.SETTINGS },
+    { icon: <CogIcon/>, title: "settings", destination: Destination.SETTINGS },
 ]
 
 type NavigationComponentPropsType =  {
@@ -51,9 +58,16 @@ type NavigationComponentPropsType =  {
 }
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
+    const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState<boolean>(false);
+    const { t, i18n } = useTranslation();
+
+    const confirmSignOut = () => {
+        setTriggerConfirmSignOut(true);
+    }
 
     const triggerSignOut = () => {
         firebase.auth().signOut();
+        setTriggerConfirmSignOut(false);
     }
 
     return (
@@ -72,10 +86,22 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
                     itemKey={0}
-                    navigation={{icon: <LogoutIcon/>, title: "Sign-out"}}
+                    navigation={{icon: <LogoutIcon/>, title: t("signout")}}
                     isActive={false}
-                    action={() => triggerSignOut()}/>
+                    action={() => confirmSignOut()}/>
             </List>
+            <Dialog
+                open={triggerConfirmSignOut}
+                onClose={() => setTriggerConfirmSignOut(false)}>
+                <DialogTitle>{ t("confirm_signout") }</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{ t("confirm_signout_message") }</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{ t("cancel") }</Button>
+                    <Button color="primary" onClick={triggerSignOut}>{ t("continue") }</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }
@@ -97,6 +123,8 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
         }
     }))
     const classes = useStyles();
+    
+    const { t, i18n } = useTranslation();
 
     return (
         <ListItem 
@@ -107,7 +135,7 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
                 onClick={props.action}>
                 <ListItemIcon>{props.navigation.icon}</ListItemIcon>
                 <ListItemText primary={
-                    <Typography variant="body2" noWrap>{props.navigation.title}</Typography>
+                    <Typography variant="body2" noWrap>{ t(props.navigation.title) }</Typography>
                 }/>
             </ListItem> 
     )
