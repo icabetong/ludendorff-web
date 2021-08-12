@@ -59,7 +59,7 @@ type NavigationComponentPropsType =  {
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
     const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState<boolean>(false);
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const confirmSignOut = () => {
         setTriggerConfirmSignOut(true);
@@ -124,7 +124,7 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
     }))
     const classes = useStyles();
     
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <ListItem 

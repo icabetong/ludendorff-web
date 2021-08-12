@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Router, Route, Switch } from 'react-router-dom';
+import { CssBaseline } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
-import { CssBaseline } from '@material-ui/core'
 import { ErrorComponent } from "../error/ErrorComponent";
 
 const secondaryColors = {
@@ -115,7 +115,8 @@ export const CoreComponent = () => {
         <div>
             {console.log(isThemeDark)}
             <ThemeContext.Provider value={{darkThemeEnabled: isThemeDark, setTheme: setDarkTheme}}>
-                <ThemeProvider theme={!!isThemeDark ? darkTheme : lightTheme}>
+                {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
+                <ThemeProvider theme={isThemeDark ? {...darkTheme} : {...lightTheme}}>
                     <CssBaseline/>                    
                         <Router history={history}>
                             <Switch>
