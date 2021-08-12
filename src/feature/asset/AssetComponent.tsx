@@ -91,6 +91,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
 
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
     const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
+    const [isCategoryEditorOpened, setCategoryEditorOpened] = useState<boolean>(false);
 
     useEffect(() => {
         AssetRepository.fetch(documentHistory[documentHistory.length - 1])
@@ -146,6 +147,30 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         }
     }
 
+    const [editorCategoryName, setEditorCategoryName] = useState<string>('');
+    const resetCategoryEditorForms = () => {
+        setEditorCategoryName('');
+    }
+
+    const onCategoryEditorNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEditorCategoryName(event.target.value);
+    }
+
+    const onCategoryEditorCommit = () => {
+        if (editorCategoryName === '')
+            return;
+
+        let category = new Category();
+        category.categoryName = editorCategoryName;
+        CategoryRepository.create(category)
+            .then(() => {
+                resetCategoryEditorForms();
+                setCategoryEditorOpened(false);
+            }).catch((error) => {
+                console.log(error);
+            })
+    }
+
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -192,7 +217,39 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 <DialogContent dividers={true}>
                     <CategoryComponent categories={categories}/>
                 </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={() => setCategoryEditorOpened(true)}>{ t("add") }</Button>
+                    <div style={{flex: '1 0 0'}}></div>
+                </DialogActions>
             </Dialog>
+
+            <Dialog
+                fullScreen={fullscreen}
+                fullWidth={true}
+                maxWidth="xs"
+                open={isCategoryEditorOpened}
+                onClose={() => setCategoryEditorOpened(false)}>
+                <DialogTitle>{ t("category_create") }</DialogTitle>
+                <DialogContent dividers={true}>
+                    <Container disableGutters>
+                        <TextField
+                            autoFocus
+                            id="editor-category-name"
+                            type="text"
+                            label={ t("category_name") }
+                            value={editorCategoryName}
+                            onChange={onCategoryEditorNameChanged}
+                            variant="outlined"
+                            size="small"
+                            className={clsx(classes.textField, classes.editor)}/>
+                    </Container>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={() => setCategoryEditorOpened(false)}>{ t("cancel") }</Button>
+                    <Button color="primary" onClick={() => onCategoryEditorCommit()}>{ t("save") }</Button>
+                </DialogActions>
+            </Dialog>
+
             <Dialog
                 fullScreen={fullscreen}
                 fullWidth={true}

@@ -3,7 +3,7 @@ import { firestore } from "../../index";
 import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
 
 import { Category, CategoryCore } from '../category/Category';
-import { newId } from "../../shared/IdUtils";
+import { newId } from "../../shared/utils";
 
 const FieldValue = firebase.firestore.FieldValue;
 

@@ -1,6 +1,6 @@
 import { firestore } from "../../index";
 import { Department, DepartmentCore } from "../department/Department";
-import { newId } from "../../shared/IdUtils";
+import { newId } from "../../shared/utils";
 
 export class User {
     userId: string

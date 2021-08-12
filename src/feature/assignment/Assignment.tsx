@@ -3,7 +3,7 @@ import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-t
 
 import { Asset } from "../asset/Asset";
 import { User } from "../user/User";
-import { newId } from "../../shared/IdUtils";
+import { newId } from "../../shared/utils";
 
 export class Assignment {
     assignmentId: string

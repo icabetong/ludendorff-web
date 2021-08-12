@@ -73,7 +73,9 @@ const CategoryItem = (props: CategoryItemPropsType) => {
         <ListItem
             button
             key={props.category.categoryId}>
-                <ListItemText primary={props.category.categoryName}></ListItemText>
+                <ListItemText primary={
+                    <Typography variant="body1">{props.category.categoryName}</Typography>
+                }/>
         </ListItem>
     )
 }

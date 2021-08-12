@@ -29,6 +29,8 @@ const resources = {
             asset_name: "Asset Name",
             asset_create: "Create Asset",
             asset_update: "Edit Asset",
+            category_create: "Create Category",
+            category_update: "Edit Category",
             confirm_signout: "Sign out?",
             confirm_signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
             empty_category: "No Categories Added",

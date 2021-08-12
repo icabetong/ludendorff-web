@@ -1,6 +1,6 @@
 import { firestore } from "../../index";
 import { Asset } from "../asset/Asset";
-import { newId } from "../../shared/IdUtils";
+import { newId } from "../../shared/utils";
 
 export class Category {
     categoryId: string
@@ -16,7 +16,7 @@ export class Category {
     }
 
     static from(document: any): Category {
-        let category = new Category(document.categoryId)
+        let category = new Category(document.categoryId);
         category.categoryName = document.categoryName
         category.count = document.count
 
@@ -49,14 +49,14 @@ export class CategoryRepository {
     static async create(category: Category): Promise<void> {
         return await firestore.collection(Category.COLLECTION)
             .doc(category.categoryId)
-            .set(category)
+            .set({...category})
     }
 
     static async update(category: Category): Promise<void> {
         let batch = firestore.batch()
 
         batch.set(firestore.collection(Category.COLLECTION)
-            .doc(category.categoryId), category)
+            .doc(category.categoryId), {...category})
 
         let task = await firestore.collection(Asset.COLLECTION)
             .where(Asset.FIELD_CATEGORY_ID, "==", category.categoryId)
