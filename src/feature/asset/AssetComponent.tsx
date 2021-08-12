@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import clsx from "clsx";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,21 +11,26 @@ import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
 
+import TagIcon from "@heroicons/react/outline/TagIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
+import DotsVerticalIcon from "@heroicons/react/outline/DotsVerticalIcon";
 
 import { TextInput } from "../../components/TextInput";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
-import { Category } from "../category/Category";
+import { Category, CategoryRepository } from "../category/Category";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 type AssetComponentPropsType = {
@@ -37,18 +43,27 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             height: '100%',
             width: '100%'
         },
+        icon: {
+            width: '1em',
+            height: '1em',
+        },
+        actionButtonIcon: {
+            color: theme.palette.primary.main
+        },
+        overflowButtonIcon: {
+            color: theme.palette.text.primary
+        },
+        overflowButton: {
+            marginLeft: '0.6em'
+        },
         wrapper: {
             height: '80%',
             padding: '1.4em'
         },
-        buttonIcon: {
-            width: '1em',
-            height: '1em',
-            color: theme.palette.primary.main
-        },
         editorContainer: {
+            width: '100%',
             margin: '0.8em'
-        }
+        },
     }));
     const classes = useStyles();
     const theme = useTheme();
@@ -59,15 +74,27 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         { field: Asset.FIELD_ASSET_NAME, headerName: 'Name', flex: 1 },
         { field: Asset.FIELD_CATEGORY, headerName: 'Category', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
         { field: Asset.FIELD_DATE_CREATED, headerName: 'Date Created', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.formatDate() },
-        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.25, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
+        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.35, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
     ];
 
     const { t } = useTranslation();
 
     const [assets, setAssets] = useState<Asset[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
+
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+
+    const onTriggerInflateMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    }
+
+    const onTriggerCloseMenu = () => {
+        setAnchorEl(null);
+    }
 
     useEffect(() => {
         AssetRepository.fetch(documentHistory[documentHistory.length - 1])
@@ -78,6 +105,10 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 newHistory.push(data[1]);
                 setDocumentHistory(newHistory);
             });
+        CategoryRepository.fetch()
+            .then((data: Category[]) => {
+                setCategories(data);
+            })
     }, [pageNumber]);
 
     const onIncrementPageNumber = () => {
@@ -108,10 +139,6 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
 
         setEditorOpened(false);
     }
-
-    const onEditorVisibilityChanged = (isVisible: boolean) => {
-        setEditorOpened(isVisible);
-    }
     
     const onEditorStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => { 
         setEditorStatus(event.target.value as Status);
@@ -122,17 +149,13 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             <ComponentHeader 
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
-                actionButton={
-                    <Button 
-                    variant="outlined" 
-                    color="primary" 
-                    startIcon={<PlusIcon className={classes.buttonIcon}
-                    onClick={() => onEditorVisibilityChanged(true) }/>}>
-                        { t("add") }
-                    </Button>
-                }/>
+                buttonText={ t("add") }
+                buttonIcon={<PlusIcon className={clsx(classes.icon, classes.actionButtonIcon) }/>}
+                buttonOnClick={() => setEditorOpened(true) }
+                />
             <Hidden xsDown>
                 <div className={classes.wrapper}>
+                    <Button onClick={() => setEditorOpened(true)}>Open</Button>
                     <DataGrid
                         columns={columns}
                         rows={assets}
@@ -158,7 +181,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             <Dialog
                 fullScreen={fullscreen}
                 open={isEditorOpened}
-                onClose={() => onEditorVisibilityChanged(false) }>
+                onClose={() => setEditorOpened(false) }>
                 <DialogTitle>{ t("asset_create") }</DialogTitle>
                 <DialogContent dividers={true}>
                     <div className={classes.editorContainer}>
@@ -180,10 +203,26 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                             </RadioGroup>
                         </FormControl>
                     </div>
+                    <div className={classes.editorContainer}>
+                        <TextInput
+                            select
+                            id="editor-category"
+                            label={ t("category") }
+                            value={editorCategory}
+                            defaultValue={categories && categories[0]}>
+                            {   categories.map((category: Category) => (
+                                    <MenuItem key={category.categoryId}>{category.categoryName}</MenuItem>
+                                ))
+                            }
+                        </TextInput>
+                    </div>
+                    <div className={classes.editorContainer}>
+
+                    </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" onClick={() => resetEditorForms()}>{ t("cancel") }</Button>
-                    <Button color="primary" onClick={() => onEditorVisibilityChanged(false) }>{ t("save") }</Button>
+                    <Button color="primary" onClick={() => resetEditorForms() }>{ t("cancel") }</Button>
+                    <Button color="primary" onClick={() => setEditorOpened(false) }>{ t("save") }</Button>
                 </DialogActions>
             </Dialog>
         </Box>

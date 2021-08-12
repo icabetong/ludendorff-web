@@ -24,6 +24,6 @@
     "src"
   ],
   "exclude": [
-    "./src/locs.js"
+    "src/localization.js"
   ]
 }

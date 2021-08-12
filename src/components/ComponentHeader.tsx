@@ -1,5 +1,6 @@
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import Typography from "@material-ui/core/Typography";
@@ -7,10 +8,14 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
 
+
 type ComponentHeaderPropsType = {
     title: string,
     onDrawerToggle: () => void,
-    actionButton?: JSX.Element
+    buttonText?: string,
+    buttonIcon?: JSX.Element,
+    buttonOnClick?: React.MouseEventHandler,
+    menuItems?: JSX.Element[]
 }
 
 export const ComponentHeader = (props: ComponentHeaderPropsType) => {
@@ -56,7 +61,13 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         {props.title}
                     </Typography>
                 </Hidden>
-                {props.actionButton}
+                <Button 
+                    variant="outlined"
+                    color="primary"
+                    startIcon={props.buttonIcon}
+                    onClick={props.buttonOnClick}>
+                    {props.buttonText}
+                </Button>
             </Toolbar>
         </AppBar>
     )
