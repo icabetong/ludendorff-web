@@ -1,11 +1,10 @@
 import { useContext, useState } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
-import { CircularProgress } from "@material-ui/core/";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
-import Paper from "@material-ui/core/Paper";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
@@ -45,13 +44,14 @@ const InnerComponent = (props: InnerComponentPropsType) => {
 const LoadingScreenComponent = () => {
     const useStyles = makeStyles((theme) => ({
         root: {
-            minHeight: '100vh'
+            width: '100vw',
+            height: '100vh'
         }
     }));
     const classes = useStyles();
 
     return (
-        <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.root}>
+        <Grid container alignItems="center" justifyContent="center" className={classes.root}>
             <CircularProgress/>
         </Grid>
     )
@@ -90,10 +90,6 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         content: {
             flexGrow: 1,
         },
-        contentPaper: {
-            width: '100%',
-            height: '100%'
-        }
     }));
     const classes = useStyles();
     const theme = useTheme();
@@ -140,9 +136,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                 </Hidden>
             </nav>
             <div className={classes.content}>
-                <Paper variant="outlined" square className={classes.contentPaper}>
-                    <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState}/>
-                </Paper>    
+                <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState}/>
             </div>
         </div>
     );

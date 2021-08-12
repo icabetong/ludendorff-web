@@ -53,13 +53,13 @@ const lightTheme = createTheme({
     palette: {
         type: 'light',
         primary: {
-            main: '#bd93f9',
+            main: '#6272a4',
             dark: '#344775'
         },
         secondary: secondaryColors,
         error: errorColors,
         background: {
-            default: '#f8f8f2',
+            default: '#ffffff',
             paper: '#ffffff'
         },
         text: {
@@ -87,8 +87,9 @@ const darkTheme = createTheme({
             paper: '#44475a'
         },
         text: {
-            primary: '#ffffff'
-        }
+            primary: '#f8f8f2'
+        },
+        divider: '#6f7287'
     },
     typography: {
         fontFamily: fonts
@@ -113,7 +114,6 @@ export const CoreComponent = () => {
     
     return (
         <div>
-            {console.log(isThemeDark)}
             <ThemeContext.Provider value={{darkThemeEnabled: isThemeDark, setTheme: setDarkTheme}}>
                 {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
                 <ThemeProvider theme={isThemeDark ? {...darkTheme} : {...lightTheme}}>

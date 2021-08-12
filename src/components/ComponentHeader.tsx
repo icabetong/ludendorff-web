@@ -9,7 +9,8 @@ import MenuIcon from "@heroicons/react/outline/MenuIcon";
 
 type ComponentHeaderPropsType = {
     title: string,
-    onDrawerToggle: () => void
+    onDrawerToggle: () => void,
+    actionButton?: JSX.Element
 }
 
 export const ComponentHeader = (props: ComponentHeaderPropsType) => {
@@ -24,11 +25,14 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                 display: 'none'
             },
         },
+        title: {
+            width: '100%',
+        },
         icon: {
             color: theme.palette.text.primary,
             width: '1em',
             height: '1em'
-        }
+        },
     }));
     const classes = useStyles();
 
@@ -43,7 +47,7 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         <MenuIcon className={classes.icon}/>
                 </IconButton>
                 <Hidden only="xs">
-                    <Typography variant="h5" noWrap>
+                    <Typography variant="h5" className={classes.title}>
                         {props.title}
                     </Typography>
                 </Hidden>
@@ -52,6 +56,7 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         {props.title}
                     </Typography>
                 </Hidden>
+                {props.actionButton}
             </Toolbar>
         </AppBar>
     )

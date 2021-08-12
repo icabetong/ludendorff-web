@@ -9,10 +9,10 @@ type ListItemContentPropTypes = {
 export const ListItemContent = (props: ListItemContentPropTypes) => {
     return (
         <ListItemText
-            primary={<Typography variant="body1">{props.title && props.title}</Typography>}
+            primary={<Typography variant="body2">{props.title && props.title}</Typography>}
             secondary={
                 props.summary &&
-                <Typography variant="subtitle2">{props.summary}</Typography>
+                <Typography variant="subtitle1">{props.summary}</Typography>
             }/>
     )
 }

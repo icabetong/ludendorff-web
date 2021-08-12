@@ -23,6 +23,15 @@ export class Asset {
         return AssetCore.from(this)
     }
 
+    formatDate(): string | undefined {
+        const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' } as const;
+        return this.dateCreated?.toDate().toLocaleDateString(['en-PH'], options);
+    }
+
+    getLocalizedStatus(): string {
+        return getStatusLoc(this.status)
+    }
+
     static from(document: any): Asset {
         let asset = new Asset(document.assetId)
         asset.assetName = document.assetName
@@ -63,10 +72,25 @@ export class AssetCore {
 }
 
 export enum Status {
-    OPERATIONAL,
-    IDLE,
-    UNDER_MAINTENANCE,
-    RETIRED
+    OPERATIONAL = "OPERATIONAL",
+    IDLE = "IDLE",
+    UNDER_MAINTENANCE = "UNDER_MAINTENANCE",
+    RETIRED = "RETIRED"
+}
+
+export const getStatusLoc = (status: Status | undefined): string => {
+    switch(status) {
+        case Status.OPERATIONAL:
+            return "status_operational"
+        case Status.IDLE:
+            return "status_idle";
+        case Status.UNDER_MAINTENANCE:
+            return "status_under_maintenance"
+        case Status.RETIRED:
+            return "status_retired"
+        default:
+            return "unknown"
+    }
 }
 
 export class AssetRepository {

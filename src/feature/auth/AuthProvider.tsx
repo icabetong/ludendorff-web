@@ -27,14 +27,12 @@ export const AuthProvider: React.FC = ({ children }) => {
     const [authState, setAuthState] = useState<AuthFetched | AuthPending>(new AuthPending());
 
     useEffect(() => {
-        const authStateListener = auth.onAuthStateChanged((firebaseUser) => {
+        const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
             setAuthState(new AuthFetched(firebaseUser));
             if (firebaseUser != null)
                 history.push("/");
         });
-        return () => {
-            authStateListener();
-        }
+        return unsubscribe;
     }, []);
 
     return (
