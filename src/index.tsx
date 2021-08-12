@@ -7,7 +7,7 @@ import 'firebase/firestore'
 import './index.scss';
 import { CoreComponent } from './feature/core/Core';
 import { AuthProvider } from './feature/auth/AuthProvider';
-import './locs';
+import './localization';
 
 const config = {
     apiKey: process.env.REACT_APP_BACKEND_API_KEY,
