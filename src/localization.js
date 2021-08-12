@@ -18,6 +18,7 @@ const resources = {
             cancel: "Cancel",
             add: "Add",
             save: "Save",
+            select: "Select",
             unknown: "Unknown",
             category: "Category", 
             status: "Status",
@@ -29,7 +30,9 @@ const resources = {
             asset_create: "Create Asset",
             asset_update: "Edit Asset",
             confirm_signout: "Sign out?",
-            confirm_signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time."
+            confirm_signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+            empty_category: "No Categories Added",
+            empty_category_summary: "There are no categories available that can be used to organize the assets."
         }
     }
 }

@@ -28,6 +28,7 @@ import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryRepository } from "../category/Category";
+import { CategoryComponent } from "../category/CategoryComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 type AssetComponentPropsType = {
@@ -88,7 +89,8 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
 
-    const [isEditorOpened, setEditorOpened] = useState<boolean>(false);;
+    const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
+    const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
 
     useEffect(() => {
         AssetRepository.fetch(documentHistory[documentHistory.length - 1])
@@ -150,10 +152,10 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
                 buttonText={ t("add") }
-                buttonIcon={<PlusIcon className={clsx(classes.icon, classes.actionButtonIcon) }/>}
+                buttonIcon={<PlusIcon className={clsx(classes.icon, classes.actionButtonIcon)}/>}
                 buttonOnClick={() => setEditorOpened(true) }
                 menuItems={[
-                    <MenuItem>{ t("categories") }</MenuItem>
+                    <MenuItem key={0} onClick={() => setCategoryScreenOpened(true)}>{ t("categories") }</MenuItem>
                 ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
@@ -182,6 +184,19 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             
             <Dialog
                 fullScreen={fullscreen}
+                fullWidth={true}
+                maxWidth="sm"
+                open={isCategoryScreenOpened}
+                onClose={() => setCategoryScreenOpened(false)}>
+                <DialogTitle>{ t("categories") }</DialogTitle>
+                <DialogContent dividers={true}>
+                    <CategoryComponent categories={categories}/>
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                fullScreen={fullscreen}
+                fullWidth={true}
+                maxWidth="xs"
                 open={isEditorOpened}
                 onClose={() => setEditorOpened(false) }>
                 <DialogTitle>{ t("asset_create") }</DialogTitle>
