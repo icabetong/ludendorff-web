@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -66,7 +66,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     ]
 
     return (
-        <Container className={classes.root}>
+        <Box className={classes.root}>
             <ComponentHeader title="Assets" onDrawerToggle={props.onDrawerToggle}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
@@ -91,7 +91,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             </Hidden>
             <button onClick={onDecrementPageNumber}>Previous</button>
             <button onClick={onIncrementPageNumber}>Next</button>
-        </Container>
+        </Box>
     )
 
 }

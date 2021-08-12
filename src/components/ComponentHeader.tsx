@@ -4,7 +4,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { Menu } from "@material-ui/icons/";
+
+import MenuIcon from "@heroicons/react/outline/MenuIcon";
 
 type ComponentHeaderPropsType = {
     title: string,
@@ -23,6 +24,11 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                 display: 'none'
             },
         },
+        icon: {
+            color: theme.palette.text.primary,
+            width: '1em',
+            height: '1em'
+        }
     }));
     const classes = useStyles();
 
@@ -30,12 +36,11 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
         <AppBar position="static" className={classes.appBar} color="transparent" elevation={0}>
             <Toolbar>
                 <IconButton
-                    color="inherit"
                     aria-label="Open Drawer"
                     edge="start"
                     onClick={props.onDrawerToggle}
                     className={classes.navigationButton}>
-                        <Menu/>
+                        <MenuIcon className={classes.icon}/>
                 </IconButton>
                 <Hidden only="xs">
                     <Typography variant="h5" noWrap>
