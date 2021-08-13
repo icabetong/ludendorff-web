@@ -30,6 +30,7 @@ import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryRepository } from "../category/Category";
 import { CategoryComponent } from "../category/CategoryComponent";
+import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 
@@ -151,25 +152,23 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     }
 
     const [isSpecsEditorOpened, setSpecsEditorOpened] = useState<boolean>(false);
-    const [isSpecsEditorInUpdateMode, setSpecsEditorInUpdateMode] = useState<boolean>(false);
     const [editorSpecsKey, setEditorSpecsKey] = useState<string>('');
     const [editorSpecsValue, setEditorSpecsValue] = useState<string>('');
 
-    const resetSpecsEditorForms = () => {
-        setSpecsEditorInUpdateMode(false);
+    const onSpecificationEditorDiscard = () => {
+        setSpecsEditorOpened(false);
         setEditorSpecsKey('');
         setEditorSpecsValue('');
-        setSpecsEditorOpened(false);
     }
-    const onSpecificationEditorCommit = () => {
-        if (!isSpecsEditorInUpdateMode) {
+    const onSpecificationEditorCommit = (specification: [string, string], isUpdate: boolean) => {
+        if (!isUpdate) {
             let specifications = editorSpecifications;
-            specifications.push([editorSpecsKey, editorSpecsValue]);
+            specifications.push(specification);
         } else {
             let specifications = editorSpecifications;
-            let index = specifications.findIndex(s => s[0] == editorSpecsKey);
+            let index = specifications.findIndex(s => s[0] == specification[0]);
             if (index > -1) {
-                specifications[index] = [editorSpecsKey, editorSpecsValue];
+                specifications[index] = specification;
                 setEditorSpecifications([...specifications]);
             }
         }
@@ -178,15 +177,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const onSpecificationItemSelected = (spec: [string, string]) => {
         setEditorSpecsKey(spec[0]);
         setEditorSpecsValue(spec[1]);
-        setSpecsEditorInUpdateMode(true);
         setSpecsEditorOpened(true);
-    }
-
-    const onSpecificationKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEditorSpecsKey(event.target.value);
-    }
-    const onSpecificationValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEditorSpecsValue(event.target.value);
     }
 
     const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
@@ -380,11 +371,13 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                             }
                         </TextField>
 
+                        <FormLabel component="legend">{ t("specification") }</FormLabel>
                         <List>
                             <SpecificationListItems onItemSelected={onSpecificationItemSelected}/>
                             <ListItem
                                 button
-                                onClick={() => setSpecsEditorOpened(true)}>
+                                onClick={() => setSpecsEditorOpened(true)}
+                                dense={true}>
                                 <ListItemIcon><PlusIcon/></ListItemIcon>
                                 <ListItemContent title={ t("add") }></ListItemContent>
                             </ListItem>
@@ -400,42 +393,12 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             </Dialog>
 
             {/* Specification Editor Screen */}
-            <Dialog
-                fullWidth={true}
-                maxWidth="xs"
-                open={isSpecsEditorOpened}
-                onClose={() => resetSpecsEditorForms()}>
-                <DialogTitle>{ t( isSpecsEditorInUpdateMode ? "specification_update" : "specification_create") }</DialogTitle>
-
-                <DialogContent dividers={true}>
-                    <Container disableGutters>
-                        <TextField
-                            autoFocus
-                            id="editor-specification-key"
-                            type="text"
-                            label={ t("specification_key") }
-                            value={editorSpecsKey}
-                            variant="outlined"
-                            size="small"
-                            onChange={onSpecificationKeyChanged}
-                            className={clsx(classes.textField, classes.editor)}/>
-                        <TextField
-                            id="editor-specification-value"
-                            type="text"
-                            label={ t("specification_value") }
-                            value={editorSpecsValue}
-                            variant="outlined"
-                            size="small"
-                            onChange={onSpecificationValueChanged}
-                            className={clsx(classes.textField, classes.editor)}/>
-                    </Container>
-                </DialogContent>
-
-                <DialogActions>
-                    <Button color="primary" onClick={() => resetSpecsEditorForms()}>{ t("cancel") }</Button>
-                    <Button color="primary" onClick={() => onSpecificationEditorCommit()}>{ t("save") }</Button>
-                </DialogActions>
-            </Dialog>
+            <SpecificationEditorComponent 
+                editorOpened={isSpecsEditorOpened} 
+                onSubmit={onSpecificationEditorCommit}
+                onCancel={onSpecificationEditorDiscard}
+                specificationKey={editorSpecsKey} 
+                specificationValue={editorSpecsValue}/>
         </Box>
     )
 }

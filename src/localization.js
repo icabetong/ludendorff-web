@@ -22,6 +22,7 @@ const resources = {
             unknown: "Unknown",
             category: "Category",
             category_name: "Category Name", 
+            specification: "Specification",
             specification_key: "Name",
             specification_value: "Value",
             status: "Status",
