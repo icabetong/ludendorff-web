@@ -11,7 +11,8 @@ import { Category } from "./Category";
 import React from "react";
 
 type CategoryComponentPropsType = {
-    categories: Category[]
+    categories: Category[],
+    onItemSelect?: (category: Category) => void,
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -56,7 +57,7 @@ export const CategoryComponent = (props: CategoryComponentPropsType) => {
             { props.categories.length > 0 
             ?   <List className={classes.root}>{
                     props.categories.map((category: Category) => {
-                        return <CategoryItem category={category}/>
+                        return <CategoryItem category={category} onItemSelect={props.onItemSelect}/>
                     })
                 }</List>
             : <EmptyStateComponent/>
@@ -66,13 +67,15 @@ export const CategoryComponent = (props: CategoryComponentPropsType) => {
 }
 
 type CategoryItemPropsType = {
-    category: Category
+    category: Category,
+    onItemSelect?: (category: Category) => void,
 }
 const CategoryItem = (props: CategoryItemPropsType) => {
     return (
         <ListItem
             button
-            key={props.category.categoryId}>
+            key={props.category.categoryId}
+            onClick={() => props.onItemSelect && props.onItemSelect(props.category)}>
                 <ListItemText primary={
                     <Typography variant="body1">{props.category.categoryName}</Typography>
                 }/>
