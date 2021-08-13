@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -31,6 +31,11 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
     const [key, setKey] = useState<string>(props.specificationKey);
     const [value, setValue] = useState<string>(props.specificationValue);
     const isInUpdateMode = Boolean(props.specificationKey && props.specificationValue);
+
+    useEffect(() => {
+        setKey(props.specificationKey);
+        setValue(props.specificationValue);
+    }, [props.specificationKey, props.specificationValue])
 
     const onKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         setKey(event.target.value);

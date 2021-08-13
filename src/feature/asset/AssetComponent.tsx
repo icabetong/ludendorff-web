@@ -30,6 +30,7 @@ import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryRepository } from "../category/Category";
 import { CategoryComponent } from "../category/CategoryComponent";
+import CategoryEditorComponent from "../category/CategoryEditorComponent";
 import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
@@ -155,7 +156,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [editorSpecsKey, setEditorSpecsKey] = useState<string>('');
     const [editorSpecsValue, setEditorSpecsValue] = useState<string>('');
 
-    const onSpecificationEditorDiscard = () => {
+    const onSpecificationEditorReset = () => {
         setSpecsEditorOpened(false);
         setEditorSpecsKey('');
         setEditorSpecsValue('');
@@ -166,13 +167,13 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             specifications.push(specification);
         } else {
             let specifications = editorSpecifications;
-            let index = specifications.findIndex(s => s[0] == specification[0]);
+            let index = specifications.findIndex(s => s[0] === specification[0]);
             if (index > -1) {
                 specifications[index] = specification;
                 setEditorSpecifications([...specifications]);
             }
         }
-        setSpecsEditorOpened(false);
+        onSpecificationEditorReset();
     }
     const onSpecificationItemSelected = (spec: [string, string]) => {
         setEditorSpecsKey(spec[0]);
@@ -183,41 +184,29 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
     
     const onCategoryItemSelected = (category: Category) => {
-        setCategoryEditorInUpdateMode(true);
-    
         setEditorCategoryId(category.categoryId);
-        setEditorCategoryName(category.categoryName !== undefined ? category.categoryName : '');
+        setEditorCategoryName(category.categoryName !== undefined ? category.categoryName : 'undefined');
 
         setCategoryEditorOpened(true);
     }
 
     const [isCategoryEditorOpened, setCategoryEditorOpened] = useState<boolean>(false);
-    const [isCategoryEditorInUpdateMode, setCategoryEditorInUpdateMode] = useState<boolean>(false);
     const [editorCategoryId, setEditorCategoryId] = useState<string>('');
     const [editorCategoryName, setEditorCategoryName] = useState<string>('');
-    const resetCategoryEditorForms = () => {
-        setCategoryEditorInUpdateMode(false);
+    
+    const onCategoryEditorReset = () => {
+        setCategoryEditorOpened(false);
         setEditorCategoryId('');
         setEditorCategoryName('');
-        setCategoryEditorOpened(false);
     }
-
-    const onCategoryEditorNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEditorCategoryName(event.target.value);
-    }
-
-    const onCategoryEditorCommit = () => {
+    const onCategoryEditorCommit = (category: Category, isNew: boolean) => {
         if (editorCategoryName === '')
             return;
 
-        if (!isCategoryEditorInUpdateMode) {
-            let category = new Category();
-            category.categoryName = editorCategoryName;
-
+        if (isNew) {
             CategoryRepository.create(category)
                 .then(() => {
-                    resetCategoryEditorForms();
-                    setCategoryEditorOpened(false);
+                    onCategoryEditorReset();
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -296,32 +285,12 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             </Dialog>
 
             {/* Category Editor Screen */}
-            <Dialog
-                fullScreen={fullscreen}
-                fullWidth={true}
-                maxWidth="xs"
-                open={isCategoryEditorOpened}
-                onClose={() => resetCategoryEditorForms() }>
-                <DialogTitle>{ t(isCategoryEditorInUpdateMode ? "category_update" : "category_create") }</DialogTitle>
-                <DialogContent dividers={true}>
-                    <Container disableGutters>
-                        <TextField
-                            autoFocus
-                            id="editor-category-name"
-                            type="text"
-                            label={ t("category_name") }
-                            value={editorCategoryName}
-                            onChange={onCategoryEditorNameChanged}
-                            variant="outlined"
-                            size="small"
-                            className={clsx(classes.textField, classes.editor)}/>
-                    </Container>
-                </DialogContent>
-                <DialogActions>
-                    <Button color="primary" onClick={() => resetCategoryEditorForms()}>{ t("cancel") }</Button>
-                    <Button color="primary" onClick={() => onCategoryEditorCommit()}>{ t("save") }</Button>
-                </DialogActions>
-            </Dialog>
+            <CategoryEditorComponent
+                editorOpened={isCategoryEditorOpened}
+                onCancel={onCategoryEditorReset}
+                onSubmit={onCategoryEditorCommit}
+                categoryId={editorCategoryId}
+                categoryName={editorCategoryName}/>
 
             {/* Asset Editor Screen */}
             <Dialog
@@ -396,7 +365,7 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             <SpecificationEditorComponent 
                 editorOpened={isSpecsEditorOpened} 
                 onSubmit={onSpecificationEditorCommit}
-                onCancel={onSpecificationEditorDiscard}
+                onCancel={onSpecificationEditorReset}
                 specificationKey={editorSpecsKey} 
                 specificationValue={editorSpecsValue}/>
         </Box>
