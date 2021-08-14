@@ -7,71 +7,71 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
+import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
-import { Category, CategoryRepository } from "../category/Category";
+import { Category, CategoryCore, CategoryRepository } from "../category/Category";
 import CategoryComponent from "../category/CategoryComponent";
 import CategoryEditorComponent from "../category/CategoryEditorComponent";
 import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 import AssetEditorComponent from "./AssetEditorComponent";
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        height: '100%',
+        width: '100%'
+    },
+    icon: {
+        width: '1em',
+        height: '1em',
+    },
+    actionButtonIcon: {
+        color: theme.palette.primary.main
+    },
+    overflowButtonIcon: {
+        color: theme.palette.text.primary
+    },
+    overflowButton: {
+        marginLeft: '0.6em'
+    },
+    wrapper: {
+        height: '80%',
+        padding: '1.4em'
+    },
+    editorContainer: {
+        width: '100%',
+        margin: '0.8em',
+    },
+    editor: {
+        marginTop: '0.6em',
+        marginBottom: '0.6em'
+    },
+    textField: {
+        width: '100%'
+    }
+}));
+
 type AssetComponentPropsType = {
     onDrawerToggle: () => void
 }
 
 const AssetComponent = (props: AssetComponentPropsType) => {
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            height: '100%',
-            width: '100%'
-        },
-        icon: {
-            width: '1em',
-            height: '1em',
-        },
-        actionButtonIcon: {
-            color: theme.palette.primary.main
-        },
-        overflowButtonIcon: {
-            color: theme.palette.text.primary
-        },
-        overflowButton: {
-            marginLeft: '0.6em'
-        },
-        wrapper: {
-            height: '80%',
-            padding: '1.4em'
-        },
-        editorContainer: {
-            width: '100%',
-            margin: '0.8em',
-        },
-        editor: {
-            marginTop: '0.6em',
-            marginBottom: '0.6em'
-        },
-        textField: {
-            width: '100%'
-        }
-    }));
     const classes = useStyles();
-
-    const columns = [
-        { field: Asset.FIELD_ASSET_ID, headerName: 'ID', hide: true },
-        { field: Asset.FIELD_ASSET_NAME, headerName: 'Name', flex: 1 },
-        { field: Asset.FIELD_CATEGORY, headerName: 'Category', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
-        { field: Asset.FIELD_DATE_CREATED, headerName: 'Date Created', flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.formatDate() },
-        { field: Asset.FIELD_STATUS, headerName: 'Status', flex: 0.35, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
-    ];
-
     const { t } = useTranslation();
 
+    const columns = [
+        { field: Asset.FIELD_ASSET_ID, headerName: t("id"), hide: true },
+        { field: Asset.FIELD_ASSET_NAME, headerName: t("name"), flex: 1 },
+        { field: Asset.FIELD_CATEGORY, headerName: t("category"), flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
+        { field: Asset.FIELD_DATE_CREATED, headerName: t("date_created"), flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.formatDate() },
+        { field: Asset.FIELD_STATUS, headerName: t("status"), flex: 0.35, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
+    ];
+    
     const [assets, setAssets] = useState<Asset[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
@@ -111,7 +111,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [editorAssetId, setEditorAssetId] = useState<string>('');
     const [editorAssetName, setEditorAssetName] = useState<string>('');
     const [editorStatus, setEditorStatus] = useState<Status>(Status.IDLE);
-    const [editorCategory, setEditorCategory] = useState<Category | null>(null);
+    const [editorCategory, setEditorCategory] = useState<CategoryCore | null>(null);
     const [editorSpecifications, setEditorSpecifications] = useState<[string, string][]>([]);
 
     const onResetAssetEditor = () => {
@@ -122,8 +122,18 @@ const AssetComponent = (props: AssetComponentPropsType) => {
 
         setEditorOpened(false);
     }
+
     const onCommitAssetEditor = () => {
 
+    }
+
+    const onAssetSelected = (asset: Asset) => {
+        setEditorAssetId(asset.assetId);
+        setEditorAssetName(asset.assetName !== undefined ? asset.assetName : '');
+        setEditorStatus(asset.status !== undefined ? asset.status : Status.IDLE);
+        setEditorCategory(asset.category !== undefined ? asset.category : null);
+        setEditorSpecifications(asset.specifications !== undefined ? asset.specifications : []);
+        setEditorOpened(true);
     }
 
     const [isSpecificationEditorOpened, setSpecificationEditorOpened] = useState<boolean>(false);
@@ -206,10 +216,12 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <DataGrid
+                        paginationMode="server"
                         columns={columns}
                         rows={assets}
-                        getRowId={(r) => r.assetId}
                         pageSize={15}
+                        getRowId={(r) => r.assetId}
+                        onRowClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
                         hideFooterPagination/>
                 </div>
             </Hidden>

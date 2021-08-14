@@ -22,13 +22,18 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import { Asset, Status } from "./Asset";
-import { Category } from "../category/Category";
+import { Category, CategoryCore } from "../category/Category";
 import { ListItemContent } from "../../components/ListItemContent";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     textField: {
         width: '100%',
         margin: '0.6em 0'
+    },
+    icon: {
+        width: '1.4em',
+        height: '1.4em',
+        color: theme.palette.text.primary
     }
 }));
 
@@ -42,7 +47,7 @@ type AssetEditorComponentPropsType = {
     assetId: string,
     assetName: string,
     assetStatus: Status,
-    category: Category | null,
+    category: CategoryCore | null,
     specifications: [string, string][]
 }
 
@@ -64,7 +69,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     const [id, setId] = useState<string>(props.assetId);
     const [name, setName] = useState<string>(props.assetName);
     const [status, setStatus] = useState<Status>(props.assetStatus);
-    const [category, setCategory] = useState<Category | null>(props.category);
+    const [category, setCategory] = useState<CategoryCore | null>(props.category);
     const [specifications, setSpecifications] = useState<[string, string][]>(props.specifications);
     const isInUpdateMode = Boolean(id);
 
@@ -154,7 +159,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                             button
                             onClick={() => props.onAddSpecification()}
                             dense={true}>
-                            <ListItemIcon><PlusIcon/></ListItemIcon>
+                            <ListItemIcon><PlusIcon className={classes.icon}/></ListItemIcon>
                             <ListItemContent title={ t("add") }></ListItemContent>
                         </ListItem>
                     </List>
