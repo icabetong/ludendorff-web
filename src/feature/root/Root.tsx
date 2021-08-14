@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, Suspense, lazy } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";

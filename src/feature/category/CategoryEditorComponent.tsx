@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -23,37 +22,23 @@ type CategoryEditorComponentPropsType = {
     onSubmit: (category: Category, isNew: boolean) => void,
     onCancel: () => void,
     categoryId: string,
-    categoryName: string
+    categoryName: string,
+    onCategoryNameChanged: (name: string) => void
 }
 
 const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    
-    const [id, setId] = useState<string>(props.categoryId);
-    const [name, setName] = useState<string>(props.categoryName);
     const isInUpdateMode = Boolean(props.categoryId && props.categoryName);
-    
-    useEffect(() => {
-        setId(props.categoryId);
-        setName(props.categoryName);
-    }, [props.categoryId, props.categoryName]);
-
-    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    }
 
     const onDismiss = () => {
-
         props.onCancel();
     }
 
     const onPreSubmit = () => {
-        let category = new Category(id);
-        category.categoryName = name;
+        let category = new Category(props.categoryId);
+        category.categoryName = props.categoryName;
 
-        setId('');
-        setName('');
         props.onSubmit(category, !isInUpdateMode);
     }
 
@@ -71,8 +56,8 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                         id="editor-category-name"
                         type="text"
                         label={ t("category_name") }
-                        value={name}
-                        onChange={onNameChanged}
+                        value={props.categoryName}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onCategoryNameChanged(event.target.value)}
                         variant="outlined"
                         size="small"
                         className={classes.textField}/>

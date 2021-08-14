@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -17,43 +16,27 @@ const useStyles = makeStyles(() => ({
 }));
 
 type SpecificationEditorComponentPropsType = {
-    editorOpened: boolean,
+    isOpen: boolean,
     onSubmit: (specification: [string, string], isUpdate: boolean) => void,
     onCancel: () => void,
     specificationKey: string,
-    specificationValue: string,
+    specificationValue: string
+    onSpecificationKeyChanged: (key: string) => void,
+    onSpecificationValueChanged: (value: string) => void,
 }
 
 const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
     
-    const [key, setKey] = useState<string>(props.specificationKey);
-    const [value, setValue] = useState<string>(props.specificationValue);
     const isInUpdateMode = Boolean(props.specificationKey && props.specificationValue);
 
-    useEffect(() => {
-        setKey(props.specificationKey);
-        setValue(props.specificationValue);
-    }, [props.specificationKey, props.specificationValue])
-
-    const onKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setKey(event.target.value);
-    }
-    const onValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
-    }
-
     const onDismiss = () => {
-        setKey('');
-        setValue('');
         props.onCancel();
     }
 
     const onPreSubmit = () => {
-        let specification: [string, string] = [key, value];
-        setKey('');
-        setValue('');
+        let specification: [string, string] = [props.specificationKey, props.specificationValue];
         props.onSubmit(specification, isInUpdateMode);
     }
 
@@ -61,7 +44,7 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
         <Dialog
             fullWidth={true}
             maxWidth="xs"
-            open={props.editorOpened}
+            open={props.isOpen}
             onClose={() => onDismiss()}>
             <DialogTitle>
                 { t(isInUpdateMode 
@@ -76,19 +59,19 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
                         id="editor-specification-key"
                         type="text"
                         label={ t("specification_key") }
-                        value={key}
+                        value={props.specificationKey}
                         variant="outlined"
                         size="small"
-                        onChange={onKeyChanged}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecificationKeyChanged(e.target.value)}
                         className={classes.textField}/>
                     <TextField
                         id="editor-specification-value"
                         type="text"
                         label={ t("specification_value") }
-                        value={value}
+                        value={props.specificationValue}
                         variant="outlined"
                         size="small"
-                        onChange={onValueChanged}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecificationValueChanged(e.target.value)}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>

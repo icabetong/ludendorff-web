@@ -14,11 +14,7 @@ import FormLabel from "@material-ui/core/FormLabel";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import MenuItem from "@material-ui/core/MenuItem";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import TextField from "@material-ui/core/TextField";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
@@ -33,13 +29,10 @@ import CategoryComponent from "../category/CategoryComponent";
 import CategoryEditorComponent from "../category/CategoryEditorComponent";
 import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
-
+import AssetEditorComponent from "./AssetEditorComponent";
 
 type AssetComponentPropsType = {
     onDrawerToggle: () => void
-}
-type SpecificationListItemsPropsType = {
-    onItemSelected: (specs: [string, string]) => void
 }
 
 export const AssetComponent = (props: AssetComponentPropsType) => {
@@ -96,7 +89,6 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [pageNumber, setPageNumber] = useState<number>(0);
     const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
 
-    
     useEffect(() => {
         AssetRepository.fetch(documentHistory[documentHistory.length - 1])
             .then((data: [Asset[], DocumentSnapshot<DocumentData>]) => {
@@ -128,12 +120,13 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         setPageNumber(pageNumber - 1);
     }
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
+    const [editorAssetId, setEditorAssetId] = useState<string>('');
     const [editorAssetName, setEditorAssetName] = useState<string>('');
     const [editorStatus, setEditorStatus] = useState<Status>(Status.IDLE);
     const [editorCategory, setEditorCategory] = useState<Category | null>(null);
     const [editorSpecifications, setEditorSpecifications] = useState<[string, string][]>([]);
 
-    const resetEditorForms = () => {
+    const onResetAssetEditor = () => {
         setEditorAssetName('');
         setEditorStatus(Status.IDLE);
         setEditorCategory(null);
@@ -141,25 +134,18 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
 
         setEditorOpened(false);
     }
-    
-    const onEditorStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        setEditorStatus(event.target.value as Status);
-    }
-    const onEditorCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let index = parseInt(event.target.value);
-        if (index < categories.length) {
-            setEditorCategory(categories[index]);
-        }
+    const onCommitAssetEditor = () => {
+
     }
 
-    const [isSpecsEditorOpened, setSpecsEditorOpened] = useState<boolean>(false);
-    const [editorSpecsKey, setEditorSpecsKey] = useState<string>('');
-    const [editorSpecsValue, setEditorSpecsValue] = useState<string>('');
+    const [isSpecificationEditorOpened, setSpecificationEditorOpened] = useState<boolean>(false);
+    const [specificationKey, setSpecificationKey] = useState<string>('');
+    const [specificationValue, setSpecificationValue] = useState<string>('');
 
     const onSpecificationEditorReset = () => {
-        setSpecsEditorOpened(false);
-        setEditorSpecsKey('');
-        setEditorSpecsValue('');
+        setSpecificationEditorOpened(false);
+        setSpecificationKey('');
+        setSpecificationValue('');
     }
     const onSpecificationEditorCommit = (specification: [string, string], isUpdate: boolean) => {
         if (!isUpdate) {
@@ -176,9 +162,9 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         onSpecificationEditorReset();
     }
     const onSpecificationItemSelected = (spec: [string, string]) => {
-        setEditorSpecsKey(spec[0]);
-        setEditorSpecsValue(spec[1]);
-        setSpecsEditorOpened(true);
+        setSpecificationKey(spec[0]);
+        setSpecificationValue(spec[1]);
+        setSpecificationEditorOpened(true);
     }
 
     const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
@@ -211,25 +197,6 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                     console.log(error);
                 })
         }
-    }
-
-    const SpecificationListItems = (props: SpecificationListItemsPropsType) => {
-        return (
-            <React.Fragment>{ 
-                editorSpecifications.map((specification: [string, string]) => {
-                    return (
-                            <ListItem
-                                button
-                                onClick={() => props.onItemSelected(specification)}
-                                key={specification[0]}>
-                                <ListItemContent 
-                                    title={specification[1]}
-                                    summary={specification[0]}/>
-                            </ListItem>
-                        )
-                    })
-            }</React.Fragment>
-        );
     }
 
     return (
@@ -281,84 +248,32 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
                 onCancel={onCategoryEditorReset}
                 onSubmit={onCategoryEditorCommit}
                 categoryId={editorCategoryId}
-                categoryName={editorCategoryName}/>
+                categoryName={editorCategoryName}
+                onCategoryNameChanged={setEditorCategoryName}/>
 
             {/* Asset Editor Screen */}
-            <Dialog
-                fullScreen={fullscreen}
-                fullWidth={true}
-                maxWidth="xs"
-                open={isEditorOpened}
-                onClose={() => setEditorOpened(false) }>
-
-                <DialogTitle>{ t("asset_create") }</DialogTitle>
-                <DialogContent dividers={true}>
-                    <Container disableGutters>
-
-                        <TextField
-                            autoFocus
-                            id="editor-asset-name"
-                            type="text"
-                            label={ t("asset_name") }
-                            value={editorAssetName}
-                            variant="outlined"
-                            size="small"
-                            className={clsx(classes.textField, classes.editor)}/>
-
-                        <FormControl component="fieldset" className={classes.editor}>
-                            <FormLabel component="legend">{ t("status") }</FormLabel>
-                            <RadioGroup aria-label={ t("status") } name="editor-status" value={editorStatus} onChange={onEditorStatusChanged}>
-                                <FormControlLabel value={Status.OPERATIONAL} control={<Radio/>} label={ t("status_operational") } />
-                                <FormControlLabel value={Status.IDLE} control={<Radio/>} label={ t("status_idle") }/>
-                                <FormControlLabel value={Status.UNDER_MAINTENANCE} control={<Radio/>} label={ t("status_under_maintenance") } />
-                                <FormControlLabel value={Status.RETIRED} control={<Radio/>} label={ t("status_retired") } />
-                            </RadioGroup>
-                        </FormControl>
-
-                        <TextField
-                            select
-                            id="editor-category"
-                            label={ t("category") }
-                            variant="outlined"
-                            size="small"
-                            value={editorCategory?.categoryName}
-                            defaultValue={categories && categories[0]}
-                            onChange={onEditorCategoryChanged}
-                            className={clsx(classes.textField, classes.editor)}>
-                            {   categories.map((category: Category, index: number) => {
-                                    return <MenuItem key={category.categoryId} value={index}>{category.categoryName}</MenuItem>
-                                })
-                            }
-                        </TextField>
-
-                        <FormLabel component="legend">{ t("specification") }</FormLabel>
-                        <List>
-                            <SpecificationListItems onItemSelected={onSpecificationItemSelected}/>
-                            <ListItem
-                                button
-                                onClick={() => setSpecsEditorOpened(true)}
-                                dense={true}>
-                                <ListItemIcon><PlusIcon/></ListItemIcon>
-                                <ListItemContent title={ t("add") }></ListItemContent>
-                            </ListItem>
-                        </List>
-                    </Container>
-                </DialogContent>
-
-                <DialogActions>
-                    <Button color="primary" onClick={() => resetEditorForms() }>{ t("cancel") }</Button>
-                    <Button color="primary" onClick={() => setEditorOpened(false) }>{ t("save") }</Button>
-                </DialogActions>
-
-            </Dialog>
+            <AssetEditorComponent
+                isOpen={isEditorOpened}
+                onCancel={onResetAssetEditor}
+                onSubmit={() => onCommitAssetEditor()}
+                onAddSpecification={() => setSpecificationEditorOpened(true)}
+                onSelectSpecification={onSpecificationItemSelected}
+                categories={categories}
+                assetId={editorAssetId}
+                assetName={editorAssetName}
+                assetStatus={editorStatus}
+                category={editorCategory}
+                specifications={editorSpecifications}/>
 
             {/* Specification Editor Screen */}
             <SpecificationEditorComponent 
-                editorOpened={isSpecsEditorOpened} 
+                isOpen={isSpecificationEditorOpened} 
                 onSubmit={onSpecificationEditorCommit}
                 onCancel={onSpecificationEditorReset}
-                specificationKey={editorSpecsKey} 
-                specificationValue={editorSpecsValue}/>
+                specificationKey={specificationKey} 
+                specificationValue={specificationValue}
+                onSpecificationKeyChanged={setSpecificationKey}
+                onSpecificationValueChanged={setSpecificationValue}/>
         </Box>
     )
 }
