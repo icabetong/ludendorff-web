@@ -74,8 +74,8 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                     <Grid xs={12} item>
                         <Paper className={classes.containerPaper}>
                             <div className={classes.container}>
-                                <Typography variant="h5">Hello.</Typography>
-                                <Typography variant="h5">Welcome Back.</Typography>
+                                <Typography variant="h5">{ t("hello") }</Typography>
+                                <Typography variant="h5">{ t("welcome_back") }</Typography>
                             </div>
                             <div className={classes.container}>
                                 {
@@ -113,6 +113,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                     type="submit" 
                                     variant="contained" 
                                     color="primary"
+                                    aria-label={ t("sign_in") }
                                     fullWidth={true}
                                     disabled={isAuthenticating}>
                                     { isAuthenticating ? "Authenticating" : "Sign in" }

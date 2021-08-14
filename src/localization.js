@@ -41,12 +41,14 @@ const resources = {
             category_update: "Edit Category",
             specification_create: "Create Specification",
             specification_update: "Edit Specification",
-            hello: "",
-            welcome_back: "",
+            hello: "Hello",
+            welcome_back: "Welcome Back",
             confirm_signout: "Sign out?",
             confirm_signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
             empty_category: "No Categories Added",
-            empty_category_summary: "There are no categories available that can be used to organize the assets."
+            empty_category_summary: "There are no categories available that can be used to organize the assets.",
+            show_menu: "Show menu",
+            show_drawer: "Show drawer"
         }
     }
 }
