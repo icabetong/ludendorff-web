@@ -20,33 +20,34 @@ type ComponentHeaderPropsType = {
     menuItems?: JSX.Element[]
 }
 
+const useStyles = makeStyles((theme) => ({
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+    },
+    toolbar: theme.mixins.toolbar,
+    navigationButton: {
+        marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+            display: 'none'
+        },
+    },
+    actionButton: {
+        marginLeft: 'auto'
+    },
+    overflowButton: {
+        marginLeft: theme.spacing(2)
+    },
+    title: {
+        width: '100%',
+    },
+    icon: {
+        color: theme.palette.text.primary,
+        width: '1em',
+        height: '1em'
+    },
+}));
 export const ComponentHeader = (props: ComponentHeaderPropsType) => {
-    const useStyles = makeStyles((theme) => ({
-        appBar: {
-            zIndex: theme.zIndex.drawer + 1,
-        },
-        toolbar: theme.mixins.toolbar,
-        navigationButton: {
-            marginRight: theme.spacing(2),
-            [theme.breakpoints.up('sm')]: {
-                display: 'none'
-            },
-        },
-        actionButton: {
-            marginLeft: 'auto'
-        },
-        overflowButton: {
-            marginLeft: theme.spacing(2)
-        },
-        title: {
-            width: '100%',
-        },
-        icon: {
-            color: theme.palette.text.primary,
-            width: '1em',
-            height: '1em'
-        },
-    }));
+
     const classes = useStyles();
 
     const [anchor, setAnchor] = useState<null | HTMLElement>(null);

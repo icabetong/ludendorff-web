@@ -29,7 +29,7 @@ import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryRepository } from "../category/Category";
-import { CategoryComponent } from "../category/CategoryComponent";
+import CategoryComponent from "../category/CategoryComponent";
 import CategoryEditorComponent from "../category/CategoryEditorComponent";
 import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
@@ -268,21 +268,12 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
             </Hidden>
             
             {/* Category Screen */}
-            <Dialog
-                fullScreen={fullscreen}
-                fullWidth={true}
-                maxWidth="sm"
-                open={isCategoryScreenOpened}
-                onClose={() => setCategoryScreenOpened(false) }>
-                <DialogTitle>{ t("categories") }</DialogTitle>
-                <DialogContent dividers={true}>
-                    <CategoryComponent categories={categories} onItemSelect={onCategoryItemSelected}/>
-                </DialogContent>
-                <DialogActions>
-                    <Button color="primary" onClick={() => setCategoryEditorOpened(true)}>{ t("add") }</Button>
-                    <div style={{flex: '1 0 0'}}></div>
-                </DialogActions>
-            </Dialog>
+            <CategoryComponent
+                isOpen={isCategoryScreenOpened}
+                categories={categories}
+                onDismiss={() => setCategoryScreenOpened(false)}
+                onAddItem={() => setCategoryEditorOpened(true)}
+                onSelectItem={onCategoryItemSelected}/>
 
             {/* Category Editor Screen */}
             <CategoryEditorComponent
