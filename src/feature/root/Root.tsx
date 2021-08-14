@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
@@ -16,6 +16,7 @@ import { AssignmentComponent } from "../assignment/AssignmentComponent";
 import { ErrorComponent } from "../error/ErrorComponent";
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
 import { SettingsComponent } from "../settings/SettingsComponent";
+import { ReactComponent as Logo } from "./icon.svg";
 
 type InnerComponentPropsType = {
     destination: Destination,
@@ -46,13 +47,29 @@ const LoadingScreenComponent = () => {
         root: {
             width: '100vw',
             height: '100vh'
+        },
+        wrapper: {
+            width: '12%',
+            height: '20%'
+        },
+        icon: {
+            display: 'block',
+            margin: 'auto',
+            fontSize: '8em'
+        },
+        progress: {
+            margin: 'auto'
         }
     }));
     const classes = useStyles();
+    const theme = useTheme();
 
     return (
-        <Grid container alignItems="center" justifyContent="center" className={classes.root}>
-            <CircularProgress/>
+        <Grid container direction="column" alignItems="center" justifyContent="center" className={classes.root}>
+            <Grid item className={classes.wrapper}>
+                <Logo fill={theme.palette.primary.main} stroke={theme.palette.primary.main} className={classes.icon}/>
+                <LinearProgress className={classes.progress}/>
+            </Grid>
         </Grid>
     )
 }
