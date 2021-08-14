@@ -9,7 +9,7 @@ type AssignmentComponentPropsType = {
     onDrawerToggle: () => void
 }
 
-export const AssignmentComponent = (props: AssignmentComponentPropsType) => {
+const AssignmentComponent = (props: AssignmentComponentPropsType) => {
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [triggerFetch, setTriggerFetch] = useState<Boolean>(false);
     const [lastDocument, setLastDocument] = useState<DocumentSnapshot<DocumentData> | null>(null);
@@ -25,3 +25,4 @@ export const AssignmentComponent = (props: AssignmentComponentPropsType) => {
     )
 }
 
+export default AssignmentComponent;

@@ -10,7 +10,7 @@ type ScanComponentPropsType = {
     onDrawerToggle: () => void
 }
 
-export const ScanComponent = (props: ScanComponentPropsType) => {
+const ScanComponent = (props: ScanComponentPropsType) => {
     const useStyles = makeStyles((theme) => ({
         icon: {
             width: '1em',
@@ -30,3 +30,5 @@ export const ScanComponent = (props: ScanComponentPropsType) => {
         </Box>
     )
 }
+
+export default ScanComponent;

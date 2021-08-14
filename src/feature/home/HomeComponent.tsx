@@ -5,10 +5,12 @@ type HomeComponentPropsType = {
     onDrawerToggle: () => void
 }
 
-export const HomeComponent = (props: HomeComponentPropsType) => {
+const HomeComponent = (props: HomeComponentPropsType) => {
     return (
         <Box>
             <ComponentHeader title="Home" onDrawerToggle={props.onDrawerToggle}/>
         </Box>
     )
 }
+
+export default HomeComponent

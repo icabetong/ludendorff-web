@@ -1,22 +1,22 @@
-import { useContext, useState, Suspense, lazy } from "react";
+import React, { useContext, useState, Suspense, lazy } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
-import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
-import { HomeComponent } from "../home/HomeComponent";
-import { ScanComponent } from "../scan/ScanComponent";
-import { AssetComponent } from "../asset/AssetComponent";
-import { UserComponent } from "../user/UserComponent";
-import { AssignmentComponent } from "../assignment/AssignmentComponent";
-import { ErrorComponent } from "../error/ErrorComponent";
+
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
 import { SettingsComponent } from "../settings/SettingsComponent";
-import { ReactComponent as Logo } from "./icon.svg";
+import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
+import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
+
+const HomeComponent = lazy(() => import('../home/HomeComponent'));
+const ScanComponent = lazy(() => import('../scan/ScanComponent'));
+const AssetComponent = lazy(() => import('../asset/AssetComponent'));
+const UserComponent = lazy(() => import('../user/UserComponent'));
+const AssignmentComponent = lazy(() => import('../assignment/AssignmentComponent'));
 
 type InnerComponentPropsType = {
     destination: Destination,
@@ -38,40 +38,8 @@ const InnerComponent = (props: InnerComponentPropsType) => {
         case Destination.SETTINGS:
             return <SettingsComponent onDrawerToggle={props.onDrawerToggle}/>
         default:
-            return <ErrorComponent/>
+            return <ErrorNotFoundStateComponent/>
     }
-}
-
-const LoadingScreenComponent = () => {
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            width: '100vw',
-            height: '100vh'
-        },
-        wrapper: {
-            width: '12%',
-            height: '20%'
-        },
-        icon: {
-            display: 'block',
-            margin: 'auto',
-            fontSize: '8em'
-        },
-        progress: {
-            margin: 'auto'
-        }
-    }));
-    const classes = useStyles();
-    const theme = useTheme();
-
-    return (
-        <Grid container direction="column" alignItems="center" justifyContent="center" className={classes.root}>
-            <Grid item className={classes.wrapper}>
-                <Logo fill={theme.palette.primary.main} stroke={theme.palette.primary.main} className={classes.icon}/>
-                <LinearProgress className={classes.progress}/>
-            </Grid>
-        </Grid>
-    )
 }
 
 type RootContainerComponentPropsType = {
@@ -153,7 +121,9 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                 </Hidden>
             </nav>
             <div className={classes.content}>
-                <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState}/>
+                <Suspense fallback={<ContentLoadingStateComponent/>}>
+                    <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState}/>
+                </Suspense>
             </div>
         </div>
     );
@@ -168,7 +138,7 @@ const RootComponent = () => {
     }
 
     if (authState instanceof AuthPending) {
-        return <LoadingScreenComponent/>
+        return <MainLoadingStateComponent/>
     } else if (authState instanceof AuthFetched) {
         if (authState.user != null) {
             return (

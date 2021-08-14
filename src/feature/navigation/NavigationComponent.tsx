@@ -41,26 +41,34 @@ type NavigationItemType = {
     destination?: Destination
 }
 
-const destinations: NavigationItemType[] = [
-    { icon: <HomeIcon/>, title: "home", destination: Destination.HOME },
-    { icon: <QrcodeIcon/>, title: "scan", destination: Destination.SCAN },
-    { icon: <DesktopComputerIcon/>, title: "assets", destination: Destination.ASSETS },
-    { icon: <UserGroupIcon/>, title: "users", destination: Destination.USERS },
-    { icon: <IdentificationIcon/>, title: "assignments", destination: Destination.ASSIGNMENTS }
-]
-
-const minorDestinations: NavigationItemType[] = [
-    { icon: <CogIcon/>, title: "settings", destination: Destination.SETTINGS },
-]
-
 type NavigationComponentPropsType =  {
     onNavigate: (destination: Destination) => void,
     currentDestination: Destination
 }
 
+const useStyles = makeStyles((theme) => ({
+    icon: {
+        width: '1.4em',
+        height: '1.4em',
+        color: theme.palette.text.primary
+    }
+}));
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
     const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState<boolean>(false);
+    const classes = useStyles();
     const { t } = useTranslation();
+
+    const destinations: NavigationItemType[] = [
+        { icon: <HomeIcon className={classes.icon}/>, title: "home", destination: Destination.HOME },
+        { icon: <QrcodeIcon className={classes.icon}/>, title: "scan", destination: Destination.SCAN },
+        { icon: <DesktopComputerIcon className={classes.icon}/>, title: "assets", destination: Destination.ASSETS },
+        { icon: <UserGroupIcon className={classes.icon}/>, title: "users", destination: Destination.USERS },
+        { icon: <IdentificationIcon className={classes.icon}/>, title: "assignments", destination: Destination.ASSIGNMENTS }
+    ]
+
+    const minorDestinations: NavigationItemType[] = [
+        { icon: <CogIcon className={classes.icon}/>, title: "settings", destination: Destination.SETTINGS },
+    ]
 
     const confirmSignOut = () => {
         setTriggerConfirmSignOut(true);
@@ -89,7 +97,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
                     itemKey={0}
-                    navigation={{icon: <LogoutIcon/>, title: t("signout")}}
+                    navigation={{icon: <LogoutIcon className={classes.icon}/>, title: t("signout")}}
                     isActive={false}
                     action={() => confirmSignOut()}/>
             </List>
@@ -125,6 +133,9 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
                 paddingLeft: '12px',
                 paddingRight: '12px',
             }
+        },
+        navigationText: {
+            color: theme.palette.text.primary
         }
     }))
     const classes = useStyles();
@@ -140,7 +151,7 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
             onClick={props.action}>
             <ListItemIcon>{props.navigation.icon}</ListItemIcon>
             <ListItemText primary={
-                <Typography variant="body2" noWrap>{ t(props.navigation.title) }</Typography>
+                <Typography className={classes.navigationText} variant="body2" noWrap>{ t(props.navigation.title) }</Typography>
             }/>
         </ListItem> 
     )

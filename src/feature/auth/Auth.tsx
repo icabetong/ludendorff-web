@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -27,6 +28,7 @@ const useStyles = makeStyles(() => ({
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) => {
     const classes = useStyles();
     const theme = useTheme();
+    const { t } = useTranslation();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
     const [email, setEmail] = useState<string>("");
@@ -88,7 +90,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                     id="authentication-email"
                                     type="text"
                                     value={email}
-                                    label="Email"
+                                    label={ t("email") }
                                     error={!!error}
                                     disabled={isAuthenticating}
                                     variant="outlined"
@@ -99,7 +101,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                     id="authentication-password"
                                     type="password"
                                     value={password}
-                                    label="Password"
+                                    label={ t("password") }
                                     error={!!error}
                                     disabled={isAuthenticating}
                                     variant="outlined"

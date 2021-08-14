@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
-import { ErrorComponent } from "../error/ErrorComponent";
+import { GenericErrorStateComponent } from "../state/ErrorStates";
 
 const secondaryColors = {
     main: '#ff5555',
@@ -63,7 +63,8 @@ const lightTheme = createTheme({
             paper: '#ffffff'
         },
         text: {
-            primary: '#000000'
+            primary: '#282a36',
+            secondary: '#44475a'
         }
     },
     typography: {
@@ -122,7 +123,7 @@ export const CoreComponent = () => {
                             <Switch>
                                 <Route path="/" component={RootComponent} exact/>
                                 <Route path="/auth" component={AuthComponent}/>
-                                <Route path="/error" component={ErrorComponent}/>
+                                <Route path="/error" component={GenericErrorStateComponent}/>
                             </Switch>
                         </Router>
                 </ThemeProvider>

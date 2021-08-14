@@ -1,22 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridValueGetterParams } from "@material-ui/data-grid";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
@@ -35,7 +25,7 @@ type AssetComponentPropsType = {
     onDrawerToggle: () => void
 }
 
-export const AssetComponent = (props: AssetComponentPropsType) => {
+const AssetComponent = (props: AssetComponentPropsType) => {
     const useStyles = makeStyles((theme) => ({
         root: {
             height: '100%',
@@ -71,8 +61,6 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         }
     }));
     const classes = useStyles();
-    const theme = useTheme();
-    const fullscreen = useMediaQuery(theme.breakpoints.down('xs'));
 
     const columns = [
         { field: Asset.FIELD_ASSET_ID, headerName: 'ID', hide: true },
@@ -144,8 +132,6 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
 
     const onSpecificationEditorReset = () => {
         setSpecificationEditorOpened(false);
-        setSpecificationKey('');
-        setSpecificationValue('');
     }
     const onSpecificationEditorCommit = (specification: [string, string], isUpdate: boolean) => {
         if (!isUpdate) {
@@ -179,7 +165,14 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
     const [isCategoryEditorOpened, setCategoryEditorOpened] = useState<boolean>(false);
     const [editorCategoryId, setEditorCategoryId] = useState<string>('');
     const [editorCategoryName, setEditorCategoryName] = useState<string>('');
-    
+
+    useEffect(() => {
+        if (!isCategoryEditorOpened){
+            setEditorCategoryId('');
+            setEditorCategoryName('');
+        }
+    }, [isCategoryEditorOpened])
+
     const onCategoryEditorReset = () => {
         setCategoryEditorOpened(false);
         setEditorCategoryId('');
@@ -277,3 +270,5 @@ export const AssetComponent = (props: AssetComponentPropsType) => {
         </Box>
     )
 }
+
+export default AssetComponent

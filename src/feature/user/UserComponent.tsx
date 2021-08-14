@@ -7,7 +7,7 @@ type UserComponentPropsType = {
     onDrawerToggle: () => void
 }
 
-export const UserComponent = (props: UserComponentPropsType) => {
+const UserComponent = (props: UserComponentPropsType) => {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -24,3 +24,5 @@ export const UserComponent = (props: UserComponentPropsType) => {
         </Box>
     )
 }
+
+export default UserComponent
