@@ -43,6 +43,7 @@ type AssetEditorComponentPropsType = {
     isOpen: boolean,
     onCancel: () => void,
     onSubmit: (asset: Asset) => void,
+    onViewQrCode: () => void,
     onAddSpecification: () => void,
     onSelectSpecification: (specification: [string, string]) => void,
     categories: Category[],
@@ -74,9 +75,6 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
         }
     }
 
-    const onDismiss = () => {
-        props.onCancel()
-    }
     const onPreSubmit = () => {
 
     }
@@ -87,7 +85,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => onDismiss() }>
+            onClose={() => props.onCancel() }>
 
             <DialogTitle>{ 
             isInUpdateMode 
@@ -172,7 +170,9 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => onDismiss() }>{ t("cancel") }</Button>
+                <Button color="primary" onClick={() => props.onViewQrCode() }>{ t("view_qr_code")}</Button>
+                <div style={{flex: '1 0 0'}}></div>
+                <Button color="primary" onClick={() => props.onCancel() }>{ t("cancel") }</Button>
                 <Button color="primary" onClick={() => onPreSubmit() }>{ t("save") }</Button>
             </DialogActions>
 

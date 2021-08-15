@@ -2,6 +2,10 @@ import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -21,6 +25,7 @@ import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
 const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
+const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -174,6 +179,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         setSpecificationEditorOpened(true);
     }
 
+    const [isQrCodeView, setQrCodeView] = useState<boolean>(false);
+
     const [isCategoryScreenOpened, setCategoryScreenOpened] = useState<boolean>(false);
     
     const onCategoryItemSelected = (category: Category) => {
@@ -270,6 +277,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 isOpen={isEditorOpened}
                 onCancel={() => setEditorOpened(false)}
                 onSubmit={() => onCommitAssetEditor()}
+                onViewQrCode={() => setQrCodeView(true)}
                 onAddSpecification={() => setSpecificationEditorOpened(true)}
                 onSelectSpecification={onSpecificationItemSelected}
                 categories={categories}
@@ -292,6 +300,11 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 specificationValue={specificationValue}
                 onSpecificationKeyChanged={setSpecificationKey}
                 onSpecificationValueChanged={setSpecificationValue}/>
+
+            <QrCodeViewComponent
+                assetId={editorAssetId}
+                isOpened={isQrCodeView}
+                onClose={() => setQrCodeView(false)}/>
         </Box>
     )
 }
