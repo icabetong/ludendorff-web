@@ -15,8 +15,8 @@ const useStyles = makeStyles((theme) => ({
         height: '100%',
     },
     wrapper: {
-        width: '12%',
-        height: '20%'
+        width: 'fit-content',
+        height: 'fit-content'
     },
     icon: {
         display: 'block',

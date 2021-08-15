@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -12,12 +13,13 @@ import FormLabel from "@material-ui/core/FormLabel";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import MenuItem from "@material-ui/core/MenuItem";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import AutoComplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
@@ -63,6 +65,8 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
 
     const isInUpdateMode = Boolean(props.assetId);
 
+    const [categoryMenuOpened, setCategoryMenuOpened] = useState<boolean>(false);
+
     const triggerCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let index = parseInt(event.target.value);
         if (index < props.categories.length) {
@@ -106,7 +110,9 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onNameChanged(e.target.value)}/>
 
                     <FormControl component="fieldset" className={classes.textField}>
-                        <FormLabel component="legend">{ t("status") }</FormLabel>
+                        <FormLabel component="legend">
+                            <Typography variant="body2">{ t("status") }</Typography>
+                        </FormLabel>
                         <RadioGroup 
                             aria-label={ t("status") } 
                             name="editor-status" 
@@ -119,27 +125,39 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         </RadioGroup>
                     </FormControl>
 
-                    <TextField
-                        select
+                    <AutoComplete
                         id="editor-category"
-                        label={ t("category") }
-                        variant="outlined"
-                        size="small"
-                        value={props.category?.categoryName}
-                        defaultValue={props.categories && props.categories[0]}
-                        onChange={triggerCategoryChanged}
-                        className={classes.textField}>
-                        {   props.categories.map((category: Category, index: number) => {
-                                return (
-                                    <MenuItem 
-                                        key={category.categoryId} 
-                                        value={index}>{category.categoryName}</MenuItem>
+                        open={categoryMenuOpened}
+                        onOpen={() => setCategoryMenuOpened(true)}
+                        onClose={() => setCategoryMenuOpened(false)}
+                        options={props.categories}
+                        loading={props.categories.length === 0}
+                        value={props.category}
+                        getOptionSelected={(option, value) => option.categoryName === value.categoryName}
+                        getOptionLabel={(option) => option.categoryName !== undefined ? option.categoryName : '' }
+                        renderInput={(params: AutocompleteRenderInputParams) => (
+                            <TextField
+                                {...params}
+                                label={ t("category") }
+                                variant="outlined"
+                                size="small"
+                                className={classes.textField}
+                                onChange={triggerCategoryChanged}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                        <React.Fragment>
+                                            {props.categories.length === 0 ? <CircularProgress color="inherit" size={20}/> : null }
+                                            {params.InputProps.endAdornment}
+                                        </React.Fragment>
                                     )
-                            })
-                        }
-                    </TextField>
+                                }}/>
+                        )
+                        }/>
 
-                    <FormLabel component="legend">{ t("specification") }</FormLabel>
+                    <FormLabel component="legend">
+                        <Typography variant="body2">{ t("specification") }</Typography>
+                    </FormLabel>
                     <List>
                         <SpecificationListItems specifications={props.specifications} onItemSelected={props.onSelectSpecification}/>
                         <ListItem
