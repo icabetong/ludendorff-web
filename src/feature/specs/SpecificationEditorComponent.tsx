@@ -28,8 +28,7 @@ type SpecificationEditorComponentPropsType = {
 const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    
-    const isInUpdateMode = Boolean(props.specificationKey && props.specificationValue);
+    const isInUpdateMode = Boolean(props.specificationKey);
 
     const onDismiss = () => {
         props.onCancel();

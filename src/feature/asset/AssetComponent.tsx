@@ -112,13 +112,13 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [editorAssetName, setEditorAssetName] = useState<string>('');
     const [editorStatus, setEditorStatus] = useState<Status>(Status.IDLE);
     const [editorCategory, setEditorCategory] = useState<CategoryCore | null>(null);
-    const [editorSpecifications, setEditorSpecifications] = useState<[string, string][]>([]);
+    const [editorSpecifications, setEditorSpecifications] = useState<Map<string, string>>(new Map<string, string>());
 
     const onResetAssetEditor = () => {
         setEditorAssetName('');
         setEditorStatus(Status.IDLE);
         setEditorCategory(null);
-        setEditorSpecifications([]);
+        setEditorSpecifications(new Map<string, string>());
 
         setEditorOpened(false);
     }
@@ -132,7 +132,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         setEditorAssetName(asset.assetName !== undefined ? asset.assetName : '');
         setEditorStatus(asset.status !== undefined ? asset.status : Status.IDLE);
         setEditorCategory(asset.category !== undefined ? asset.category : null);
-        setEditorSpecifications(asset.specifications !== undefined ? asset.specifications : []);
+        setEditorSpecifications(asset.specifications !== undefined ? asset.specifications : new Map<string, string>());
         setEditorOpened(true);
     }
 
@@ -146,13 +146,15 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const onSpecificationEditorCommit = (specification: [string, string], isUpdate: boolean) => {
         if (!isUpdate) {
             let specifications = editorSpecifications;
-            specifications.push(specification);
+            specifications.set(specification[0], specification[1]);
+            
+            setEditorSpecifications(specifications);
         } else {
             let specifications = editorSpecifications;
-            let index = specifications.findIndex(s => s[0] === specification[0]);
-            if (index > -1) {
-                specifications[index] = specification;
-                setEditorSpecifications([...specifications]);
+            // check if the key in the map exists
+            if (specification[0] in specifications) {
+                specifications.set(specification[0], specification[1]);
+                setEditorSpecifications(new Map<string, string>(specifications));
             }
         }
         onSpecificationEditorReset();
@@ -268,7 +270,11 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 assetName={editorAssetName}
                 assetStatus={editorStatus}
                 category={editorCategory}
-                specifications={editorSpecifications}/>
+                specifications={editorSpecifications}
+                onNameChanged={setEditorAssetName}
+                onStatusChanged={setEditorStatus}
+                onCategoryChanged={setEditorCategory}
+                onSpecificationsChanged={setEditorSpecifications}/>
 
             {/* Specification Editor Screen */}
             <SpecificationEditorComponent 

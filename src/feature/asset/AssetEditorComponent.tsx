@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -48,7 +48,11 @@ type AssetEditorComponentPropsType = {
     assetName: string,
     assetStatus: Status,
     category: CategoryCore | null,
-    specifications: [string, string][]
+    specifications: Map<string, string>,
+    onNameChanged: (name: string) => void,
+    onStatusChanged: (status: Status) => void,
+    onCategoryChanged: (category: Category) => void,
+    onSpecificationsChanged: (specifications: Map<string, string>) => void
 }
 
 const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
@@ -57,37 +61,12 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
-    const dependencies = [props.assetId, props.assetName, props.assetStatus, props.categories, props.specifications];
-    useEffect(() => {
-        setId(props.assetId);
-        setName(props.assetName);
-        setStatus(props.assetStatus);
-        setCategory(props.category);
-        setSpecifications(props.specifications);
-    }, dependencies);
+    const isInUpdateMode = Boolean(props.assetId);
 
-    const [id, setId] = useState<string>(props.assetId);
-    const [name, setName] = useState<string>(props.assetName);
-    const [status, setStatus] = useState<Status>(props.assetStatus);
-    const [category, setCategory] = useState<CategoryCore | null>(props.category);
-    const [specifications, setSpecifications] = useState<[string, string][]>(props.specifications);
-    const isInUpdateMode = Boolean(id);
-
-    const [categories, setCategories] = useState<Category[]>([]);
-    useEffect(() => {
-        setCategories(props.categories);
-    }, [props.categories]);
-
-    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    }
-    const onStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        setStatus(event.target.value as Status);
-    }
     const onCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let index = parseInt(event.target.value);
-        if (index < categories.length) {
-            setCategory(categories[index]);
+        if (index < props.categories.length) {
+            props.onCategoryChanged(props.categories[index]);
         }
     }
 
@@ -120,15 +99,19 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         id="editor-asset-name"
                         type="text"
                         label={ t("asset_name") }
-                        value={name}
+                        value={props.assetName}
                         variant="outlined"
                         size="small"
                         className={classes.textField}
-                        onChange={onNameChanged}/>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onNameChanged(e.target.value)}/>
 
                     <FormControl component="fieldset" className={classes.textField}>
                         <FormLabel component="legend">{ t("status") }</FormLabel>
-                        <RadioGroup aria-label={ t("status") } name="editor-status" value={status} onChange={onStatusChanged}>
+                        <RadioGroup 
+                            aria-label={ t("status") } 
+                            name="editor-status" 
+                            value={props.assetStatus} 
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onStatusChanged(e.target.value as Status)}>
                             <FormControlLabel value={Status.OPERATIONAL} control={<Radio/>} label={ t("status_operational") } />
                             <FormControlLabel value={Status.IDLE} control={<Radio/>} label={ t("status_idle") }/>
                             <FormControlLabel value={Status.UNDER_MAINTENANCE} control={<Radio/>} label={ t("status_under_maintenance") } />
@@ -142,19 +125,16 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         label={ t("category") }
                         variant="outlined"
                         size="small"
-                        value={category?.categoryName}
-                        defaultValue={categories && categories[0]}
+                        value={props.category?.categoryName}
+                        defaultValue={props.categories && props.categories[0]}
                         onChange={onCategoryChanged}
                         className={classes.textField}>
-                        {   categories.map((category: Category, index: number) => {
-                                return <MenuItem key={category.categoryId} value={index}>{category.categoryName}</MenuItem>
-                            })
-                        }
+                        <CategoryListItem categories={props.categories} />
                     </TextField>
 
                     <FormLabel component="legend">{ t("specification") }</FormLabel>
                     <List>
-                        <SpecificationListItems specifications={specifications} onItemSelected={props.onSelectSpecification}/>
+                        <SpecificationListItems specifications={props.specifications} onItemSelected={props.onSelectSpecification}/>
                         <ListItem
                             button
                             onClick={() => props.onAddSpecification()}
@@ -175,26 +155,44 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     );
 }
 
+type CategoryListItemsPropsType = {
+    categories: Category[]
+}
+
+const CategoryListItem = (props: CategoryListItemsPropsType) => {
+    return (
+        <React.Fragment>{   
+            props.categories.map((category: Category, index: number) => {
+                return (
+                    <MenuItem 
+                        key={category.categoryId} 
+                        value={index}>{category.categoryName}</MenuItem>
+                    )
+            })            
+        }</React.Fragment>
+    )
+}
+
 type SpecificationListItemsPropsType = {
-    specifications: [string, string][],
+    specifications: Map<string, string>,
     onItemSelected: (specs: [string, string]) => void
 }
 
 const SpecificationListItems = (props: SpecificationListItemsPropsType) => {
     return (
         <React.Fragment>{ 
-            props.specifications.map((specification: [string, string]) => {
+            Array.from(props.specifications.entries()).map((entry) => {
                 return (
-                        <ListItem
-                            button
-                            onClick={() => props.onItemSelected(specification)}
-                            key={specification[0]}>
-                            <ListItemContent 
-                                title={specification[1]}
-                                summary={specification[0]}/>
-                        </ListItem>
-                    )
-                })
+                    <ListItem
+                        button
+                        onClick={() => props.onItemSelected(entry)}
+                        key={entry[0]}>
+                        <ListItemContent 
+                            title={entry[1]}
+                            summary={entry[0]}/>
+                    </ListItem>
+                )
+            } )
         }</React.Fragment>
     );
 }
