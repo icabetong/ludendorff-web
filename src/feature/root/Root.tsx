@@ -1,4 +1,4 @@
-import React, { useContext, useState, Suspense, lazy } from "react";
+import { useContext, useState, Suspense, lazy } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
@@ -85,9 +85,14 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         setDrawerOpen(!drawerOpen);
     }
 
+    const onNavigateThenDismiss = (destination: Destination) => {
+        setDrawerOpen(false)
+        props.onNavigate(destination)
+    }
+
     const drawerItems = (
         <NavigationComponent 
-            onNavigate={props.onNavigate} 
+            onNavigate={onNavigateThenDismiss} 
             currentDestination={props.currentDestination}/>
     )
 

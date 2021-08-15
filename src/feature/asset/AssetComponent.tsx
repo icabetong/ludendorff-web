@@ -2,16 +2,13 @@ import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
+import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
@@ -19,13 +16,12 @@ import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
-import CategoryEditorComponent from "../category/CategoryEditorComponent";
-import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
-import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
 const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
+const CategoryEditorComponent = lazy(() => import("../category/CategoryEditorComponent"));
+const SpecificationEditorComponent = lazy(() => import("../specs/SpecificationEditorComponent"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -132,7 +128,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     }, [isEditorOpened]);
 
     const onCommitAssetEditor = () => {
-
+        
     }
 
     const onAssetSelected = (asset: Asset) => {

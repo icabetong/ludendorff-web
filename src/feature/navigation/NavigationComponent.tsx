@@ -78,7 +78,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
         firebase.auth().signOut();
         setTriggerConfirmSignOut(false);
     }
-
+    
     return (
         <Box>
             <ListSubheader>{ t("manage") }</ListSubheader>
