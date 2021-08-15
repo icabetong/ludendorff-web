@@ -54,6 +54,7 @@ const CategoryComponent = (props: CategoryComponentPropsType) => {
             <DialogActions>
                 <Button color="primary" onClick={() => props.onAddItem()}>{ t("add") }</Button>
                 <div style={{flex: '1 0 0'}}></div>
+                <Button color="primary" onClick={() => props.onDismiss()}>{ t("close") }</Button>
             </DialogActions>
         </Dialog>
     )
@@ -96,7 +97,7 @@ const CategoryList = (props: CategoryListPropsType) => {
             { props.categories.length > 0 
             ?   <List className={classes.root}>{
                     props.categories.map((category: Category) => {
-                        return <CategoryItem category={category} onItemSelect={props.onItemSelect}/>
+                        return <CategoryItem key={category.categoryId} category={category} onItemSelect={props.onItemSelect}/>
                     })
                 }</List>
             : <EmptyStateComponent/>

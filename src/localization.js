@@ -19,6 +19,7 @@ const resources = {
             add: "Add",
             save: "Save",
             select: "Select",
+            close: "Close",
             unknown: "Unknown",
             email: "Email",
             password: "Password",

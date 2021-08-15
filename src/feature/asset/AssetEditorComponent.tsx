@@ -63,10 +63,10 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
 
     const isInUpdateMode = Boolean(props.assetId);
 
-    const onCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const triggerCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let index = parseInt(event.target.value);
         if (index < props.categories.length) {
-            props.onCategoryChanged(props.categories[index]);
+            console.log(props.categories[index]);
         }
     }
 
@@ -127,9 +127,16 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         size="small"
                         value={props.category?.categoryName}
                         defaultValue={props.categories && props.categories[0]}
-                        onChange={onCategoryChanged}
+                        onChange={triggerCategoryChanged}
                         className={classes.textField}>
-                        <CategoryListItem categories={props.categories} />
+                        {   props.categories.map((category: Category, index: number) => {
+                                return (
+                                    <MenuItem 
+                                        key={category.categoryId} 
+                                        value={index}>{category.categoryName}</MenuItem>
+                                    )
+                            })
+                        }
                     </TextField>
 
                     <FormLabel component="legend">{ t("specification") }</FormLabel>
@@ -155,24 +162,6 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     );
 }
 
-type CategoryListItemsPropsType = {
-    categories: Category[]
-}
-
-const CategoryListItem = (props: CategoryListItemsPropsType) => {
-    return (
-        <React.Fragment>{   
-            props.categories.map((category: Category, index: number) => {
-                return (
-                    <MenuItem 
-                        key={category.categoryId} 
-                        value={index}>{category.categoryName}</MenuItem>
-                    )
-            })            
-        }</React.Fragment>
-    )
-}
-
 type SpecificationListItemsPropsType = {
     specifications: Map<string, string>,
     onItemSelected: (specs: [string, string]) => void
@@ -186,7 +175,8 @@ const SpecificationListItems = (props: SpecificationListItemsPropsType) => {
                     <ListItem
                         button
                         onClick={() => props.onItemSelected(entry)}
-                        key={entry[0]}>
+                        key={entry[0]}
+                        dense={true}>
                         <ListItemContent 
                             title={entry[1]}
                             summary={entry[0]}/>

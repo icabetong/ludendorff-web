@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
@@ -15,11 +15,12 @@ import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
-import CategoryComponent from "../category/CategoryComponent";
 import CategoryEditorComponent from "../category/CategoryEditorComponent";
 import SpecificationEditorComponent from "../specs/SpecificationEditorComponent";
 import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
-import AssetEditorComponent from "./AssetEditorComponent";
+
+const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
+const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -71,7 +72,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         { field: Asset.FIELD_DATE_CREATED, headerName: t("date_created"), flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.formatDate() },
         { field: Asset.FIELD_STATUS, headerName: t("status"), flex: 0.35, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
     ];
-    
+
     const [assets, setAssets] = useState<Asset[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [pageNumber, setPageNumber] = useState<number>(0);
@@ -114,14 +115,16 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [editorCategory, setEditorCategory] = useState<CategoryCore | null>(null);
     const [editorSpecifications, setEditorSpecifications] = useState<Map<string, string>>(new Map<string, string>());
 
-    const onResetAssetEditor = () => {
-        setEditorAssetName('');
-        setEditorStatus(Status.IDLE);
-        setEditorCategory(null);
-        setEditorSpecifications(new Map<string, string>());
-
-        setEditorOpened(false);
-    }
+    useEffect(() => {
+        if (!isEditorOpened) {
+            setTimeout(() => {
+                setEditorAssetName('');
+                setEditorStatus(Status.IDLE);
+                setEditorCategory(null);
+                setEditorSpecifications(new Map<string, string>());
+            }, 500);
+        }
+    }, [isEditorOpened]);
 
     const onCommitAssetEditor = () => {
 
@@ -140,9 +143,15 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [specificationKey, setSpecificationKey] = useState<string>('');
     const [specificationValue, setSpecificationValue] = useState<string>('');
 
-    const onSpecificationEditorReset = () => {
-        setSpecificationEditorOpened(false);
-    }
+    useEffect(() => {
+        if (!isSpecificationEditorOpened) {
+            setTimeout(() => {
+                setSpecificationKey('');
+                setSpecificationValue('');
+            }, 500);
+        }
+    }, [isSpecificationEditorOpened])
+
     const onSpecificationEditorCommit = (specification: [string, string], isUpdate: boolean) => {
         if (!isUpdate) {
             let specifications = editorSpecifications;
@@ -157,7 +166,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 setEditorSpecifications(new Map<string, string>(specifications));
             }
         }
-        onSpecificationEditorReset();
+        setSpecificationEditorOpened(false);
     }
     const onSpecificationItemSelected = (spec: [string, string]) => {
         setSpecificationKey(spec[0]);
@@ -180,16 +189,14 @@ const AssetComponent = (props: AssetComponentPropsType) => {
 
     useEffect(() => {
         if (!isCategoryEditorOpened){
-            setEditorCategoryId('');
-            setEditorCategoryName('');
+            // used in UI glitch
+            setTimeout(() => {
+                setEditorCategoryId('');
+                setEditorCategoryName('');
+            }, 500);
         }
-    }, [isCategoryEditorOpened])
+    }, [isCategoryEditorOpened]);
 
-    const onCategoryEditorReset = () => {
-        setCategoryEditorOpened(false);
-        setEditorCategoryId('');
-        setEditorCategoryName('');
-    }
     const onCategoryEditorCommit = (category: Category, isNew: boolean) => {
         if (editorCategoryName === '')
             return;
@@ -197,7 +204,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         if (isNew) {
             CategoryRepository.create(category)
                 .then(() => {
-                    onCategoryEditorReset();
+                    setCategoryScreenOpened(false);
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -252,7 +259,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             {/* Category Editor Screen */}
             <CategoryEditorComponent
                 editorOpened={isCategoryEditorOpened}
-                onCancel={onCategoryEditorReset}
+                onCancel={() => setCategoryEditorOpened(false)}
                 onSubmit={onCategoryEditorCommit}
                 categoryId={editorCategoryId}
                 categoryName={editorCategoryName}
@@ -261,7 +268,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             {/* Asset Editor Screen */}
             <AssetEditorComponent
                 isOpen={isEditorOpened}
-                onCancel={onResetAssetEditor}
+                onCancel={() => setEditorOpened(false)}
                 onSubmit={() => onCommitAssetEditor()}
                 onAddSpecification={() => setSpecificationEditorOpened(true)}
                 onSelectSpecification={onSpecificationItemSelected}
@@ -270,7 +277,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 assetName={editorAssetName}
                 assetStatus={editorStatus}
                 category={editorCategory}
-                specifications={editorSpecifications}
+                specifications={new Map(Object.entries(editorSpecifications))}
                 onNameChanged={setEditorAssetName}
                 onStatusChanged={setEditorStatus}
                 onCategoryChanged={setEditorCategory}
@@ -280,7 +287,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             <SpecificationEditorComponent 
                 isOpen={isSpecificationEditorOpened} 
                 onSubmit={onSpecificationEditorCommit}
-                onCancel={onSpecificationEditorReset}
+                onCancel={() => setSpecificationEditorOpened(false)}
                 specificationKey={specificationKey} 
                 specificationValue={specificationValue}
                 onSpecificationKeyChanged={setSpecificationKey}

@@ -31,10 +31,6 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     const classes = useStyles();
     const isInUpdateMode = Boolean(props.categoryId && props.categoryName);
 
-    const onDismiss = () => {
-        props.onCancel();
-    }
-
     const onPreSubmit = () => {
         let category = new Category(props.categoryId);
         category.categoryName = props.categoryName;
@@ -47,7 +43,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.editorOpened}
-            onClose={() => onDismiss() }>
+            onClose={() => props.onCancel() }>
             <DialogTitle>{ t(isInUpdateMode ? "category_update" : "category_create") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
@@ -64,7 +60,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                 </Container>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => onDismiss()}>{ t("cancel") }</Button>
+                <Button color="primary" onClick={() => props.onCancel()}>{ t("cancel") }</Button>
                 <Button color="primary" onClick={() => onPreSubmit()}>{ t("save") }</Button>
             </DialogActions>
         </Dialog>

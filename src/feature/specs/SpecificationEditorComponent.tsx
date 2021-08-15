@@ -30,10 +30,6 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
     const classes = useStyles();
     const isInUpdateMode = Boolean(props.specificationKey);
 
-    const onDismiss = () => {
-        props.onCancel();
-    }
-
     const onPreSubmit = () => {
         let specification: [string, string] = [props.specificationKey, props.specificationValue];
         props.onSubmit(specification, isInUpdateMode);
@@ -44,7 +40,7 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => onDismiss()}>
+            onClose={() => props.onCancel()}>
             <DialogTitle>
                 { t(isInUpdateMode 
                     ? "specification_update" 
@@ -76,7 +72,7 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => onDismiss()}>{ t("cancel") }</Button>
+                <Button color="primary" onClick={() => props.onCancel()}>{ t("cancel") }</Button>
                 <Button color="primary" onClick={() => onPreSubmit()}>{ t("save") }</Button>
             </DialogActions>
         </Dialog>
