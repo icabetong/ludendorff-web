@@ -19,6 +19,7 @@
     "firebase": "^8.9.0",
     "i18next": "^20.4.0",
     "install": "^0.13.0",
+    "jsqr": "^1.4.0",
     "node-sass": "^6.0.1",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",

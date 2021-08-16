@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
         height: '1em',
     },
     actionButtonIcon: {
-        color: theme.palette.primary.main
+        color: theme.palette.primary.contrastText
     },
     overflowButtonIcon: {
         color: theme.palette.text.primary

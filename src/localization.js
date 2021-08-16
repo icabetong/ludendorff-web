@@ -4,6 +4,7 @@ import { initReactI18next } from "react-i18next";
 const resources = {
     en: {
         translation: {
+            app_name: "Ludendorff",
             manage: "Manage",
             account: "Account",
             home: "Home",
@@ -20,7 +21,6 @@ const resources = {
             save: "Save",
             select: "Select",
             close: "Close",
-            view_qr_code: "View QR Code",
             unknown: "Unknown",
             email: "Email",
             password: "Password",

@@ -42,40 +42,50 @@ const InnerComponent = (props: InnerComponentPropsType) => {
     }
 }
 
+const drawerWidth = 240;
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+        width: '100vw',
+        height: '100vh'
+    },
+    drawer: {
+        [theme.breakpoints.up('sm')]: {
+            width: drawerWidth,
+            flexShrink: 0,
+        }
+    },
+    drawerPaper: {
+        width: drawerWidth,
+    },
+    container: {
+        minWidth: '100%',
+        minHeight: '100%',
+    }, 
+    icon: {
+        maxWidth: '2em',
+        maxHeight: '2em',
+    },
+    content: {
+        flexGrow: 1,
+    },
+    headerIcon: {
+        fontSize: '1em',
+        display: 'block',
+        margin: 'auto'
+    },
+    header: {
+        display: 'block',
+        textAlign: 'center'
+    }
+}));
+
 type RootContainerComponentPropsType = {
     onNavigate: (destination: Destination) => void,
     currentDestination: Destination,
 }
 
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
-    const drawerWidth = 240;
-    const useStyles = makeStyles((theme) => ({
-        root: {
-            display: 'flex',
-            width: '100vw',
-            height: '100vh'
-        },
-        drawer: {
-            [theme.breakpoints.up('sm')]: {
-                width: drawerWidth,
-                flexShrink: 0,
-            }
-        },
-        drawerPaper: {
-            width: drawerWidth,
-        },
-        container: {
-            minWidth: '100%',
-            minHeight: '100%',
-        }, 
-        icon: {
-            maxWidth: '2em',
-            maxHeight: '2em',
-        },
-        content: {
-            flexGrow: 1,
-        },
-    }));
     const classes = useStyles();
     const theme = useTheme();
 

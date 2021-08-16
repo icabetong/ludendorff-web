@@ -80,7 +80,7 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                 </Hidden>
                 { props.buttonText &&
                     <Button 
-                        variant="outlined"
+                        variant="contained"
                         color="primary"
                         className={classes.actionButton}
                         startIcon={props.buttonIcon}
