@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import { firestore } from "../../index";
-import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
+import { DocumentSnapshot, Timestamp } from "@firebase/firestore-types";
 
 import { Category, CategoryCore } from '../category/Category';
 import { newId } from "../../shared/utils";
@@ -128,22 +128,15 @@ export class AssetRepository {
         return batch.commit()
     }
 
-    static async fetch(startWith: DocumentSnapshot<DocumentData> | null): Promise<[Asset[], DocumentSnapshot]> {
-        let assets: Asset[] = [];
-
+    static async fetch(snapshot?: DocumentSnapshot): Promise<DocumentSnapshot[]> {
         let query = firestore.collection(Asset.COLLECTION)
             .orderBy(Asset.FIELD_ASSET_NAME, "asc")
-            .limit(15)
-            
-        if (startWith)
-            query = query.startAfter(startWith)   
+            .limit(15)          
+
+        if (snapshot) query = query.startAfter(snapshot)
 
         let task = await query.get()
-        task.docs.forEach((document: DocumentSnapshot) => {
-            assets.push(Asset.from(document.data()))
-        })
-
-        return [assets, task.docs[task.docs.length - 1]]
+        return task.docs;
     }
 }
 

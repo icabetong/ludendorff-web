@@ -2,13 +2,16 @@ import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
-import { DocumentSnapshot, DocumentData } from "@firebase/firestore-types";
+import { DocumentSnapshot } from "@firebase/firestore-types";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
@@ -75,40 +78,38 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     ];
 
     const [assets, setAssets] = useState<Asset[]>([]);
+    const [nextAssets, setNextAssets] = useState<Asset[]>([]);
+    const [page, setPage] = useState<number>(0);
+    const [documents, setDocuments] = useState<DocumentSnapshot[]>([]);
+
     const [categories, setCategories] = useState<Category[]>([]);
-    const [pageNumber, setPageNumber] = useState<number>(0);
-    const [documentHistory, setDocumentHistory] = useState<DocumentSnapshot<DocumentData>[]>([]);
 
     useEffect(() => {
-        AssetRepository.fetch(documentHistory[documentHistory.length - 1])
-            .then((data: [Asset[], DocumentSnapshot<DocumentData>]) => {
-                setAssets(data[0]);
+        AssetRepository.fetch(documents[page])
+            .then((data: DocumentSnapshot[]) => {
+                let asset: Asset[] = [];
+                data.forEach((snapshot: DocumentSnapshot) => {
+                    asset.push(Asset.from(snapshot.data()))
+                })
+                setAssets(asset);
 
-                let newHistory = documentHistory;
-                newHistory.push(data[1]);
-                setDocumentHistory(newHistory);
+                let docs = documents;
+                docs[page + 1] = data[data.length - 1];
+                setDocuments([...docs]);
             });
-        CategoryRepository.fetch()
-            .then((data: Category[]) => {
-                setCategories(data);
+    }, [page]);
+
+    useEffect(() => {
+        AssetRepository.fetch(documents[page + 1])
+            .then((data: DocumentSnapshot[]) => {
+                let asset: Asset[] = [];
+                data.forEach((snapshot: DocumentSnapshot) => {
+                    asset.push(Asset.from(snapshot.data()))
+                })
+                setNextAssets(asset);
             })
-    }, [pageNumber]);
+    }, [page])
 
-    const onIncrementPageNumber = () => {
-        setPageNumber(pageNumber + 1);
-    }
-
-    const onDecrementPageNumber = () => {
-        let newHistory = documentHistory;
-        // we need to pop it two times
-        // because the reference we need 
-        // is two times behind.
-        newHistory.pop();
-        newHistory.pop();
-
-        setDocumentHistory(newHistory);
-        setPageNumber(pageNumber - 1);
-    }
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
     const [editorAssetId, setEditorAssetId] = useState<string>('');
     const [editorAssetName, setEditorAssetName] = useState<string>('');
@@ -228,10 +229,10 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <DataGrid
-                        paginationMode="server"
-                        columns={columns}
                         rows={assets}
+                        columns={columns}
                         pageSize={15}
+                        paginationMode="server"
                         getRowId={(r) => r.assetId}
                         onRowClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
                         hideFooterPagination/>
@@ -247,9 +248,29 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         )
                     })    
                 }</List>
-                <button onClick={onDecrementPageNumber}>Previous</button>
-                <button onClick={onIncrementPageNumber}>Next</button>
             </Hidden>
+            <Container>
+                <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
+                    <Grid item>
+                        <Button 
+                            variant="outlined" 
+                            color="primary" 
+                            disabled={page < 1}
+                            onClick={() => setPage(page - 1)}>
+                                Previous
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button 
+                            variant="outlined" 
+                            color="primary" 
+                            disabled={nextAssets.length < 1}
+                            onClick={() => setPage(page + 1)}>
+                                Next
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Container>
             
             {/* Category Screen */}
             <CategoryComponent
