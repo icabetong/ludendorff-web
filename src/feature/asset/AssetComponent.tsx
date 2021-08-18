@@ -11,7 +11,7 @@ import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
-import { DocumentSnapshot } from "@firebase/firestore-types";
+import { firestore } from "../../index";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
@@ -19,6 +19,7 @@ import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, AssetRepository, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
+import { usePagination } from "../../shared/pagination";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
 const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
@@ -72,45 +73,37 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const columns = [
         { field: Asset.FIELD_ASSET_ID, headerName: t("id"), hide: true },
         { field: Asset.FIELD_ASSET_NAME, headerName: t("name"), flex: 1 },
-        { field: Asset.FIELD_CATEGORY, headerName: t("category"), flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.category?.categoryName },
-        { field: Asset.FIELD_DATE_CREATED, headerName: t("date_created"), flex: 0.5, valueGetter: (params: GridValueGetterParams) => params.row.formatDate() },
-        { field: Asset.FIELD_STATUS, headerName: t("status"), flex: 0.35, valueGetter: (params: GridValueGetterParams) => t(params.row.getLocalizedStatus()) }
+        { 
+            field: Asset.FIELD_CATEGORY, headerName: 
+            t("category"), 
+            flex: 0.5,
+            valueGetter: (params: GridValueGetterParams) => Asset.from(params.row).category?.categoryName },
+        { 
+            field: Asset.FIELD_DATE_CREATED, 
+            headerName: t("date_created"), 
+            flex: 0.5, 
+            valueGetter: (params: GridValueGetterParams) => Asset.from(params.row).formatDate() },
+        { 
+            field: Asset.FIELD_STATUS, 
+            headerName: t("status"), 
+            flex: 0.35, 
+            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).getLocalizedStatus()) }
     ];
 
-    const [assets, setAssets] = useState<Asset[]>([]);
-    const [nextAssets, setNextAssets] = useState<Asset[]>([]);
-    const [page, setPage] = useState<number>(0);
-    const [documents, setDocuments] = useState<DocumentSnapshot[]>([]);
+    const {
+        items,
+        isLoading,
+        isStart,
+        isEnd,
+        getPrev,
+        getNext,
+    } = usePagination<Asset>(
+        firestore
+            .collection(Asset.COLLECTION)
+            .orderBy(Asset.FIELD_ASSET_NAME, "asc"), { limit: 15 }
+    )
 
     const [categories, setCategories] = useState<Category[]>([]);
-
-    useEffect(() => {
-        AssetRepository.fetch(documents[page])
-            .then((data: DocumentSnapshot[]) => {
-                let asset: Asset[] = [];
-                data.forEach((snapshot: DocumentSnapshot) => {
-                    asset.push(Asset.from(snapshot.data()))
-                })
-                setAssets(asset);
-
-                let docs = documents;
-                console.log(docs);
-                docs[page + 1] = data[data.length - 1];
-                setDocuments([...docs]);
-            });
-    }, [page]);
-
-    useEffect(() => {
-        AssetRepository.fetch(documents[page + 1])
-            .then((data: DocumentSnapshot[]) => {
-                let asset: Asset[] = [];
-                data.forEach((snapshot: DocumentSnapshot) => {
-                    asset.push(Asset.from(snapshot.data()))
-                })
-                console.log(asset.length);
-                setNextAssets(asset);
-            })
-    }, [page, documents])
 
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
     const [editorAssetId, setEditorAssetId] = useState<string>('');
@@ -219,6 +212,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
 
     return (
         <Box className={classes.root}>
+            {console.log(items)}
             <ComponentHeader 
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
@@ -231,7 +225,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <DataGrid
-                        rows={assets}
+                        rows={items}
                         columns={columns}
                         pageSize={15}
                         paginationMode="server"
@@ -242,7 +236,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             </Hidden>
             <Hidden smUp>
                 <List>{
-                    assets.map((asset: Asset) => {
+                    items.map((asset: Asset) => {
                         return (
                             <ListItem button key={asset.assetId}>
                                 <ListItemContent title={asset.assetName} summary={asset.category?.categoryName}/>
@@ -257,8 +251,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         <Button 
                             variant="outlined" 
                             color="primary" 
-                            disabled={page < 1}
-                            onClick={() => setPage(page - 1)}>
+                            disabled={isStart}
+                            onClick={getPrev}>
                                 Previous
                         </Button>
                     </Grid>
@@ -266,8 +260,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         <Button 
                             variant="outlined" 
                             color="primary" 
-                            disabled={nextAssets.length < 1}
-                            onClick={() => setPage(page + 1)}>
+                            disabled={isEnd}
+                            onClick={getNext}>
                                 Next
                         </Button>
                     </Grid>

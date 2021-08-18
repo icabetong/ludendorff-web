@@ -131,7 +131,7 @@ export class AssetRepository {
     static async fetch(snapshot?: DocumentSnapshot): Promise<DocumentSnapshot[]> {
         let query = firestore.collection(Asset.COLLECTION)
             .orderBy(Asset.FIELD_ASSET_NAME, "asc")
-            .limit(15)          
+            .limit(1)          
 
         if (snapshot) query = query.startAfter(snapshot)
 
