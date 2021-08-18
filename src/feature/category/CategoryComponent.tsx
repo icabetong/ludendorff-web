@@ -30,6 +30,11 @@ const useStyles = makeStyles(() => ({
 type CategoryComponentPropsType = {
     isOpen: boolean,
     categories: Category[],
+    isLoading: boolean,
+    hasPrevious: boolean,
+    hasNext: boolean,
+    onPreviousBatch: () => void,
+    onNextBatch: () => void,
     onDismiss: () => void,
     onAddItem: () => void,
     onSelectItem: (category: Category) => void,

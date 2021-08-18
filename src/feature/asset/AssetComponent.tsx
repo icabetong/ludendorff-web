@@ -15,9 +15,10 @@ import { firestore } from "../../index";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
+import GridLinearProgress from "../../components/GridLinearProgress";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
-import { Asset, AssetRepository, Status } from "./Asset";
+import { Asset, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
 
@@ -91,19 +92,30 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     ];
 
     const {
-        items,
-        isLoading,
-        isStart,
-        isEnd,
-        getPrev,
-        getNext,
+        items: assets,
+        isLoading: isAssetsLoading,
+        isStart: atAssetStart,
+        isEnd: atAssetEnd,
+        getPrev: getPreviousAssets,
+        getNext: getNextAssets,
     } = usePagination<Asset>(
         firestore
             .collection(Asset.COLLECTION)
             .orderBy(Asset.FIELD_ASSET_NAME, "asc"), { limit: 15 }
     )
 
-    const [categories, setCategories] = useState<Category[]>([]);
+    const {
+        items: categories,
+        isLoading: isCategoriesLoading,
+        isStart: atCategoryStart,
+        isEnd: atCategoryEnd,
+        getPrev: getPreviousCategories,
+        getNext: getNextCategories
+    } = usePagination<Category>(
+        firestore
+            .collection(Category.COLLECTION)
+            .orderBy(Category.FIELD_CATEGORY_NAME, "asc"), { limit: 15 }   
+    )
 
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
     const [editorAssetId, setEditorAssetId] = useState<string>('');
@@ -212,7 +224,6 @@ const AssetComponent = (props: AssetComponentPropsType) => {
 
     return (
         <Box className={classes.root}>
-            {console.log(items)}
             <ComponentHeader 
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
@@ -225,9 +236,11 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <DataGrid
-                        rows={items}
+                        components={{LoadingOverlay: GridLinearProgress}}
+                        rows={assets}
                         columns={columns}
                         pageSize={15}
+                        loading={isAssetsLoading}
                         paginationMode="server"
                         getRowId={(r) => r.assetId}
                         onRowClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
@@ -236,7 +249,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             </Hidden>
             <Hidden smUp>
                 <List>{
-                    items.map((asset: Asset) => {
+                    assets.map((asset: Asset) => {
                         return (
                             <ListItem button key={asset.assetId}>
                                 <ListItemContent title={asset.assetName} summary={asset.category?.categoryName}/>
@@ -251,8 +264,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         <Button 
                             variant="outlined" 
                             color="primary" 
-                            disabled={isStart}
-                            onClick={getPrev}>
+                            disabled={atAssetStart}
+                            onClick={getPreviousAssets}>
                                 Previous
                         </Button>
                     </Grid>
@@ -260,8 +273,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         <Button 
                             variant="outlined" 
                             color="primary" 
-                            disabled={isEnd}
-                            onClick={getNext}>
+                            disabled={atAssetEnd}
+                            onClick={getNextAssets}>
                                 Next
                         </Button>
                     </Grid>
@@ -271,7 +284,12 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             {/* Category Screen */}
             <CategoryComponent
                 isOpen={isCategoryScreenOpened}
+                isLoading={isCategoriesLoading}
+                hasPrevious={atCategoryStart}
+                hasNext={atCategoryEnd}
                 categories={categories}
+                onPreviousBatch={getPreviousCategories}
+                onNextBatch={getNextCategories}
                 onDismiss={() => setCategoryScreenOpened(false)}
                 onAddItem={() => setCategoryEditorOpened(true)}
                 onSelectItem={onCategoryItemSelected}/>
