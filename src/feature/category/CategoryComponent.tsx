@@ -54,7 +54,13 @@ const CategoryComponent = (props: CategoryComponentPropsType) => {
             onClose={() => props.onDismiss() }>
             <DialogTitle>{ t("categories") }</DialogTitle>
             <DialogContent dividers={true}>
-                <CategoryList categories={props.categories} onItemSelect={props.onSelectItem}/>
+                <CategoryList 
+                    hasPrevious={props.hasPrevious}
+                    hasNext={props.hasNext}
+                    onPreviousBatch={props.onPreviousBatch}
+                    onNextBatch={props.onNextBatch}
+                    categories={props.categories} 
+                    onItemSelect={props.onSelectItem}/>
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.onAddItem()}>{ t("add") }</Button>
@@ -91,21 +97,49 @@ const EmptyStateComponent = () => {
 
 type CategoryListPropsType = {
     categories: Category[],
+    hasPrevious: boolean,
+    hasNext: boolean,
+    onPreviousBatch: () => void,
+    onNextBatch: () => void
     onItemSelect?: (category: Category) => void,
 }
 
 const CategoryList = (props: CategoryListPropsType) => {
     const classes = useStyles();
+    const { t } = useTranslation();
 
     return (
         <React.Fragment>
             { props.categories.length > 0 
-            ?   <List className={classes.root}>{
-                    props.categories.map((category: Category) => {
-                        return <CategoryItem key={category.categoryId} category={category} onItemSelect={props.onItemSelect}/>
-                    })
-                }</List>
+            ?   <React.Fragment>
+                    <List className={classes.root}>{
+                        props.categories.map((category: Category) => {
+                            return <CategoryItem key={category.categoryId} category={category} onItemSelect={props.onItemSelect}/>
+                        })
+                    }</List>
+                    <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
+                        <Grid item>
+                            <Button 
+                                variant="outlined" 
+                                color="primary" 
+                                disabled={props.hasPrevious}
+                                onClick={props.onPreviousBatch}>
+                                    { t("previous") }
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button 
+                                variant="outlined" 
+                                color="primary" 
+                                disabled={props.hasNext}
+                                onClick={props.onNextBatch}>
+                                    { t("next") }
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </React.Fragment>
             : <EmptyStateComponent/>
+
         }
         </React.Fragment>
     )

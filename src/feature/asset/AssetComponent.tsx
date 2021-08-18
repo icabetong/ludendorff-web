@@ -78,12 +78,12 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             field: Asset.FIELD_CATEGORY, headerName: 
             t("category"), 
             flex: 0.5,
-            valueGetter: (params: GridValueGetterParams) => Asset.from(params.row).category?.categoryName },
+            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).getLocalizedCategory())},
         { 
             field: Asset.FIELD_DATE_CREATED, 
             headerName: t("date_created"), 
             flex: 0.5, 
-            valueGetter: (params: GridValueGetterParams) => Asset.from(params.row).formatDate() },
+            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).formatDate()) },
         { 
             field: Asset.FIELD_STATUS, 
             headerName: t("status"), 
@@ -266,7 +266,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                             color="primary" 
                             disabled={atAssetStart}
                             onClick={getPreviousAssets}>
-                                Previous
+                                { t("previous") }
                         </Button>
                     </Grid>
                     <Grid item>
@@ -275,7 +275,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                             color="primary" 
                             disabled={atAssetEnd}
                             onClick={getNextAssets}>
-                                Next
+                                { t("next") }
                         </Button>
                     </Grid>
                 </Grid>

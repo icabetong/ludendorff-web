@@ -23,9 +23,13 @@ export class Asset {
         return AssetCore.from(this)
     }
 
-    formatDate(): string | undefined {
+    formatDate(): string {
         const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' } as const;
-        return this.dateCreated?.toDate().toLocaleDateString(['en-PH'], options);
+        return this.dateCreated !== undefined ? this.dateCreated?.toDate().toLocaleDateString(['en-PH'], options) : "unknown" ;
+    }
+
+    getLocalizedCategory(): string {
+        return this.category?.categoryName !== undefined ? this.category?.categoryName : "unknown"
     }
 
     getLocalizedStatus(): string {
