@@ -30,7 +30,7 @@ export const SettingsComponent = (props: SettingsComponentPropsType) => {
     const classes = useStyles();
 
     const onTriggerThemeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        theme.setTheme(event.target.checked);
+        theme.setTheme(event.target.checked ? 'dark' : 'light');
     }
 
     return (
@@ -43,7 +43,7 @@ export const SettingsComponent = (props: SettingsComponentPropsType) => {
                     <ListItemSecondaryAction>
                         <Switch
                             edge="end"
-                            checked={theme.darkThemeEnabled}
+                            checked={theme.theme === 'dark'}
                             onChange={onTriggerThemeChanged}/>
                     </ListItemSecondaryAction>
                 </ListItem>

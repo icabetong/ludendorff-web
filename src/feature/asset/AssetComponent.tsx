@@ -1,6 +1,5 @@
 import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
-import clsx from "clsx";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -36,12 +35,7 @@ const useStyles = makeStyles((theme) => ({
     icon: {
         width: '1em',
         height: '1em',
-    },
-    actionButtonIcon: {
         color: theme.palette.primary.contrastText
-    },
-    overflowButtonIcon: {
-        color: theme.palette.text.primary
     },
     overflowButton: {
         marginLeft: '0.6em'
@@ -228,7 +222,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
                 buttonText={ t("add") }
-                buttonIcon={<PlusIcon className={clsx(classes.icon, classes.actionButtonIcon)}/>}
+                buttonIcon={<PlusIcon className={classes.icon}/>}
                 buttonOnClick={() => setEditorOpened(true) }
                 menuItems={[
                     <MenuItem key={0} onClick={() => setCategoryScreenOpened(true)}>{ t("categories") }</MenuItem>

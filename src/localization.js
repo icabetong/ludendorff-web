@@ -13,6 +13,7 @@ const resources = {
             users: "Users",
             assignments: "Assignments",
             categories: "Categories",
+            departments: "Departments",
             settings: "Settings",
             signout: "Sign-out",
             continue: "Continue",

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Router, Route, Switch } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
+import useLocalStorage from "../../shared/persistence";
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
@@ -101,23 +102,23 @@ const darkTheme = createTheme({
 })
 
 type ThemeContextType = {
-    darkThemeEnabled: boolean,
+    theme: string,
     setTheme: Function
 }
 
 export const ThemeContext = React.createContext<ThemeContextType>({
-    darkThemeEnabled: false,
+    theme: 'dark',
     setTheme: () => {}
 });
 
 export const CoreComponent = () => {
-    const [isThemeDark, setDarkTheme] = useState<boolean>(false);
+    const [theme, setTheme] = useLocalStorage("preference:theme", 'dark');
     
     return (
         <div>
-            <ThemeContext.Provider value={{darkThemeEnabled: isThemeDark, setTheme: setDarkTheme}}>
+            <ThemeContext.Provider value={{theme, setTheme}}>
                 {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
-                <ThemeProvider theme={isThemeDark ? {...darkTheme} : {...lightTheme}}>
+                <ThemeProvider theme={theme === 'dark' ? {...darkTheme} : {...lightTheme}}>
                     <CssBaseline/>                    
                         <Router history={history}>
                             <Switch>
