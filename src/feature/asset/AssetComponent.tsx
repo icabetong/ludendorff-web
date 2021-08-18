@@ -94,6 +94,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 setAssets(asset);
 
                 let docs = documents;
+                console.log(docs);
                 docs[page + 1] = data[data.length - 1];
                 setDocuments([...docs]);
             });
@@ -106,9 +107,10 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 data.forEach((snapshot: DocumentSnapshot) => {
                     asset.push(Asset.from(snapshot.data()))
                 })
+                console.log(asset.length);
                 setNextAssets(asset);
             })
-    }, [page])
+    }, [page, documents])
 
     const [isEditorOpened, setEditorOpened] = useState<boolean>(false);
     const [editorAssetId, setEditorAssetId] = useState<string>('');
