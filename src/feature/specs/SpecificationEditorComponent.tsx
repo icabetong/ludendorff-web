@@ -15,23 +15,23 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-type SpecificationEditorComponentPropsType = {
+type SpecEditorComponentPropsType = {
     isOpen: boolean,
-    onSubmit: (specification: [string, string], isUpdate: boolean) => void,
+    onSubmit: (spec: [string, string], exists: boolean) => void,
     onCancel: () => void,
-    specificationKey: string,
-    specificationValue: string
-    onSpecificationKeyChanged: (key: string) => void,
-    onSpecificationValueChanged: (value: string) => void,
+    specKey: string,
+    specValue: string
+    onSpecKeyChanged: (key: string) => void,
+    onSpecValueChanged: (value: string) => void,
 }
 
-const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsType) => {
+const SpecificationEditorComponent = (props: SpecEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const isInUpdateMode = Boolean(props.specificationKey);
+    const isInUpdateMode = Boolean(props.specKey);
 
     const onPreSubmit = () => {
-        let specification: [string, string] = [props.specificationKey, props.specificationValue];
+        let specification: [string, string] = [props.specKey, props.specValue];
         props.onSubmit(specification, isInUpdateMode);
     }
 
@@ -54,19 +54,19 @@ const SpecificationEditorComponent = (props: SpecificationEditorComponentPropsTy
                         id="editor-specification-key"
                         type="text"
                         label={ t("specification_key") }
-                        value={props.specificationKey}
+                        value={props.specKey}
                         variant="outlined"
                         size="small"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecificationKeyChanged(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecKeyChanged(e.target.value)}
                         className={classes.textField}/>
                     <TextField
                         id="editor-specification-value"
                         type="text"
                         label={ t("specification_value") }
-                        value={props.specificationValue}
+                        value={props.specValue}
                         variant="outlined"
                         size="small"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecificationValueChanged(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onSpecValueChanged(e.target.value)}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>

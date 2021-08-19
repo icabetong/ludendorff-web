@@ -96,7 +96,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     destination={props.currentDestination}
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
-                    itemKey={0}
+                    itemKey={1}
                     navigation={{icon: <LogoutIcon className={classes.icon}/>, title: t("signout")}}
                     isActive={false}
                     action={() => confirmSignOut()}/>

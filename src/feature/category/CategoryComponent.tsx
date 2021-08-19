@@ -5,7 +5,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -19,6 +18,7 @@ import TagIcon from "@heroicons/react/outline/TagIcon";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 import PaginationController from "../../components/PaginationController";
+import { EmptyStateComponent } from "../state/EmptyStateComponent";
 import { Category } from "./Category";
 
 const useStyles = makeStyles(() => ({
@@ -82,30 +82,6 @@ const CategoryComponent = (props: CategoryComponentPropsType) => {
     )
 }
 
-const EmptyStateComponent = () => {
-    const classes = useStyles();
-    const { t } = useTranslation();
-
-    return (
-        <Grid 
-            container 
-            direction="column" 
-            alignItems="center" 
-            justifyContent="center" 
-            className={classes.root}>
-            <Grid item>
-                <TagIcon className={classes.icon}/>
-            </Grid>
-            <Grid item>
-                <Typography variant="h6">{ t("empty_category") }</Typography>    
-            </Grid>
-            <Grid item>
-                <Typography variant="subtitle1">{ t("empty_category_summary") }</Typography>
-            </Grid>
-        </Grid>
-    )
-}
-
 type CategoryListPropsType = {
     categories: Category[],
     hasPrevious: boolean,
@@ -118,6 +94,7 @@ type CategoryListPropsType = {
 
 const CategoryList = (props: CategoryListPropsType) => {
     const classes = useStyles();
+    const { t } = useTranslation();
 
     return (
         <React.Fragment>
@@ -140,7 +117,10 @@ const CategoryList = (props: CategoryListPropsType) => {
                             getNext={props.onNextBatch}/>
                     }
                 </React.Fragment>
-            : <EmptyStateComponent/>
+            : <EmptyStateComponent
+                icon={<TagIcon className={classes.icon}/>}
+                title={t("empty_category")}
+                subtitle={t("empty_category_summary")}/>
 
         }
         </React.Fragment>
