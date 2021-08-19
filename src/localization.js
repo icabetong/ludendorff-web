@@ -45,6 +45,7 @@ const resources = {
             status_under_maintenance: "Under Maintenance",
             status_retired: "Retired",
             asset_name: "Asset Name",
+            count: "Count: {{count}}",
             asset_create: "Create Asset",
             asset_update: "Edit Asset",
             category_create: "Create Category",

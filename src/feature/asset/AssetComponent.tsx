@@ -189,6 +189,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [isCategoryEditorOpened, setCategoryEditorOpened] = useState<boolean>(false);
     const [editorCategoryId, setEditorCategoryId] = useState<string>('');
     const [editorCategoryName, setEditorCategoryName] = useState<string>('');
+    const [editorCategoryCount, setEditorCategoryCount] = useState<number>(0);
 
     useEffect(() => {
         if (!isCategoryEditorOpened){
@@ -196,6 +197,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             setTimeout(() => {
                 setEditorCategoryId('');
                 setEditorCategoryName('');
+                setEditorCategoryCount(0);
             }, 500);
         }
     }, [isCategoryEditorOpened]);
@@ -207,7 +209,14 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         if (isNew) {
             CategoryRepository.create(category)
                 .then(() => {
-                    setCategoryScreenOpened(false);
+                    setCategoryEditorOpened(false);
+                }).catch((error) => {
+                    console.log(error);
+                })
+        } else {
+            CategoryRepository.update(category)
+                .then(() => {
+                    setCategoryEditorOpened(false);
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -279,6 +288,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 onSubmit={onCategoryEditorCommit}
                 categoryId={editorCategoryId}
                 categoryName={editorCategoryName}
+                categoryCount={editorCategoryCount}
                 onCategoryNameChanged={setEditorCategoryName}/>
 
             {/* Asset Editor Screen */}

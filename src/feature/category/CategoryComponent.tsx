@@ -139,14 +139,21 @@ type CategoryItemPropsType = {
 }
 
 const CategoryItem = (props: CategoryItemPropsType) => {
+    const { t } = useTranslation(); 
+
     return (
         <ListItem
+            dense
             button
             key={props.category.categoryId}
             onClick={() => props.onItemSelect && props.onItemSelect(props.category)}>
-                <ListItemText primary={
-                    <Typography variant="body1">{props.category.categoryName}</Typography>
-                }/>
+                <ListItemText 
+                    primary={
+                        <Typography variant="body2">{props.category.categoryName}</Typography>
+                    }
+                    secondary={
+                        <Typography variant="caption">{ t("count", { count: props.category.count }) }</Typography>
+                    }/>
         </ListItem>
     )
 }

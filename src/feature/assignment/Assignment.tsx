@@ -32,6 +32,17 @@ export class Assignment {
 
     static COLLECTION = "assignments"
     static FIELD_ID = "assignmentId"
+    static FIELD_ASSET = "asset"
+    static FIELD_ASSET_ID = `${Assignment.FIELD_ASSET}.assetId`;
+    static FIELD_ASSET_NAME = `${Assignment.FIELD_ASSET}.assetName`;
+    static FIELD_CATEGORY = `${Assignment.FIELD_ASSET}.category`
+    static FIELD_CATEGORY_ID = `${Assignment.FIELD_ASSET}.category.categoryId`;
+    static FIELD_USER = "user"
+    static FIELD_USER_ID = `${Assignment.FIELD_USER}.${User.FIELD_USER_ID}`;
+    static FIELD_DATE_ASSIGNED = "dateAssigned";
+    static FIELD_DATE_RETURNED = "dateReturned";
+    static FIELD_LOCATION = "location";
+    static FIELD_REMARKS = "remarks";
 }
 
 export class AssignmentRepository {

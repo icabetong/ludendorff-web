@@ -1,5 +1,6 @@
 import { firestore } from "../../index";
 import { Asset } from "../asset/Asset";
+import { Assignment } from "../assignment/Assignment";
 import { newId } from "../../shared/utils";
 
 export class Category {
@@ -58,18 +59,26 @@ export class CategoryRepository {
         batch.set(firestore.collection(Category.COLLECTION)
             .doc(category.categoryId), {...category})
 
-        let task = await firestore.collection(Asset.COLLECTION)
+        let assetTask = await firestore.collection(Asset.COLLECTION)
             .where(Asset.FIELD_CATEGORY_ID, "==", category.categoryId)
             .get()
-        task.docs.forEach(doc => {
+        assetTask.docs.forEach(doc => {
             batch.update(doc.ref, Asset.FIELD_CATEGORY, category.minimize())
+        })
+
+        let assignmentTask = await firestore.collection(Assignment.COLLECTION)
+            .where(Assignment.FIELD_CATEGORY_ID, "==", category.categoryId)
+            .get()
+
+        assignmentTask.docs.forEach(doc => {
+            batch.update(doc.ref, Assignment.FIELD_CATEGORY, category.minimize())
         })
 
         return batch.commit()
     }
 
     static async remove(category: Category): Promise<void> {
-        return firestore.collection(Category.COLLECTION)
+        return await firestore.collection(Category.COLLECTION)
             .doc(category.categoryId)
             .delete()
     }

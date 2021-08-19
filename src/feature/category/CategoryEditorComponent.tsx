@@ -23,17 +23,19 @@ type CategoryEditorComponentPropsType = {
     onCancel: () => void,
     categoryId: string,
     categoryName: string,
+    categoryCount: number,
     onCategoryNameChanged: (name: string) => void
 }
 
 const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const isInUpdateMode = Boolean(props.categoryId && props.categoryName);
+    const isInUpdateMode = Boolean(props.categoryId);
 
     const onPreSubmit = () => {
-        let category = new Category(props.categoryId);
+        let category = new Category(isInUpdateMode ? props.categoryId : undefined);
         category.categoryName = props.categoryName;
+        category.count = props.categoryCount;
 
         props.onSubmit(category, !isInUpdateMode);
     }
