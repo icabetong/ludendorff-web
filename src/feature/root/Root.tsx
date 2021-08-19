@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh'
     },
     drawer: {
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             width: drawerWidth,
             flexShrink: 0,
         }
@@ -109,7 +109,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     return (
         <div className={classes.root}>
             <nav className={classes.drawer}>
-                <Hidden smUp implementation="css">
+                <Hidden mdUp implementation="css">
                     <Drawer 
                         variant="temporary"
                         anchor={theme.direction === "rtl" ? 'right' : 'left' }
@@ -124,7 +124,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                         {drawerItems}
                     </Drawer>
                 </Hidden>
-                <Hidden xsDown implementation="css">
+                <Hidden smDown implementation="css">
                     <Drawer 
                         className={classes.drawer}
                         variant="permanent"

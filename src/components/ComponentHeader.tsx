@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     toolbar: theme.mixins.toolbar,
     navigationButton: {
         marginRight: theme.spacing(2),
-        [theme.breakpoints.up('sm')]: {
+        [theme.breakpoints.up('md')]: {
             display: 'none'
         },
     },
@@ -68,12 +68,12 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                     aria-label={ t("show_drawer") }>
                         <MenuIcon className={classes.icon}/>
                 </IconButton>
-                <Hidden only="xs">
+                <Hidden xsDown>
                     <Typography variant="h5" className={classes.title} noWrap>
                         {props.title}
                     </Typography>
                 </Hidden>
-                <Hidden only={['sm', 'md', 'lg', 'xl']}>
+                <Hidden smUp>
                     <Typography variant="h6" noWrap>
                         {props.title}
                     </Typography>
