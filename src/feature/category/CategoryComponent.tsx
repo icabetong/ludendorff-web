@@ -12,8 +12,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+
 import TagIcon from "@heroicons/react/outline/TagIcon";
 
+import PaginationController from "../../components/PaginationController";
 import { Category } from "./Category";
 
 const useStyles = makeStyles(() => ({
@@ -106,7 +108,6 @@ type CategoryListPropsType = {
 
 const CategoryList = (props: CategoryListPropsType) => {
     const classes = useStyles();
-    const { t } = useTranslation();
 
     return (
         <React.Fragment>
@@ -117,26 +118,13 @@ const CategoryList = (props: CategoryListPropsType) => {
                             return <CategoryItem key={category.categoryId} category={category} onItemSelect={props.onItemSelect}/>
                         })
                     }</List>
-                    <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
-                        <Grid item>
-                            <Button 
-                                variant="outlined" 
-                                color="primary" 
-                                disabled={props.hasPrevious}
-                                onClick={props.onPreviousBatch}>
-                                    { t("previous") }
-                            </Button>
-                        </Grid>
-                        <Grid item>
-                            <Button 
-                                variant="outlined" 
-                                color="primary" 
-                                disabled={props.hasNext}
-                                onClick={props.onNextBatch}>
-                                    { t("next") }
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    { !props.hasNext && !props.hasPrevious &&
+                        <PaginationController
+                            hasPrevious={props.hasPrevious}
+                            hasNext={props.hasNext}
+                            getPrevious={props.onPreviousBatch}
+                            getNext={props.onNextBatch}/>
+                    }
                 </React.Fragment>
             : <EmptyStateComponent/>
 

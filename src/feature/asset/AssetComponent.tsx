@@ -1,9 +1,6 @@
 import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -15,6 +12,7 @@ import { firestore } from "../../index";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
+import PaginationController from "../../components/PaginationController";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, Status } from "./Asset";
@@ -252,28 +250,14 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                     })    
                 }</List>
             </Hidden>
-            <Container>
-                <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
-                    <Grid item>
-                        <Button 
-                            variant="outlined" 
-                            color="primary" 
-                            disabled={atAssetStart}
-                            onClick={getPreviousAssets}>
-                                { t("previous") }
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button 
-                            variant="outlined" 
-                            color="primary" 
-                            disabled={atAssetEnd}
-                            onClick={getNextAssets}>
-                                { t("next") }
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Container>
+            {
+                !atAssetStart && !atAssetEnd &&
+                <PaginationController
+                    hasPrevious={atAssetStart}
+                    hasNext={atAssetEnd}
+                    getPrevious={getPreviousAssets}
+                    getNext={getNextAssets}/>
+            }
             
             {/* Category Screen */}
             <CategoryComponent
