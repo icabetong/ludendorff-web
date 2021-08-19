@@ -80,7 +80,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                             <div className={classes.container}>
                                 {
                                     error != null && 
-                                    <Typography variant="body2" color="error">
+                                    <Typography variant="body2" color="error" noWrap>
                                         {error.message}
                                     </Typography>
                                 }
