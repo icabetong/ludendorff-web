@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { SnackbarProvider } from "notistack";
 
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
 
@@ -157,9 +158,17 @@ const RootComponent = () => {
     } else if (authState instanceof AuthFetched) {
         if (authState.user != null) {
             return (
-                <RootContainerComponent 
-                    onNavigate={onNavigate} 
-                    currentDestination={destination}/>
+                <SnackbarProvider 
+                    maxSnack={3}
+                    autoHideDuration={3000}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right'
+                    }}>
+                    <RootContainerComponent 
+                        onNavigate={onNavigate} 
+                        currentDestination={destination}/>
+                </SnackbarProvider>
             )
         } else return <Redirect to="/auth"/>
     } else return <Redirect to="/error"/>

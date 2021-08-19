@@ -7,7 +7,7 @@ import ListItem from "@material-ui/core/ListItem";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
-import { firestore } from "../../index";
+import { useSnackbar } from "notistack";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
@@ -18,6 +18,7 @@ import { ComponentHeader } from "../../components/ComponentHeader";
 import { Asset, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
+import { firestore } from "../../index";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
 const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
@@ -62,6 +63,7 @@ type AssetComponentPropsType = {
 const AssetComponent = (props: AssetComponentPropsType) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
         { field: Asset.FIELD_ASSET_ID, headerName: t("id"), hide: true },
@@ -186,6 +188,10 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         setCategoryEditorOpened(true);
     }
 
+    const onCategoryItemRemoved = (category: Category) => {
+
+    }
+
     const [isCategoryEditorOpened, setCategoryEditorOpened] = useState<boolean>(false);
     const [editorCategoryId, setEditorCategoryId] = useState<string>('');
     const [editorCategoryName, setEditorCategoryName] = useState<string>('');
@@ -210,6 +216,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             CategoryRepository.create(category)
                 .then(() => {
                     setCategoryEditorOpened(false);
+
+                    enqueueSnackbar(t("feedback_category_created"));
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -217,6 +225,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             CategoryRepository.update(category)
                 .then(() => {
                     setCategoryEditorOpened(false);
+
+                    enqueueSnackbar(t("feedback_category_updated"));
                 }).catch((error) => {
                     console.log(error);
                 })
@@ -279,7 +289,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 onNextBatch={getNextCategories}
                 onDismiss={() => setCategoryScreenOpened(false)}
                 onAddItem={() => setCategoryEditorOpened(true)}
-                onSelectItem={onCategoryItemSelected}/>
+                onSelectItem={onCategoryItemSelected}
+                onDeleteItem={onCategoryItemRemoved}/>
 
             {/* Category Editor Screen */}
             <CategoryEditorComponent
