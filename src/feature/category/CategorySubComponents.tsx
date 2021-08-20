@@ -6,9 +6,13 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import { Category } from "./Category";
+
 type CategoryDeleteConfirmComponentPropsType = {
     isOpen: boolean,
-    onDismiss: () => void
+    onDismiss: () => void,
+    onConfirm: (category: Category | null) => void,
+    category: Category | null
 }
 
 export const CategoryDeleteConfirmComponent = (props: CategoryDeleteConfirmComponentPropsType) => {
@@ -34,7 +38,7 @@ export const CategoryDeleteConfirmComponent = (props: CategoryDeleteConfirmCompo
                 </Button>
                 <Button
                     color="primary"
-                    >
+                    onClick={() => props.onConfirm(props.category)}>
                         { t("delete") }
                 </Button>
             </DialogActions>

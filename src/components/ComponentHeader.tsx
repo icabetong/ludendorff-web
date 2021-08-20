@@ -69,12 +69,12 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         <MenuIcon className={classes.icon}/>
                 </IconButton>
                 <Hidden xsDown>
-                    <Typography variant="h5" className={classes.title} noWrap>
+                    <Typography variant="h5" className={classes.title}>
                         {props.title}
                     </Typography>
                 </Hidden>
                 <Hidden smUp>
-                    <Typography variant="h6" noWrap>
+                    <Typography variant="h6">
                         {props.title}
                     </Typography>
                 </Hidden>

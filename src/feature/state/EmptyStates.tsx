@@ -14,7 +14,7 @@ type EmptyStateComponentPropsType = {
     subtitle: string
 }
 
-export const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
+const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
     const classes = useStyles();
 
     return (
@@ -36,3 +36,5 @@ export const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
         </Grid>
     )
 }
+
+export default EmptyStateComponent;

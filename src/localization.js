@@ -63,10 +63,13 @@ const resources = {
             confirm_signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
             confirm_category_remove: "Remove category?",
             confirm_category_remove_summary: "Do you want to remove this category? This action cannot be undone.",
+            empty_asset: "No Assets Added",
+            empty_asset_summary: "There are no assets available.",
             empty_category: "No Categories Added",
             empty_category_summary: "There are no categories available that can be used to organize the assets.",
             feedback_category_created: "Category created successfully",
             feedback_category_updated: "Category updated successfully",
+            feedback_category_removed: "Category removed successfully"
         }
     }
 }

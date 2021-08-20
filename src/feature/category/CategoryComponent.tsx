@@ -17,9 +17,9 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import TagIcon from "@heroicons/react/outline/TagIcon";
 import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
-import PaginationController from "../../components/PaginationController";
-import { EmptyStateComponent } from "../state/EmptyStateComponent";
 import { Category } from "./Category";
+import EmptyStateComponent from "../state/EmptyStates";
+import PaginationController from "../../components/PaginationController";
 
 const useStyles = makeStyles(() => ({
     root: {

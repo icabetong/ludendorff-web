@@ -9,6 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { Category } from "./Category";
+import React from "react";
 
 const useStyles = makeStyles(() => ({
     textField: {
@@ -21,23 +22,30 @@ type CategoryEditorComponentPropsType = {
     editorOpened: boolean,
     onSubmit: (category: Category, isNew: boolean) => void,
     onCancel: () => void,
-    categoryId: string,
-    categoryName: string,
-    categoryCount: number,
-    onCategoryNameChanged: (name: string) => void
+    category: Category | null,
+    onCategoryChanged: (category: Category) => void
 }
 
 const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const isInUpdateMode = Boolean(props.categoryId);
+    const isInUpdateMode = Boolean(props.category);
 
     const onPreSubmit = () => {
-        let category = new Category(isInUpdateMode ? props.categoryId : undefined);
-        category.categoryName = props.categoryName;
-        category.count = props.categoryCount;
+        let category = new Category(isInUpdateMode ? props.category?.categoryId : undefined);
+        category.categoryName = props.category?.categoryName;
+        category.count = props.category?.count !== undefined ? props.category?.count : 0;
 
         props.onSubmit(category, !isInUpdateMode);
+    }
+
+    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let category = props.category;
+        if (category) {
+            category.categoryName = event.target.value;
+
+            props.onCategoryChanged(category);
+        }
     }
 
     return (
@@ -54,8 +62,8 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                         id="editor-category-name"
                         type="text"
                         label={ t("category_name") }
-                        value={props.categoryName}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onCategoryNameChanged(event.target.value)}
+                        value={props.category?.categoryName}
+                        onChange={onNameChanged}
                         variant="outlined"
                         size="small"
                         className={classes.textField}/>

@@ -4,22 +4,29 @@ import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
+import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
+import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
+import TagIcon from "@heroicons/react/outline/TagIcon";
 
 import { CategoryDeleteConfirmComponent } from "../category/CategorySubComponents";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import { ListItemContent } from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
+import EmptyStateComponent from "../state/EmptyStates";
+
+import { firestore } from "../../index";
 import { Asset, Status } from "./Asset";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
-import { firestore } from "../../index";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
 const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
@@ -30,7 +37,7 @@ const SpecificationEditorComponent = lazy(() => import("../specs/SpecificationEd
 const useStyles = makeStyles((theme) => ({
     root: {
         height: '100%',
-        width: '100%'
+        width: '100%',
     },
     icon: {
         width: '1em',
@@ -39,6 +46,15 @@ const useStyles = makeStyles((theme) => ({
     },
     overflowButton: {
         marginLeft: '0.6em'
+    },
+    menuIcon: {
+        width: '1.8em',
+        height: '1.8em'
+    },
+    dataIcon: {
+        width: '4em',
+        height: '4em',
+        color: theme.palette.text.primary
     },
     wrapper: {
         height: '80%',
@@ -54,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     },
     textField: {
         width: '100%'
-    }
+    },
 }));
 
 type AssetComponentPropsType = {
@@ -186,34 +202,42 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [isCategoryEditorOpen, setCategoryEditorOpen] = useState<boolean>(false);
     const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState<boolean>(false);
 
-    const [_categoryId, setCategoryId] = useState<string>('');
-    const [_categoryName, setCategoryName] = useState<string>('');
-    const [_categoryCount, setCategoryCount] = useState<number>(0);
+    const [_category, setCategory] = useState<Category | null>(null);
 
     useEffect(() => {
         if (!isCategoryEditorOpen){
             // used in UI glitch
             setTimeout(() => {
-                setCategoryId('');
-                setCategoryName('');
-                setCategoryCount(0);
-            }, 500);
+                setCategory(null);
+            }, 100);
         }
     }, [isCategoryEditorOpen]);
     
     const onCategoryItemSelected = (category: Category) => {
-        setCategoryId(category.categoryId);
-        setCategoryName(category.categoryName !== undefined ? category.categoryName : 'undefined');
-
+        setCategory(category);
         setCategoryEditorOpen(true);
     }
 
     const onCategoryItemRemoved = (category: Category) => {
+        setCategory(category);
         setCategoryDeleteOpened(true);
     }
 
+    const onCategoryItemRemoveConfirmed = (category: Category | null) => {
+        if (category !== null) {
+            CategoryRepository.remove(category)
+                .then(() => {
+                    setCategoryDeleteOpened(false);
+
+                    enqueueSnackbar(t("feedback_category_removed"));
+                }).catch((error) => {
+                    console.log(error); 
+                })
+        }
+    }
+
     const onCategoryEditorCommit = (category: Category, isNew: boolean) => {
-        if (_categoryName === '')
+        if (_category?.categoryName === '')
             return;
 
         if (isNew) {
@@ -222,8 +246,6 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                     setCategoryEditorOpen(false);
 
                     enqueueSnackbar(t("feedback_category_created"));
-                }).catch((error) => {
-                    console.log(error);
                 })
         } else {
             CategoryRepository.update(category)
@@ -231,8 +253,6 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                     setCategoryEditorOpen(false);
 
                     enqueueSnackbar(t("feedback_category_updated"));
-                }).catch((error) => {
-                    console.log(error);
                 })
         }
     }
@@ -246,12 +266,18 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 buttonIcon={<PlusIcon className={classes.icon}/>}
                 buttonOnClick={() => setEditorOpen(true) }
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("categories") }</MenuItem>
+                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>
+                        <ListItemIcon><TagIcon className={classes.menuIcon}/></ListItemIcon>
+                        <Typography variant="inherit">{ t("categories") }</Typography>
+                    </MenuItem>
                 ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
                     <DataGrid
-                        components={{LoadingOverlay: GridLinearProgress}}
+                        components={{
+                            LoadingOverlay: GridLinearProgress,
+                            NoRowsOverlay: EmptyStateOverlay
+                        }}
                         rows={assets}
                         columns={columns}
                         pageSize={15}
@@ -263,11 +289,20 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 </div>
             </Hidden>
             <Hidden smUp>
-                <List>{
-                    assets.map((asset: Asset) => {
-                        return <AssetListItem asset={asset} onClick={onAssetSelected}/>
-                    })    
-                }</List>
+                { isAssetsLoading && <LinearProgress/> }
+                { !isAssetsLoading && assets.length < 1 &&
+                    <AssetEmptyStateComponent/>
+                }
+                { !isAssetsLoading &&
+                    <List>{
+                        assets.map((asset: Asset) => {
+                            return <AssetListItem 
+                                        key={asset.assetId}
+                                        asset={asset} 
+                                        onClick={onAssetSelected}/>
+                        })    
+                    }</List>
+                }
             </Hidden>
             {
                 !atAssetStart && !atAssetEnd &&
@@ -331,14 +366,14 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 editorOpened={isCategoryEditorOpen}
                 onCancel={() => setCategoryEditorOpen(false)}
                 onSubmit={onCategoryEditorCommit}
-                categoryId={_categoryId}
-                categoryName={_categoryName}
-                categoryCount={_categoryCount}
-                onCategoryNameChanged={setCategoryName}/>
+                category={_category}
+                onCategoryChanged={setCategory}/>
 
             <CategoryDeleteConfirmComponent
                 isOpen={isCategoryDeleteOpened}
-                onDismiss={() => setCategoryDeleteOpened(false)} />
+                onDismiss={() => setCategoryDeleteOpened(false)}
+                onConfirm={onCategoryItemRemoveConfirmed}
+                category={_category} />
 
         </Box>
     )
@@ -358,6 +393,26 @@ const AssetListItem = (props: AssetListItemPropsType) => {
             <ListItemContent title={props.asset.assetName} summary={props.asset.category?.categoryName}/>
         </ListItem>
     );
+}
+
+const EmptyStateOverlay = () => {
+    return (
+        <GridOverlay>
+            <AssetEmptyStateComponent />
+        </GridOverlay>
+    )
+}
+
+const AssetEmptyStateComponent = () => {
+    const classes = useStyles();
+    const { t } = useTranslation();
+    
+    return (
+        <EmptyStateComponent
+            icon={<DesktopComputerIcon className={classes.dataIcon}/>}
+            title={ t("empty_asset") }
+            subtitle={ t("empty_asset_summary")} />
+    )
 }
 
 export default AssetComponent;
