@@ -16,7 +16,7 @@ export class User {
         this.userId = userId
     }
 
-    hasPermission(permission: number): Boolean {
+    hasPermission(permission: number): boolean {
         return (this.permissions & permission) === permission
     }
 
@@ -67,6 +67,7 @@ export class UserCore {
 }
 
 export class UserRepository {
+
     static async fetch(): Promise<User[]> {
         let users: User[] = []
 

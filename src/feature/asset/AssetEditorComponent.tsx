@@ -25,7 +25,7 @@ import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import { Asset, Status } from "./Asset";
 import { Category, CategoryCore } from "../category/Category";
-import { ListItemContent } from "../../components/ListItemContent";
+import ListItemContent from "../../components/ListItemContent";
 
 const useStyles = makeStyles((theme) => ({
     textField: {

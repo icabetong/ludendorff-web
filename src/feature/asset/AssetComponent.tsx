@@ -16,7 +16,7 @@ import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import { CategoryDeleteDialog } from "../category/CategorySubComponents";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
-import { ListItemContent } from "../../components/ListItemContent";
+import ListItemContent from "../../components/ListItemContent";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
@@ -79,8 +79,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         { field: Asset.FIELD_ASSET_ID, headerName: t("id"), hide: true },
         { field: Asset.FIELD_ASSET_NAME, headerName: t("name"), flex: 1 },
         { 
-            field: Asset.FIELD_CATEGORY, headerName: 
-            t("category"), 
+            field: Asset.FIELD_CATEGORY, 
+            headerName: t("category"), 
             flex: 0.5,
             valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).getLocalizedCategory())},
         { 

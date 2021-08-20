@@ -6,7 +6,7 @@ type ListItemContentPropTypes = {
     summary?: string | undefined
 }
 
-export const ListItemContent = (props: ListItemContentPropTypes) => {
+const ListItemContent = (props: ListItemContentPropTypes) => {
     return (
         <ListItemText
             primary={<Typography variant="body2">{props.title && props.title}</Typography>}
@@ -16,3 +16,5 @@ export const ListItemContent = (props: ListItemContentPropTypes) => {
             }/>
     )
 }
+
+export default ListItemContent;
