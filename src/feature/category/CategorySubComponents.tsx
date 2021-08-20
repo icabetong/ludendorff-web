@@ -15,7 +15,7 @@ type CategoryDeleteConfirmComponentPropsType = {
     category: Category | null
 }
 
-export const CategoryDeleteConfirmComponent = (props: CategoryDeleteConfirmComponentPropsType) => {
+export const CategoryDeleteDialog = (props: CategoryDeleteConfirmComponentPropsType) => {
     const { t } = useTranslation();
 
     return (

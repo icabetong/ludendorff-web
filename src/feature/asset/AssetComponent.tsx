@@ -4,19 +4,16 @@ import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import TagIcon from "@heroicons/react/outline/TagIcon";
 
-import { CategoryDeleteConfirmComponent } from "../category/CategorySubComponents";
+import { CategoryDeleteDialog } from "../category/CategorySubComponents";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import { ListItemContent } from "../../components/ListItemContent";
@@ -46,10 +43,6 @@ const useStyles = makeStyles((theme) => ({
     },
     overflowButton: {
         marginLeft: '0.6em'
-    },
-    menuIcon: {
-        width: '1.8em',
-        height: '1.8em'
     },
     dataIcon: {
         width: '4em',
@@ -266,10 +259,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 buttonIcon={<PlusIcon className={classes.icon}/>}
                 buttonOnClick={() => setEditorOpen(true) }
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>
-                        <ListItemIcon><TagIcon className={classes.menuIcon}/></ListItemIcon>
-                        <Typography variant="inherit">{ t("categories") }</Typography>
-                    </MenuItem>
+                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("categories") }</MenuItem>
                 ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
@@ -369,7 +359,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 category={_category}
                 onCategoryChanged={setCategory}/>
 
-            <CategoryDeleteConfirmComponent
+            <CategoryDeleteDialog
                 isOpen={isCategoryDeleteOpened}
                 onDismiss={() => setCategoryDeleteOpened(false)}
                 onConfirm={onCategoryItemRemoveConfirmed}
