@@ -11,8 +11,8 @@ import { Category } from "./Category";
 type CategoryDeleteConfirmComponentPropsType = {
     isOpen: boolean,
     onDismiss: () => void,
-    onConfirm: (category: Category | null) => void,
-    category: Category | null
+    onConfirm: (category: Category | undefined) => void,
+    category?: Category
 }
 
 export const CategoryDeleteDialog = (props: CategoryDeleteConfirmComponentPropsType) => {

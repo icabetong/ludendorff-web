@@ -15,6 +15,7 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 import { ComponentHeader } from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import ListItemContent from "../../components/ListItemContent";
+import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
@@ -71,6 +72,10 @@ const UserComponent = (props: UserComponentPropsType) => {
             .orderBy(User.FIELD_LAST_NAME, "asc"), { limit: 15 }
     )
 
+    const onUserSelected = (user: User) => {
+
+    }
+
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -104,7 +109,25 @@ const UserComponent = (props: UserComponentPropsType) => {
                 { !isUsersLoading && users.length < 1 &&
                     <UserEmptyStateComponent/>
                 }
+                { !isUsersLoading &&
+                    <List>{
+                        users.map((user: User) => {
+                            return <UserListItem
+                                        key={user.userId}
+                                        user={user}
+                                        onClick={onUserSelected}/>
+                        })
+                    }</List>
+                }
             </Hidden>
+            {
+                !atUserStart && !atUserEnd &&
+                <PaginationController
+                    hasPrevious={atUserStart}
+                    hasNext={atUserEnd}
+                    getPrevious={getPreviousUsers}
+                    getNext={getNextUsers}/>
+            }
         </Box>
     )
 }

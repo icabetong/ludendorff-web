@@ -70,6 +70,12 @@ const resources = {
             empty_asset_summary: "There are no assets available.",
             empty_category: "No Categories Added",
             empty_category_summary: "There are no categories available that can be used to organize the assets.",
+            empty_user: "No Users Added",
+            empty_user_summary: "There are no users available.",
+            empty_department: "No Departments Added",
+            empty_department_summary: "There are no departments available that can be used to assign the users from.",
+            empty_assignment: "No Assignments Available",
+            empty_assignment_summary: "There are currently no records of assigned assets to the users.",
             feedback_category_created: "Category created successfully",
             feedback_category_updated: "Category updated successfully",
             feedback_category_removed: "Category removed successfully"

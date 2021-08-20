@@ -41,21 +41,19 @@ const useStyles = makeStyles((theme) => ({
 
 type AssetEditorComponentPropsType = {
     isOpen: boolean,
+    id: string,
+    name: string,
+    status: Status,
+    category?: Category,
+    specs: Map<string, string>,
+    categories: Category[],
     onCancel: () => void,
     onSubmit: (asset: Asset) => void,
     onViewQrCode: () => void,
     onAddSpecification: () => void,
     onSelectSpecification: (specification: [string, string]) => void,
-    categories: Category[],
-    assetId: string,
-    assetName: string,
-    assetStatus: Status,
-    category: CategoryCore | null,
-    specifications: Map<string, string>,
     onNameChanged: (name: string) => void,
     onStatusChanged: (status: Status) => void,
-    onCategoryChanged: (category: Category) => void,
-    onSpecificationsChanged: (specifications: Map<string, string>) => void
 }
 
 const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
@@ -64,15 +62,28 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
-    const isInUpdateMode = Boolean(props.assetId);
+    const isUpdate = props.id !== '';
 
     const [categoryMenuOpened, setCategoryMenuOpened] = useState<boolean>(false);
 
-    const triggerCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.onNameChanged(event.target.value);
+    }
+
+    const onStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.onStatusChanged(event.target.value as Status);
+    }
+
+    const onCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let index = parseInt(event.target.value);
+        console.log(index);
         if (index < props.categories.length) {
             console.log(props.categories[index]);
         }
+    }
+
+    const onSpecificationChanged = (specifications: Map<String, String>) => {
+        
     }
 
     const onPreSubmit = () => {
@@ -88,7 +99,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
             onClose={() => props.onCancel() }>
 
             <DialogTitle>{ 
-            isInUpdateMode 
+            isUpdate 
             ? t("asset_create") 
             : t("asset_update")
             }</DialogTitle>
@@ -101,11 +112,11 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         id="editor-asset-name"
                         type="text"
                         label={ t("asset_name") }
-                        value={props.assetName}
+                        value={props.name}
                         variant="outlined"
                         size="small"
                         className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onNameChanged(e.target.value)}/>
+                        onChange={onNameChanged}/>
 
                     <FormControl component="fieldset" className={classes.textField}>
                         <FormLabel component="legend">
@@ -114,12 +125,12 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         <RadioGroup 
                             aria-label={ t("status") } 
                             name="editor-status" 
-                            value={props.assetStatus} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.onStatusChanged(e.target.value as Status)}>
-                            <FormControlLabel value={Status.OPERATIONAL} control={<Radio/>} label={ t("status_operational") } />
-                            <FormControlLabel value={Status.IDLE} control={<Radio/>} label={ t("status_idle") }/>
-                            <FormControlLabel value={Status.UNDER_MAINTENANCE} control={<Radio/>} label={ t("status_under_maintenance") } />
-                            <FormControlLabel value={Status.RETIRED} control={<Radio/>} label={ t("status_retired") } />
+                            value={props.status} 
+                            onChange={onStatusChanged}>
+                            <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status_operational") } />
+                            <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status_idle") }/>
+                            <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status_under_maintenance") } />
+                            <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status_retired") } />
                         </RadioGroup>
                     </FormControl>
 
@@ -130,7 +141,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         onClose={() => setCategoryMenuOpened(false)}
                         options={props.categories}
                         loading={props.categories.length === 0}
-                        value={props.category}
+                        value={props.category && props.category}
                         getOptionSelected={(option, value) => option.categoryName === value.categoryName}
                         getOptionLabel={(option) => option.categoryName !== undefined ? option.categoryName : '' }
                         renderInput={(params: AutocompleteRenderInputParams) => (
@@ -140,7 +151,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                                 variant="outlined"
                                 size="small"
                                 className={classes.textField}
-                                onChange={triggerCategoryChanged}
+                                onChange={onCategoryChanged}
                                 InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (
@@ -157,7 +168,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         <Typography variant="body2">{ t("specification") }</Typography>
                     </FormLabel>
                     <List>
-                        <SpecificationListItems specifications={props.specifications} onItemSelected={props.onSelectSpecification}/>
+                        <SpecificationListItems specifications={props.specs} onItemSelected={props.onSelectSpecification}/>
                         <ListItem
                             button
                             onClick={() => props.onAddSpecification()}
@@ -170,7 +181,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onViewQrCode() }>{ t("view_qr_code")}</Button>
+                <Button color="primary" onClick={() => props.onViewQrCode() } disabled={props.id === undefined}>{ t("view_qr_code")}</Button>
                 <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onCancel() }>{ t("cancel") }</Button>
                 <Button color="primary" onClick={() => onPreSubmit() }>{ t("save") }</Button>
@@ -181,14 +192,14 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
 }
 
 type SpecificationListItemsPropsType = {
-    specifications: Map<string, string>,
+    specifications?: Map<string, string>,
     onItemSelected: (specs: [string, string]) => void
 }
 
 const SpecificationListItems = (props: SpecificationListItemsPropsType) => {
     return (
         <React.Fragment>{ 
-            Array.from(props.specifications.entries()).map((entry) => {
+            props.specifications && Array.from(props.specifications.entries()).map((entry) => {
                 return (
                     <ListItem
                         button

@@ -116,38 +116,34 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [_assetId, setAssetId] = useState<string>('');
     const [_assetName, setAssetName] = useState<string>('');
     const [_assetStatus, setAssetStatus] = useState<Status>(Status.IDLE);
-    const [_assetCategory, setAssetCategory] = useState<CategoryCore | null>(null);
-    const [_assetSpecs, setAssetSpecs] = useState<Map<string, string>>(new Map<string, string>());
+    const [_assetSpecs, setAssetSpecs] = useState<Map<string, string>>(new Map());
 
-    const [_specKey, setSpecKey] = useState<string>('');
-    const [_specValue, setSpecValue] = useState<string>('');
+    const [_specification, setSpecification] = useState<[string, string]>(['', '']);
 
     useEffect(() => {
         if (!isEditorOpen) {
             setTimeout(() => {
+                setAssetId('');
                 setAssetName('');
                 setAssetStatus(Status.IDLE);
-                setAssetCategory(null);
                 setAssetSpecs(new Map<string, string>());
-            }, 500);
+            }, 100);
         }
     }, [isEditorOpen]);
 
     useEffect(() => {
         if (!isSpecsEditorOpen) {
             setTimeout(() => {
-                setSpecKey('');
-                setSpecValue('');
-            }, 500);
+                setSpecification(['', '']);
+            }, 100);
         }
     }, [isSpecsEditorOpen]);
 
     const onAssetSelected = (asset: Asset) => {
         setAssetId(asset.assetId);
-        setAssetName(asset.assetName !== undefined ? asset.assetName : '');
-        setAssetStatus(asset.status !== undefined ? asset.status : Status.IDLE);
-        setAssetCategory(asset.category !== undefined ? asset.category : null);
-        setAssetSpecs(asset.specifications !== undefined ? asset.specifications : new Map<string, string>());
+        setAssetName(asset.assetName === undefined ? _assetName : asset.assetName);
+        setAssetStatus(asset.status === undefined ? _assetStatus : asset.status);
+        setAssetSpecs(asset.specifications === undefined ? _assetSpecs : asset.specifications);
         setEditorOpen(true);
     }
 
@@ -156,25 +152,15 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     }
 
     const onSpecificationItemSelected = (spec: [string, string]) => {
-        setSpecKey(spec[0]);
-        setSpecValue(spec[1]);
+        setSpecification(spec);
         setSpecsEditorOpen(true);
     }
 
-    const onSpecificationEditorCommit = (spec: [string, string], exists: boolean) => {
-        if (!exists) {
-            let specs = _assetSpecs;
-            specs.set(spec[0], spec[1]);
-            
-            setAssetSpecs(specs);
-        } else {
-            let specifications = _assetSpecs;
-            // check if the key in the map exists
-            if (spec[0] in specifications) {
-                specifications.set(spec[0], spec[1]);
-                setAssetSpecs(new Map<string, string>(specifications));
-            }
-        }
+    const onSpecificationEditorCommit = (spec: [string, string]) => {
+        let specifications = _assetSpecs;
+        specifications.set(spec[0], spec[1]);
+        setAssetSpecs(specifications);
+
         setSpecsEditorOpen(false);
     }
 
@@ -195,13 +181,13 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [isCategoryEditorOpen, setCategoryEditorOpen] = useState<boolean>(false);
     const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState<boolean>(false);
 
-    const [_category, setCategory] = useState<Category | null>(null);
+    const [_category, setCategory] = useState<Category | undefined>(undefined);
 
     useEffect(() => {
         if (!isCategoryEditorOpen){
             // used in UI glitch
             setTimeout(() => {
-                setCategory(null);
+                setCategory(undefined);
             }, 100);
         }
     }, [isCategoryEditorOpen]);
@@ -216,8 +202,8 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         setCategoryDeleteOpened(true);
     }
 
-    const onCategoryItemRemoveConfirmed = (category: Category | null) => {
-        if (category !== null) {
+    const onCategoryItemRemoveConfirmed = (category: Category | undefined) => {
+        if (category !== undefined) {
             CategoryRepository.remove(category)
                 .then(() => {
                     setCategoryDeleteOpened(false);
@@ -274,7 +260,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                         loading={isAssetsLoading}
                         paginationMode="server"
                         getRowId={(r) => r.assetId}
-                        onRowClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
+                        onRowDoubleClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
                         hideFooter/>
                 </div>
             </Hidden>
@@ -306,31 +292,26 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             {/* Asset Editor Screen */}
             <AssetEditorComponent
                 isOpen={isEditorOpen}
+                id={_assetId}
+                name={_assetName}
+                status={_assetStatus}
+                specs={_assetSpecs}
+                categories={categories}
                 onCancel={() => setEditorOpen(false)}
                 onSubmit={() => onAssetEditorCommit()}
                 onViewQrCode={() => setQrCodeOpen(true)}
                 onAddSpecification={() => setSpecsEditorOpen(true)}
                 onSelectSpecification={onSpecificationItemSelected}
-                categories={categories}
-                assetId={_assetId}
-                assetName={_assetName}
-                assetStatus={_assetStatus}
-                category={_assetCategory}
-                specifications={new Map(Object.entries(_assetSpecs))}
                 onNameChanged={setAssetName}
-                onStatusChanged={setAssetStatus}
-                onCategoryChanged={setAssetCategory}
-                onSpecificationsChanged={setAssetSpecs}/>
+                onStatusChanged={setAssetStatus}/>
 
             {/* Specification Editor Screen */}
             <SpecificationEditorComponent 
                 isOpen={isSpecsEditorOpen} 
+                specification={_specification}
                 onSubmit={onSpecificationEditorCommit}
                 onCancel={() => setSpecsEditorOpen(false)}
-                specKey={_specKey} 
-                specValue={_specValue}
-                onSpecKeyChanged={setSpecKey}
-                onSpecValueChanged={setSpecValue}/>
+                onSpecificationChanged={setSpecification}/>
 
             <QrCodeViewComponent
                 assetId={_assetId}

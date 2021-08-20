@@ -22,30 +22,31 @@ type CategoryEditorComponentPropsType = {
     editorOpened: boolean,
     onSubmit: (category: Category, isNew: boolean) => void,
     onCancel: () => void,
-    category: Category | null,
+    category?: Category,
     onCategoryChanged: (category: Category) => void
 }
 
 const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const isInUpdateMode = Boolean(props.category);
+    const isUpdate = props.category !== undefined;
 
     const onPreSubmit = () => {
-        let category = new Category(isInUpdateMode ? props.category?.categoryId : undefined);
+        let category = new Category(isUpdate ? props.category?.categoryId : undefined);
         category.categoryName = props.category?.categoryName;
         category.count = props.category?.count !== undefined ? props.category?.count : 0;
 
-        props.onSubmit(category, !isInUpdateMode);
+        props.onSubmit(category, !isUpdate);
     }
 
     const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let category = props.category;
-        if (category) {
-            category.categoryName = event.target.value;
+        if (category === undefined) 
+            category = new Category();
+        else category = new Category(props.category?.categoryId);
 
-            props.onCategoryChanged(category);
-        }
+        category.categoryName = event.target.value;
+        props.onCategoryChanged(category);
     }
 
     return (
@@ -54,7 +55,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
             maxWidth="xs"
             open={props.editorOpened}
             onClose={() => props.onCancel() }>
-            <DialogTitle>{ t(isInUpdateMode ? "category_update" : "category_create") }</DialogTitle>
+            <DialogTitle>{ t(isUpdate ? "category_update" : "category_create") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
                     <TextField
