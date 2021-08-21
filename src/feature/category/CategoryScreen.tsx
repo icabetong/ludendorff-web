@@ -33,7 +33,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
         <Dialog
             fullScreen={isMobile}
             fullWidth={true}
-            maxWidth="sm"
+            maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onDismiss() }>
             <DialogTitle>{ t("categories") }</DialogTitle>

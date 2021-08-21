@@ -2,8 +2,6 @@ import { useEffect, useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
@@ -15,12 +13,12 @@ import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
-import ListItemContent from "../../components/ListItemContent";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
 import { Asset, Status } from "./Asset";
+import AssetList from "./AssetList";
 import { Category, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
 
@@ -274,19 +272,11 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 </div>
             </Hidden>
             <Hidden smUp>
-                { isAssetsLoading && <LinearProgress/> }
-                { !isAssetsLoading && assets.length < 1 &&
-                    <AssetEmptyStateComponent/>
-                }
-                { !isAssetsLoading &&
-                    <List>{
-                        assets.map((asset: Asset) => {
-                            return <AssetListItem 
-                                        key={asset.assetId}
-                                        asset={asset} 
-                                        onClick={onAssetSelected}/>
-                        })    
-                    }</List>
+                { !isAssetsLoading 
+                    ? assets.length < 1 
+                        ? <AssetEmptyStateComponent/>
+                        : <AssetList assets={assets} onItemSelect={onAssetSelected}/>
+                    : <LinearProgress/>
                 }
             </Hidden>
             {
@@ -372,22 +362,6 @@ const AssetComponent = (props: AssetComponentPropsType) => {
 
         </Box>
     )
-}
-
-type AssetListItemPropsType = {
-    asset: Asset,
-    onClick: (asset: Asset) => void,
-}
-
-const AssetListItem = (props: AssetListItemPropsType) => {
-    return (
-        <ListItem 
-            button 
-            key={props.asset.assetId}
-            onClick={() => props.onClick(props.asset)}>
-            <ListItemContent title={props.asset.assetName} summary={props.asset.category?.categoryName}/>
-        </ListItem>
-    );
 }
 
 const EmptyStateOverlay = () => {
