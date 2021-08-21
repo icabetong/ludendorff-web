@@ -60,7 +60,6 @@ const AssetEditor = (props: AssetEditorProps) => {
     const classes = useStyles();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-    const isUpdate = props.id !== '';
 
     const onPreSubmit = () => {
 
@@ -82,7 +81,7 @@ const AssetEditor = (props: AssetEditorProps) => {
             open={props.isOpen}
             onClose={() => props.onCancel() }>
 
-            <DialogTitle>{ t(isUpdate ? "asset_update" : "asset_create") }</DialogTitle>
+            <DialogTitle>{ t("asset_details") }</DialogTitle>
 
             <DialogContent dividers={true}>
                 <Container disableGutters>

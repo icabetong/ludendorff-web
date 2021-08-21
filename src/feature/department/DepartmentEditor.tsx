@@ -29,7 +29,6 @@ type DepartmentEditorProps = {
 const DepartmentEditor = (props: DepartmentEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const isUpdate = props.department !== undefined;
 
     const onPreSubmit = () => {
         
@@ -51,7 +50,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onCancel() }>
-            <DialogTitle>{ t(isUpdate ? "department_update" : "department_create") }</DialogTitle>
+            <DialogTitle>{ t("department_details") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
                     <TextField

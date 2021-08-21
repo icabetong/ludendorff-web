@@ -55,7 +55,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
             maxWidth="xs"
             open={props.editorOpened}
             onClose={() => props.onCancel() }>
-            <DialogTitle>{ t(isUpdate ? "category_update" : "category_create") }</DialogTitle>
+            <DialogTitle>{ t("category_details") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
                     <TextField
