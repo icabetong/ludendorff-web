@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -16,11 +16,10 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { TrashIcon, OfficeBuildingIcon } from "@heroicons/react/outline";
 
-import ListItemContent from "../../components/ListItemContent";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
-import { Department, DepartmentRepository } from "./Department";
+import { Department } from "./Department";
 
 const useStyles = makeStyles(() => ({
     root: {

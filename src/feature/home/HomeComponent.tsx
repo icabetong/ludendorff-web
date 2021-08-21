@@ -1,5 +1,5 @@
 import { Box } from "@material-ui/core";
-import { ComponentHeader } from "../../components/ComponentHeader";
+import ComponentHeader from "../../components/ComponentHeader";
 
 type HomeComponentPropsType = {
     onDrawerToggle: () => void

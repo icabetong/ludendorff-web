@@ -17,19 +17,22 @@ import { CategoryDeleteDialog } from "../category/CategorySubComponents";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import ListItemContent from "../../components/ListItemContent";
-import { ComponentHeader } from "../../components/ComponentHeader";
+import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
 import { Asset, Status } from "./Asset";
-import { Category, CategoryCore, CategoryRepository } from "../category/Category";
+import { Category, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
 
 const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
-const CategoryComponent = lazy(() => import("../category/CategoryComponent"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
-const CategoryEditorComponent = lazy(() => import("../category/CategoryEditorComponent"));
 const SpecificationEditorComponent = lazy(() => import("../specs/SpecificationEditorComponent"));
+
+const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
+const CategoryPicker = lazy(() => import("../category/CategoryPicker"));
+const CategoryEditorComponent = lazy(() => import("../category/CategoryEditor"));
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -116,6 +119,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
     const [_assetId, setAssetId] = useState<string>('');
     const [_assetName, setAssetName] = useState<string>('');
     const [_assetStatus, setAssetStatus] = useState<Status>(Status.IDLE);
+    const [_assetCategory, setAssetCategory] = useState<Category | undefined>(undefined);
     const [_assetSpecs, setAssetSpecs] = useState<Map<string, string>>(new Map());
 
     const [_specification, setSpecification] = useState<[string, string]>(['', '']);
@@ -151,6 +155,11 @@ const AssetComponent = (props: AssetComponentPropsType) => {
         
     }
 
+    const onAssetCategorySelected = (category: Category) => {
+        setAssetCategory(category);
+        setCategoryPickerOpen(false);
+    }
+
     const onSpecificationItemSelected = (spec: [string, string]) => {
         setSpecification(spec);
         setSpecsEditorOpen(true);
@@ -177,9 +186,10 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             .orderBy(Category.FIELD_CATEGORY_NAME, "asc"), { limit: 15 }   
     )
 
-    const [isCategoryListOpen, setCategoryListOpen] = useState<boolean>(false);
-    const [isCategoryEditorOpen, setCategoryEditorOpen] = useState<boolean>(false);
-    const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState<boolean>(false);
+    const [isCategoryListOpen, setCategoryListOpen] = useState(false);
+    const [isCategoryPickerOpen, setCategoryPickerOpen] = useState(false);
+    const [isCategoryEditorOpen, setCategoryEditorOpen] = useState(false);
+    const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState(false);
 
     const [_category, setCategory] = useState<Category | undefined>(undefined);
 
@@ -295,11 +305,13 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 id={_assetId}
                 name={_assetName}
                 status={_assetStatus}
+                category={_assetCategory}
                 specs={_assetSpecs}
                 categories={categories}
                 onCancel={() => setEditorOpen(false)}
                 onSubmit={() => onAssetEditorCommit()}
                 onViewQrCode={() => setQrCodeOpen(true)}
+                onCategorySelect={() => setCategoryPickerOpen(true)}
                 onAddSpecification={() => setSpecsEditorOpen(true)}
                 onSelectSpecification={onSpecificationItemSelected}
                 onNameChanged={setAssetName}
@@ -319,17 +331,30 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 onClose={() => setQrCodeOpen(false)}/>
             
             {/* Category Screen */}
-            <CategoryComponent
+            <CategoryScreen
                 isOpen={isCategoryListOpen}
+                categories={categories}
                 isLoading={isCategoriesLoading}
                 hasPrevious={atCategoryStart}
                 hasNext={atCategoryEnd}
-                categories={categories}
                 onPreviousBatch={getPreviousCategories}
                 onNextBatch={getNextCategories}
                 onDismiss={() => setCategoryListOpen(false)}
                 onAddItem={() => setCategoryEditorOpen(true)}
                 onSelectItem={onCategoryItemSelected}
+                onDeleteItem={onCategoryItemRemoved}/>
+
+            <CategoryPicker
+                isOpen={isCategoryPickerOpen}
+                categories={categories}
+                isLoading={isCategoriesLoading}
+                hasPrevious={atCategoryStart}
+                hasNext={atCategoryEnd}
+                onPreviousBatch={getPreviousCategories}
+                onNextBatch={getNextCategories}
+                onDismiss={() => setCategoryPickerOpen(false)}
+                onAddItem={() => setCategoryEditorOpen(true)}
+                onSelectItem={onAssetCategorySelected}
                 onDeleteItem={onCategoryItemRemoved}/>
 
             {/* Category Editor Screen */}

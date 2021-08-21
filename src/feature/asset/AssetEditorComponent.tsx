@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -12,19 +11,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import AutoComplete, { AutocompleteRenderInputParams } from "@material-ui/lab/Autocomplete";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import { Asset, Status } from "./Asset";
-import { Category, CategoryCore } from "../category/Category";
+import { Category } from "../category/Category";
 import ListItemContent from "../../components/ListItemContent";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,8 +30,8 @@ const useStyles = makeStyles((theme) => ({
         margin: '0.6em 0'
     },
     icon: {
-        width: '1.4em',
-        height: '1.4em',
+        width: '1em',
+        height: '1em',
         color: theme.palette.text.primary
     }
 }));
@@ -50,6 +47,7 @@ type AssetEditorComponentPropsType = {
     onCancel: () => void,
     onSubmit: (asset: Asset) => void,
     onViewQrCode: () => void,
+    onCategorySelect: () => void,
     onAddSpecification: () => void,
     onSelectSpecification: (specification: [string, string]) => void,
     onNameChanged: (name: string) => void,
@@ -61,10 +59,11 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     const classes = useStyles();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-
     const isUpdate = props.id !== '';
 
-    const [categoryMenuOpened, setCategoryMenuOpened] = useState<boolean>(false);
+    const onPreSubmit = () => {
+
+    }
 
     const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.onNameChanged(event.target.value);
@@ -72,22 +71,6 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
 
     const onStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.onStatusChanged(event.target.value as Status);
-    }
-
-    const onCategoryChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let index = parseInt(event.target.value);
-        console.log(index);
-        if (index < props.categories.length) {
-            console.log(props.categories[index]);
-        }
-    }
-
-    const onSpecificationChanged = (specifications: Map<String, String>) => {
-        
-    }
-
-    const onPreSubmit = () => {
-
     }
 
     return (
@@ -134,48 +117,28 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         </RadioGroup>
                     </FormControl>
 
-                    <AutoComplete
-                        id="editor-category"
-                        open={categoryMenuOpened}
-                        onOpen={() => setCategoryMenuOpened(true)}
-                        onClose={() => setCategoryMenuOpened(false)}
-                        options={props.categories}
-                        loading={props.categories.length === 0}
-                        value={props.category && props.category}
-                        getOptionSelected={(option, value) => option.categoryName === value.categoryName}
-                        getOptionLabel={(option) => option.categoryName !== undefined ? option.categoryName : '' }
-                        renderInput={(params: AutocompleteRenderInputParams) => (
-                            <TextField
-                                {...params}
-                                label={ t("category") }
-                                variant="outlined"
-                                size="small"
-                                className={classes.textField}
-                                onChange={onCategoryChanged}
-                                InputProps={{
-                                    ...params.InputProps,
-                                    endAdornment: (
-                                        <React.Fragment>
-                                            {props.categories.length === 0 ? <CircularProgress color="inherit" size={20}/> : null }
-                                            {params.InputProps.endAdornment}
-                                        </React.Fragment>
-                                    )
-                                }}/>
-                        )
-                        }/>
+                    <FormControl component="fieldset" className={classes.textField}>
+                        <FormLabel component="legend">
+                            <Typography variant="body2">{ t("category") }</Typography>
+                        </FormLabel>
+                        <ListItem button onClick={() => props.onCategorySelect()}>
+                            <Typography variant="body2">
+                                { props.category?.categoryName !== undefined ? props.category?.categoryName : t("not_set")  }
+                            </Typography>
+                        </ListItem>
+                    </FormControl>
 
                     <FormLabel component="legend">
                         <Typography variant="body2">{ t("specification") }</Typography>
                     </FormLabel>
                     <List>
                         <SpecificationListItems specifications={props.specs} onItemSelected={props.onSelectSpecification}/>
-                        <ListItem
-                            button
-                            onClick={() => props.onAddSpecification()}
-                            dense={true}>
-                            <ListItemIcon><PlusIcon className={classes.icon}/></ListItemIcon>
-                            <ListItemContent title={ t("add") }></ListItemContent>
-                        </ListItem>
+                        <Button
+                            className={classes.textField}
+                            startIcon={<PlusIcon className={classes.icon}/>}
+                            onClick={() => props.onAddSpecification()}>
+                                { t("add") }
+                        </Button>
                     </List>
                 </Container>
             </DialogContent>

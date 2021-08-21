@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
 
-import FolderOpenIcon from "@heroicons/react/outline/FolderOpenIcon";
+import { FolderOpenIcon, QrcodeIcon } from "@heroicons/react/outline";
 
-import { ComponentHeader } from "../../components/ComponentHeader";
+import EmptyStateComponent from "../state/EmptyStates";
+import ComponentHeader from "../../components/ComponentHeader";
 
 type ScanComponentPropsType = {
     onDrawerToggle: () => void
@@ -15,6 +16,10 @@ const useStyles = makeStyles(() => ({
     icon: {
         width: '1em',
         height: '1em'
+    },
+    emptyIcon: {
+        width: '4em',
+        height: '4em'
     }
 }));
 
@@ -57,8 +62,12 @@ const ScanComponent = (props: ScanComponentPropsType) => {
                 buttonIcon={<FolderOpenIcon className={classes.icon}/>}
                 buttonOnClick={() => fileInput.current!!.click()}/>
             <input ref={fileInput} type="file" accept="image/*" onChange={onFileSelected} hidden/>
-            { imageBase &&
-                <img src={imageBase} ref={imageInput} alt="code" hidden={imageBase === null}/>
+            { imageBase !== ''
+                ? <img src={imageBase} ref={imageInput} alt="code" hidden={imageBase === null}/>
+                : <EmptyStateComponent
+                    icon={<QrcodeIcon className={classes.emptyIcon}/>}
+                    title={t("empty_scanned_code")}
+                    subtitle={t("empty_scanned_code_summary")}/>
             }
         </Box>
     )

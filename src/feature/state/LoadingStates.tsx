@@ -1,11 +1,11 @@
-import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         width: '100vw',
         height: '100vh'

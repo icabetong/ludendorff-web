@@ -33,7 +33,7 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
                     <Typography>{ t("view_qr_code_summary") }</Typography>
                 </DialogContentText>
                 <Grid container direction="row" alignItems="center" justifyContent="center">
-                    <QRCode value={props.assetId}/>
+                    <QRCode value={`clsu://keeper/${props.assetId}`}/>
                 </Grid>
             </DialogContent>
 

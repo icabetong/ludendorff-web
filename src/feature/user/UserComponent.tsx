@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from "react";
+import { useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
@@ -7,12 +7,12 @@ import ListItem from "@material-ui/core/ListItem";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay } from "@material-ui/data-grid";
+import { DataGrid, GridOverlay } from "@material-ui/data-grid";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
 
-import { ComponentHeader } from "../../components/ComponentHeader";
+import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import ListItemContent from "../../components/ListItemContent";
 import PaginationController from "../../components/PaginationController";
@@ -20,7 +20,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
-import { User, UserRepository } from "./User";
+import { User } from "./User";
 import { Department } from "../department/Department";
 
 const DepartmentComponent = lazy(() => import("../department/DepartmentComponent"));

@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
         height: '1em'
     },
 }));
-export const ComponentHeader = (props: ComponentHeaderPropsType) => {
+
+const ComponentHeader = (props: ComponentHeaderPropsType) => {
     const { t } = useTranslation();
     const classes = useStyles();
 
@@ -118,3 +119,5 @@ export const ComponentHeader = (props: ComponentHeaderPropsType) => {
         </AppBar>
     )
 }
+
+export default ComponentHeader;
