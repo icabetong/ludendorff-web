@@ -10,7 +10,7 @@ import { useTheme } from "@material-ui/core/styles";
 import { Department } from "./Department";
 import DepartmentList from "./DepartmentList";
 
-type DepartmentComponentPropsType = {
+type DepartmentScreenProps = {
     isOpen: boolean,
     departments: Department[],
     isLoading: boolean,
@@ -20,11 +20,11 @@ type DepartmentComponentPropsType = {
     onNext: () => void,
     onDismiss: () => void,
     onAddItem: () => void,
-    onSelectItem: () => void,
+    onSelectItem: (department: Department) => void,
     onDeleteItem: () => void
 }
 
-const DepartmentComponent = (props: DepartmentComponentPropsType) => {
+const DepartmentScreen = (props: DepartmentScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
@@ -33,7 +33,7 @@ const DepartmentComponent = (props: DepartmentComponentPropsType) => {
         <Dialog
             fullScreen={isMobile}
             fullWidth={true}
-            maxWidth="sm"
+            maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onDismiss() }>
             <DialogTitle>{ t("departments") }</DialogTitle>
@@ -56,4 +56,4 @@ const DepartmentComponent = (props: DepartmentComponentPropsType) => {
     )
 }
 
-export default DepartmentComponent;
+export default DepartmentScreen;

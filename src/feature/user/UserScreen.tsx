@@ -23,7 +23,8 @@ import { usePagination } from "../../shared/pagination";
 import { User } from "./User";
 import { Department } from "../department/Department";
 
-const DepartmentComponent = lazy(() => import("../department/DepartmentComponent"));
+const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
+const DepartmentEditor = lazy(() => import("../department/DepartmentEditor"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,7 +58,7 @@ const UserScreen = (props: UserScreenProps) => {
     const columns = [
         { field: User.FIELD_USER_ID, headerName: t("id"), hide: true },
         { field: User.FIELD_LAST_NAME, headerName: t("last_name"), flex: 1 },
-        { field: User.FIELD_FIRST_NAME, headerName: t("first_name"), flex: 1},
+        { field: User.FIELD_FIRST_NAME, headerName: t("first_name"), flex: 1 },
         { field: User.FIELD_EMAIL, headerName: t("email"), flex: 0.5 },
         { field: User.FIELD_POSITION, headerName: t("position"), flex: 0.5 }
     ]
@@ -74,6 +75,8 @@ const UserScreen = (props: UserScreenProps) => {
             .collection(User.COLLECTION)
             .orderBy(User.FIELD_LAST_NAME, "asc"), { limit: 15 }
     )
+
+    const [_userDepartment, setUserDepartment] = useState<Department | undefined>(undefined);
 
     const onUserSelected = (user: User) => {
 
@@ -94,6 +97,12 @@ const UserScreen = (props: UserScreenProps) => {
 
 
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
+    const [isDepartmentEditorOpen, setDepartmentEditorOpen] = useState(false);
+    const [_department, setDepartment] = useState<Department | undefined>(undefined);
+
+    const onDepartmentEditorCommit = (department: Department) => {
+
+    }
 
     return (
         <Box className={classes.root}>
@@ -148,7 +157,7 @@ const UserScreen = (props: UserScreenProps) => {
                     getNext={getNextUsers}/>
             }
 
-            <DepartmentComponent
+            <DepartmentScreen
                 isOpen={isDepartmentOpen}
                 departments={departments}
                 isLoading={isDepartmentsLoading}
@@ -157,9 +166,16 @@ const UserScreen = (props: UserScreenProps) => {
                 onPrevious={getPreviousDepartments}
                 onNext={getNextDepartments}
                 onDismiss={() => setDepartmentOpen(false)}
-                onAddItem={() => setDepartmentOpen(false)}
-                onSelectItem={() => setDepartmentOpen(false)}
+                onAddItem={() => setDepartmentEditorOpen(true)}
+                onSelectItem={setDepartment}
                 onDeleteItem={() => setDepartmentOpen(false)}/>
+
+            <DepartmentEditor
+                isOpen={isDepartmentEditorOpen}
+                department={_department}
+                onSubmit={onDepartmentEditorCommit}
+                onCancel={() => setDepartmentEditorOpen(false)}
+                onDepartmentChanged={setUserDepartment}/>
         </Box>
     )
 }

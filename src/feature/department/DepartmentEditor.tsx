@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-type DepartmentEditorComponentPropsType = {
+type DepartmentEditorProps = {
     isOpen: boolean,
     department?: Department,
     onSubmit: (department: Department, isNew: boolean) => void,
@@ -26,7 +26,7 @@ type DepartmentEditorComponentPropsType = {
     onDepartmentChanged: (department: Department) => void 
 }
 
-const DepartmentEditorComponent = (props: DepartmentEditorComponentPropsType) => {
+const DepartmentEditor = (props: DepartmentEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const isUpdate = props.department !== undefined;
@@ -74,4 +74,4 @@ const DepartmentEditorComponent = (props: DepartmentEditorComponentPropsType) =>
     )
 }
 
-export default DepartmentEditorComponent;
+export default DepartmentEditor;
