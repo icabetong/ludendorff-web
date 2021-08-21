@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-type SpecEditorComponentPropsType = {
+type SpecificationEditorProps = {
     isOpen: boolean,
     specification: [string, string],
     onSubmit: (spec: [string, string], exists: boolean) => void,
@@ -24,7 +24,7 @@ type SpecEditorComponentPropsType = {
     onSpecificationChanged: (spec: [string, string]) => void
 }
 
-const SpecificationEditorComponent = (props: SpecEditorComponentPropsType) => {
+const SpecificationEditor = (props: SpecificationEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const isUpdate = props.specification[0] !== '';
@@ -88,4 +88,4 @@ const SpecificationEditorComponent = (props: SpecEditorComponentPropsType) => {
     )
 }
 
-export default SpecificationEditorComponent
+export default SpecificationEditor;

@@ -24,9 +24,9 @@ import { Asset, Status } from "./Asset";
 import { Category, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
 
-const AssetEditorComponent = lazy(() => import("./AssetEditorComponent"));
+const AssetEditor = lazy(() => import("./AssetEditor"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
-const SpecificationEditorComponent = lazy(() => import("../specs/SpecificationEditorComponent"));
+const SpecificationEditor = lazy(() => import("../specs/SpecificationEditor"));
 
 const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
 const CategoryPicker = lazy(() => import("../category/CategoryPicker"));
@@ -299,7 +299,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
             }
 
             {/* Asset Editor Screen */}
-            <AssetEditorComponent
+            <AssetEditor
                 isOpen={isEditorOpen}
                 id={_assetId}
                 name={_assetName}
@@ -317,7 +317,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 onStatusChanged={setAssetStatus}/>
 
             {/* Specification Editor Screen */}
-            <SpecificationEditorComponent 
+            <SpecificationEditor
                 isOpen={isSpecsEditorOpen} 
                 specification={_specification}
                 onSubmit={onSpecificationEditorCommit}

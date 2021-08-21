@@ -20,9 +20,10 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
+import SpecificationList from "../specs/SpecificationList";
+
 import { Asset, Status } from "./Asset";
 import { Category } from "../category/Category";
-import ListItemContent from "../../components/ListItemContent";
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-type AssetEditorComponentPropsType = {
+type AssetEditorProps = {
     isOpen: boolean,
     id: string,
     name: string,
@@ -54,7 +55,7 @@ type AssetEditorComponentPropsType = {
     onStatusChanged: (status: Status) => void,
 }
 
-const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
+const AssetEditor = (props: AssetEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const theme = useTheme();
@@ -81,11 +82,7 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
             open={props.isOpen}
             onClose={() => props.onCancel() }>
 
-            <DialogTitle>{ 
-            isUpdate 
-            ? t("asset_create") 
-            : t("asset_update")
-            }</DialogTitle>
+            <DialogTitle>{ t(isUpdate ? "asset_update" : "asset_create") }</DialogTitle>
 
             <DialogContent dividers={true}>
                 <Container disableGutters>
@@ -132,7 +129,9 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
                         <Typography variant="body2">{ t("specification") }</Typography>
                     </FormLabel>
                     <List>
-                        <SpecificationListItems specifications={props.specs} onItemSelected={props.onSelectSpecification}/>
+                        <SpecificationList 
+                            specifications={props.specs} 
+                            onItemSelected={props.onSelectSpecification}/>
                         <Button
                             className={classes.textField}
                             startIcon={<PlusIcon className={classes.icon}/>}
@@ -154,29 +153,4 @@ const AssetEditorComponent = (props: AssetEditorComponentPropsType) => {
     );
 }
 
-type SpecificationListItemsPropsType = {
-    specifications?: Map<string, string>,
-    onItemSelected: (specs: [string, string]) => void
-}
-
-const SpecificationListItems = (props: SpecificationListItemsPropsType) => {
-    return (
-        <React.Fragment>{ 
-            props.specifications && Array.from(props.specifications.entries()).map((entry) => {
-                return (
-                    <ListItem
-                        button
-                        onClick={() => props.onItemSelected(entry)}
-                        key={entry[0]}
-                        dense={true}>
-                        <ListItemContent 
-                            title={entry[1]}
-                            summary={entry[0]}/>
-                    </ListItem>
-                )
-            } )
-        }</React.Fragment>
-    );
-}
-
-export default AssetEditorComponent;
+export default AssetEditor;
