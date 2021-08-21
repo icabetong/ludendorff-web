@@ -2,11 +2,11 @@ import Box from "@material-ui/core/Box";
 
 import ComponentHeader from "../../components/ComponentHeader";
 
-type AssignmentComponentPropsType = {
+type AssignmentScreenProps = {
     onDrawerToggle: () => void
 }
 
-const AssignmentComponent = (props: AssignmentComponentPropsType) => {
+const AssignmentScreen = (props: AssignmentScreenProps) => {
     return (
         <Box>
             <ComponentHeader title="Assignments" onDrawerToggle={props.onDrawerToggle}/>
@@ -14,4 +14,4 @@ const AssignmentComponent = (props: AssignmentComponentPropsType) => {
     )
 }
 
-export default AssignmentComponent;
+export default AssignmentScreen;

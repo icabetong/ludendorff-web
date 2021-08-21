@@ -8,7 +8,7 @@ import { FolderOpenIcon, QrcodeIcon } from "@heroicons/react/outline";
 import EmptyStateComponent from "../state/EmptyStates";
 import ComponentHeader from "../../components/ComponentHeader";
 
-type ScanComponentPropsType = {
+type ScanScreenProps = {
     onDrawerToggle: () => void
 }
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const ScanComponent = (props: ScanComponentPropsType) => {
+const ScanScreen = (props: ScanScreenProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
     const fileInput = useRef<HTMLInputElement | null>(null);
@@ -73,4 +73,4 @@ const ScanComponent = (props: ScanComponentPropsType) => {
     )
 }
 
-export default ScanComponent;
+export default ScanScreen;

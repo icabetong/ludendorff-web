@@ -66,11 +66,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-type AssetComponentPropsType = {
+type AssetScreenProps = {
     onDrawerToggle: () => void
 }
 
-const AssetComponent = (props: AssetComponentPropsType) => {
+const AssetScreen = (props: AssetScreenProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
@@ -384,4 +384,4 @@ const AssetEmptyStateComponent = () => {
     )
 }
 
-export default AssetComponent;
+export default AssetScreen;

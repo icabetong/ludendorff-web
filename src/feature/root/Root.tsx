@@ -13,11 +13,11 @@ import { SettingsComponent } from "../settings/SettingsComponent";
 import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
 
-const HomeComponent = lazy(() => import('../home/HomeComponent'));
-const ScanComponent = lazy(() => import('../scan/ScanComponent'));
-const AssetComponent = lazy(() => import('../asset/AssetComponent'));
-const UserComponent = lazy(() => import('../user/UserComponent'));
-const AssignmentComponent = lazy(() => import('../assignment/AssignmentComponent'));
+const HomeScreen = lazy(() => import('../home/HomeScreen'));
+const ScanScreen = lazy(() => import('../scan/ScanScreen'));
+const AssetScreen = lazy(() => import('../asset/AssetScreen'));
+const UserScreen = lazy(() => import('../user/UserScreen'));
+const AssignmentScreen = lazy(() => import('../assignment/AssignmentScreen'));
 
 type InnerComponentPropsType = {
     destination: Destination,
@@ -27,15 +27,15 @@ type InnerComponentPropsType = {
 const InnerComponent = (props: InnerComponentPropsType) => {
     switch(props.destination) {
         case Destination.HOME:
-            return <HomeComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <HomeScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SCAN:
-            return <ScanComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <ScanScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSETS:
-            return <AssetComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <AssetScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.USERS:
-            return <UserComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <UserScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSIGNMENTS:
-            return <AssignmentComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <AssignmentScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SETTINGS:
             return <SettingsComponent onDrawerToggle={props.onDrawerToggle}/>
         default:

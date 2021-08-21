@@ -1,11 +1,11 @@
 import { Box } from "@material-ui/core";
 import ComponentHeader from "../../components/ComponentHeader";
 
-type HomeComponentPropsType = {
+type HomeScreenProps = {
     onDrawerToggle: () => void
 }
 
-const HomeComponent = (props: HomeComponentPropsType) => {
+const HomeScreen = (props: HomeScreenProps) => {
     return (
         <Box>
             <ComponentHeader title="Home" onDrawerToggle={props.onDrawerToggle}/>
@@ -13,4 +13,4 @@ const HomeComponent = (props: HomeComponentPropsType) => {
     )
 }
 
-export default HomeComponent
+export default HomeScreen;

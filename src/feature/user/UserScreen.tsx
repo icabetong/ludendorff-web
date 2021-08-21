@@ -46,11 +46,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-type UserComponentPropsType = {
+type UserScreenProps = {
     onDrawerToggle: () => void
 }
 
-const UserComponent = (props: UserComponentPropsType) => {
+const UserScreen = (props: UserScreenProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
 
@@ -202,4 +202,4 @@ const UserEmptyStateComponent = () => {
     );
 }
 
-export default UserComponent
+export default UserScreen
