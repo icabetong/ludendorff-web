@@ -13,7 +13,6 @@ import { useSnackbar } from "notistack";
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
-import { CategoryDeleteDialog } from "../category/CategorySubComponents";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import ListItemContent from "../../components/ListItemContent";
@@ -32,7 +31,7 @@ const SpecificationEditorComponent = lazy(() => import("../specs/SpecificationEd
 const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
 const CategoryPicker = lazy(() => import("../category/CategoryPicker"));
 const CategoryEditorComponent = lazy(() => import("../category/CategoryEditor"));
-
+const CategoryRemove = lazy(() => import("../category/CategoryRemove"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -365,7 +364,7 @@ const AssetComponent = (props: AssetComponentPropsType) => {
                 category={_category}
                 onCategoryChanged={setCategory}/>
 
-            <CategoryDeleteDialog
+            <CategoryRemove
                 isOpen={isCategoryDeleteOpened}
                 onDismiss={() => setCategoryDeleteOpened(false)}
                 onConfirm={onCategoryItemRemoveConfirmed}

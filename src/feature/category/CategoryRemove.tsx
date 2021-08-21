@@ -8,14 +8,14 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 import { Category } from "./Category";
 
-type CategoryDeleteConfirmComponentPropsType = {
+type CategoryRemoveProps = {
     isOpen: boolean,
     onDismiss: () => void,
     onConfirm: (category: Category | undefined) => void,
     category?: Category
 }
 
-export const CategoryDeleteDialog = (props: CategoryDeleteConfirmComponentPropsType) => {
+const CategoryRemove = (props: CategoryRemoveProps) => {
     const { t } = useTranslation();
 
     return (
@@ -45,3 +45,5 @@ export const CategoryDeleteDialog = (props: CategoryDeleteConfirmComponentPropsT
         </Dialog>
     )
 }
+
+export default CategoryRemove;
