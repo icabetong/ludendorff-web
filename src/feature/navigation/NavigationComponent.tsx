@@ -48,8 +48,8 @@ type NavigationComponentPropsType =  {
 
 const useStyles = makeStyles((theme) => ({
     icon: {
-        width: '1.4em',
-        height: '1.4em',
+        width: '1.6em',
+        height: '1.6em',
         color: theme.palette.text.primary
     }
 }));

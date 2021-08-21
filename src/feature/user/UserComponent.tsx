@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
@@ -21,6 +21,9 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { User, UserRepository } from "./User";
+import { Department } from "../department/Department";
+
+const DepartmentComponent = lazy(() => import("../department/DepartmentComponent"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -76,6 +79,22 @@ const UserComponent = (props: UserComponentPropsType) => {
 
     }
 
+    const {
+        items: departments,
+        isLoading: isDepartmentsLoading,
+        isStart: atDepartmentStart,
+        isEnd: atDepartmentEnd,
+        getPrev: getPreviousDepartments,
+        getNext: getNextDepartments,
+    } = usePagination<Department>(
+        firestore
+            .collection(Department.COLLECTION)
+            .orderBy(Department.FIELD_DEPARTMENT_NAME, "asc"), { limit: 15 } 
+    );
+
+
+    const [isDepartmentOpen, setDepartmentOpen] = useState(false);
+
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -84,7 +103,7 @@ const UserComponent = (props: UserComponentPropsType) => {
                 buttonText={ t("add") }
                 buttonIcon={<PlusIcon className={classes.icon}/>}
                 menuItems={[
-                    <MenuItem key={0}>{ t("departments") }</MenuItem>
+                    <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("departments") }</MenuItem>
                 ]}
             />
             <Hidden xsDown>
@@ -128,6 +147,19 @@ const UserComponent = (props: UserComponentPropsType) => {
                     getPrevious={getPreviousUsers}
                     getNext={getNextUsers}/>
             }
+
+            <DepartmentComponent
+                isOpen={isDepartmentOpen}
+                departments={departments}
+                isLoading={isDepartmentsLoading}
+                hasPrevious={atDepartmentStart}
+                hasNext={atDepartmentEnd}
+                onPrevious={getPreviousDepartments}
+                onNext={getNextDepartments}
+                onDismiss={() => setDepartmentOpen(false)}
+                onAddItem={() => setDepartmentOpen(false)}
+                onSelectItem={() => setDepartmentOpen(false)}
+                onDeleteItem={() => setDepartmentOpen(false)}/>
         </Box>
     )
 }
