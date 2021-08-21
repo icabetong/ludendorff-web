@@ -170,14 +170,13 @@ type UserListPropsType = {
 }
 
 const UserListItem = (props: UserListPropsType) => {
-    const displayName = props.user.getDisplayName()
     return (
         <ListItem
             button
             key={props.user.userId}
             onClick={() => props.onClick(props.user)}>
             <ListItemContent
-                title={displayName}
+                title={`${props.user.firstName} ${props.user.lastName}`}
                 summary={props.user.email}/>
         </ListItem>
     );

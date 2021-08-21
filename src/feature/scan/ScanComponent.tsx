@@ -57,7 +57,9 @@ const ScanComponent = (props: ScanComponentPropsType) => {
                 buttonIcon={<FolderOpenIcon className={classes.icon}/>}
                 buttonOnClick={() => fileInput.current!!.click()}/>
             <input ref={fileInput} type="file" accept="image/*" onChange={onFileSelected} hidden/>
-            <img src={imageBase} ref={imageInput} alt="code" hidden={imageBase === null}/>
+            { imageBase &&
+                <img src={imageBase} ref={imageInput} alt="code" hidden={imageBase === null}/>
+            }
         </Box>
     )
 }

@@ -6,6 +6,9 @@ const useStyles = makeStyles(() => ({
     root: {
         minHeight: '60vh'
     },
+    text: {
+        textAlign: 'center'
+    }
 }));
 
 type EmptyStateComponentPropsType = {
@@ -28,10 +31,10 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
                 {props.icon}
             </Grid>
             <Grid item>
-                <Typography variant="h6">{ props.title }</Typography>    
+                <Typography variant="h6" className={classes.text}>{ props.title }</Typography>    
             </Grid>
             <Grid item>
-                <Typography variant="subtitle1">{ props.subtitle }</Typography>
+                <Typography variant="subtitle1" className={classes.text}>{ props.subtitle }</Typography>
             </Grid>
         </Grid>
     )
