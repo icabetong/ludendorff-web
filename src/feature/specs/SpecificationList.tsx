@@ -2,22 +2,23 @@ import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
+import { Specification } from "./Specification";
+
 type SpecificationListProps = {
-    specifications?: Map<string, string>,
+    specifications?: Specification,
     onItemSelected: (specs: [string, string]) => void
 }
 
 const SpecificationList = (props: SpecificationListProps) => {
     return (
         <React.Fragment>
-            {
-                props.specifications &&
-                Array.from(props.specifications.entries()).map((entry) => {
+            { props.specifications &&
+                Object.keys(props.specifications).map((key) => {
                     return (
                         <SpecificationItem
-                            key={entry[0]}
-                            specificationKey={entry[0]}
-                            specificationValue={entry[1]}
+                            key={key}
+                            specificationKey={key}
+                            specificationValue={props.specifications![key]}
                             onItemSelected={props.onItemSelected}/>
                     );
                 })

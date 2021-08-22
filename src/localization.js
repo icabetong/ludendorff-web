@@ -87,6 +87,9 @@ const resources = {
             empty_assignment_summary: "There are currently no records of assigned assets to the users.",
             empty_scanned_code: "Scan a QR-Code",
             empty_scanned_code_summary: "You'll need to scan a valid QR-Code first to view its embedded data.",
+            feedback_asset_created: "Asset created successfully",
+            feedback_asset_updated: "Asset updated successfully",
+            feedback_asset_removed: "Asset removed successfully",
             feedback_category_created: "Category created successfully",
             feedback_category_updated: "Category updated successfully",
             feedback_category_removed: "Category removed successfully"

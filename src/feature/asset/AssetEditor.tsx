@@ -22,8 +22,9 @@ import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import SpecificationList from "../specs/SpecificationList";
 
-import { Asset, Status } from "./Asset";
+import { Status } from "./Asset";
 import { CategoryCore } from "../category/Category";
+import { Specification } from "../specs/Specification";
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -43,9 +44,9 @@ type AssetEditorProps = {
     name: string,
     status: Status,
     category?: CategoryCore,
-    specs: Map<string, string>,
+    specs: Specification,
     onCancel: () => void,
-    onSubmit: (asset: Asset) => void,
+    onSubmit: () => void,
     onViewQrCode: () => void,
     onCategorySelect: () => void,
     onAddSpecification: () => void,
@@ -59,10 +60,6 @@ const AssetEditor = (props: AssetEditorProps) => {
     const classes = useStyles();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-
-    const onPreSubmit = () => {
-
-    }
 
     return (
         <Dialog
@@ -136,7 +133,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                 <Button color="primary" onClick={() => props.onViewQrCode() } disabled={props.id === undefined}>{ t("view_qr_code")}</Button>
                 <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onCancel() }>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit() }>{ t("save") }</Button>
+                <Button color="primary" onClick={() => props.onSubmit() }>{ t("save") }</Button>
             </DialogActions>
 
         </Dialog>

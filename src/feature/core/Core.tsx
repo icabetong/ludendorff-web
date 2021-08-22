@@ -118,7 +118,6 @@ export const ThemeContext = React.createContext<ThemeContextType>({
 
 export const CoreComponent = () => {
     const [theme, setTheme] = useLocalStorage("preference:theme", 'dark');
-    console.log(darkTheme);
     
     return (
         <div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy } from "react";
+import { useEffect, useState, useReducer, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
@@ -15,12 +15,30 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
+import { newId, formatDate } from "../../shared/utils";
 
+import firebase from "firebase/app";
 import { firestore } from "../../index";
-import { Asset, Status } from "./Asset";
+import { Asset, AssetRepository, Status, getStatusLoc } from "./Asset";
 import AssetList from "./AssetList";
 import { Category, CategoryCore, CategoryRepository } from "../category/Category";
+import { 
+    CategoryEditorActionType, 
+    categoryEditorInitialState, 
+    categoryEditorReducer } from "../category/CategoryEditorReducer";
+import { Specification } from "../specs/Specification";
 import { usePagination } from "../../shared/pagination";
+
+import {
+    assetCollection,
+    categoryCollection,
+    assetId,
+    assetName,
+    assetCategory,
+    dateCreated,
+    assetStatus,
+    categoryName
+} from "../../shared/const";
 
 const AssetEditor = lazy(() => import("./AssetEditor"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
@@ -70,29 +88,35 @@ type AssetScreenProps = {
     onDrawerToggle: () => void
 }
 
+
 const AssetScreen = (props: AssetScreenProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
-        { field: Asset.FIELD_ASSET_ID, headerName: t("id"), hide: true },
-        { field: Asset.FIELD_ASSET_NAME, headerName: t("name"), flex: 1 },
+        { field: assetId, headerName: t("id"), hide: true },
+        { field: assetName, headerName: t("name"), flex: 1 },
         { 
-            field: Asset.FIELD_CATEGORY, 
+            field: assetCategory, 
             headerName: t("category"), 
             flex: 0.5,
-            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).getLocalizedCategory())},
+            valueGetter: (params: GridValueGetterParams) => {
+                let asset = params.row as Asset;
+                return asset.category?.categoryName === undefined ? t("unknown") : asset.category?.categoryName;
+            }},
         { 
-            field: Asset.FIELD_DATE_CREATED, 
+            field: dateCreated, 
             headerName: t("date_created"), 
             flex: 0.5, 
-            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).formatDate()) },
+            valueGetter: (params: GridValueGetterParams) => 
+                t(formatDate(params.row.dateCreated)) 
+            },
         { 
-            field: Asset.FIELD_STATUS, 
+            field: assetStatus, 
             headerName: t("status"), 
             flex: 0.35, 
-            valueGetter: (params: GridValueGetterParams) => t(Asset.from(params.row).getLocalizedStatus()) }
+            valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status)) }
     ];
 
     const {
@@ -104,8 +128,8 @@ const AssetScreen = (props: AssetScreenProps) => {
         getNext: getNextAssets,
     } = usePagination<Asset>(
         firestore
-            .collection(Asset.COLLECTION)
-            .orderBy(Asset.FIELD_ASSET_NAME, "asc"), { limit: 15 }
+            .collection(assetCollection)
+            .orderBy(assetName, "asc"), { limit: 15 }
     )
 
     // AssetEditor Props
@@ -117,7 +141,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     const [_assetName, setAssetName] = useState<string>('');
     const [_assetStatus, setAssetStatus] = useState<Status>(Status.IDLE);
     const [_assetCategory, setAssetCategory] = useState<CategoryCore | undefined>(undefined);
-    const [_assetSpecs, setAssetSpecs] = useState<Map<string, string>>(new Map());
+    const [_assetSpecs, setAssetSpecs] = useState<Specification>({});
 
     const [_specification, setSpecification] = useState<[string, string]>(['', '']);
 
@@ -127,7 +151,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 setAssetId('');
                 setAssetName('');
                 setAssetStatus(Status.IDLE);
-                setAssetSpecs(new Map<string, string>());
+                setAssetSpecs({});
             }, 100);
         }
     }, [isEditorOpen]);
@@ -150,7 +174,25 @@ const AssetScreen = (props: AssetScreenProps) => {
     }
 
     const onAssetEditorCommit = () => {
-        
+        const isCreate = _assetId === '';
+        const asset: Asset = {
+            assetId: isCreate ? newId() : _assetId,
+            assetName: _assetName,
+            status: _assetStatus,
+            dateCreated: firebase.firestore.Timestamp.now(),
+            category: _assetCategory,
+            specifications: _assetSpecs
+        }   
+
+        if (isCreate) {
+            AssetRepository.create(asset)
+                .then(() => {
+                    setEditorOpen(false);
+                    enqueueSnackbar(t("feedback_asset_created"))
+                }).catch((error) => {
+                    console.log(error);
+                })
+        }
     }
 
     const onAssetCategorySelected = (category: Category) => {
@@ -165,7 +207,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const onSpecificationEditorCommit = (spec: [string, string]) => {
         let specifications = _assetSpecs;
-        specifications.set(spec[0], spec[1]);
+        specifications[spec[0]] = spec[1]
         setAssetSpecs(specifications);
 
         setSpecsEditorOpen(false);
@@ -180,33 +222,24 @@ const AssetScreen = (props: AssetScreenProps) => {
         getNext: getNextCategories
     } = usePagination<Category>(
         firestore
-            .collection(Category.COLLECTION)
-            .orderBy(Category.FIELD_CATEGORY_NAME, "asc"), { limit: 15 }   
+            .collection(categoryCollection)
+            .orderBy(categoryName, "asc"), { limit: 15 }   
     )
 
     const [isCategoryListOpen, setCategoryListOpen] = useState(false);
     const [isCategoryPickerOpen, setCategoryPickerOpen] = useState(false);
-    const [isCategoryEditorOpen, setCategoryEditorOpen] = useState(false);
     const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState(false);
 
-    const [_category, setCategory] = useState<Category | undefined>(undefined);
-
-    useEffect(() => {
-        if (!isCategoryEditorOpen){
-            // used in UI glitch
-            setTimeout(() => {
-                setCategory(undefined);
-            }, 100);
-        }
-    }, [isCategoryEditorOpen]);
+    const [categoryEditorState, categoryEditorDispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
     
     const onCategoryItemSelected = (category: Category) => {
-        setCategory(category);
-        setCategoryEditorOpen(true);
+        categoryEditorDispatch({
+            type: CategoryEditorActionType.Update,
+            value: category,
+        })
     }
 
     const onCategoryItemRemoved = (category: Category) => {
-        setCategory(category);
         setCategoryDeleteOpened(true);
     }
 
@@ -223,24 +256,22 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
     }
 
-    const onCategoryEditorCommit = (category: Category, isNew: boolean) => {
-        if (_category?.categoryName === '')
-            return;
-
-        if (isNew) {
-            CategoryRepository.create(category)
-                .then(() => {
-                    setCategoryEditorOpen(false);
-
-                    enqueueSnackbar(t("feedback_category_created"));
-                })
-        } else {
-            CategoryRepository.update(category)
-                .then(() => {
-                    setCategoryEditorOpen(false);
-
-                    enqueueSnackbar(t("feedback_category_updated"));
-                })
+    const onCategoryEditorCommit = () => {
+        let category = categoryEditorState.category;
+        if (category !== undefined) {
+            if (categoryEditorState.isCreate) {
+                CategoryRepository.create(category)
+                    .then(() => {
+                        categoryEditorDispatch({ type: CategoryEditorActionType.Dismiss })
+                        enqueueSnackbar(t("feedback_category_created"));
+                    })
+            } else {
+                CategoryRepository.update(category)
+                    .then(() => {
+                        categoryEditorDispatch({ type: CategoryEditorActionType.Dismiss })
+                        enqueueSnackbar(t("feedback_category_updated"));
+                    })
+            }
         }
     }
 
@@ -331,7 +362,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onPreviousBatch={getPreviousCategories}
                 onNextBatch={getNextCategories}
                 onDismiss={() => setCategoryListOpen(false)}
-                onAddItem={() => setCategoryEditorOpen(true)}
+                onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.Create })}
                 onSelectItem={onCategoryItemSelected}
                 onDeleteItem={onCategoryItemRemoved}/>
 
@@ -344,23 +375,28 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onPreviousBatch={getPreviousCategories}
                 onNextBatch={getNextCategories}
                 onDismiss={() => setCategoryPickerOpen(false)}
-                onAddItem={() => setCategoryEditorOpen(true)}
+                onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.Create })}
                 onSelectItem={onAssetCategorySelected}
                 onDeleteItem={onCategoryItemRemoved}/>
 
             {/* Category Editor Screen */}
             <CategoryEditorComponent
-                editorOpened={isCategoryEditorOpen}
-                onCancel={() => setCategoryEditorOpen(false)}
+                editorOpened={categoryEditorState.isOpen}
+                onCancel={() => categoryEditorDispatch({type: CategoryEditorActionType.Dismiss })}
                 onSubmit={onCategoryEditorCommit}
-                category={_category}
-                onCategoryChanged={setCategory}/>
-
-            <CategoryRemove
-                isOpen={isCategoryDeleteOpened}
-                onDismiss={() => setCategoryDeleteOpened(false)}
-                onConfirm={onCategoryItemRemoveConfirmed}
-                category={_category} />
+                categoryId={categoryEditorState.category?.categoryId === undefined ? "" : categoryEditorState.category?.categoryId}
+                categoryName={categoryEditorState.category?.categoryName === undefined ? "" : categoryEditorState.category?.categoryName}
+                count={categoryEditorState.category?.count === undefined ? 0 : categoryEditorState.category?.count}
+                onCategoryNameChanged={(name) => {
+                    let _cat = categoryEditorState.category;
+                    if (_cat === undefined)
+                        _cat = { categoryId: newId(), count: 0 }
+                    _cat!.categoryName = name;
+                    return categoryEditorDispatch({
+                        value: _cat!,
+                        type: CategoryEditorActionType.NameChanged
+                    })
+                }}/>
         </Box>
     )
 }

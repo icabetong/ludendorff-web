@@ -1,3 +1,4 @@
+import { Timestamp } from "@firebase/firestore-types";
 
 const assert = require('assert');
 
@@ -9,4 +10,9 @@ export const newId = (): string => {
     }
     assert(id.length === 20);
     return id;
+}
+
+export const formatDate = (timestamp: Timestamp | undefined) => {
+    const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' } as const;
+        return timestamp !== undefined ? timestamp?.toDate().toLocaleDateString(['en-PH'], options) : "unknown" ;
 }
