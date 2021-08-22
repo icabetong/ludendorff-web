@@ -2,26 +2,24 @@ import { useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridOverlay } from "@material-ui/data-grid";
+import { DataGrid, GridOverlay, GridRowParams } from "@material-ui/data-grid";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
-import ListItemContent from "../../components/ListItemContent";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { User } from "./User";
-import { Department } from "../department/Department";
+import UserList from "./UserList";
+import { Department, DepartmentCore } from "../department/Department";
 
 const UserEditor = lazy(() => import("./UserEditor"));
 
@@ -85,14 +83,21 @@ const UserScreen = (props: UserScreenProps) => {
     const [_userEmail, setUserEmail] = useState('');
     const [_userPermissions, setUserPermissions] = useState(0);
     const [_userPosition, setUserPosition] = useState('');
-    const [_userDepartment, setUserDepartment] = useState<Department | undefined>(undefined);
+    const [_userDepartment, setUserDepartment] = useState<DepartmentCore | undefined>(undefined);
 
     const onUserEditorCommit = (user: User) => {
 
     }
 
     const onUserSelected = (user: User) => {
-
+        setUserId(user.userId);
+        setUserLastName(user.lastName === undefined ? '' : user.lastName);
+        setUserFirstName(user.firstName === undefined ? '' : user.firstName);
+        setUserEmail(user.email === undefined ? '' : user.email);
+        setUserPermissions(user.permissions);
+        setUserPosition(user.position === undefined ? '' : user.position);
+        setUserDepartment(user.department);
+        setEditorOpen(true);
     }
 
     const {
@@ -142,24 +147,19 @@ const UserScreen = (props: UserScreenProps) => {
                         loading={isUsersLoading}
                         paginationMode="server"
                         getRowId={(r) => r.userId}
+                        onRowDoubleClick={(params: GridRowParams, e: any) =>
+                            onUserSelected(params.row as User)
+                        }
                         hideFooter/>
                         
                 </div>
             </Hidden>
             <Hidden smUp>
-                { isUsersLoading && <LinearProgress/> }
-                { !isUsersLoading && users.length < 1 &&
-                    <UserEmptyStateComponent/>
-                }
-                { !isUsersLoading &&
-                    <List>{
-                        users.map((user: User) => {
-                            return <UserListItem
-                                        key={user.userId}
-                                        user={user}
-                                        onClick={onUserSelected}/>
-                        })
-                    }</List>
+                { !isUsersLoading 
+                    ? users.length < 1
+                        ? <UserEmptyStateComponent/>
+                        : <UserList users={users} onItemSelect={onUserSelected}/>
+                    : <LinearProgress/>
                 }
             </Hidden>
             {
@@ -211,24 +211,6 @@ const UserScreen = (props: UserScreenProps) => {
     )
 }
 
-type UserListPropsType = {
-    user: User,
-    onClick: (user: User) => void
-}
-
-const UserListItem = (props: UserListPropsType) => {
-    return (
-        <ListItem
-            button
-            key={props.user.userId}
-            onClick={() => props.onClick(props.user)}>
-            <ListItemContent
-                title={`${props.user.firstName} ${props.user.lastName}`}
-                summary={props.user.email}/>
-        </ListItem>
-    );
-}
-
 const EmptyStateOverlay = () => {
     return (
         <GridOverlay>
@@ -249,4 +231,4 @@ const UserEmptyStateComponent = () => {
     );
 }
 
-export default UserScreen
+export default UserScreen;

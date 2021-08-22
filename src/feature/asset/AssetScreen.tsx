@@ -19,7 +19,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { firestore } from "../../index";
 import { Asset, Status } from "./Asset";
 import AssetList from "./AssetList";
-import { Category, CategoryRepository } from "../category/Category";
+import { Category, CategoryCore, CategoryRepository } from "../category/Category";
 import { usePagination } from "../../shared/pagination";
 
 const AssetEditor = lazy(() => import("./AssetEditor"));
@@ -116,7 +116,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     const [_assetId, setAssetId] = useState<string>('');
     const [_assetName, setAssetName] = useState<string>('');
     const [_assetStatus, setAssetStatus] = useState<Status>(Status.IDLE);
-    const [_assetCategory, setAssetCategory] = useState<Category | undefined>(undefined);
+    const [_assetCategory, setAssetCategory] = useState<CategoryCore | undefined>(undefined);
     const [_assetSpecs, setAssetSpecs] = useState<Map<string, string>>(new Map());
 
     const [_specification, setSpecification] = useState<[string, string]>(['', '']);
@@ -142,9 +142,10 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const onAssetSelected = (asset: Asset) => {
         setAssetId(asset.assetId);
-        setAssetName(asset.assetName === undefined ? _assetName : asset.assetName);
-        setAssetStatus(asset.status === undefined ? _assetStatus : asset.status);
+        setAssetName(asset.assetName === undefined ? '' : asset.assetName);
+        setAssetStatus(asset.status === undefined ? Status.IDLE : asset.status);
         setAssetSpecs(asset.specifications === undefined ? _assetSpecs : asset.specifications);
+        setAssetCategory(asset.category);
         setEditorOpen(true);
     }
 
@@ -267,7 +268,9 @@ const AssetScreen = (props: AssetScreenProps) => {
                         loading={isAssetsLoading}
                         paginationMode="server"
                         getRowId={(r) => r.assetId}
-                        onRowDoubleClick={(params: GridRowParams, e: any) => onAssetSelected(params.row as Asset)}
+                        onRowDoubleClick={(params: GridRowParams, e: any) => 
+                            onAssetSelected(params.row as Asset)
+                        }
                         hideFooter/>
                 </div>
             </Hidden>
@@ -296,7 +299,6 @@ const AssetScreen = (props: AssetScreenProps) => {
                 status={_assetStatus}
                 category={_assetCategory}
                 specs={_assetSpecs}
-                categories={categories}
                 onCancel={() => setEditorOpen(false)}
                 onSubmit={() => onAssetEditorCommit()}
                 onViewQrCode={() => setQrCodeOpen(true)}
@@ -359,7 +361,6 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onDismiss={() => setCategoryDeleteOpened(false)}
                 onConfirm={onCategoryItemRemoveConfirmed}
                 category={_category} />
-
         </Box>
     )
 }

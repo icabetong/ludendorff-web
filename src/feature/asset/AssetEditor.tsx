@@ -23,7 +23,7 @@ import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import SpecificationList from "../specs/SpecificationList";
 
 import { Asset, Status } from "./Asset";
-import { Category } from "../category/Category";
+import { CategoryCore } from "../category/Category";
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -42,9 +42,8 @@ type AssetEditorProps = {
     id: string,
     name: string,
     status: Status,
-    category?: Category,
+    category?: CategoryCore,
     specs: Map<string, string>,
-    categories: Category[],
     onCancel: () => void,
     onSubmit: (asset: Asset) => void,
     onViewQrCode: () => void,

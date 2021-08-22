@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -18,7 +18,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { User } from "./User";
-import { Department } from "../department/Department";
+import { DepartmentCore } from "../department/Department";
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -40,7 +40,7 @@ type UserEditorProps = {
     email: string,
     permissions: number,
     position: string,
-    department?: Department,
+    department?: DepartmentCore,
     onCancel: () => void,
     onSubmit: (user: User) => void,
     onLastNameChanged: (lastName: string) => void,
