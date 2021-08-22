@@ -9,19 +9,18 @@ import RootComponent from '../root/Root';
 import history from "../navigation/History";
 import { GenericErrorStateComponent } from "../state/ErrorStates";
 
+const secondaryColors = {
+    main: '#ff79c6',
+    dark: '#c94695',
+    light: '#ffacf9'
+}
+const errorColors = {
+    main: '#ff5555',
+    dark: '#c5162c',
+    light: '#ff8982'
+}
+
 const baseTheme = createTheme({
-    palette: {
-        secondary: {
-            main: '#ff5555',
-            dark: '#c5162c',
-            light: '#ff8982'
-        },
-        error: {
-            main: '#ffb86c',
-            dark: '#c9883e',
-            light: '#ffea9c'
-        }
-    },
     typography: {
         fontFamily: [
             'Inter',
@@ -74,6 +73,8 @@ const lightTheme = createTheme({
             main: '#6272a4',
             dark: '#344775'
         },
+        secondary: secondaryColors,
+        error: errorColors,
         background: {
             default: '#ffffff',
             paper: '#ffffff'
@@ -92,6 +93,8 @@ const darkTheme = createTheme({
             main: '#bd93f9',
             dark: '#8b65c6'
         },
+        secondary: secondaryColors,
+        error: errorColors,
         background: {
             default: '#1e1f29',
             paper: '#44475a'
@@ -115,6 +118,7 @@ export const ThemeContext = React.createContext<ThemeContextType>({
 
 export const CoreComponent = () => {
     const [theme, setTheme] = useLocalStorage("preference:theme", 'dark');
+    console.log(darkTheme);
     
     return (
         <div>

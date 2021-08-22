@@ -50,12 +50,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onCancel()}>
-            <DialogTitle>
-                { t(isUpdate 
-                    ? "specification_update" 
-                    : "specification_create") 
-                }
-            </DialogTitle>
+            <DialogTitle>{ t("specification_details") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
                     <TextField
