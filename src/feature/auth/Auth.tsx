@@ -8,7 +8,6 @@ import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-import { useMediaQuery, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import firebase from "firebase/app";
@@ -27,9 +26,7 @@ const useStyles = makeStyles(() => ({
 }));
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) => {
     const classes = useStyles();
-    const theme = useTheme();
     const { t } = useTranslation();
-    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -93,8 +90,6 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                     label={ t("email") }
                                     error={!!error}
                                     disabled={isAuthenticating}
-                                    variant="outlined"
-                                    size={isMobile ? 'medium' : 'small'}
                                     onChange={onEmailInputChanged}/>
                                 <br/>
                                 <TextField
@@ -104,8 +99,6 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                     label={ t("password") }
                                     error={!!error}
                                     disabled={isAuthenticating}
-                                    variant="outlined"
-                                    size={isMobile ? 'medium' : 'small'}
                                     onChange={onPasswordInputChanged}/>
                             </div>
                             <div className={classes.container}>

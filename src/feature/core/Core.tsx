@@ -37,6 +37,12 @@ const baseTheme = createTheme({
             'sans-serif'
         ].join(',')
     },
+    props: {
+        MuiTextField: {
+            variant: "outlined",
+            size: "small"
+        }
+    },
     overrides: {
         MuiTypography: {
             h6: {

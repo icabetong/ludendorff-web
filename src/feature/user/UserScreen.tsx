@@ -23,6 +23,8 @@ import { usePagination } from "../../shared/pagination";
 import { User } from "./User";
 import { Department } from "../department/Department";
 
+const UserEditor = lazy(() => import("./UserEditor"));
+
 const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
 const DepartmentEditor = lazy(() => import("../department/DepartmentEditor"));
 
@@ -76,7 +78,18 @@ const UserScreen = (props: UserScreenProps) => {
             .orderBy(User.FIELD_LAST_NAME, "asc"), { limit: 15 }
     )
 
+    const [isEditorOpen, setEditorOpen] = useState(false);
+    const [_userId, setUserId] = useState('');
+    const [_userLastName, setUserLastName] = useState('');
+    const [_userFirstName, setUserFirstName] = useState('');
+    const [_userEmail, setUserEmail] = useState('');
+    const [_userPermissions, setUserPermissions] = useState(0);
+    const [_userPosition, setUserPosition] = useState('');
     const [_userDepartment, setUserDepartment] = useState<Department | undefined>(undefined);
+
+    const onUserEditorCommit = (user: User) => {
+
+    }
 
     const onUserSelected = (user: User) => {
 
@@ -111,6 +124,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("add") }
                 buttonIcon={<PlusIcon className={classes.icon}/>}
+                buttonOnClick={() => setEditorOpen(true)}
                 menuItems={[
                     <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("departments") }</MenuItem>
                 ]}
@@ -156,6 +170,23 @@ const UserScreen = (props: UserScreenProps) => {
                     getPrevious={getPreviousUsers}
                     getNext={getNextUsers}/>
             }
+
+            <UserEditor
+                isOpen={isEditorOpen}
+                id={_userId}
+                lastName={_userLastName}
+                firstName={_userFirstName}
+                email={_userEmail}
+                permissions={_userPermissions}
+                position={_userPosition}
+                department={_userDepartment}
+                onCancel={() => setEditorOpen(false)}
+                onSubmit={onUserEditorCommit}
+                onLastNameChanged={setUserLastName}
+                onFirstNameChanged={setUserFirstName}
+                onEmailChanged={setUserEmail}
+                onPermissionsChanged={setUserPermissions}
+                onPositionChanged={setUserPosition}/>
 
             <DepartmentScreen
                 isOpen={isDepartmentOpen}

@@ -64,8 +64,6 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         type="text"
                         label={ t("specification_key") }
                         value={props.specification[0]}
-                        variant="outlined"
-                        size="small"
                         onChange={onKeyChanged}
                         className={classes.textField}/>
                     <TextField
@@ -73,8 +71,6 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         type="text"
                         label={ t("specification_value") }
                         value={props.specification[1]}
-                        variant="outlined"
-                        size="small"
                         onChange={onValueChanged}
                         className={classes.textField}/>
                 </Container>

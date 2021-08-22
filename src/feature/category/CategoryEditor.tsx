@@ -65,8 +65,6 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                         label={ t("category_name") }
                         value={props.category?.categoryName}
                         onChange={onNameChanged}
-                        variant="outlined"
-                        size="small"
                         className={classes.textField}/>
                 </Container>
             </DialogContent>

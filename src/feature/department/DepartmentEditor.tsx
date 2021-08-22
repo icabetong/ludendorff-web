@@ -60,8 +60,6 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                         label={ t("department_name") }
                         value={props.department?.name}
                         onChange={onNameChanged}
-                        variant="outlined"
-                        size="small"
                         className={classes.textField}/>
                 </Container>
             </DialogContent>

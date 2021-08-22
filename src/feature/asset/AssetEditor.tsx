@@ -65,14 +65,6 @@ const AssetEditor = (props: AssetEditorProps) => {
 
     }
 
-    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.onNameChanged(event.target.value);
-    }
-
-    const onStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.onStatusChanged(event.target.value as Status);
-    }
-
     return (
         <Dialog
             fullScreen={isMobile}
@@ -80,9 +72,7 @@ const AssetEditor = (props: AssetEditorProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onCancel() }>
-
             <DialogTitle>{ t("asset_details") }</DialogTitle>
-
             <DialogContent dividers={true}>
                 <Container disableGutters>
 
@@ -92,10 +82,10 @@ const AssetEditor = (props: AssetEditorProps) => {
                         type="text"
                         label={ t("asset_name") }
                         value={props.name}
-                        variant="outlined"
-                        size="small"
                         className={classes.textField}
-                        onChange={onNameChanged}/>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                            props.onNameChanged(e.target.value)
+                        }/>
 
                     <FormControl component="fieldset" className={classes.textField}>
                         <FormLabel component="legend">
@@ -105,7 +95,9 @@ const AssetEditor = (props: AssetEditorProps) => {
                             aria-label={ t("status") } 
                             name="editor-status" 
                             value={props.status} 
-                            onChange={onStatusChanged}>
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                props.onStatusChanged(e.target.value as Status)
+                            }>
                             <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status_operational") } />
                             <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status_idle") }/>
                             <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status_under_maintenance") } />
