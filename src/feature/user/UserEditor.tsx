@@ -11,6 +11,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
+import Grid from "@material-ui/core/Grid";
 import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -29,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
         width: '1em',
         height: '1em',
         color: theme.palette.text.primary
+    },
+    gridItem: {
+        maxWidth: '100%'
     }
 }));
 
@@ -105,121 +109,124 @@ const UserEditor = (props: UserEditorProps) => {
         <Dialog
             fullScreen={isMobile}
             fullWidth={true}
-            maxWidth="xs"
+            maxWidth={isMobile ? "xs" : "md"}
             open={props.isOpen}
             onClose={() => props.onCancel()}>
             <DialogTitle>{t("user_details")}</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
+                    <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
+                        <Grid item xs={6} className={classes.gridItem}>
+                            <TextField
+                                autoFocus
+                                id="editor-user-last-name"
+                                type="text"
+                                label={ t("last_name") }
+                                value={props.lastName}
+                                className={classes.textField}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                    props.onLastNameChanged(e.target.value)
+                                } />
 
-                    <TextField
-                        autoFocus
-                        id="editor-user-last-name"
-                        type="text"
-                        label={ t("last_name") }
-                        value={props.lastName}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onLastNameChanged(e.target.value)
-                        } />
+                            <TextField
+                                id="editor-user-first-name"
+                                type="text"
+                                label={ t("first_name") }
+                                value={props.firstName}
+                                className={classes.textField}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                    props.onFirstNameChanged(e.target.value)
+                                } />
 
-                    <TextField
-                        id="editor-user-first-name"
-                        type="text"
-                        label={ t("first_name") }
-                        value={props.firstName}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onFirstNameChanged(e.target.value)
-                        } />
+                            <TextField
+                                id="editor-user-email"
+                                type="text"
+                                label={ t("email") }
+                                value={props.email}
+                                className={classes.textField}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                    props.onEmailChanged(e.target.value)
+                                } />
 
-                    <TextField
-                        id="editor-user-email"
-                        type="text"
-                        label={ t("email") }
-                        value={props.email}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onEmailChanged(e.target.value)
-                        } />
+                            <TextField
+                                id="editor-user-position"
+                                type="text"
+                                label={ t("position") }
+                                value={props.position}
+                                className={classes.textField}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                    props.onPositionChanged(e.target.value)
+                                } />
 
-                    <FormControl component="fieldset" className={classes.textField}>
-                        <FormLabel component="legend">
-                            <Typography variant="body2">{ t("permissions") }</Typography>
-                        </FormLabel>
-                        <FormGroup>
-                            <FormControlLabel
-                                label={t("permission_read")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.READ)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-read"/>
-                                }/>
-                            <FormControlLabel
-                                label={t("permission_write")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.WRITE)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-write"/>
-                                }/>
-                            <FormControlLabel
-                                label={t("permission_delete")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.DELETE)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-delete"/>
-                                }/>
-                            <FormControlLabel
-                                label={t("permission_audit")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.AUDIT)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-audit"/>
-                                }/>
-                            <FormControlLabel
-                                label={t("permission_manage_users")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.MANAGE_USERS)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-manage-users"/>
-                                }/>
-                            <FormControlLabel
-                                label={t("permission_administrative")}
-                                control={
-                                    <Checkbox 
-                                        checked={hasPermission(Permission.ADMINISTRATIVE)} 
-                                        onChange={onPermissionsChanged}
-                                        name="editor-administrative"/>
-                                }/>
-                        </FormGroup>
-                    </FormControl>
-
-                    <TextField
-                        id="editor-user-position"
-                        type="text"
-                        label={ t("position") }
-                        value={props.position}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onPositionChanged(e.target.value)
-                        } />
-
-                    <FormControl component="fieldset" className={classes.textField}>
-                        <FormLabel component="legend">
-                            <Typography variant="body2">{ t("department") }</Typography>
-                        </FormLabel>
-                        <ListItem button>
-                            <Typography variant="body2">
-                                { props.department?.name !== undefined ? props.department?.name : t("not_set")  }
-                            </Typography>
-                        </ListItem>
-                    </FormControl>
-
+                            <FormControl component="fieldset" className={classes.textField}>
+                                <FormLabel component="legend">
+                                    <Typography variant="body2">{ t("department") }</Typography>
+                                </FormLabel>
+                                <ListItem button>
+                                    <Typography variant="body2">
+                                        { props.department?.name !== undefined ? props.department?.name : t("not_set")  }
+                                    </Typography>
+                                </ListItem>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6} className={classes.gridItem}>
+                            <FormControl component="fieldset" className={classes.textField}>
+                            <FormLabel component="legend">
+                                <Typography variant="body2">{ t("permissions") }</Typography>
+                            </FormLabel>
+                            <FormGroup>
+                                <FormControlLabel
+                                    label={t("permission_read")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.READ)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-read"/>
+                                    }/>
+                                <FormControlLabel
+                                    label={t("permission_write")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.WRITE)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-write"/>
+                                    }/>
+                                <FormControlLabel
+                                    label={t("permission_delete")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.DELETE)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-delete"/>
+                                    }/>
+                                <FormControlLabel
+                                    label={t("permission_audit")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.AUDIT)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-audit"/>
+                                    }/>
+                                <FormControlLabel
+                                    label={t("permission_manage_users")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.MANAGE_USERS)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-manage-users"/>
+                                    }/>
+                                <FormControlLabel
+                                    label={t("permission_administrative")}
+                                    control={
+                                        <Checkbox 
+                                            checked={hasPermission(Permission.ADMINISTRATIVE)} 
+                                            onChange={onPermissionsChanged}
+                                            name="editor-administrative"/>
+                                    }/>
+                            </FormGroup>
+                        </FormControl>
+                        </Grid>
+                    </Grid>
                 </Container>
             </DialogContent>
 

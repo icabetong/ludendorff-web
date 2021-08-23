@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
+import Grid from "@material-ui/core/Grid";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Radio from "@material-ui/core/Radio";
@@ -35,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
         width: '1em',
         height: '1em',
         color: theme.palette.text.primary
+    },
+    gridItem: {
+        maxWidth: '100%'
     }
 }));
 
@@ -65,67 +69,71 @@ const AssetEditor = (props: AssetEditorProps) => {
         <Dialog
             fullScreen={isMobile}
             fullWidth={true}
-            maxWidth="xs"
+            maxWidth={isMobile ? "xs" : "md" }
             open={props.isOpen}
             onClose={() => props.onCancel() }>
             <DialogTitle>{ t("asset_details") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container disableGutters>
+                    <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
+                        <Grid item xs={6} className={classes.gridItem}>
+                            <TextField
+                                autoFocus
+                                id="editor-asset-name"
+                                type="text"
+                                label={ t("asset_name") }
+                                value={props.name}
+                                className={classes.textField}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                    props.onNameChanged(e.target.value)
+                                }/>
 
-                    <TextField
-                        autoFocus
-                        id="editor-asset-name"
-                        type="text"
-                        label={ t("asset_name") }
-                        value={props.name}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onNameChanged(e.target.value)
-                        }/>
+                            <FormControl component="fieldset" className={classes.textField}>
+                                <FormLabel component="legend">
+                                    <Typography variant="body2">{ t("status") }</Typography>
+                                </FormLabel>
+                                <RadioGroup 
+                                    aria-label={ t("status") } 
+                                    name="editor-status" 
+                                    value={props.status} 
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                                        props.onStatusChanged(e.target.value as Status)
+                                    }>
+                                    <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status_operational") } />
+                                    <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status_idle") }/>
+                                    <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status_under_maintenance") } />
+                                    <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status_retired") } />
+                                </RadioGroup>
+                            </FormControl>
 
-                    <FormControl component="fieldset" className={classes.textField}>
-                        <FormLabel component="legend">
-                            <Typography variant="body2">{ t("status") }</Typography>
-                        </FormLabel>
-                        <RadioGroup 
-                            aria-label={ t("status") } 
-                            name="editor-status" 
-                            value={props.status} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                props.onStatusChanged(e.target.value as Status)
-                            }>
-                            <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status_operational") } />
-                            <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status_idle") }/>
-                            <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status_under_maintenance") } />
-                            <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status_retired") } />
-                        </RadioGroup>
-                    </FormControl>
-
-                    <FormControl component="fieldset" className={classes.textField}>
-                        <FormLabel component="legend">
-                            <Typography variant="body2">{ t("category") }</Typography>
-                        </FormLabel>
-                        <ListItem button onClick={() => props.onCategorySelect()}>
-                            <Typography variant="body2">
-                                { props.category?.categoryName !== undefined ? props.category?.categoryName : t("not_set")  }
-                            </Typography>
-                        </ListItem>
-                    </FormControl>
-
-                    <FormLabel component="legend">
-                        <Typography variant="body2">{ t("specification") }</Typography>
-                    </FormLabel>
-                    <List>
-                        <SpecificationList 
-                            specifications={props.specs} 
-                            onItemSelected={props.onSelectSpecification}/>
-                        <Button
-                            className={classes.textField}
-                            startIcon={<PlusIcon className={classes.icon}/>}
-                            onClick={() => props.onAddSpecification()}>
-                                { t("add") }
-                        </Button>
-                    </List>
+                            <FormControl component="fieldset" className={classes.textField}>
+                                <FormLabel component="legend">
+                                    <Typography variant="body2">{ t("category") }</Typography>
+                                </FormLabel>
+                                <ListItem button onClick={() => props.onCategorySelect()}>
+                                    <Typography variant="body2">
+                                        { props.category?.categoryName !== undefined ? props.category?.categoryName : t("not_set")  }
+                                    </Typography>
+                                </ListItem>
+                        </FormControl>
+                        </Grid>
+                        <Grid item xs={6} className={classes.gridItem}>
+                            <FormLabel component="legend">
+                                <Typography variant="body2">{ t("specification") }</Typography>
+                            </FormLabel>
+                            <List>
+                                <SpecificationList 
+                                    specifications={props.specs} 
+                                    onItemSelected={props.onSelectSpecification}/>
+                                <Button
+                                    className={classes.textField}
+                                    startIcon={<PlusIcon className={classes.icon}/>}
+                                    onClick={() => props.onAddSpecification()}>
+                                        { t("add") }
+                                </Button>
+                            </List>
+                        </Grid>
+                    </Grid>
                 </Container>
             </DialogContent>
 
