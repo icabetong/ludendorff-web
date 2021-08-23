@@ -2,14 +2,14 @@ import { Asset } from "./Asset";
 import { newId } from "../../shared/utils";
 
 export enum AssetEditorActionType {
-    Changed = "changed",
-    Create = "create",
-    Update = "update",
-    Dismiss = "dismiss"
+    CHANGED = "changed",
+    CREATE = "create",
+    UPDATE = "update",
+    DISMISS = "dismiss"
 }
 type AssetEditorAction = {
     type: AssetEditorActionType,
-    value?: Asset
+    payload?: Asset
 }
 type AssetEditorState = {
     asset?: Asset,
@@ -22,26 +22,26 @@ export const assetEditorInitialState: AssetEditorState = {
     isOpen: false,
 }
 export const assetEditorReducer = (state: AssetEditorState, action: AssetEditorAction) => {
-    const { type, value } = action;
+    const { type, payload } = action;
     switch(type) {
-        case AssetEditorActionType.Changed:
+        case AssetEditorActionType.CHANGED:
             return {
                 ...state,
-                asset: value
+                asset: payload
             }
-        case AssetEditorActionType.Create:
+        case AssetEditorActionType.CREATE:
             return {
-                asset: value,
+                asset: payload,
                 isCreate: true,
                 isOpen: true
             }
-        case AssetEditorActionType.Update: 
+        case AssetEditorActionType.UPDATE: 
             return {
-                asset: value,
+                asset: payload,
                 isCreate: false,
                 isOpen: true
             }
-        case AssetEditorActionType.Dismiss:
+        case AssetEditorActionType.DISMISS:
             return {
                 ...state,
                 isOpen: false,

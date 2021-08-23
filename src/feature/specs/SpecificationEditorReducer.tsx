@@ -1,8 +1,8 @@
 export enum SpecificationEditorActionType {
-    Changed = "changed",
-    Create = "create",
-    Update = "update",
-    Dismiss = "dismiss"
+    CHANGED = "changed",
+    CREATE = "create",
+    UPDATE = "update",
+    DISMISS = "dismiss"
 }
 type SpecificationEditorAction = {
     type: SpecificationEditorActionType,
@@ -23,24 +23,24 @@ export const specificationEditorInitialState: SpecificationEditorState = {
 export const specificationReducer = (state: SpecificationEditorState, action: SpecificationEditorAction): SpecificationEditorState => {
     const { type, payload } = action;
     switch(type) {
-        case SpecificationEditorActionType.Changed: 
+        case SpecificationEditorActionType.CHANGED: 
             return {
                 ...state,
                 specification: payload
             }
-        case SpecificationEditorActionType.Create:
+        case SpecificationEditorActionType.CREATE:
             return {
                 specification: payload,
                 isCreate: true,
                 isOpen: true
             }
-        case SpecificationEditorActionType.Update:
+        case SpecificationEditorActionType.UPDATE:
             return {
                 specification: payload,
                 isCreate: false,
                 isOpen: true
             }
-        case SpecificationEditorActionType.Dismiss:
+        case SpecificationEditorActionType.DISMISS:
             return {
                 ...state,
                 isOpen: false,
