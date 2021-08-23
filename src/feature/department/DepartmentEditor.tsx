@@ -6,7 +6,11 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import ListItem from "@material-ui/core/ListItem";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { UserCore } from "../user/User";
@@ -24,6 +28,7 @@ type DepartmentEditorProps = {
     manager?: UserCore
     onSubmit: () => void,
     onCancel: () => void,
+    onManagerSelect: () => void,
     onNameChanged: (name: string) => void,
 }
 
@@ -50,6 +55,16 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                             props.onNameChanged(event.target.value)
                         }}
                         className={classes.textField}/>
+                    <FormControl component="fieldset" className={classes.textField}>
+                            <FormLabel component="legend">
+                                <Typography variant="body2">{ t("manager") }</Typography>
+                            </FormLabel>
+                            <ListItem button onClick={() => props.onManagerSelect()}>
+                                <Typography variant="body2">
+                                    { props.manager?.name !== undefined ? props.manager?.name : t("not_set")  }
+                                </Typography>
+                            </ListItem>
+                        </FormControl>
                 </Container>
             </DialogContent>
             <DialogActions>

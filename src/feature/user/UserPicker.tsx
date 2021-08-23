@@ -7,24 +7,24 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 
-import { Category } from "./Category";
-import CategoryList from "./CategoryList";
+import { User } from "./User";
+import UserList from "./UserList";
 
-type CategoryPickerProps = {
+import PaginationController from "../../components/PaginationController";
+
+type UserPickerProps = {
     isOpen: boolean,
-    categories: Category[],
+    users: User[],
     isLoading: boolean,
     hasPrevious: boolean,
     hasNext: boolean,
-    onPreviousBatch: () => void,
-    onNextBatch: () => void,
+    onPrevious: () => void,
+    onNext: () => void,
     onDismiss: () => void,
-    onAddItem: () => void,
-    onSelectItem: (category: Category) => void,
-    onDeleteItem: (category: Category) => void,
+    onSelectItem: (user: User) => void,
 }
 
-const CategoryPicker = (props: CategoryPickerProps) => {
+const UserPicker = (props: UserPickerProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
@@ -35,25 +35,25 @@ const CategoryPicker = (props: CategoryPickerProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss() }>
-            <DialogTitle>{ t("category_select") }</DialogTitle>
+            onClose={() => props.onDismiss()}>
+            <DialogTitle>{ t("user_select") }</DialogTitle>
             <DialogContent dividers={true}>
-                <CategoryList 
-                    hasPrevious={props.hasPrevious}
-                    hasNext={props.hasNext}
-                    onPrevious={props.onPreviousBatch}
-                    onNext={props.onNextBatch}
-                    categories={props.categories} 
-                    onItemSelect={props.onSelectItem}
-                    onItemRemove={props.onDeleteItem}/>
+                <UserList
+                    users={props.users}
+                    onItemSelect={props.onSelectItem}/>
+                { props.users.length > 0 && 
+                    <PaginationController
+                        hasPrevious={props.hasPrevious}
+                        hasNext={props.hasNext}
+                        getPrevious={props.onPrevious}
+                        getNext={props.onNext}/>
+                }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onAddItem()}>{ t("add") }</Button>
-                <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onDismiss()}>{ t("close") }</Button>
             </DialogActions>
         </Dialog>
-    )
+    );
 }
 
-export default CategoryPicker;
+export default UserPicker;

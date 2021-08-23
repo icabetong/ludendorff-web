@@ -13,6 +13,16 @@ export const hasPermission = (user: User, permission: Permission): boolean => {
     return (user.permissions & permission) === permission;
 }
 
+export const minimize = (user: User): UserCore => {
+    return {
+        userId: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        imageUrl: user.imageUrl,
+        position: user.position
+    }
+}
+
 export type User = {
     userId: string,
     firstName?: string,

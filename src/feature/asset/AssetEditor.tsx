@@ -115,7 +115,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                         { props.category?.categoryName !== undefined ? props.category?.categoryName : t("not_set")  }
                                     </Typography>
                                 </ListItem>
-                        </FormControl>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={6} className={classes.gridItem}>
                             <FormLabel component="legend">
