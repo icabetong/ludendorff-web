@@ -92,7 +92,31 @@ const resources = {
             feedback_asset_removed: "Asset removed successfully",
             feedback_category_created: "Category created successfully",
             feedback_category_updated: "Category updated successfully",
-            feedback_category_removed: "Category removed successfully"
+            feedback_category_removed: "Category removed successfully",
+            feedback_user_created: "User created successfully",
+            feedback_user_updated: "User updated successfully",
+            feedback_user_removed: "User removed successfully",
+            feedback_department_created: "Department created successfully",
+            feedback_department_updated: "Department updated successfully",
+            feedback_department_removed: "Department removed successfully",
+            feedback_assignment_created: "Assignment created successfully",
+            feedback_assignment_updated: "Assignment updated successfully",
+            feedback_assignment_removed: "Assignment removed successfully",
+            feedback_asset_create_error: "Error creating asset",
+            feedback_asset_update_error: "Error updating asset",
+            feedback_asset_remove_error: "Error removing asset",
+            feedback_category_create_error: "Error creating category",
+            feedback_category_update_error: "Error updating category",
+            feedback_category_remove_error: "Error removing category",
+            feedback_user_create_error: "Error creating user",
+            feedback_user_update_error: "Error updating user",
+            feedback_user_remove_error: "Error removing user",
+            feedback_department_create_error: "Error creating department",
+            feedback_department_update_error: "Error updating department",
+            feedback_department_remove_error: "Error removing department",
+            feedback_assignment_create_error: "Error creating assignment",
+            feedback_assignment_update_error: "Error updating assignment",
+            feedback_assignment_remove_error: "Error removing department"
         }
     }
 }
