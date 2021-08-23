@@ -93,7 +93,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
             onClick={() => props.onItemSelect(props.department)}>
             <ListItemText
                 primary={props.department.name}
-                secondary={props.department.managerSSN?.name}/>
+                secondary={props.department.managerSNN?.name}/>
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.department)}>
                     <TrashIcon className={classes.actionIcon}/>

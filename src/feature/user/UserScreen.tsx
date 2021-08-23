@@ -1,4 +1,4 @@
-import { useState, lazy } from "react";
+import { useState, useReducer, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
@@ -17,9 +17,33 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
+import { newId } from "../../shared/utils";
 import { User } from "./User";
 import UserList from "./UserList";
-import { Department, DepartmentCore } from "../department/Department";
+import { Department } from "../department/Department";
+
+import {
+    UserEditorActionType,
+    userEditorInitialState,
+    userEditorReducer
+} from "./UserEditorReducer";
+
+import {
+    DepartmentEditorActionType,
+    departmentEditorInitialState,
+    departmentEditorReducer
+} from "../department/DepartmentEditorReducer";
+
+import {
+    userCollection,
+    departmentCollection,
+    userId,
+    firstName,
+    lastName,
+    email,
+    position,
+    departmentName
+} from "../../shared/const";
 
 const UserEditor = lazy(() => import("./UserEditor"));
 
@@ -56,11 +80,11 @@ const UserScreen = (props: UserScreenProps) => {
     const classes = useStyles();
 
     const columns = [
-        { field: User.FIELD_USER_ID, headerName: t("id"), hide: true },
-        { field: User.FIELD_LAST_NAME, headerName: t("last_name"), flex: 1 },
-        { field: User.FIELD_FIRST_NAME, headerName: t("first_name"), flex: 1 },
-        { field: User.FIELD_EMAIL, headerName: t("email"), flex: 0.5 },
-        { field: User.FIELD_POSITION, headerName: t("position"), flex: 0.5 }
+        { field: userId, headerName: t("id"), hide: true },
+        { field: lastName, headerName: t("last_name"), flex: 1 },
+        { field: firstName, headerName: t("first_name"), flex: 1 },
+        { field: email, headerName: t("email"), flex: 0.5 },
+        { field: position, headerName: t("position"), flex: 0.5 }
     ]
 
     const {
@@ -72,32 +96,21 @@ const UserScreen = (props: UserScreenProps) => {
         getNext: getNextUsers
     } = usePagination<User>(
         firestore
-            .collection(User.COLLECTION)
-            .orderBy(User.FIELD_LAST_NAME, "asc"), { limit: 15 }
+            .collection(userCollection)
+            .orderBy(lastName, "asc"), { limit: 15 }
     )
 
-    const [isEditorOpen, setEditorOpen] = useState(false);
-    const [_userId, setUserId] = useState('');
-    const [_userLastName, setUserLastName] = useState('');
-    const [_userFirstName, setUserFirstName] = useState('');
-    const [_userEmail, setUserEmail] = useState('');
-    const [_userPermissions, setUserPermissions] = useState(0);
-    const [_userPosition, setUserPosition] = useState('');
-    const [_userDepartment, setUserDepartment] = useState<DepartmentCore | undefined>(undefined);
+    const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
 
     const onUserEditorCommit = (user: User) => {
 
     }
 
     const onUserSelected = (user: User) => {
-        setUserId(user.userId);
-        setUserLastName(user.lastName === undefined ? '' : user.lastName);
-        setUserFirstName(user.firstName === undefined ? '' : user.firstName);
-        setUserEmail(user.email === undefined ? '' : user.email);
-        setUserPermissions(user.permissions);
-        setUserPosition(user.position === undefined ? '' : user.position);
-        setUserDepartment(user.department);
-        setEditorOpen(true);
+        editorDispatch({
+            type: UserEditorActionType.UPDATE,
+            payload: user
+        })
     }
 
     const {
@@ -109,16 +122,21 @@ const UserScreen = (props: UserScreenProps) => {
         getNext: getNextDepartments,
     } = usePagination<Department>(
         firestore
-            .collection(Department.COLLECTION)
-            .orderBy(Department.FIELD_DEPARTMENT_NAME, "asc"), { limit: 15 } 
+            .collection(departmentCollection)
+            .orderBy(departmentName, "asc"), { limit: 15 } 
     );
 
-
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
-    const [isDepartmentEditorOpen, setDepartmentEditorOpen] = useState(false);
-    const [_department, setDepartment] = useState<Department | undefined>(undefined);
+    const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
 
-    const onDepartmentEditorCommit = (department: Department) => {
+    const onDepartmentItemSelected = (department: Department) => {
+        departmentEditorDispatch({
+            type: DepartmentEditorActionType.UPDATE,
+            payload: department
+        })
+    }
+
+    const onDepartmentEditorCommit = () => {
 
     }
 
@@ -129,7 +147,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("add") }
                 buttonIcon={<PlusIcon className={classes.icon}/>}
-                buttonOnClick={() => setEditorOpen(true)}
+                buttonOnClick={() => editorDispatch({ type: UserEditorActionType.CREATE })}
                 menuItems={[
                     <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("departments") }</MenuItem>
                 ]}
@@ -162,8 +180,7 @@ const UserScreen = (props: UserScreenProps) => {
                     : <LinearProgress/>
                 }
             </Hidden>
-            {
-                !atUserStart && !atUserEnd &&
+            { !atUserStart && !atUserEnd &&
                 <PaginationController
                     hasPrevious={atUserStart}
                     hasNext={atUserEnd}
@@ -172,21 +189,66 @@ const UserScreen = (props: UserScreenProps) => {
             }
 
             <UserEditor
-                isOpen={isEditorOpen}
-                id={_userId}
-                lastName={_userLastName}
-                firstName={_userFirstName}
-                email={_userEmail}
-                permissions={_userPermissions}
-                position={_userPosition}
-                department={_userDepartment}
-                onCancel={() => setEditorOpen(false)}
+                isOpen={editorState.isOpen}
+                id={editorState.user?.userId}
+                lastName={editorState.user?.lastName}
+                firstName={editorState.user?.firstName}
+                email={editorState.user?.email}
+                permissions={editorState.user?.permissions === undefined ? 0 : editorState.user?.permissions}
+                position={editorState.user?.position}
+                department={editorState.user?.department}
+                onCancel={() => editorDispatch({ type: UserEditorActionType.DISMISS })}
                 onSubmit={onUserEditorCommit}
-                onLastNameChanged={setUserLastName}
-                onFirstNameChanged={setUserFirstName}
-                onEmailChanged={setUserEmail}
-                onPermissionsChanged={setUserPermissions}
-                onPositionChanged={setUserPosition}/>
+                onLastNameChanged={(lastName) => {
+                    let user = editorState.user;
+                    if (user === undefined)
+                        user = { userId: newId(), permissions: 0 }
+                    user!.lastName = lastName;
+                    return editorDispatch({
+                        type: UserEditorActionType.CHANGED,
+                        payload: user
+                    });
+                }}
+                onFirstNameChanged={(firstName) => {
+                    let user = editorState.user;
+                    if (user === undefined)
+                        user = { userId: newId(), permissions: 0 }
+                    user!.firstName = firstName;
+                    return editorDispatch({
+                        type: UserEditorActionType.CHANGED,
+                        payload: user
+                    });
+                }}
+                onEmailChanged={(email) => {
+                    let user = editorState.user;
+                    if (user === undefined)
+                        user = { userId: newId(), permissions: 0 }
+                    user!.email = email;
+                    return editorDispatch({
+                        type: UserEditorActionType.CHANGED,
+                        payload: user
+                    })
+                }}
+                onPermissionsChanged={(permissions) => {
+                    let user = editorState.user;
+                    if (user === undefined)
+                        user = { userId: newId(), permissions: 0 }
+                    user!.permissions = permissions;
+                    return editorDispatch({
+                        type: UserEditorActionType.CHANGED,
+                        payload: user
+                    })
+                }}
+                onPositionChanged={(position) => {
+                    let user = editorState.user;
+                    if (user === undefined)
+                        user = { userId: newId(), permissions: 0 }
+                    user!.position = position;
+                    return editorDispatch({
+                        type: UserEditorActionType.CHANGED,
+                        payload: user
+                    })
+                }}/>
 
             <DepartmentScreen
                 isOpen={isDepartmentOpen}
@@ -197,16 +259,29 @@ const UserScreen = (props: UserScreenProps) => {
                 onPrevious={getPreviousDepartments}
                 onNext={getNextDepartments}
                 onDismiss={() => setDepartmentOpen(false)}
-                onAddItem={() => setDepartmentEditorOpen(true)}
-                onSelectItem={setDepartment}
+                onAddItem={() => departmentEditorDispatch({
+                    type: DepartmentEditorActionType.CREATE
+                })}
+                onSelectItem={onDepartmentItemSelected}
                 onDeleteItem={() => setDepartmentOpen(false)}/>
 
             <DepartmentEditor
-                isOpen={isDepartmentEditorOpen}
-                department={_department}
+                isOpen={departmentEditorState.isOpen}
+                name={departmentEditorState.department?.name}
                 onSubmit={onDepartmentEditorCommit}
-                onCancel={() => setDepartmentEditorOpen(false)}
-                onDepartmentChanged={setUserDepartment}/>
+                onCancel={() => departmentEditorDispatch({
+                    type: DepartmentEditorActionType.DISMISS
+                })}
+                onNameChanged={(name) => {
+                    let department = departmentEditorState.department;
+                    if (department === undefined)
+                        department = { departmentId: newId(), count: 0 }
+                    department!.name = name;
+                    return departmentEditorDispatch({
+                        type: DepartmentEditorActionType.CHANGED,
+                        payload: department
+                    })
+                }}/>
         </Box>
     )
 }

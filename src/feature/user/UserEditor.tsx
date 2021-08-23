@@ -17,7 +17,7 @@ import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-import { User } from "./User";
+import { User, Permission } from "./User";
 import { DepartmentCore } from "../department/Department";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,12 +34,12 @@ const useStyles = makeStyles((theme) => ({
 
 type UserEditorProps = {
     isOpen: boolean,
-    id: string,
-    lastName: string,
-    firstName: string,
-    email: string,
+    id?: string,
+    lastName?: string,
+    firstName?: string,
+    email?: string,
     permissions: number,
-    position: string,
+    position?: string,
     department?: DepartmentCore,
     onCancel: () => void,
     onSubmit: (user: User) => void,
@@ -64,33 +64,33 @@ const UserEditor = (props: UserEditorProps) => {
         switch(event.target.name) {
             case "editor-read": 
                 if (isChecked)
-                    permissions += User.PERMISSION_READ;
-                else permissions -= User.PERMISSION_READ;
+                    permissions += Permission.READ;
+                else permissions -= Permission.READ;
                 break;
             case "editor-write":
                 if (isChecked)
-                    permissions += User.PERMISSION_WRITE;
-                else permissions -= User.PERMISSION_WRITE;
+                    permissions += Permission.WRITE;
+                else permissions -= Permission.WRITE;
                 break;
             case "editor-delete":
                 if (isChecked)
-                    permissions += User.PERMISSION_DELETE;
-                else permissions -= User.PERMISSION_DELETE;
+                    permissions += Permission.DELETE;
+                else permissions -= Permission.DELETE;
                 break;
             case "editor-audit":
                 if (isChecked)
-                    permissions += User.PERMISSION_AUDIT;
-                else permissions -= User.PERMISSION_AUDIT;
+                    permissions += Permission.AUDIT;
+                else permissions -= Permission.AUDIT;
                 break;
             case "editor-manage-users":
                 if (isChecked)
-                    permissions += User.PERMISSION_MANAGE_USERS;
-                else permissions -= User.PERMISSION_MANAGE_USERS;
+                    permissions += Permission.MANAGE_USERS;
+                else permissions -= Permission.MANAGE_USERS;
                 break;
             case "editor-administrative":
                 if (isChecked)
-                    permissions += User.PERMISSION_ADMINISTRATIVE;
-                else permissions -= User.PERMISSION_ADMINISTRATIVE;
+                    permissions += Permission.ADMINISTRATIVE;
+                else permissions -= Permission.ADMINISTRATIVE;
                 break;
         }
         props.onPermissionsChanged(permissions);
@@ -152,7 +152,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_read")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_READ)} 
+                                        checked={hasPermission(Permission.READ)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-read"/>
                                 }/>
@@ -160,7 +160,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_write")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_WRITE)} 
+                                        checked={hasPermission(Permission.WRITE)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-write"/>
                                 }/>
@@ -168,7 +168,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_delete")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_DELETE)} 
+                                        checked={hasPermission(Permission.DELETE)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-delete"/>
                                 }/>
@@ -176,7 +176,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_audit")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_AUDIT)} 
+                                        checked={hasPermission(Permission.AUDIT)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-audit"/>
                                 }/>
@@ -184,7 +184,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_manage_users")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_MANAGE_USERS)} 
+                                        checked={hasPermission(Permission.MANAGE_USERS)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-manage-users"/>
                                 }/>
@@ -192,7 +192,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={t("permission_administrative")}
                                 control={
                                     <Checkbox 
-                                        checked={hasPermission(User.PERMISSION_ADMINISTRATIVE)} 
+                                        checked={hasPermission(Permission.ADMINISTRATIVE)} 
                                         onChange={onPermissionsChanged}
                                         name="editor-administrative"/>
                                 }/>
