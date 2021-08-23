@@ -22,7 +22,7 @@ const useStyles = makeStyles(() => ({
     },
     container: {
         padding: '1em 0em',
-    }
+    },
 }));
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) => {
     const classes = useStyles();
@@ -68,16 +68,15 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                     alignItems="center" 
                     justifyContent="center" 
                     className={classes.root}>
-                    <Grid xs={12} item>
+                    <Grid xs={12} sm={4} item>
                         <Paper className={classes.containerPaper}>
                             <div className={classes.container}>
                                 <Typography variant="h5">{ t("hello") }</Typography>
                                 <Typography variant="h5">{ t("welcome_back") }</Typography>
                             </div>
                             <div className={classes.container}>
-                                {
-                                    error != null && 
-                                    <Typography variant="body2" color="error" noWrap>
+                                { error != null && 
+                                    <Typography variant="body2" color="error">
                                         {error.message}
                                     </Typography>
                                 }
