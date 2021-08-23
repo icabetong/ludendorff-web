@@ -248,7 +248,13 @@ const AssetScreen = (props: AssetScreenProps) => {
     }
 
     const onCategoryItemRemoveConfirmed = (category: Category | undefined) => {
-
+        if (category !== undefined) {
+            CategoryRepository.remove(category)
+                .then(() => {
+                    setCategoryDeleteOpened(false);
+                    setCategory(undefined);
+                })
+        }
     }
 
     const onCategoryEditorCommit = () => {
