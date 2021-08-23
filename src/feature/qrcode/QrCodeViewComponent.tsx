@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography";
 const QRCode = require('qrcode.react');
 
 type QrCodeViewComponentPropsType = {
-    assetId: string,
+    assetId?: string,
     isOpened: boolean,
     onClose: () => void
 }

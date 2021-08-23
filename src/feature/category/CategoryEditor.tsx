@@ -9,9 +9,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { Category } from "./Category";
-import { newId } from "../../shared/utils";
-
 const useStyles = makeStyles(() => ({
     textField: {
         margin: '0.6em 0',

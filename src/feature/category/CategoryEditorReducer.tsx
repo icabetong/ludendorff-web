@@ -1,11 +1,10 @@
-import { Category } from "../category/Category";
+import { Category } from "./Category";
 import { newId } from "../../shared/utils";
 
 export enum CategoryEditorActionType {
-    NameChanged = "nameChanged",
+    Changed = "changed",
     Create = "create",
     Update = "update",
-    Submit = "submit",
     Dismiss = "dismiss"
 }
 type CategoryEditorAction = {
@@ -26,7 +25,7 @@ export const categoryEditorInitialState: CategoryEditorState = {
 export const categoryEditorReducer = (state: CategoryEditorState, action: CategoryEditorAction) => {
     const { type, value } = action;
     switch(type) {
-        case CategoryEditorActionType.NameChanged: 
+        case CategoryEditorActionType.Changed: 
             return {
                 ...state,
                 category: value
@@ -43,18 +42,12 @@ export const categoryEditorReducer = (state: CategoryEditorState, action: Catego
                 isCreate: false,
                 isOpen: true,
             }
-        case CategoryEditorActionType.Submit:
-            return {
-                ...state,
-                isOpen: false,
-            }
         case CategoryEditorActionType.Dismiss: 
             return {
                 ...state,
                 isOpen: false,
                 category: undefined
             }
-        default: 
-            return state;
+        default: return state;
     }
 }

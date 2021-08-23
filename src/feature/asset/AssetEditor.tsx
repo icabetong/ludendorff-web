@@ -40,11 +40,11 @@ const useStyles = makeStyles((theme) => ({
 
 type AssetEditorProps = {
     isOpen: boolean,
-    id: string,
-    name: string,
-    status: Status,
+    id?: string,
+    name?: string,
+    status?: Status,
     category?: CategoryCore,
-    specs: Specification,
+    specs?: Specification,
     onCancel: () => void,
     onSubmit: () => void,
     onViewQrCode: () => void,
