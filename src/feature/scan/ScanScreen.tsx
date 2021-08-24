@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core/styles";
 
 import { FolderOpenIcon, QrcodeIcon } from "@heroicons/react/outline";
 
@@ -12,15 +11,7 @@ type ScanScreenProps = {
     onDrawerToggle: () => void
 }
 
-const useStyles = makeStyles(() => ({
-    emptyIcon: {
-        width: '4em',
-        height: '4em'
-    }
-}));
-
 const ScanScreen = (props: ScanScreenProps) => {
-    const classes = useStyles();
     const { t } = useTranslation();
     const fileInput = useRef<HTMLInputElement | null>(null);
     const imageInput = useRef<HTMLImageElement | null>(null);
@@ -61,7 +52,7 @@ const ScanScreen = (props: ScanScreenProps) => {
             { imageBase !== ''
                 ? <img src={imageBase} ref={imageInput} alt="code" hidden={imageBase === null}/>
                 : <EmptyStateComponent
-                    icon={<QrcodeIcon className={classes.emptyIcon}/>}
+                    icon={QrcodeIcon}
                     title={t("empty_scanned_code")}
                     subtitle={t("empty_scanned_code_summary")}/>
             }

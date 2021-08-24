@@ -68,7 +68,7 @@ const DepartmentList = (props: DepartmentListProps) => {
                     }
                 </React.Fragment>
             : <EmptyStateComponent
-                icon={<OfficeBuildingIcon className={classes.uiIcon}/>}
+                icon={OfficeBuildingIcon}
                 title={t("empty_department")}
                 subtitle={t("empty_department_summary")}/>
             }
@@ -93,7 +93,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
             onClick={() => props.onItemSelect(props.department)}>
             <ListItemText
                 primary={props.department.name}
-                secondary={props.department.managerSNN?.name}/>
+                secondary={props.department.manager?.name}/>
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.department)}>
                     <TrashIcon className={classes.actionIcon}/>

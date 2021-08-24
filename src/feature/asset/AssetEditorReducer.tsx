@@ -1,4 +1,4 @@
-import { Asset } from "./Asset";
+import { Asset, Status } from "./Asset";
 import { newId } from "../../shared/utils";
 
 export enum AssetEditorActionType {
@@ -17,7 +17,7 @@ type AssetEditorState = {
     isOpen: boolean
 }
 export const assetEditorInitialState: AssetEditorState = {
-    asset: { assetId: newId() },
+    asset: { assetId: newId(), status: Status.IDLE },
     isCreate: true,
     isOpen: false,
 }

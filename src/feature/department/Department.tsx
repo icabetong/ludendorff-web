@@ -19,7 +19,7 @@ export const minimize = (department: Department): DepartmentCore => {
 export type Department = {
     departmentId: string,
     name?: string,
-    managerSNN?: UserCore,
+    manager?: UserCore,
     count: number
 }
 
@@ -35,9 +35,9 @@ export class DepartmentRepository {
         batch.set(firestore.collection(departmentCollection)
             .doc(department.departmentId), department);
     
-        if (department.managerSNN !== undefined)
+        if (department.manager !== undefined)
             batch.update(firestore.collection(userCollection)
-                .doc(department.managerSNN!.userId), departmentField,
+                .doc(department.manager!.userId), departmentField,
                 minimizeDepartment(department))
 
         return batch.commit()
@@ -46,9 +46,9 @@ export class DepartmentRepository {
     static async update(department: Department): Promise<void> {
         let batch = firestore.batch();
 
-        if (department.managerSNN !== undefined)
+        if (department.manager !== undefined)
             batch.update(firestore.collection(userCollection)
-                .doc(department.managerSNN!.userId), departmentField,
+                .doc(department.manager!.userId), departmentField,
                 minimizeDepartment(department))
 
         return await firestore.collection(departmentCollection)

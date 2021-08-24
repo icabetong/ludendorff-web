@@ -17,7 +17,7 @@ type ComponentHeaderPropsType = {
     title: string,
     onDrawerToggle: () => void,
     buttonText?: string,
-    buttonIcon?: string | FunctionComponent<any> | ComponentClass<any, any>,
+    buttonIcon?: FunctionComponent<any> | ComponentClass<any, any>,
     buttonOnClick?: React.MouseEventHandler,
     menuItems?: JSX.Element[]
 }

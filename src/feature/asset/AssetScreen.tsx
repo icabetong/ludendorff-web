@@ -74,11 +74,6 @@ const useStyles = makeStyles((theme) => ({
         height: '100%',
         width: '100%',
     },
-    dataIcon: {
-        width: '4em',
-        height: '4em',
-        color: theme.palette.text.primary
-    },
     wrapper: {
         height: '80%',
         padding: '1.4em'
@@ -489,12 +484,11 @@ const EmptyStateOverlay = () => {
 }
 
 const AssetEmptyStateComponent = () => {
-    const classes = useStyles();
     const { t } = useTranslation();
     
     return (
         <EmptyStateComponent
-            icon={<DesktopComputerIcon className={classes.dataIcon}/>}
+            icon={DesktopComputerIcon}
             title={ t("empty_asset") }
             subtitle={ t("empty_asset_summary")} />
     )

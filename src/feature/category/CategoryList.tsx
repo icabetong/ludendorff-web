@@ -18,11 +18,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: '60vh'
     },
-    uiIcon: {
-        width: '4em',
-        height: '4em',
-        color: theme.palette.text.primary
-    },
     actionIcon: {
         width: '1em',
         height: '1em',
@@ -68,7 +63,7 @@ const CategoryList = (props: CategoryListProps) => {
                     }
                 </React.Fragment>
             : <EmptyStateComponent
-                icon={<TagIcon className={classes.uiIcon}/>}
+                icon={TagIcon}
                 title={t("empty_category")}
                 subtitle={t("empty_category_summary")}/>
 

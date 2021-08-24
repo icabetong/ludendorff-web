@@ -63,11 +63,6 @@ const useStyles = makeStyles((theme) => ({
         height: '100%',
         width: '100%'
     },
-    dataIcon: {
-        width: '4em',
-        height: '4em',
-        color: theme.palette.text.primary
-    },
     wrapper: {
         height: '80%',
         padding: '1.4em'
@@ -158,7 +153,7 @@ const UserScreen = (props: UserScreenProps) => {
         let department = departmentEditorState.department;
         if (department === undefined)
             department = { departmentId: newId(), count: 0 }
-        department!.managerSNN = minimize(user);
+        department!.manager = minimize(user);
         setPickerOpen(false);
         departmentEditorDispatch({
             type: DepartmentEditorActionType.CHANGED,
@@ -336,7 +331,7 @@ const UserScreen = (props: UserScreenProps) => {
             <DepartmentEditor
                 isOpen={departmentEditorState.isOpen}
                 name={departmentEditorState.department?.name}
-                manager={departmentEditorState.department?.managerSNN}
+                manager={departmentEditorState.department?.manager}
                 onSubmit={onDepartmentEditorCommit}
                 onCancel={() => departmentEditorDispatch({
                     type: DepartmentEditorActionType.DISMISS
@@ -380,12 +375,11 @@ const EmptyStateOverlay = () => {
 }
 
 const UserEmptyStateComponent = () => {
-    const classes = useStyles();
     const { t } = useTranslation();
 
     return (
         <EmptyStateComponent
-            icon={<UserIcon className={classes.dataIcon}/>}
+            icon={UserIcon}
             title={ t("empty_user") }
             subtitle={ t("empty_user_summary") }/>
     );
