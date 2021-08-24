@@ -21,6 +21,7 @@ const config = {
 firebase.initializeApp(config)
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()
+firestore.settings({ ignoreUndefinedProperties: true, merge: true })
 
 ReactDOM.render(
   <React.StrictMode>

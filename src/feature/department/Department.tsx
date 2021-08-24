@@ -1,10 +1,20 @@
 import { firestore } from "../../index"
 
 import { UserCore } from "../user/User";
+import { minimize as minimizeDepartment } from "./Department";
 
 import {
-    departmentCollection
+    departmentCollection,
+    userCollection,
+    department as departmentField
 } from "../../shared/const";
+
+export const minimize = (department: Department): DepartmentCore => {
+    return {
+        departmentId: department.departmentId,
+        name: department.name
+    }
+}
 
 export type Department = {
     departmentId: string,
@@ -20,12 +30,27 @@ export type DepartmentCore = {
 
 export class DepartmentRepository {
     static async create(department: Department): Promise<void> {
-        return await firestore.collection(departmentCollection)
-            .doc(department.departmentId)
-            .set(department)
+        let batch = firestore.batch();
+
+        batch.set(firestore.collection(departmentCollection)
+            .doc(department.departmentId), department);
+    
+        if (department.managerSNN !== undefined)
+            batch.update(firestore.collection(userCollection)
+                .doc(department.managerSNN!.userId), departmentField,
+                minimizeDepartment(department))
+
+        return batch.commit()
     }
 
     static async update(department: Department): Promise<void> {
+        let batch = firestore.batch();
+
+        if (department.managerSNN !== undefined)
+            batch.update(firestore.collection(userCollection)
+                .doc(department.managerSNN!.userId), departmentField,
+                minimizeDepartment(department))
+
         return await firestore.collection(departmentCollection)
             .doc(department.departmentId)
             .set(department)

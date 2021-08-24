@@ -6,6 +6,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridOverlay, GridRowParams } from "@material-ui/data-grid";
+import { useSnackbar } from "notistack";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
@@ -16,11 +17,16 @@ import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { firestore } from "../../index";
-import { usePagination } from "../../shared/pagination";
-import { newId } from "../../shared/utils";
 import { User, minimize } from "./User";
 import UserList from "./UserList";
-import { Department } from "../department/Department";
+import { usePagination } from "../../shared/pagination";
+import { newId } from "../../shared/utils";
+
+import { 
+    Department, 
+    DepartmentRepository,
+    minimize as minimizeDepartment 
+} from "../department/Department";
 
 import {
     UserEditorActionType,
@@ -50,6 +56,7 @@ const UserPicker = lazy(() => import("./UserPicker"));
 
 const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
 const DepartmentEditor = lazy(() => import("../department/DepartmentEditor"));
+const DepartmentPicker = lazy(() => import("../department/DepartmentPicker"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -79,6 +86,7 @@ type UserScreenProps = {
 const UserScreen = (props: UserScreenProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
         { field: userId, headerName: t("id"), hide: true },
@@ -103,6 +111,18 @@ const UserScreen = (props: UserScreenProps) => {
 
     const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
     const [isPickerOpen, setPickerOpen] = useState(false);
+
+    const onUserDepartmentSelected = (department: Department) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: 0 }
+        user!.department = minimizeDepartment(department);
+        setDepartmentPickerOpen(false);
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        })
+    }
 
     const onUserEditorCommit = (user: User) => {
 
@@ -129,6 +149,7 @@ const UserScreen = (props: UserScreenProps) => {
     );
 
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
+    const [isDepartmentPickerOpen, setDepartmentPickerOpen] = useState(false);
     const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
 
     const onDepartmentItemSelected = (department: Department) => {
@@ -151,7 +172,23 @@ const UserScreen = (props: UserScreenProps) => {
     }
 
     const onDepartmentEditorCommit = () => {
+        let department = departmentEditorState.department;
+        if (department === undefined)
+            return;
 
+        if (departmentEditorState.isCreate) {
+            DepartmentRepository.create(department)
+                .then(() => {
+                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
+                    enqueueSnackbar(t("feedback_department_created"));
+                })
+        } else {
+            DepartmentRepository.update(department)
+                .then(() => {
+                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
+                    enqueueSnackbar(t("feedback_department_updated"));
+                })
+        }
     }
 
     return (
@@ -213,6 +250,7 @@ const UserScreen = (props: UserScreenProps) => {
                 department={editorState.user?.department}
                 onCancel={() => editorDispatch({ type: UserEditorActionType.DISMISS })}
                 onSubmit={onUserEditorCommit}
+                onDepartmentSelect={() => setDepartmentPickerOpen(true)}
                 onLastNameChanged={(lastName) => {
                     let user = editorState.user;
                     if (user === undefined)
@@ -309,6 +347,21 @@ const UserScreen = (props: UserScreenProps) => {
                         payload: department
                     })
                 }}/>
+
+            <DepartmentPicker
+                isOpen={isDepartmentPickerOpen}
+                departments={departments}
+                isLoading={isDepartmentsLoading}
+                hasPrevious={atDepartmentStart}
+                hasNext={atDepartmentEnd}
+                onPrevious={getPreviousDepartments}
+                onNext={getNextDepartments}
+                onDismiss={() => setDepartmentPickerOpen(false)}
+                onAddItem={() => departmentEditorDispatch({
+                    type: DepartmentEditorActionType.CREATE
+                })}
+                onSelectItem={onUserDepartmentSelected}
+                onDeleteItem={() => setDepartmentOpen(false)}/>
         </Box>
     )
 }

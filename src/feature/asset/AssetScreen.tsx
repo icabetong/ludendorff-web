@@ -15,7 +15,6 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
-import { newId, formatDate } from "../../shared/utils";
 
 import firebase from "firebase/app";
 import { firestore } from "../../index";
@@ -24,6 +23,7 @@ import AssetList from "./AssetList";
 import { Category, CategoryRepository } from "../category/Category";
 import { Specification } from "../specs/Specification";
 import { usePagination } from "../../shared/pagination";
+import { newId, formatDate } from "../../shared/utils";
 
 import {
     assetCollection,

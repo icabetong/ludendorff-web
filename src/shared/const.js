@@ -18,7 +18,7 @@ export const specifications = "specifications";
 
 export const userId = "userId";
 export const departmentId = "departmentId";
-export const departmentName = "departmentName";
+export const departmentName = "name";
 export const departmentManager = "managerSSN";
 export const departmentManagerId = `${departmentManager}.${userId}`;
 export const departmentCount = "count";

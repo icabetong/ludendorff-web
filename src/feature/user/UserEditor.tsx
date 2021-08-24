@@ -47,6 +47,7 @@ type UserEditorProps = {
     department?: DepartmentCore,
     onCancel: () => void,
     onSubmit: (user: User) => void,
+    onDepartmentSelect: () => void,
     onLastNameChanged: (lastName: string) => void,
     onFirstNameChanged: (firstName: string) => void,
     onEmailChanged: (email: string) => void,
@@ -162,7 +163,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 <FormLabel component="legend">
                                     <Typography variant="body2">{ t("department") }</Typography>
                                 </FormLabel>
-                                <ListItem button>
+                                <ListItem button onClick={() => props.onDepartmentSelect()}>
                                     <Typography variant="body2">
                                         { props.department?.name !== undefined ? props.department?.name : t("not_set")  }
                                     </Typography>
