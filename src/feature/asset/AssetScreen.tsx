@@ -165,11 +165,23 @@ const AssetScreen = (props: AssetScreenProps) => {
                 AssetRepository.create(asset)
                     .then(() => {
                         enqueueSnackbar(t("feedback_asset_created"));
+
+                    }).catch(() => {
+                        enqueueSnackbar(t("feedback_asset_create_error"));
+
+                    }).finally(() => {
+                        editorDispatch({ type: AssetEditorActionType.DISMISS })
                     })
             } else {
                 AssetRepository.update(asset)
                     .then(() => {
                         enqueueSnackbar(t("feedback_asset_updated"));
+
+                    }).catch(() => {
+                        enqueueSnackbar(t("feedback_asset_update_error"));
+
+                    }).finally(() => {
+                        editorDispatch({ type: AssetEditorActionType.DISMISS })
                     })
             }
         }
@@ -251,8 +263,14 @@ const AssetScreen = (props: AssetScreenProps) => {
         if (category !== undefined) {
             CategoryRepository.remove(category)
                 .then(() => {
-                    setCategoryDeleteOpened(false);
+                    enqueueSnackbar(t("feedback_category_removed"));
                     setCategory(undefined);
+
+                }).catch(() => {
+                    enqueueSnackbar(t("feedback_category_remove_error"));
+
+                }).finally(() => {
+                    setCategoryDeleteOpened(false);
                 })
         }
     }
@@ -263,14 +281,25 @@ const AssetScreen = (props: AssetScreenProps) => {
             if (categoryEditorState.isCreate) {
                 CategoryRepository.create(category)
                     .then(() => {
-                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
                         enqueueSnackbar(t("feedback_category_created"));
+
+                    }).catch(() => {
+                        enqueueSnackbar(t("feedback_category_create_error"));
+
+                    }).finally(() => {
+                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
                     })
             } else {
                 CategoryRepository.update(category)
                     .then(() => {
-                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
                         enqueueSnackbar(t("feedback_category_updated"));
+
+                    }).catch(() => {
+                        enqueueSnackbar(t("feedback_category_update_error"));
+
+                    }).finally(() => {
+                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
+
                     })
             }
         }

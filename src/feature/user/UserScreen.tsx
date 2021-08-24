@@ -179,14 +179,24 @@ const UserScreen = (props: UserScreenProps) => {
         if (departmentEditorState.isCreate) {
             DepartmentRepository.create(department)
                 .then(() => {
-                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
                     enqueueSnackbar(t("feedback_department_created"));
+                    
+                }).catch(() => {
+                    enqueueSnackbar(t("feedback_department_create_error"));
+
+                }).finally(() => {
+                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
                 })
         } else {
             DepartmentRepository.update(department)
                 .then(() => {
-                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
                     enqueueSnackbar(t("feedback_department_updated"));
+
+                }).catch(() => {
+                    enqueueSnackbar(t("feedback_department_update_error"))
+
+                }).finally(() => {
+                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
                 })
         }
     }
