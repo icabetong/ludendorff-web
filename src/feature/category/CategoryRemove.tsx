@@ -6,13 +6,10 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { Category } from "./Category";
-
 type CategoryRemoveProps = {
     isOpen: boolean,
     onDismiss: () => void,
-    onConfirm: (category: Category | undefined) => void,
-    category?: Category
+    onConfirm: () => void,
 }
 
 const CategoryRemove = (props: CategoryRemoveProps) => {
@@ -38,7 +35,7 @@ const CategoryRemove = (props: CategoryRemoveProps) => {
                 </Button>
                 <Button
                     color="primary"
-                    onClick={() => props.onConfirm(props.category)}>
+                    onClick={() => props.onConfirm()}>
                         { t("delete") }
                 </Button>
             </DialogActions>

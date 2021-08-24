@@ -42,6 +42,12 @@ import {
     assetEditorReducer
 } from "./AssetEditorReducer";
 
+import {
+    SpecificationEditorActionType,
+    specificationEditorInitialState,
+    specificationReducer
+} from "../specs/SpecificationEditorReducer";
+
 import { 
     CategoryEditorActionType, 
     categoryEditorInitialState, 
@@ -49,10 +55,10 @@ import {
 } from "../category/CategoryEditorReducer";
 
 import {
-    SpecificationEditorActionType,
-    specificationEditorInitialState,
-    specificationReducer
-} from "../specs/SpecificationEditorReducer";
+    CategoryRemoveActionType,
+    categoryRemoveInitialState,
+    categoryRemoveReducer
+} from "../category/CategoryRemoveReducer";
 
 const AssetEditor = lazy(() => import("./AssetEditor"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
@@ -242,10 +248,9 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const [isCategoryListOpen, setCategoryListOpen] = useState(false);
     const [isCategoryPickerOpen, setCategoryPickerOpen] = useState(false);
-    const [isCategoryDeleteOpened, setCategoryDeleteOpened] = useState(false);
-
+    
     const [categoryEditorState, categoryEditorDispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
-    const [category, setCategory] = useState<Category | undefined>(undefined);
+    const [categoryRemoveState, categoryRemoveDispatch] = useReducer(categoryRemoveReducer, categoryRemoveInitialState);
     
     const onCategoryItemSelected = (category: Category) => {
         categoryEditorDispatch({
@@ -255,22 +260,26 @@ const AssetScreen = (props: AssetScreenProps) => {
     }
 
     const onCategoryItemRemoved = (category: Category) => {
-        setCategory(category);
-        setCategoryDeleteOpened(true);
+        categoryRemoveDispatch({
+            type: CategoryRemoveActionType.REQUEST,
+            payload: category
+        })
     }
 
-    const onCategoryItemRemoveConfirmed = (category: Category | undefined) => {
+    const onCategoryItemRemoveConfirmed = () => {
+        let category = categoryRemoveState.category;
         if (category !== undefined) {
             CategoryRepository.remove(category)
                 .then(() => {
                     enqueueSnackbar(t("feedback_category_removed"));
-                    setCategory(undefined);
 
                 }).catch(() => {
                     enqueueSnackbar(t("feedback_category_remove_error"));
 
                 }).finally(() => {
-                    setCategoryDeleteOpened(false);
+                    categoryRemoveDispatch({
+                        type: CategoryRemoveActionType.DISMISS
+                    })
                 })
         }
     }
@@ -470,9 +479,10 @@ const AssetScreen = (props: AssetScreenProps) => {
                 }}/>
 
             <CategoryRemove
-                isOpen={isCategoryDeleteOpened}
-                category={category}
-                onDismiss={() => setCategoryDeleteOpened(false)}
+                isOpen={categoryRemoveState.isRequest}
+                onDismiss={() => categoryRemoveDispatch({
+                    type: CategoryRemoveActionType.DISMISS
+                })}
                 onConfirm={onCategoryItemRemoveConfirmed}/>
         </Box>
     )
