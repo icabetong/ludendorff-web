@@ -5,14 +5,16 @@ import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay } from "@material-ui/data-grid";
+import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay, GridCellValue } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
+import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
+import HeroIconButton from "../../components/HeroIconButton";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -125,7 +127,20 @@ const AssetScreen = (props: AssetScreenProps) => {
             field: assetStatus, 
             headerName: t("status"), 
             flex: 0.35, 
-            valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status)) }
+            valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status)) 
+        },
+        {
+            field: "action",
+            headerName: t("actions"),
+            flex: 0.8,
+            renderCell: (cellValues: GridCellValue) => {
+                return (
+                    <HeroIconButton 
+                        icon={TrashIcon}
+                        aria-label={t("delete")}/>
+                )
+            }
+        }
     ];
 
     const {

@@ -33,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
             display: 'none'
         },
     },
+    icon: {
+        width: '1em',
+        height: '1em'
+    },
     actionButton: {
         marginLeft: 'auto'
     },
@@ -41,10 +45,6 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         width: '100%',
-    },
-    icon: {
-        width: '1em',
-        height: '1em'
     },
     toolbarButtonIcon: {
         color: theme.palette.text.primary
@@ -73,7 +73,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                     onClick={props.onDrawerToggle}
                     className={classes.navigationButton}
                     aria-label={ t("show_drawer") }>
-                        <MenuIcon className={clsx(classes.icon, classes.toolbarButtonIcon)}/>
+                    <MenuIcon className={clsx(classes.toolbarButtonIcon, classes.icon)}/>
                 </IconButton>
                 <Hidden xsDown>
                     <Typography variant="h5" className={classes.title}>

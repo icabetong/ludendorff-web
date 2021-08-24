@@ -30,6 +30,7 @@ const resources = {
             authenticating: "Authenticating",
             sign_in: "Sign in",
             unknown: "Unknown",
+            actions: "Actions",
             not_set: "Not Set",
             email: "Email",
             password: "Password",
