@@ -13,10 +13,6 @@ type ScanScreenProps = {
 }
 
 const useStyles = makeStyles(() => ({
-    icon: {
-        width: '1em',
-        height: '1em'
-    },
     emptyIcon: {
         width: '4em',
         height: '4em'
@@ -59,7 +55,7 @@ const ScanScreen = (props: ScanScreenProps) => {
                 title={ t("scan") } 
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("select") }
-                buttonIcon={<FolderOpenIcon className={classes.icon}/>}
+                buttonIcon={FolderOpenIcon}
                 buttonOnClick={() => fileInput.current!!.click()}/>
             <input ref={fileInput} type="file" accept="image/*" onChange={onFileSelected} hidden/>
             { imageBase !== ''

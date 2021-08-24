@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -8,6 +8,7 @@ import Hidden from "@material-ui/core/Hidden";
 import Menu from "@material-ui/core/Menu";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import clsx from "clsx";
 
 import DotsVerticalIcon from "@heroicons/react/outline/DotsVerticalIcon";
 import MenuIcon from "@heroicons/react/outline/MenuIcon";
@@ -16,7 +17,7 @@ type ComponentHeaderPropsType = {
     title: string,
     onDrawerToggle: () => void,
     buttonText?: string,
-    buttonIcon?: JSX.Element,
+    buttonIcon?: string | FunctionComponent<any> | ComponentClass<any, any>,
     buttonOnClick?: React.MouseEventHandler,
     menuItems?: JSX.Element[]
 }
@@ -36,16 +37,21 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 'auto'
     },
     overflowButton: {
-        marginLeft: theme.spacing(2)
+        marginLeft: theme.spacing(1)
     },
     title: {
         width: '100%',
     },
     icon: {
-        color: theme.palette.text.primary,
         width: '1em',
         height: '1em'
     },
+    toolbarButtonIcon: {
+        color: theme.palette.text.primary
+    },
+    actionButtonIcon: {
+        color: theme.palette.primary.contrastText
+    }
 }));
 
 const ComponentHeader = (props: ComponentHeaderPropsType) => {
@@ -67,7 +73,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                     onClick={props.onDrawerToggle}
                     className={classes.navigationButton}
                     aria-label={ t("show_drawer") }>
-                        <MenuIcon className={classes.icon}/>
+                        <MenuIcon className={clsx(classes.icon, classes.toolbarButtonIcon)}/>
                 </IconButton>
                 <Hidden xsDown>
                     <Typography variant="h5" className={classes.title}>
@@ -84,7 +90,10 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         variant="contained"
                         color="primary"
                         className={classes.actionButton}
-                        startIcon={props.buttonIcon}
+                        startIcon={ props.buttonIcon &&
+                            React.createElement(props.buttonIcon,
+                                { className: clsx(classes.icon, classes.actionButtonIcon) })
+                        }
                         onClick={props.buttonOnClick}
                         aria-label={props.buttonText}>
                         {props.buttonText}
@@ -97,7 +106,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                             aria-haspopup="true"
                             aria-label={ t("show_menu") }
                             onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}>
-                            <DotsVerticalIcon className={classes.icon}/>
+                            <DotsVerticalIcon className={clsx(classes.icon, classes.toolbarButtonIcon)}/>
                         </IconButton>
                         <Menu
                             keepMounted

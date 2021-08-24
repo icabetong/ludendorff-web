@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -36,7 +36,7 @@ export enum Destination {
 }
 
 type NavigationItemType = {
-    icon: JSX.Element,
+    icon: string | FunctionComponent<any> | ComponentClass<any, any>,
     title: string,
     destination?: Destination
 }
@@ -46,28 +46,20 @@ type NavigationComponentPropsType =  {
     currentDestination: Destination
 }
 
-const useStyles = makeStyles((theme) => ({
-    icon: {
-        width: '1.6em',
-        height: '1.6em',
-        color: theme.palette.text.primary
-    }
-}));
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
-    const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState<boolean>(false);
-    const classes = useStyles();
+    const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
     const { t } = useTranslation();
 
     const destinations: NavigationItemType[] = [
-        { icon: <HomeIcon className={classes.icon}/>, title: "home", destination: Destination.HOME },
-        { icon: <QrcodeIcon className={classes.icon}/>, title: "scan", destination: Destination.SCAN },
-        { icon: <DesktopComputerIcon className={classes.icon}/>, title: "assets", destination: Destination.ASSETS },
-        { icon: <UserGroupIcon className={classes.icon}/>, title: "users", destination: Destination.USERS },
-        { icon: <IdentificationIcon className={classes.icon}/>, title: "assignments", destination: Destination.ASSIGNMENTS }
+        { icon: HomeIcon, title: "home", destination: Destination.HOME },
+        { icon: QrcodeIcon, title: "scan", destination: Destination.SCAN },
+        { icon: DesktopComputerIcon, title: "assets", destination: Destination.ASSETS },
+        { icon: UserGroupIcon, title: "users", destination: Destination.USERS },
+        { icon: IdentificationIcon, title: "assignments", destination: Destination.ASSIGNMENTS }
     ]
 
     const minorDestinations: NavigationItemType[] = [
-        { icon: <CogIcon className={classes.icon}/>, title: "settings", destination: Destination.SETTINGS },
+        { icon: CogIcon, title: "settings", destination: Destination.SETTINGS },
     ]
 
     const confirmSignOut = () => {
@@ -97,7 +89,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
                     itemKey={1}
-                    navigation={{icon: <LogoutIcon className={classes.icon}/>, title: t("signout")}}
+                    navigation={{icon: LogoutIcon, title: t("signout")}}
                     isActive={false}
                     action={() => confirmSignOut()}/>
             </List>
@@ -136,10 +128,14 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
         },
         navigationText: {
             color: theme.palette.text.primary
+        },
+        icon: {
+            width: '1.6em',
+            height: '1.6em',
+            color: theme.palette.text.primary
         }
     }))
     const classes = useStyles();
-    
     const { t } = useTranslation();
 
     return (
@@ -149,7 +145,12 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
             key={props.itemKey} 
             selected={props.isActive}
             onClick={props.action}>
-            <ListItemIcon>{props.navigation.icon}</ListItemIcon>
+            <ListItemIcon>{
+                React.createElement(props.navigation.icon,
+                    { className: classes.icon }
+                )
+            }
+            </ListItemIcon>
             <ListItemText primary={
                 <Typography className={classes.navigationText} variant="body2" noWrap>{ t(props.navigation.title) }</Typography>
             }/>

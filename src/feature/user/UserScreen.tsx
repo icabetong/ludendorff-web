@@ -63,11 +63,6 @@ const useStyles = makeStyles((theme) => ({
         height: '100%',
         width: '100%'
     },
-    icon: {
-        width: '1em',
-        height: '1em',
-        color: theme.palette.primary.contrastText
-    },
     dataIcon: {
         width: '4em',
         height: '4em',
@@ -207,7 +202,7 @@ const UserScreen = (props: UserScreenProps) => {
                 title={ t("users") } 
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("add") }
-                buttonIcon={<PlusIcon className={classes.icon}/>}
+                buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: UserEditorActionType.CREATE })}
                 menuItems={[
                     <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("departments") }</MenuItem>

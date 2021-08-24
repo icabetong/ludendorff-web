@@ -74,14 +74,6 @@ const useStyles = makeStyles((theme) => ({
         height: '100%',
         width: '100%',
     },
-    icon: {
-        width: '1em',
-        height: '1em',
-        color: theme.palette.primary.contrastText
-    },
-    overflowButton: {
-        marginLeft: '0.6em'
-    },
     dataIcon: {
         width: '4em',
         height: '4em',
@@ -320,7 +312,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 title={ t("assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
                 buttonText={ t("add") }
-                buttonIcon={<PlusIcon className={classes.icon}/>}
+                buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
                 menuItems={[
                     <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("categories") }</MenuItem>
