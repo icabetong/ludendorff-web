@@ -21,7 +21,7 @@ type DepartmentScreenProps = {
     onDismiss: () => void,
     onAddItem: () => void,
     onSelectItem: (department: Department) => void,
-    onDeleteItem: () => void
+    onDeleteItem: (department: Department) => void
 }
 
 const DepartmentScreen = (props: DepartmentScreenProps) => {

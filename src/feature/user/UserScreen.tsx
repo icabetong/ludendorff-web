@@ -5,7 +5,7 @@ import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridOverlay, GridRowParams } from "@material-ui/data-grid";
+import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
@@ -13,6 +13,7 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
+import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
@@ -41,6 +42,12 @@ import {
 } from "../department/DepartmentEditorReducer";
 
 import {
+    DepartmentRemoveActionType,
+    departmentRemoveInitialState,
+    departmentRemoveReducer
+} from "../department/DepartmentRemoveReducer";
+
+import {
     userCollection,
     departmentCollection,
     userId,
@@ -48,8 +55,11 @@ import {
     lastName,
     email,
     position,
+    department,
     departmentName
 } from "../../shared/const";
+
+import ItemRemoveDialog from "../shared/ItemRemoveDialog";
 
 const UserEditor = lazy(() => import("./UserEditor"));
 const UserPicker = lazy(() => import("./UserPicker"));
@@ -82,8 +92,25 @@ const UserScreen = (props: UserScreenProps) => {
         { field: userId, headerName: t("id"), hide: true },
         { field: lastName, headerName: t("last_name"), flex: 1 },
         { field: firstName, headerName: t("first_name"), flex: 1 },
-        { field: email, headerName: t("email"), flex: 0.5 },
-        { field: position, headerName: t("position"), flex: 0.5 }
+        { field: email, headerName: t("email"), flex: 1 },
+        { 
+            field: position, 
+            headerName: t("position"), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) => {
+                let user = params.row as User;
+                return user.position === undefined ? t("unknown") : user.position;
+            } 
+        },
+        { 
+            field: department, 
+            headerName: t("department"), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) => {
+                let user = params.row as User;
+                return user.department?.name === undefined ? t("unknown") : user.department?.name;
+            } 
+        }
     ]
 
     const {
@@ -140,7 +167,9 @@ const UserScreen = (props: UserScreenProps) => {
 
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
     const [isDepartmentPickerOpen, setDepartmentPickerOpen] = useState(false);
+    
     const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
+    const [departmentRemoveState, departmentRemoveDispatch] = useReducer(departmentRemoveReducer, departmentRemoveInitialState);
 
     const onDepartmentItemSelected = (department: Department) => {
         departmentEditorDispatch({
@@ -191,6 +220,32 @@ const UserScreen = (props: UserScreenProps) => {
         }
     }
 
+    const onDepartmentItemRequestRemove = (department: Department) => {
+        departmentRemoveDispatch({
+            type: DepartmentRemoveActionType.REQUEST,
+            payload: department
+        })
+    }
+
+    const onDepartmentItemRemove = () => {
+        let department = departmentRemoveState.department;
+        if (department === undefined)
+            return;
+
+        DepartmentRepository.remove(department)
+            .then(() => {
+                enqueueSnackbar(t("feedback_department_removed"));
+
+            }).catch(() => {
+                enqueueSnackbar(t("feedback_department_remove_error"));
+
+            }).finally(() => {
+                departmentRemoveDispatch({
+                    type: DepartmentRemoveActionType.DISMISS
+                })
+            })
+    }
+    
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -208,7 +263,8 @@ const UserScreen = (props: UserScreenProps) => {
                     <DataGrid
                         components={{
                             LoadingOverlay: GridLinearProgress,
-                            NoRowsOverlay: EmptyStateOverlay
+                            NoRowsOverlay: EmptyStateOverlay,
+                            Toolbar: GridToolbar
                         }}
                         rows={users}
                         columns={columns}
@@ -326,7 +382,7 @@ const UserScreen = (props: UserScreenProps) => {
                     type: DepartmentEditorActionType.CREATE
                 })}
                 onSelectItem={onDepartmentItemSelected}
-                onDeleteItem={() => setDepartmentOpen(false)}/>
+                onDeleteItem={onDepartmentItemRequestRemove}/>
 
             <DepartmentEditor
                 isOpen={departmentEditorState.isOpen}
@@ -361,7 +417,16 @@ const UserScreen = (props: UserScreenProps) => {
                     type: DepartmentEditorActionType.CREATE
                 })}
                 onSelectItem={onUserDepartmentSelected}
-                onDeleteItem={() => setDepartmentOpen(false)}/>
+                onDeleteItem={onDepartmentItemRequestRemove}/>
+
+            <ItemRemoveDialog
+                isOpen={departmentRemoveState.isRequest}
+                title="confirm_department_remove"
+                summary="confirm_department_remove_summary"
+                onDismiss={() => departmentRemoveDispatch({
+                    type: DepartmentRemoveActionType.DISMISS
+                })}
+                onConfirm={onDepartmentItemRemove}/>
         </Box>
     )
 }

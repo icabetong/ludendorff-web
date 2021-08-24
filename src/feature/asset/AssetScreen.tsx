@@ -12,6 +12,7 @@ import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
+import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -60,6 +61,8 @@ import {
     categoryRemoveReducer
 } from "../category/CategoryRemoveReducer";
 
+import ItemRemoveDialog from "../shared/ItemRemoveDialog";
+
 const AssetEditor = lazy(() => import("./AssetEditor"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
 const SpecificationEditor = lazy(() => import("../specs/SpecificationEditor"));
@@ -67,9 +70,8 @@ const SpecificationEditor = lazy(() => import("../specs/SpecificationEditor"));
 const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
 const CategoryPicker = lazy(() => import("../category/CategoryPicker"));
 const CategoryEditorComponent = lazy(() => import("../category/CategoryEditor"));
-const CategoryRemove = lazy(() => import("../category/CategoryRemove"));
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         height: '100%',
         width: '100%',
@@ -246,29 +248,30 @@ const AssetScreen = (props: AssetScreenProps) => {
         })
     }
 
-    const onCategoryItemRemoved = (category: Category) => {
+    const onCategoryItemRequestRemove = (category: Category) => {
         categoryRemoveDispatch({
             type: CategoryRemoveActionType.REQUEST,
             payload: category
         })
     }
 
-    const onCategoryItemRemoveConfirmed = () => {
+    const onCategoryItemRemove = () => {
         let category = categoryRemoveState.category;
-        if (category !== undefined) {
-            CategoryRepository.remove(category)
-                .then(() => {
-                    enqueueSnackbar(t("feedback_category_removed"));
+        if (category === undefined) 
+            return;
 
-                }).catch(() => {
-                    enqueueSnackbar(t("feedback_category_remove_error"));
+        CategoryRepository.remove(category)
+            .then(() => {
+                enqueueSnackbar(t("feedback_category_removed"));
 
-                }).finally(() => {
-                    categoryRemoveDispatch({
-                        type: CategoryRemoveActionType.DISMISS
-                    })
+            }).catch(() => {
+                enqueueSnackbar(t("feedback_category_remove_error"));
+
+            }).finally(() => {
+                categoryRemoveDispatch({
+                    type: CategoryRemoveActionType.DISMISS
                 })
-        }
+            })
     }
 
     const onCategoryEditorCommit = () => {
@@ -317,7 +320,8 @@ const AssetScreen = (props: AssetScreenProps) => {
                     <DataGrid
                         components={{
                             LoadingOverlay: GridLinearProgress,
-                            NoRowsOverlay: EmptyStateOverlay
+                            NoRowsOverlay: EmptyStateOverlay,
+                            Toolbar: GridToolbar
                         }}
                         rows={assets}
                         columns={columns}
@@ -431,7 +435,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onDismiss={() => setCategoryListOpen(false)}
                 onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.CREATE })}
                 onSelectItem={onCategoryItemSelected}
-                onDeleteItem={onCategoryItemRemoved}/>
+                onDeleteItem={onCategoryItemRequestRemove}/>
 
             <CategoryPicker
                 isOpen={isCategoryPickerOpen}
@@ -444,7 +448,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onDismiss={() => setCategoryPickerOpen(false)}
                 onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.CREATE })}
                 onSelectItem={onAssetCategorySelected}
-                onDeleteItem={onCategoryItemRemoved}/>
+                onDeleteItem={onCategoryItemRequestRemove}/>
 
             {/* Category Editor Screen */}
             <CategoryEditorComponent
@@ -465,12 +469,14 @@ const AssetScreen = (props: AssetScreenProps) => {
                     })
                 }}/>
 
-            <CategoryRemove
+            <ItemRemoveDialog
                 isOpen={categoryRemoveState.isRequest}
+                title="confirm_category_remove"
+                summary="confirm_category_remove_summary"
                 onDismiss={() => categoryRemoveDispatch({
                     type: CategoryRemoveActionType.DISMISS
                 })}
-                onConfirm={onCategoryItemRemoveConfirmed}/>
+                onConfirm={onCategoryItemRemove}/>
         </Box>
     )
 }

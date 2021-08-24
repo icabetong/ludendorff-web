@@ -6,14 +6,18 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-type CategoryRemoveProps = {
+type ItemRemoveDialogProps = {
     isOpen: boolean,
-    onDismiss: () => void,
+    title?: string,
+    summary?: string
     onConfirm: () => void,
+    onDismiss: () => void,
 }
 
-const CategoryRemove = (props: CategoryRemoveProps) => {
+const ItemRemoveDialog = (props: ItemRemoveDialogProps) => {
     const { t } = useTranslation();
+    const title = props.title !== undefined ? props.title : "confirm_generic_remove";
+    const summary = props.summary !== undefined ? props.summary : "confirm_generic_remove_summary";
 
     return (
         <Dialog
@@ -21,10 +25,10 @@ const CategoryRemove = (props: CategoryRemoveProps) => {
             fullWidth={true}
             open={props.isOpen}
             onClose={() => props.onDismiss()}>
-            <DialogTitle>{ t("confirm_category_remove") }</DialogTitle>
+            <DialogTitle>{ t(title) }</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    { t("confirm_category_remove_summary") }
+                    { t(summary) }
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -43,4 +47,4 @@ const CategoryRemove = (props: CategoryRemoveProps) => {
     )
 }
 
-export default CategoryRemove;
+export default ItemRemoveDialog;
