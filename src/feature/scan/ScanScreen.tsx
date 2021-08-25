@@ -43,7 +43,7 @@ const ScanScreen = (props: ScanScreenProps) => {
     return (
         <Box>
             <ComponentHeader 
-                title={ t("scan") } 
+                title={ t("navigation.scan") } 
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("select") }
                 buttonIcon={FolderOpenIcon}

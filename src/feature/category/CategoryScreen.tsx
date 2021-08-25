@@ -36,7 +36,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onDismiss() }>
-            <DialogTitle>{ t("categories") }</DialogTitle>
+            <DialogTitle>{ t("navigation.categories") }</DialogTitle>
             <DialogContent dividers={true}>
                 <CategoryList 
                     hasPrevious={props.hasPrevious}

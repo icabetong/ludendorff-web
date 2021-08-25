@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Box } from "@material-ui/core";
 import ComponentHeader from "../../components/ComponentHeader";
 
@@ -6,9 +7,11 @@ type HomeScreenProps = {
 }
 
 const HomeScreen = (props: HomeScreenProps) => {
+    const { t } = useTranslation();
+
     return (
         <Box>
-            <ComponentHeader title="Home" onDrawerToggle={props.onDrawerToggle}/>
+            <ComponentHeader title={t("navigation.home")} onDrawerToggle={props.onDrawerToggle}/>
         </Box>
     )
 }

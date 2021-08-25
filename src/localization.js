@@ -5,16 +5,22 @@ const resources = {
     en: {
         translation: {
             app_name: "Ludendorff",
-            manage: "Manage",
-            account: "Account",
-            home: "Home",
-            scan: "Scan",
-            assets: "Assets",
-            users: "Users",
-            assignments: "Assignments",
-            categories: "Categories",
-            departments: "Departments",
-            settings: "Settings",
+            auth: {
+                hello: "Hello.",
+                welcome_back: "Welcome Back."
+            },
+            navigation: {
+                manage: "Manage",
+                account: "Account",
+                home: "Home",
+                scan: "Scan",
+                assets: "Assets",
+                users: "Users",
+                assignments: "Assignments",
+                categories: "Categories",
+                departments: "Departments",
+                settings: "Settings",
+            },
             signout: "Sign-out",
             continue: "Continue",
             cancel: "Cancel",
@@ -73,8 +79,6 @@ const resources = {
             category_select: "Select Category",
             user_select: "Select User",
             department_select: "Select Department",
-            hello: "Hello.",
-            welcome_back: "Welcome Back.",
             view_qr_code: "View QR-Code",
             view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
             confirm_signout: "Sign out?",
@@ -122,7 +126,9 @@ const resources = {
             feedback_department_remove_error: "Error removing department",
             feedback_assignment_create_error: "Error creating assignment",
             feedback_assignment_update_error: "Error updating assignment",
-            feedback_assignment_remove_error: "Error removing department"
+            feedback_assignment_remove_error: "Error removing department",
+            settings_dark_theme: "Dark Theme",
+            settings_dark_theme_summary: "Make the interface darker and easier on the eyes."
         }
     }
 }

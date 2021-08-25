@@ -71,8 +71,8 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                     <Grid xs={12} sm={4} item>
                         <Paper className={classes.containerPaper}>
                             <div className={classes.container}>
-                                <Typography variant="h5">{ t("hello") }</Typography>
-                                <Typography variant="h5">{ t("welcome_back") }</Typography>
+                                <Typography variant="h5">{ t("auth.hello") }</Typography>
+                                <Typography variant="h5">{ t("auth.welcome_back") }</Typography>
                             </div>
                             <div className={classes.container}>
                                 { error != null && 

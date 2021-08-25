@@ -51,15 +51,15 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     const { t } = useTranslation();
 
     const destinations: NavigationItemType[] = [
-        { icon: HomeIcon, title: "home", destination: Destination.HOME },
-        { icon: QrcodeIcon, title: "scan", destination: Destination.SCAN },
-        { icon: DesktopComputerIcon, title: "assets", destination: Destination.ASSETS },
-        { icon: UserGroupIcon, title: "users", destination: Destination.USERS },
-        { icon: IdentificationIcon, title: "assignments", destination: Destination.ASSIGNMENTS }
+        { icon: HomeIcon, title: "navigation.home", destination: Destination.HOME },
+        { icon: QrcodeIcon, title: "navigation.scan", destination: Destination.SCAN },
+        { icon: DesktopComputerIcon, title: "navigation.assets", destination: Destination.ASSETS },
+        { icon: UserGroupIcon, title: "navigation.users", destination: Destination.USERS },
+        { icon: IdentificationIcon, title: "navigation.assignments", destination: Destination.ASSIGNMENTS }
     ]
 
     const minorDestinations: NavigationItemType[] = [
-        { icon: CogIcon, title: "settings", destination: Destination.SETTINGS },
+        { icon: CogIcon, title: "navigation.settings", destination: Destination.SETTINGS },
     ]
 
     const confirmSignOut = () => {
@@ -73,7 +73,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     
     return (
         <Box>
-            <ListSubheader>{ t("manage") }</ListSubheader>
+            <ListSubheader>{ t("navigation.manage") }</ListSubheader>
             <List>
                 <NavigationList 
                     items={destinations} 
@@ -81,7 +81,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
             </List>
             <Divider/>
-            <ListSubheader>{ t("account") }</ListSubheader>
+            <ListSubheader>{ t("navigation.account") }</ListSubheader>
             <List>
                 <NavigationList
                     items={minorDestinations}

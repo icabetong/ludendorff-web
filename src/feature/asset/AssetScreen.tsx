@@ -322,7 +322,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     return (
         <Box className={classes.root}>
             <ComponentHeader 
-                title={ t("assets") } 
+                title={ t("navigation.assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
                 buttonText={ t("add") }
                 buttonIcon={PlusIcon}

@@ -9,7 +9,6 @@ import { SnackbarProvider } from "notistack";
 import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
 
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
-import { SettingsComponent } from "../settings/SettingsComponent";
 import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
 
@@ -18,6 +17,7 @@ const ScanScreen = lazy(() => import('../scan/ScanScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
 const AssignmentScreen = lazy(() => import('../assignment/AssignmentScreen'));
+const SettingsScreen = lazy(() => import('../settings/SettingsScreen'));
 
 type InnerComponentPropsType = {
     destination: Destination,
@@ -37,7 +37,7 @@ const InnerComponent = (props: InnerComponentPropsType) => {
         case Destination.ASSIGNMENTS:
             return <AssignmentScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SETTINGS:
-            return <SettingsComponent onDrawerToggle={props.onDrawerToggle}/>
+            return <SettingsScreen onDrawerToggle={props.onDrawerToggle}/>
         default:
             return <ErrorNotFoundStateComponent/>
     }

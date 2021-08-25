@@ -36,7 +36,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onDismiss() }>
-            <DialogTitle>{ t("departments") }</DialogTitle>
+            <DialogTitle>{ t("navigation.departments") }</DialogTitle>
             <DialogContent dividers={true}>
                 <DepartmentList
                     departments={props.departments}

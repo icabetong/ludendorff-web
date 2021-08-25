@@ -249,7 +249,7 @@ const UserScreen = (props: UserScreenProps) => {
     return (
         <Box className={classes.root}>
             <ComponentHeader 
-                title={ t("users") } 
+                title={ t("navigation.users") } 
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("add") }
                 buttonIcon={PlusIcon}
