@@ -1,13 +1,13 @@
 import { firestore } from "../../index";
 import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
 
-import { Asset } from "../asset/Asset";
-import { User } from "../user/User";
+import { AssetCore } from "../asset/Asset";
+import { UserCore } from "../user/User";
 
 export type Assignment = {
     assignmentId: string
-    asset?: Asset
-    user?: User
+    asset?: AssetCore
+    user?: UserCore
     dateAssigned?: Timestamp
     dateReturned?: Timestamp
     location?: string

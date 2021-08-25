@@ -122,7 +122,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 autoFocus
                                 id="editor-user-last-name"
                                 type="text"
-                                label={ t("last_name") }
+                                label={ t("field.last_name") }
                                 value={props.lastName}
                                 className={classes.textField}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -132,7 +132,7 @@ const UserEditor = (props: UserEditorProps) => {
                             <TextField
                                 id="editor-user-first-name"
                                 type="text"
-                                label={ t("first_name") }
+                                label={ t("field.first_name") }
                                 value={props.firstName}
                                 className={classes.textField}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -142,7 +142,7 @@ const UserEditor = (props: UserEditorProps) => {
                             <TextField
                                 id="editor-user-email"
                                 type="text"
-                                label={ t("email") }
+                                label={ t("field.email") }
                                 value={props.email}
                                 className={classes.textField}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -152,7 +152,7 @@ const UserEditor = (props: UserEditorProps) => {
                             <TextField
                                 id="editor-user-position"
                                 type="text"
-                                label={ t("position") }
+                                label={ t("field.position") }
                                 value={props.position}
                                 className={classes.textField}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -161,7 +161,7 @@ const UserEditor = (props: UserEditorProps) => {
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
-                                    <Typography variant="body2">{ t("department") }</Typography>
+                                    <Typography variant="body2">{ t("field.department") }</Typography>
                                 </FormLabel>
                                 <ListItem button onClick={() => props.onDepartmentSelect()}>
                                     <Typography variant="body2">
@@ -173,11 +173,11 @@ const UserEditor = (props: UserEditorProps) => {
                         <Grid item xs={6} className={classes.gridItem}>
                             <FormControl component="fieldset" className={classes.textField}>
                             <FormLabel component="legend">
-                                <Typography variant="body2">{ t("permissions") }</Typography>
+                                <Typography variant="body2">{ t("field.permissions") }</Typography>
                             </FormLabel>
                             <FormGroup>
                                 <FormControlLabel
-                                    label={t("permission_read")}
+                                    label={t("permission.read")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.READ)} 
@@ -185,7 +185,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             name="editor-read"/>
                                     }/>
                                 <FormControlLabel
-                                    label={t("permission_write")}
+                                    label={t("permission.write")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.WRITE)} 
@@ -193,7 +193,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             name="editor-write"/>
                                     }/>
                                 <FormControlLabel
-                                    label={t("permission_delete")}
+                                    label={t("permission.delete")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.DELETE)} 
@@ -201,7 +201,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             name="editor-delete"/>
                                     }/>
                                 <FormControlLabel
-                                    label={t("permission_audit")}
+                                    label={t("permission.audit")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.AUDIT)} 
@@ -209,7 +209,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             name="editor-audit"/>
                                     }/>
                                 <FormControlLabel
-                                    label={t("permission_manage_users")}
+                                    label={t("permission.manage_users")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.MANAGE_USERS)} 
@@ -217,7 +217,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             name="editor-manage-users"/>
                                     }/>
                                 <FormControlLabel
-                                    label={t("permission_administrative")}
+                                    label={t("permission.administrative")}
                                     control={
                                         <Checkbox 
                                             checked={hasPermission(Permission.ADMINISTRATIVE)} 

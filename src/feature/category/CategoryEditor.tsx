@@ -43,7 +43,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                         autoFocus
                         id="editor-category-name"
                         type="text"
-                        label={ t("category_name") }
+                        label={ t("field.category_name") }
                         value={props.categoryName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             props.onCategoryNameChanged(e.target.value)
@@ -59,4 +59,4 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
     )
 }
 
-export default CategoryEditorComponent
+export default CategoryEditorComponent;

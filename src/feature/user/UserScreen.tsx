@@ -89,13 +89,13 @@ const UserScreen = (props: UserScreenProps) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
-        { field: userId, headerName: t("id"), hide: true },
-        { field: lastName, headerName: t("last_name"), flex: 1 },
-        { field: firstName, headerName: t("first_name"), flex: 1 },
-        { field: email, headerName: t("email"), flex: 1 },
+        { field: userId, headerName: t("field.id"), hide: true },
+        { field: lastName, headerName: t("field.last_name"), flex: 1 },
+        { field: firstName, headerName: t("field.first_name"), flex: 1 },
+        { field: email, headerName: t("field.email"), flex: 1 },
         { 
             field: position, 
-            headerName: t("position"), 
+            headerName: t("field.position"), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams) => {
                 let user = params.row as User;
@@ -104,7 +104,7 @@ const UserScreen = (props: UserScreenProps) => {
         },
         { 
             field: department, 
-            headerName: t("department"), 
+            headerName: t("field.department"), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams) => {
                 let user = params.row as User;
@@ -255,7 +255,7 @@ const UserScreen = (props: UserScreenProps) => {
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: UserEditorActionType.CREATE })}
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("departments") }</MenuItem>
+                    <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("navigation.departments") }</MenuItem>
                 ]}
             />
             <Hidden xsDown>

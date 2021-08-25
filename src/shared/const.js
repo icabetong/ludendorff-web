@@ -14,6 +14,7 @@ export const dateCreated = "dateCreated";
 export const assetStatus = "status";
 export const assetCategory = "category";
 export const assetCategoryId = `${assetCategory}.${categoryId}`
+export const assetCategoryName = `${assetCategory}.${categoryName}`
 export const specifications = "specifications";
 
 export const userId = "userId";
@@ -31,15 +32,19 @@ export const permissions = "permissions";
 export const position = "position";
 export const department = "department";
 export const userDepartmentId = `${department}.${departmentId}`;
+export const userDepartmentName = `${department}.${departmentName}`;
 
 export const assignmentId = "assignmentId";
 export const assignmentAsset = "asset";
 export const assignmentAssetId = `${assignmentAsset}.${assetId}`;
 export const assignmentAssetName = `${assignmentAsset}.${assetName}`;
+export const assignmentAssetStatus = `${assignmentAsset}.${assetStatus}`;
 export const assignmentAssetCategory = `${assignmentAsset}.${assetCategory}`;
 export const assignmentAssetCategoryId = `${assignmentAsset}.${assetCategory}.${categoryId}`;
 export const assignmentUser = "user";
 export const assignmentUserId = `${assignmentUser}.${userId}`;
+export const assignmentUserEmail = `${assignmentUser}.${email}`;
+export const assignmentUserPosition = `${assignmentUser}.${position}`;
 export const dateAssigned = "dateAssigned";
 export const dateReturned = "dateReturned";
 export const location = "location";

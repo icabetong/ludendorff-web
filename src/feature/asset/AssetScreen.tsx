@@ -5,7 +5,7 @@ import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay, GridCellValue } from "@material-ui/data-grid";
+import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
@@ -44,6 +44,12 @@ import {
     assetEditorInitialState,
     assetEditorReducer
 } from "./AssetEditorReducer";
+
+import {
+    AssetRemoveActionType,
+    assetRemoveInitialState,
+    assetRemoveReducer
+} from "./AssetRemoveReducer";
 
 import {
     SpecificationEditorActionType,
@@ -106,38 +112,40 @@ const AssetScreen = (props: AssetScreenProps) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
-        { field: assetId, headerName: t("id"), hide: true },
-        { field: assetName, headerName: t("name"), flex: 1 },
+        { field: assetId, headerName: t("field.id"), hide: true },
+        { field: assetName, headerName: t("field.asset_name"), flex: 1 },
         { 
             field: assetCategory, 
-            headerName: t("category"), 
+            headerName: t("field.category"), 
             flex: 0.5,
             valueGetter: (params: GridValueGetterParams) => {
                 let asset = params.row as Asset;
                 return asset.category?.categoryName === undefined ? t("unknown") : asset.category?.categoryName;
-            }},
+            }
+        },
         { 
             field: dateCreated, 
-            headerName: t("date_created"), 
-            flex: 0.5, 
+            headerName: t("field.date_created"), 
+            flex: 1, 
             valueGetter: (params: GridValueGetterParams) => 
                 t(formatDate(params.row.dateCreated)) 
-            },
+        },
         { 
             field: assetStatus, 
-            headerName: t("status"), 
-            flex: 0.35, 
+            headerName: t("field.status"), 
+            flex: 0.5, 
             valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status)) 
         },
         {
             field: "action",
             headerName: t("actions"),
-            flex: 0.8,
-            renderCell: (cellValues: GridCellValue) => {
+            flex: 0.5,
+            renderCell: (params: GridCellParams) => {
                 return (
                     <HeroIconButton 
                         icon={TrashIcon}
-                        aria-label={t("delete")}/>
+                        aria-label={t("delete")}
+                        onClick={() => onAssetItemRemoveRequest(params.row as Asset)}/>
                 )
             }
         }
@@ -158,6 +166,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const [isQrCodeOpen, setQrCodeOpen] = useState<boolean>(false);
     const [editorState, editorDispatch] = useReducer(assetEditorReducer, assetEditorInitialState);
+    const [removeState, removeDispatch] = useReducer(assetRemoveReducer, assetRemoveInitialState);
     const [specEditorState, specEditorDispatch] = useReducer(specificationReducer, specificationEditorInitialState);
 
     const onAssetSelected = (asset: Asset) => {
@@ -207,6 +216,33 @@ const AssetScreen = (props: AssetScreenProps) => {
             payload: asset
         })
         setCategoryPickerOpen(false);
+    }
+
+    const onAssetItemRemoveRequest = (asset: Asset) => {
+        removeDispatch({
+            type: AssetRemoveActionType.REQUEST,
+            payload: asset
+        })
+    }
+
+    const onAssetItemRemove = () => {
+        let asset = removeState.asset;
+        if (asset === undefined)
+            return;
+
+        AssetRepository.remove(asset)
+            .then(() => {
+                enqueueSnackbar(t("feedback_asset_removed"));
+
+            }).catch((error) => {
+                console.log(error);
+                enqueueSnackbar(t("feedback_asset_remove_error"));
+
+            }).finally(() => {
+                removeDispatch({
+                    type: AssetRemoveActionType.DISMISS
+                })
+            })
     }
 
     const onSpecificationItemSelected = (spec: [string, string]) => {
@@ -328,7 +364,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("categories") }</MenuItem>
+                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
@@ -353,7 +389,7 @@ const AssetScreen = (props: AssetScreenProps) => {
             <Hidden smUp>
                 { !isAssetsLoading 
                     ? assets.length < 1 
-                        ? <AssetEmptyStateComponent/>
+                        ? <AssetEmptyState/>
                         : <AssetList assets={assets} onItemSelect={onAssetSelected}/>
                     : <LinearProgress/>
                 }
@@ -485,13 +521,23 @@ const AssetScreen = (props: AssetScreenProps) => {
                 }}/>
 
             <ItemRemoveDialog
+                isOpen={removeState.isRequest}
+                title="confirm.asset_remove"
+                summary="confirm.asset_remove_summary"
+                onDismiss={() => removeDispatch({
+                    type: AssetRemoveActionType.DISMISS
+                })}
+                onConfirm={onAssetItemRemove}/>
+
+            <ItemRemoveDialog
                 isOpen={categoryRemoveState.isRequest}
-                title="confirm_category_remove"
-                summary="confirm_category_remove_summary"
+                title="confirm.category_remove"
+                summary="confirm.category_remove_summary"
                 onDismiss={() => categoryRemoveDispatch({
                     type: CategoryRemoveActionType.DISMISS
                 })}
                 onConfirm={onCategoryItemRemove}/>
+
         </Box>
     )
 }
@@ -499,12 +545,12 @@ const AssetScreen = (props: AssetScreenProps) => {
 const EmptyStateOverlay = () => {
     return (
         <GridOverlay>
-            <AssetEmptyStateComponent />
+            <AssetEmptyState />
         </GridOverlay>
     )
 }
 
-const AssetEmptyStateComponent = () => {
+const AssetEmptyState = () => {
     const { t } = useTranslation();
     
     return (

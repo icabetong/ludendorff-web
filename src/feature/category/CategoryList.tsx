@@ -89,7 +89,7 @@ const CategoryItem = (props: CategoryItemProps) => {
             onClick={() => props.onItemSelect(props.category)}>
             <ListItemText 
                 primary={props.category.categoryName}
-                secondary={ t("count", { count: props.category.count }) }/>
+                secondary={ t("field.count", { count: props.category.count }) }/>
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.category)}>
                     <TrashIcon className={classes.actionIcon}/>

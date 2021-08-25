@@ -49,7 +49,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                         autoFocus
                         id="editor-department-name"
                         type="text"
-                        label={ t("department_name") }
+                        label={ t("field.department_name") }
                         value={props.name === undefined ? '' : props.name}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             props.onNameChanged(event.target.value)
@@ -57,7 +57,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                         className={classes.textField}/>
                     <FormControl component="fieldset" className={classes.textField}>
                             <FormLabel component="legend">
-                                <Typography variant="body2">{ t("manager") }</Typography>
+                                <Typography variant="body2">{ t("field.manager") }</Typography>
                             </FormLabel>
                             <ListItem button onClick={() => props.onManagerSelect()}>
                                 <Typography variant="body2">

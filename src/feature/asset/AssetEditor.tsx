@@ -81,7 +81,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                 autoFocus
                                 id="editor-asset-name"
                                 type="text"
-                                label={ t("asset_name") }
+                                label={ t("field.asset_name") }
                                 value={props.name}
                                 className={classes.textField}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -90,25 +90,25 @@ const AssetEditor = (props: AssetEditorProps) => {
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
-                                    <Typography variant="body2">{ t("status") }</Typography>
+                                    <Typography variant="body2">{ t("field.status") }</Typography>
                                 </FormLabel>
                                 <RadioGroup 
-                                    aria-label={ t("status") } 
+                                    aria-label={ t("field.status") } 
                                     name="editor-status" 
                                     value={props.status} 
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                                         props.onStatusChanged(e.target.value as Status)
                                     }>
-                                    <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status_operational") } />
-                                    <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status_idle") }/>
-                                    <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status_under_maintenance") } />
-                                    <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status_retired") } />
+                                    <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status.operational") } />
+                                    <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status.idle") }/>
+                                    <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status.under_maintenance") } />
+                                    <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status.retired") } />
                                 </RadioGroup>
                             </FormControl>
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
-                                    <Typography variant="body2">{ t("category") }</Typography>
+                                    <Typography variant="body2">{ t("field.category") }</Typography>
                                 </FormLabel>
                                 <ListItem button onClick={() => props.onCategorySelect()}>
                                     <Typography variant="body2">
@@ -119,7 +119,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         </Grid>
                         <Grid item xs={6} className={classes.gridItem}>
                             <FormLabel component="legend">
-                                <Typography variant="body2">{ t("specification") }</Typography>
+                                <Typography variant="body2">{ t("field.specification") }</Typography>
                             </FormLabel>
                             <List>
                                 <SpecificationList 

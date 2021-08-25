@@ -48,13 +48,13 @@ export enum Status {
 export const getStatusLoc = (status: Status | undefined): string => {
     switch(status) {
         case Status.OPERATIONAL:
-            return "status_operational"
+            return "status.operational"
         case Status.IDLE:
-            return "status_idle";
+            return "status.idle";
         case Status.UNDER_MAINTENANCE:
-            return "status_under_maintenance"
+            return "status.under_maintenance"
         case Status.RETIRED:
-            return "status_retired"
+            return "status.retired"
         default:
             return "unknown"
     }
@@ -81,7 +81,8 @@ export class AssetRepository {
         batch.update(firestore.collection(categoryCollection)
             .doc(asset.category?.categoryId), FieldValue.increment(1))
         batch.update(firestore.collection(categoryCollection)
-            .doc(previousCategoryId), FieldValue.increment(-1))
+            .doc(previousCategoryId), categoryCount,
+                FieldValue.increment(-1))
 
         return batch.commit()
     }
@@ -91,7 +92,8 @@ export class AssetRepository {
         batch.delete(firestore.collection(assetCollection)
             .doc(asset.assetId))
         batch.update(firestore.collection(categoryCollection)
-            .doc(asset.category?.categoryId), FieldValue.increment(-1))
+            .doc(asset.category?.categoryId), categoryCount, 
+                FieldValue.increment(-1))
 
         return batch.commit()
     }
