@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import firebase from 'firebase/app';
 
-import { auth } from "../../index"
 import history from "../navigation/History";
+import { User } from "../user/User";
+import { userCollection } from "../../shared/const";
+import { auth, firestore } from "../../index";
 
 export class AuthFetched {
-    user: firebase.User | null
+    user: User | null;
 
-    constructor(user: firebase.User | null) {
-        this.user = user
+    constructor(user: User | null) {
+        this.user = user;
     }
 }
 export class AuthPending {
@@ -28,9 +29,17 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-            setAuthState(new AuthFetched(firebaseUser));
-            if (firebaseUser != null)
-                history.push("/");
+            if (firebaseUser != null) {
+                firestore.collection(userCollection)
+                    .doc(firebaseUser.uid)
+                    .onSnapshot((document) => {
+                        setAuthState(new AuthFetched(document.data() as User));
+                        history.push("/");
+                    });
+            } else {
+                auth.signOut();
+                history.push("/auth");
+            }
         });
         return unsubscribe;
     }, []);

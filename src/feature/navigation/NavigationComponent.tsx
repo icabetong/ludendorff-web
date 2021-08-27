@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ComponentClass, useState } from "react";
+import React, { FunctionComponent, ComponentClass, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -22,9 +22,11 @@ import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import UserGroupIcon from "@heroicons/react/outline/UserGroupIcon";
 import IdentificationIcon from "@heroicons/react/outline/IdentificationIcon";
 import CogIcon from "@heroicons/react/outline/CogIcon";
+import UserIcon from "@heroicons/react/outline/UserIcon";
 import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
 
 import firebase from "firebase/app";
+import { AuthContext, AuthFetched } from "../auth/AuthProvider";
 
 export enum Destination {
     HOME = 1, 
@@ -32,6 +34,7 @@ export enum Destination {
     ASSETS, 
     USERS, 
     ASSIGNMENTS,
+    PROFILE,
     SETTINGS
 }
 
@@ -47,6 +50,7 @@ type NavigationComponentPropsType =  {
 }
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
+    const authState = useContext(AuthContext);
     const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
     const { t } = useTranslation();
 
@@ -73,6 +77,9 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     
     return (
         <Box>
+            <h1>{
+                
+            }</h1>
             <ListSubheader>{ t("navigation.manage") }</ListSubheader>
             <List>
                 <NavigationList 
@@ -83,6 +90,16 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
             <Divider/>
             <ListSubheader>{ t("navigation.account") }</ListSubheader>
             <List>
+                <NavigationListItem
+                    itemKey={0}
+                    navigation={{
+                        icon: UserIcon,
+                        title: authState instanceof AuthFetched && authState.user?.firstName !== undefined
+                            ? authState.user?.firstName
+                            : t("profile")
+                    }}
+                    isActive={false}
+                    action={() => props.onNavigate(Destination.PROFILE)}/>
                 <NavigationList
                     items={minorDestinations}
                     destination={props.currentDestination}

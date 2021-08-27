@@ -19,6 +19,7 @@ const resources = {
                 assignments: "Assignments",
                 categories: "Categories",
                 departments: "Departments",
+                profile: "Profile",
                 settings: "Settings",
             },
             field: {
@@ -66,6 +67,11 @@ const resources = {
                 signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
                 category_remove: "Remove category?",
                 category_remove_summary: "Do you want to remove this category? This action cannot be undone.",
+            },
+            action: {
+                change_name: "Change Name",
+                change_password: "Change Password",
+                request_reset: "Request Password Reset"
             },
             signout: "Sign-out",
             continue: "Continue",

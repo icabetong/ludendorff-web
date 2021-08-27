@@ -17,6 +17,7 @@ const ScanScreen = lazy(() => import('../scan/ScanScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
 const AssignmentScreen = lazy(() => import('../assignment/AssignmentScreen'));
+const ProfileScreen = lazy(() => import('../profile/ProfileScreen'));
 const SettingsScreen = lazy(() => import('../settings/SettingsScreen'));
 
 type InnerComponentPropsType = {
@@ -36,6 +37,8 @@ const InnerComponent = (props: InnerComponentPropsType) => {
             return <UserScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSIGNMENTS:
             return <AssignmentScreen onDrawerToggle={props.onDrawerToggle}/>
+        case Destination.PROFILE:
+            return <ProfileScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.SETTINGS:
             return <SettingsScreen onDrawerToggle={props.onDrawerToggle}/>
         default:
