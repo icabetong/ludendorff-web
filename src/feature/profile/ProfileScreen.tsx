@@ -1,7 +1,7 @@
-import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -12,9 +12,9 @@ import {
 
 import ProfileActionList from "./ProfileActionList";
 import ComponentHeader from "../../components/ComponentHeader";
-import { ContentLoadingStateComponent } from "../state/LoadingStates";
 
-import { AuthContext, AuthFetched } from "../auth/AuthProvider";
+import useAuthState from "../auth/useAuthState";
+import { AuthStatus } from "../auth/AuthProvider";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -31,7 +31,7 @@ type ProfileScreenProps = {
 
 
 const ProfileScreen = (props: ProfileScreenProps) => {
-    const authState = useContext(AuthContext);
+    const { status, user } = useAuthState();
     const classes = useStyles();
     const { t } = useTranslation();
     const theme = useTheme();
@@ -53,7 +53,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 title={ t("navigation.profile") }
                 onDrawerToggle={props.onDrawerToggle}/>
 
-            { authState instanceof AuthFetched
+            { status === AuthStatus.FETCHED
                 ? 
                 <div className={classes.wrapper}>
                     <Grid 
@@ -61,16 +61,16 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                         direction={isMobile ? "column" : "row"} 
                         spacing={2}>
                         <Grid item sm={6}>
-                            <Typography variant="h4">{authState.user?.firstName}</Typography>
-                            <Typography variant="h4">{authState.user?.lastName}</Typography>
-                            <Typography variant="body1">{authState.user?.email}</Typography>
+                            <Typography variant="h4">{user?.firstName}</Typography>
+                            <Typography variant="h4">{user?.lastName}</Typography>
+                            <Typography variant="body1">{user?.email}</Typography>
                         </Grid>
                         <Grid item sm={6}>
                             <ProfileActionList actions={actions}/>
                         </Grid>
                     </Grid>
                 </div>
-                : <ContentLoadingStateComponent/>
+                : <LinearProgress/>
             }
         </Box>
     );

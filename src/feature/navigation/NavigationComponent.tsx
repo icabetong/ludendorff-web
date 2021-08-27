@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ComponentClass, useState, useContext } from "react";
+import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -26,7 +26,8 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
 
 import firebase from "firebase/app";
-import { AuthContext, AuthFetched } from "../auth/AuthProvider";
+import useAuthState from "../auth/useAuthState";
+import { AuthStatus } from "../auth/AuthProvider";
 
 export enum Destination {
     HOME = 1, 
@@ -50,7 +51,7 @@ type NavigationComponentPropsType =  {
 }
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
-    const authState = useContext(AuthContext);
+    const { status, user } = useAuthState();
     const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
     const { t } = useTranslation();
 
@@ -77,9 +78,6 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     
     return (
         <Box>
-            <h1>{
-                
-            }</h1>
             <ListSubheader>{ t("navigation.manage") }</ListSubheader>
             <List>
                 <NavigationList 
@@ -94,8 +92,9 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     itemKey={0}
                     navigation={{
                         icon: UserIcon,
-                        title: authState instanceof AuthFetched && authState.user?.firstName !== undefined
-                            ? authState.user?.firstName
+                        title: status === AuthStatus.FETCHED 
+                            && user?.firstName !== undefined
+                            ? user!.firstName
                             : t("profile")
                     }}
                     isActive={false}

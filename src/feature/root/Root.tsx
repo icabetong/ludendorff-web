@@ -1,4 +1,4 @@
-import { useContext, useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy } from "react";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
@@ -6,7 +6,8 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
 
-import { AuthContext, AuthFetched, AuthPending } from "../auth/AuthProvider";
+import useAuthState from "../auth/useAuthState";
+import { AuthStatus } from "../auth/AuthProvider";
 
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
 import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
@@ -149,17 +150,17 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 }
 
 const RootComponent = () => {
-    const authState = useContext(AuthContext);
+    const { status, user } = useAuthState();
     const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
 
     const onNavigate = (newDestination: Destination) => {
         setDestination(newDestination)
     }
 
-    if (authState instanceof AuthPending) {
+    if (status === AuthStatus.PENDING) {
         return <MainLoadingStateComponent/>
-    } else if (authState instanceof AuthFetched) {
-        if (authState.user != null) {
+    } else if (status === AuthStatus.FETCHED) {
+        if (user !== undefined) {
             return (
                 <SnackbarProvider 
                     maxSnack={3}

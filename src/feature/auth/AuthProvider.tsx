@@ -5,6 +5,12 @@ import { User } from "../user/User";
 import { userCollection } from "../../shared/const";
 import { auth, firestore } from "../../index";
 
+export enum AuthStatus { FETCHED, PENDING }
+export type AuthState = {
+    status: AuthStatus,
+    user?: User
+}
+
 export class AuthFetched {
     user: User | null;
 
@@ -22,10 +28,10 @@ export class AuthPending {
      */
 }
 
-export const AuthContext = React.createContext<AuthFetched | AuthPending>(new AuthPending())
+export const AuthContext = React.createContext<AuthState>({ status: AuthStatus.PENDING })
 
 export const AuthProvider: React.FC = ({ children }) => {
-    const [authState, setAuthState] = useState<AuthFetched | AuthPending>(new AuthPending());
+    const [authState, setAuthState] = useState<AuthState>({ status: AuthStatus.PENDING });
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
@@ -33,7 +39,7 @@ export const AuthProvider: React.FC = ({ children }) => {
                 firestore.collection(userCollection)
                     .doc(firebaseUser.uid)
                     .onSnapshot((document) => {
-                        setAuthState(new AuthFetched(document.data() as User));
+                        setAuthState({ status: AuthStatus.FETCHED, user: document.data() as User });
                         history.push("/");
                     });
             } else {
