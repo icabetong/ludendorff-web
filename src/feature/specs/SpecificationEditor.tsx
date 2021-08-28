@@ -43,7 +43,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         autoFocus
                         id="editor-specification-key"
                         type="text"
-                        label={ t("specification_key") }
+                        label={ t("field.specification_key") }
                         value={specification[0]}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             props.onKeyChanged(e.target.value)
@@ -52,7 +52,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                     <TextField
                         id="editor-specification-value"
                         type="text"
-                        label={ t("specification_value") }
+                        label={ t("field.specification_value") }
                         value={specification[1]}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                             props.onValueChanged(e.target.value)
@@ -62,8 +62,8 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit()}>{ t("save") }</Button>
+                <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
+                <Button color="primary" onClick={() => props.onSubmit()}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

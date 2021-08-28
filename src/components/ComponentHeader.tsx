@@ -72,7 +72,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                     edge="start"
                     onClick={props.onDrawerToggle}
                     className={classes.navigationButton}
-                    aria-label={ t("show_drawer") }>
+                    aria-label={ t("button.show_drawer") }>
                     <MenuIcon className={clsx(classes.toolbarButtonIcon, classes.icon)}/>
                 </IconButton>
                 <Hidden xsDown>
@@ -104,7 +104,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
                         <IconButton
                             className={classes.overflowButton}
                             aria-haspopup="true"
-                            aria-label={ t("show_menu") }
+                            aria-label={ t("button.show_menu") }
                             onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}>
                             <DotsVerticalIcon className={clsx(classes.icon, classes.toolbarButtonIcon)}/>
                         </IconButton>

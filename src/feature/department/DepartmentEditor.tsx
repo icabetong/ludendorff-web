@@ -68,8 +68,8 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                 </Container>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit()}>{ t("save") }</Button>
+                <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
+                <Button color="primary" onClick={() => props.onSubmit()}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

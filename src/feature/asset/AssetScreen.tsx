@@ -69,7 +69,7 @@ import {
     categoryRemoveReducer
 } from "../category/CategoryRemoveReducer";
 
-import ItemRemoveDialog from "../shared/ItemRemoveDialog";
+import ConfirmationDialog from "../shared/ItemRemoveDialog";
 
 const AssetEditor = lazy(() => import("./AssetEditor"));
 const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
@@ -360,7 +360,7 @@ const AssetScreen = (props: AssetScreenProps) => {
             <ComponentHeader 
                 title={ t("navigation.assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
-                buttonText={ t("add") }
+                buttonText={ t("button.add") }
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
                 menuItems={[
@@ -520,7 +520,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                     })
                 }}/>
 
-            <ItemRemoveDialog
+            <ConfirmationDialog
                 isOpen={removeState.isRequest}
                 title="confirm.asset_remove"
                 summary="confirm.asset_remove_summary"
@@ -529,7 +529,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 })}
                 onConfirm={onAssetItemRemove}/>
 
-            <ItemRemoveDialog
+            <ConfirmationDialog
                 isOpen={categoryRemoveState.isRequest}
                 title="confirm.category_remove"
                 summary="confirm.category_remove_summary"

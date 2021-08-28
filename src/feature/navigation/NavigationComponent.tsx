@@ -105,7 +105,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     onNavigate={props.onNavigate}/>
                 <NavigationListItem
                     itemKey={1}
-                    navigation={{icon: LogoutIcon, title: t("signout")}}
+                    navigation={{icon: LogoutIcon, title: t("button.signout")}}
                     isActive={false}
                     action={() => confirmSignOut()}/>
             </List>
@@ -119,8 +119,8 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                     <DialogContentText>{ t("confirm.signout_message") }</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{ t("cancel") }</Button>
-                    <Button color="primary" onClick={triggerSignOut}>{ t("continue") }</Button>
+                    <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{ t("button.cancel") }</Button>
+                    <Button color="primary" onClick={triggerSignOut}>{ t("button.continue") }</Button>
                 </DialogActions>
             </Dialog>
         </Box>

@@ -6,18 +6,20 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-type ItemRemoveDialogProps = {
+type ConfirmationDialogProps = {
     isOpen: boolean,
-    title?: string,
-    summary?: string
+    title: string,
+    summary: string,
+    positiveButtonText?: string,
+    negativeButtonText?: string,
     onConfirm: () => void,
     onDismiss: () => void,
 }
 
-const ItemRemoveDialog = (props: ItemRemoveDialogProps) => {
+const ConfirmationDialog = (props: ConfirmationDialogProps) => {
     const { t } = useTranslation();
-    const title = props.title !== undefined ? props.title : "confirm_generic_remove";
-    const summary = props.summary !== undefined ? props.summary : "confirm_generic_remove_summary";
+    const positiveButtonText = props.positiveButtonText === undefined ? "button.ok" : props.positiveButtonText;
+    const negativeButtonText = props.negativeButtonText === undefined ? "button.cancel" : props.negativeButtonText;
 
     return (
         <Dialog
@@ -25,26 +27,24 @@ const ItemRemoveDialog = (props: ItemRemoveDialogProps) => {
             fullWidth={true}
             open={props.isOpen}
             onClose={() => props.onDismiss()}>
-            <DialogTitle>{ t(title) }</DialogTitle>
+            <DialogTitle>{ t(props.title) }</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    { t(summary) }
-                </DialogContentText>
+                <DialogContentText>{ t(props.summary) }</DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button 
                     color="primary"
                     onClick={() => props.onDismiss()}>
-                        { t("cancel") }
+                        { t(negativeButtonText) }
                 </Button>
                 <Button
                     color="primary"
                     onClick={() => props.onConfirm()}>
-                        { t("delete") }
+                        { t(positiveButtonText) }
                 </Button>
             </DialogActions>
         </Dialog>
     )
 }
 
-export default ItemRemoveDialog;
+export default ConfirmationDialog;

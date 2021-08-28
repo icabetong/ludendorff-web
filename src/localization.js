@@ -66,7 +66,9 @@ const resources = {
                 signout: "Sign out?",
                 signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
                 category_remove: "Remove category?",
-                category_remove_summary: "Do you want to remove this category? This action cannot be undone.",
+                category_remove_summary: "Do you want to remove this category? Once finished, this action cannot be undone.",
+                department_remove: "Remove department?",
+                department_remove_summary: "Do you want to remove this department? Once finished, this action cannot be undone."
             },
             action: {
                 change_name: "Change Name",
@@ -74,27 +76,30 @@ const resources = {
                 request_reset: "Request Password Reset"
             },
             button: {
+                cancel: "Cancel",
+                ok: "Ok",
+                continue: "Continue",
+                add: "Add",
+                save: "Save",
+                select: "Select",
+                previous: "Previous",
+                next: "Next",
+                close: "Close",
+                delete: "Delete",
+                show_menu: "Show menu",
+                show_drawer: "Show drawer",
+                signin: "Sign in",
+                signout: "Sign-out",
                 go_to_home: "Go to Home"
+            },
+            feedback: {
+                authenticating: "Authenticating"
             },
             error: {
                 not_found_header: "Whoops!",
                 not_found_summary: "We couldn't find that page.",
                 not_found_info: "Maybe you can head back home and find it there instead?"
             },
-            signout: "Sign-out",
-            continue: "Continue",
-            cancel: "Cancel",
-            add: "Add",
-            save: "Save",
-            select: "Select",
-            previous: "Previous",
-            next: "Next",
-            close: "Close",
-            delete: "Delete",
-            show_menu: "Show menu",
-            show_drawer: "Show drawer",
-            authenticating: "Authenticating",
-            sign_in: "Sign in",
             unknown: "Unknown",
             actions: "Actions",
             not_set: "Not Set",

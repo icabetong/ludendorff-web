@@ -59,7 +59,7 @@ import {
     departmentName
 } from "../../shared/const";
 
-import ItemRemoveDialog from "../shared/ItemRemoveDialog";
+import ConfirmationDialog from "../shared/ItemRemoveDialog";
 
 const UserEditor = lazy(() => import("./UserEditor"));
 const UserPicker = lazy(() => import("./UserPicker"));
@@ -68,7 +68,7 @@ const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
 const DepartmentEditor = lazy(() => import("../department/DepartmentEditor"));
 const DepartmentPicker = lazy(() => import("../department/DepartmentPicker"));
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         height: '100%',
         width: '100%'
@@ -251,7 +251,7 @@ const UserScreen = (props: UserScreenProps) => {
             <ComponentHeader 
                 title={ t("navigation.users") } 
                 onDrawerToggle={props.onDrawerToggle}
-                buttonText={ t("add") }
+                buttonText={ t("button.add") }
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: UserEditorActionType.CREATE })}
                 menuItems={[
@@ -419,10 +419,10 @@ const UserScreen = (props: UserScreenProps) => {
                 onSelectItem={onUserDepartmentSelected}
                 onDeleteItem={onDepartmentItemRequestRemove}/>
 
-            <ItemRemoveDialog
+            <ConfirmationDialog
                 isOpen={departmentRemoveState.isRequest}
-                title="confirm_department_remove"
-                summary="confirm_department_remove_summary"
+                title="confirm.department_remove"
+                summary="confirm.department_remove_summary"
                 onDismiss={() => departmentRemoveDispatch({
                     type: DepartmentRemoveActionType.DISMISS
                 })}
