@@ -97,7 +97,7 @@ const resources = {
             },
             error: {
                 not_found_header: "Whoops!",
-                not_found_summary: "We couldn't find that page.",
+                not_found_summary: "We can't seem to find that page you're looking for.",
                 not_found_info: "Maybe you can head back home and find it there instead?"
             },
             unknown: "Unknown",

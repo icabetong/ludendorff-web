@@ -7,7 +7,7 @@ import useLocalStorage from "../../shared/persistence";
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
-import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
+import { ErrorNotFoundState } from "../state/ErrorStates";
 
 const secondaryColors = {
     main: '#ff79c6',
@@ -61,6 +61,19 @@ const baseTheme = createTheme({
                 fontSize: '1em',
                 fontWeight: 500
             },
+        },
+        MuiList: {
+            root: {
+                paddingLeft: '0.6em',
+                paddingRight: '0.6em'
+            }
+        },
+        MuiListItem: {
+            root: {
+                borderRadius: '0.4em',
+                marginTop: '0.4em',
+                marginBottom: '0.4em'
+            }
         }
     }
 })
@@ -129,7 +142,7 @@ export const CoreComponent = () => {
                             <Switch>
                                 <Route path="/" component={RootComponent} exact/>
                                 <Route path="/auth" component={AuthComponent}/>
-                                <Route path="*" component={ErrorNotFoundStateComponent} exact/>
+                                <Route path="*" component={ErrorNotFoundState} exact/>
                             </Switch>
                         </Router>
                 </ThemeProvider>

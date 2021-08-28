@@ -10,7 +10,7 @@ import useAuthState from "../auth/useAuthState";
 import { AuthStatus } from "../auth/AuthProvider";
 
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
-import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
+import { ErrorNotFoundState } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
 
 const HomeScreen = lazy(() => import('../home/HomeScreen'));
@@ -43,7 +43,7 @@ const InnerComponent = (props: InnerComponentPropsType) => {
         case Destination.SETTINGS:
             return <SettingsScreen onDrawerToggle={props.onDrawerToggle}/>
         default:
-            return <ErrorNotFoundStateComponent/>
+            return <ErrorNotFoundState/>
     }
 }
 
