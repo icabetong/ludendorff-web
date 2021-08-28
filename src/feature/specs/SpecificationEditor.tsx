@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -28,7 +29,23 @@ type SpecificationEditorProps = {
 const SpecificationEditor = (props: SpecificationEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const [keyError, setKeyError] = useState(false);
+    const [valueError, setValueError] = useState(false);
     const specification = props.specification === undefined ? ['', ''] : props.specification;
+
+    const onPreSubmit = () => {
+        if (specification[0] === '') {
+            setKeyError(true);
+            return;
+        }
+
+        if (specification[1] === '') {
+            setValueError(true);
+            return;
+        }
+
+        props.onSubmit();
+    }
 
     return (
         <Dialog
@@ -45,25 +62,35 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         type="text"
                         label={ t("field.specification_key") }
                         value={specification[0]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.onKeyChanged(e.target.value)
-                        }
+                        error={keyError}
+                        helperText={keyError ? t("error.empty_specification_key") : undefined}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            let key = e.target.value;
+                            if (key !== '' && keyError)
+                                setKeyError(false);
+                            return props.onKeyChanged(key); 
+                        }}
                         className={classes.textField}/>
                     <TextField
                         id="editor-specification-value"
                         type="text"
                         label={ t("field.specification_value") }
                         value={specification[1]}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                            props.onValueChanged(e.target.value)
-                        }
+                        error={valueError}
+                        helperText={valueError ? t("error.empty_specification_value") : undefined}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            let value = e.target.value;
+                            if (value !== '' && valueError)
+                                setValueError(false);
+                            return props.onValueChanged(value);
+                        }}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>
 
             <DialogActions>
                 <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

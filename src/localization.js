@@ -96,6 +96,8 @@ const resources = {
                 authenticating: "Authenticating"
             },
             error: {
+                empty_specification_key: "You'll need a key for this specification",
+                empty_specification_value: "You'll need a value for this specification",
                 not_found_header: "Whoops!",
                 not_found_summary: "We can't seem to find that page you're looking for.",
                 not_found_info: "Maybe you can head back home and find it there instead?"
