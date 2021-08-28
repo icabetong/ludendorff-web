@@ -10,7 +10,7 @@ export enum Permission {
 }
 
 export const hasPermission = (user: User, permission: Permission): boolean => {
-    return (user.permissions & permission) === permission;
+    return user.permissions.includes(permission);
 }
 
 export const minimize = (user: User): UserCore => {
@@ -29,7 +29,7 @@ export type User = {
     lastName?: string,
     email?: string,
     imageUrl?: string,
-    permissions: number,
+    permissions: number[],
     position?: string,
     department?: DepartmentCore
 }

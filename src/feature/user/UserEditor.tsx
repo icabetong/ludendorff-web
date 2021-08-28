@@ -42,7 +42,7 @@ type UserEditorProps = {
     lastName?: string,
     firstName?: string,
     email?: string,
-    permissions: number,
+    permissions: number[],
     position?: string,
     department?: DepartmentCore,
     onCancel: () => void,
@@ -51,7 +51,7 @@ type UserEditorProps = {
     onLastNameChanged: (lastName: string) => void,
     onFirstNameChanged: (firstName: string) => void,
     onEmailChanged: (email: string) => void,
-    onPermissionsChanged: (permissions: number) => void,
+    onPermissionsChanged: (permissions: number[]) => void,
     onPositionChanged: (position: string) => void
 }
 
@@ -63,47 +63,47 @@ const UserEditor = (props: UserEditorProps) => {
 
     const onPreSubmit = () => {}
 
+    const hasPermission = (permissions: number[], permission: Permission) => {
+        return permissions.includes(permission);
+    }
+
     const onPermissionsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         const isChecked = event.target.checked;
         let permissions = props.permissions;
         switch(event.target.name) {
             case "editor-read": 
                 if (isChecked)
-                    permissions += Permission.READ;
-                else permissions -= Permission.READ;
+                    permissions.push(Permission.READ);
+                else permissions = permissions.filter((v: number) => v !== Permission.READ);
                 break;
             case "editor-write":
                 if (isChecked)
-                    permissions += Permission.WRITE;
-                else permissions -= Permission.WRITE;
+                    permissions.push(Permission.WRITE);
+                else permissions = permissions.filter((v: number) => v !== Permission.WRITE);
                 break;
             case "editor-delete":
                 if (isChecked)
-                    permissions += Permission.DELETE;
-                else permissions -= Permission.DELETE;
+                    permissions.push(Permission.DELETE);
+                else permissions = permissions.filter((v: number) => v !== Permission.DELETE);
                 break;
             case "editor-audit":
                 if (isChecked)
-                    permissions += Permission.AUDIT;
-                else permissions -= Permission.AUDIT;
+                    permissions.push(Permission.AUDIT);
+                else permissions = permissions.filter((v: number) => v !== Permission.AUDIT);
                 break;
             case "editor-manage-users":
                 if (isChecked)
-                    permissions += Permission.MANAGE_USERS;
-                else permissions -= Permission.MANAGE_USERS;
+                    permissions.push(Permission.MANAGE_USERS);
+                else permissions = permissions.filter((v: number) => v !== Permission.MANAGE_USERS);
                 break;
             case "editor-administrative":
                 if (isChecked)
-                    permissions += Permission.ADMINISTRATIVE;
-                else permissions -= Permission.ADMINISTRATIVE;
+                    permissions.push(Permission.ADMINISTRATIVE);
+                else permissions = permissions.filter((v: number) => v !== Permission.ADMINISTRATIVE);
                 break;
         }
+        console.log(permissions);
         props.onPermissionsChanged(permissions);
-    }
-
-    const hasPermission = (permission: number): boolean => {
-        let result = props.permissions & permission;
-        return result === permission;
     }
 
     return (
@@ -180,7 +180,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.read")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.READ)} 
+                                            checked={hasPermission(props.permissions, Permission.READ)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-read"/>
                                     }/>
@@ -188,7 +188,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.write")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.WRITE)} 
+                                            checked={hasPermission(props.permissions, Permission.WRITE)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-write"/>
                                     }/>
@@ -196,7 +196,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.delete")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.DELETE)} 
+                                            checked={hasPermission(props.permissions, Permission.DELETE)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-delete"/>
                                     }/>
@@ -204,7 +204,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.audit")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.AUDIT)} 
+                                            checked={hasPermission(props.permissions, Permission.AUDIT)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-audit"/>
                                     }/>
@@ -212,7 +212,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.manage_users")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.MANAGE_USERS)} 
+                                            checked={hasPermission(props.permissions, Permission.MANAGE_USERS)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-manage-users"/>
                                     }/>
@@ -220,7 +220,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     label={t("permission.administrative")}
                                     control={
                                         <Checkbox 
-                                            checked={hasPermission(Permission.ADMINISTRATIVE)} 
+                                            checked={hasPermission(props.permissions, Permission.ADMINISTRATIVE)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-administrative"/>
                                     }/>

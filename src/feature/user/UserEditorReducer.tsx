@@ -18,7 +18,7 @@ type UserEditorState = {
 }
 
 export const userEditorInitialState: UserEditorState = {
-    user: { userId: newId(), permissions: 0 },
+    user: { userId: newId(), permissions: [] },
     isCreate: true,
     isOpen: false
 }

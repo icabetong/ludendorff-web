@@ -132,7 +132,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserDepartmentSelected = (department: Department) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: 0 }
+            user = { userId: newId(), permissions: [] }
         user!.department = minimizeDepartment(department);
         setDepartmentPickerOpen(false);
         editorDispatch({
@@ -301,7 +301,7 @@ const UserScreen = (props: UserScreenProps) => {
                 lastName={editorState.user?.lastName}
                 firstName={editorState.user?.firstName}
                 email={editorState.user?.email}
-                permissions={editorState.user?.permissions === undefined ? 0 : editorState.user?.permissions}
+                permissions={editorState.user?.permissions === undefined ? [] : editorState.user?.permissions}
                 position={editorState.user?.position}
                 department={editorState.user?.department}
                 onCancel={() => editorDispatch({ type: UserEditorActionType.DISMISS })}
@@ -310,7 +310,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onLastNameChanged={(lastName) => {
                     let user = editorState.user;
                     if (user === undefined)
-                        user = { userId: newId(), permissions: 0 }
+                        user = { userId: newId(), permissions: [] }
                     user!.lastName = lastName;
                     return editorDispatch({
                         type: UserEditorActionType.CHANGED,
@@ -320,7 +320,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onFirstNameChanged={(firstName) => {
                     let user = editorState.user;
                     if (user === undefined)
-                        user = { userId: newId(), permissions: 0 }
+                        user = { userId: newId(), permissions: [] }
                     user!.firstName = firstName;
                     return editorDispatch({
                         type: UserEditorActionType.CHANGED,
@@ -330,7 +330,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onEmailChanged={(email) => {
                     let user = editorState.user;
                     if (user === undefined)
-                        user = { userId: newId(), permissions: 0 }
+                        user = { userId: newId(), permissions: [] }
                     user!.email = email;
                     return editorDispatch({
                         type: UserEditorActionType.CHANGED,
@@ -340,7 +340,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onPermissionsChanged={(permissions) => {
                     let user = editorState.user;
                     if (user === undefined)
-                        user = { userId: newId(), permissions: 0 }
+                        user = { userId: newId(), permissions: [] }
                     user!.permissions = permissions;
                     return editorDispatch({
                         type: UserEditorActionType.CHANGED,
@@ -350,7 +350,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onPositionChanged={(position) => {
                     let user = editorState.user;
                     if (user === undefined)
-                        user = { userId: newId(), permissions: 0 }
+                        user = { userId: newId(), permissions: [] }
                     user!.position = position;
                     return editorDispatch({
                         type: UserEditorActionType.CHANGED,
