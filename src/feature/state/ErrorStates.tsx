@@ -1,4 +1,37 @@
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+
+import history from "../navigation/History";
+import { ReactComponent as Logo } from "./404.svg";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100vw', height: '100vh',
+        padding: theme.spacing(6)
+    },
+    wrapper: {
+        height: '100%',
+    },
+    image: {
+        width: '32em',
+        height: '32em',
+        [theme.breakpoints.down('xs')]: {
+            width: '24em',
+            height: '24em'
+        }
+    },
+    cta_wrapper: {
+        marginTop: theme.spacing(6),
+    },
+    cta: {
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(6)
+    }
+}));
 
 export const GenericErrorStateComponent = () => {
     const { t } = useTranslation();
@@ -9,9 +42,26 @@ export const GenericErrorStateComponent = () => {
 }
 
 export const ErrorNotFoundStateComponent = () => {
+    const classes = useStyles();
     const { t } = useTranslation();
 
     return (
-        <div>{ t("error_not_found") }</div>
+        <Box className={classes.root}>
+            <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.wrapper}>
+                <Grid item md={6}>
+                    <Logo className={classes.image}/>
+                </Grid>
+                <Grid item md={6}>
+                    <Typography variant="h2">{ t("error.not_found_header") }</Typography>
+                    <Typography variant="h4">{ t("error.not_found_summary") }</Typography>
+
+                    <Box className={classes.cta_wrapper}>
+                        <Typography variant="h6">{ t("error.not_found_info") }</Typography>
+
+                        <Button variant="outlined" color="primary" onClick={() => history.push('/')} className={classes.cta}>{ t("button.go_to_home") }</Button>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
     )
 }

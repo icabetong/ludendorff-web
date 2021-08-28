@@ -7,7 +7,7 @@ import useLocalStorage from "../../shared/persistence";
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
-import { GenericErrorStateComponent } from "../state/ErrorStates";
+import { ErrorNotFoundStateComponent } from "../state/ErrorStates";
 
 const secondaryColors = {
     main: '#ff79c6',
@@ -129,7 +129,7 @@ export const CoreComponent = () => {
                             <Switch>
                                 <Route path="/" component={RootComponent} exact/>
                                 <Route path="/auth" component={AuthComponent}/>
-                                <Route path="*" component={GenericErrorStateComponent} exact/>
+                                <Route path="*" component={ErrorNotFoundStateComponent} exact/>
                             </Switch>
                         </Router>
                 </ThemeProvider>

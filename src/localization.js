@@ -73,6 +73,14 @@ const resources = {
                 change_password: "Change Password",
                 request_reset: "Request Password Reset"
             },
+            button: {
+                go_to_home: "Go to Home"
+            },
+            error: {
+                not_found_header: "Whoops!",
+                not_found_summary: "We couldn't find that page.",
+                not_found_info: "Maybe you can head back home and find it there instead?"
+            },
             signout: "Sign-out",
             continue: "Continue",
             cancel: "Cancel",

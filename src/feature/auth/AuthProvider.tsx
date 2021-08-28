@@ -40,7 +40,6 @@ export const AuthProvider: React.FC = ({ children }) => {
                     .doc(firebaseUser.uid)
                     .onSnapshot((document) => {
                         setAuthState({ status: AuthStatus.FETCHED, user: document.data() as User });
-                        history.push("/");
                     });
             } else {
                 auth.signOut();
