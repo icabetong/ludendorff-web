@@ -39,14 +39,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const ErrorGenericState = () => {
-    const { t } = useTranslation();
-
-    return (
-        <div>{ t("error_generic") }</div>
-    )
-}
-
 export const ErrorNotFoundState = () => {
     const classes = useStyles();
     const { t } = useTranslation();

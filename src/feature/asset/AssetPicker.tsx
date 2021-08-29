@@ -35,7 +35,7 @@ const AssetPicker = (props: AssetPickerProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss()}>
+            onClose={props.onDismiss}>
             <DialogTitle>{ t("asset_select") }</DialogTitle>
             <DialogContent dividers={true}>
                 <AssetList
@@ -50,7 +50,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                 }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onDismiss()}>{ t("close") }</Button>
+                <Button color="primary" onClick={props.onDismiss}>{ t("close") }</Button>
             </DialogActions>
         </Dialog>
     );

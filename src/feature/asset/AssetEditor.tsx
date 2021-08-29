@@ -74,6 +74,10 @@ const AssetEditor = (props: AssetEditorProps) => {
         props.onNameChanged(name);
     }
 
+    const onStatusChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        props.onStatusChanged(event.target.value as Status)
+    }
+
     const onPreSubmit = () => {
         if (props.name === undefined) {
             setNameError(true);
@@ -89,7 +93,7 @@ const AssetEditor = (props: AssetEditorProps) => {
             fullWidth={true}
             maxWidth={isMobile ? "xs" : "md" }
             open={props.isOpen}
-            onClose={() => props.onCancel() }>
+            onClose={props.onCancel}>
             <DialogTitle>{ t("asset_details") }</DialogTitle>
             <DialogContent dividers={true}>
                 <Container>
@@ -114,9 +118,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                     aria-label={ t("field.status") } 
                                     name="editor-status" 
                                     value={props.status} 
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                        props.onStatusChanged(e.target.value as Status)
-                                    }>
+                                    onChange={onStatusChanged}>
                                     <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status.operational") } />
                                     <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status.idle") }/>
                                     <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status.under_maintenance") } />
@@ -128,7 +130,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                 <FormLabel component="legend">
                                     <Typography variant="body2">{ t("field.category") }</Typography>
                                 </FormLabel>
-                                <ListItem button onClick={() => props.onCategorySelect()}>
+                                <ListItem button onClick={props.onCategorySelect}>
                                     <Typography variant="body2">
                                         { props.category?.categoryName !== undefined ? props.category?.categoryName : t("not_set")  }
                                     </Typography>
@@ -146,7 +148,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                 <Button
                                     className={classes.textField}
                                     startIcon={<PlusIcon className={classes.icon}/>}
-                                    onClick={() => props.onAddSpecification()}>
+                                    onClick={props.onAddSpecification}>
                                         { t("add") }
                                 </Button>
                             </List>
@@ -156,10 +158,10 @@ const AssetEditor = (props: AssetEditorProps) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onViewQrCode() } disabled={props.id === undefined}>{ t("view_qr_code")}</Button>
+                <Button color="primary" onClick={props.onViewQrCode} disabled={props.id === undefined}>{ t("view_qr_code")}</Button>
                 <div style={{flex: '1 0 0'}}></div>
-                <Button color="primary" onClick={() => props.onCancel() }>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit() }>{ t("save") }</Button>
+                <Button color="primary" onClick={props.onCancel}>{ t("cancel") }</Button>
+                <Button color="primary" onClick={onPreSubmit}>{ t("save") }</Button>
             </DialogActions>
 
         </Dialog>

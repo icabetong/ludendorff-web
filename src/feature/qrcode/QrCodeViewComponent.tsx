@@ -24,7 +24,7 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
             open={props.isOpened}
             fullWidth={true}
             maxWidth="xs"
-            onClose={() => props.onClose()}>
+            onClose={props.onClose}>
 
             <DialogTitle>{ t("view_qr_code") }</DialogTitle>
 
@@ -38,7 +38,7 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onClose()}>{ t("close") }</Button>
+                <Button color="primary" onClick={props.onClose}>{ t("close") }</Button>
             </DialogActions>
         </Dialog>
     );

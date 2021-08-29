@@ -129,6 +129,80 @@ const UserScreen = (props: UserScreenProps) => {
     const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
     const [isPickerOpen, setPickerOpen] = useState(false);
 
+    const onUserPickerView = () => { setPickerOpen(true) }
+    const onUserPickerDismiss = () => { setPickerOpen(false) }
+
+    const onDataGridRowDoubleClick = (params: GridRowParams) => {
+        onUserSelected(params.row as User)
+    }
+
+    const onUserEditorView = () => {
+        editorDispatch({ 
+            type: UserEditorActionType.CREATE 
+        })
+    }
+
+    const onUserEditorDismiss = () => {
+        editorDispatch({
+            type: UserEditorActionType.DISMISS
+        })
+    }
+
+    const onUserEditorLastNameChanged = (lastName: string) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: [] }
+        user!.lastName = lastName;
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        });
+    }
+
+    const onUserEditorFirstNameChanged = (firstName: string) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: [] }
+        user!.firstName = firstName;
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        });
+    }
+
+    const onUserEditorEmailAddressChanged = (email: string) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: [] }
+        user!.email = email;
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        })
+    }
+
+    const onUserEditorPermissionsChanged = (permissions: number[]) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: [] }
+        user!.permissions = permissions;
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        })
+    }
+
+    const onUserEditorPositionChanged = (position: string) => {
+        let user = editorState.user;
+        if (user === undefined)
+            user = { userId: newId(), permissions: [] }
+        user!.position = position;
+        editorDispatch({
+            type: UserEditorActionType.CHANGED,
+            payload: user
+        })
+    }
+
     const onUserDepartmentSelected = (department: Department) => {
         let user = editorState.user;
         if (user === undefined)
@@ -171,6 +245,12 @@ const UserScreen = (props: UserScreenProps) => {
     const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
     const [departmentRemoveState, departmentRemoveDispatch] = useReducer(departmentRemoveReducer, departmentRemoveInitialState);
 
+    const onDepartmentView = () => { setDepartmentOpen(true) }
+    const onDepartmentDismiss = () => { setDepartmentOpen(false) }
+
+    const onDepartmentPickerView = () => { setDepartmentPickerOpen(true) }
+    const onDepartmentPickerDismiss = () => { setDepartmentPickerOpen(false) }
+
     const onDepartmentItemSelected = (department: Department) => {
         departmentEditorDispatch({
             type: DepartmentEditorActionType.UPDATE,
@@ -187,6 +267,29 @@ const UserScreen = (props: UserScreenProps) => {
         departmentEditorDispatch({
             type: DepartmentEditorActionType.CHANGED,
             payload: department,
+        })
+    }
+
+    const onDepartmentEditorView = () => {
+        departmentEditorDispatch({
+            type: DepartmentEditorActionType.CREATE
+        })
+    }
+
+    const onDepartmentEditorDismiss = () => {
+        departmentEditorDispatch({
+            type: DepartmentEditorActionType.DISMISS
+        })
+    }
+
+    const onDepartmentEditorNameChanged = (name: string) => {
+        let department = departmentEditorState.department;
+        if (department === undefined)
+            department = { departmentId: newId(), count: 0 }
+        department!.name = name;
+        departmentEditorDispatch({
+            type: DepartmentEditorActionType.CHANGED,
+            payload: department
         })
     }
 
@@ -245,6 +348,12 @@ const UserScreen = (props: UserScreenProps) => {
                 })
             })
     }
+
+    const onDismissDepartmentConfirmation = () => {
+        departmentRemoveDispatch({
+            type: DepartmentRemoveActionType.DISMISS
+        })
+    }
     
     return (
         <Box className={classes.root}>
@@ -253,9 +362,9 @@ const UserScreen = (props: UserScreenProps) => {
                 onDrawerToggle={props.onDrawerToggle}
                 buttonText={ t("button.add") }
                 buttonIcon={PlusIcon}
-                buttonOnClick={() => editorDispatch({ type: UserEditorActionType.CREATE })}
+                buttonOnClick={onUserEditorView}
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setDepartmentOpen(true)}>{ t("navigation.departments") }</MenuItem>
+                    <MenuItem key={0} onClick={onDepartmentView}>{ t("navigation.departments") }</MenuItem>
                 ]}
             />
             <Hidden xsDown>
@@ -272,9 +381,7 @@ const UserScreen = (props: UserScreenProps) => {
                         loading={isUsersLoading}
                         paginationMode="server"
                         getRowId={(r) => r.userId}
-                        onRowDoubleClick={(params: GridRowParams, e: any) =>
-                            onUserSelected(params.row as User)
-                        }
+                        onRowDoubleClick={onDataGridRowDoubleClick}
                         hideFooter/>
                         
                 </div>
@@ -304,59 +411,14 @@ const UserScreen = (props: UserScreenProps) => {
                 permissions={editorState.user?.permissions === undefined ? [] : editorState.user?.permissions}
                 position={editorState.user?.position}
                 department={editorState.user?.department}
-                onCancel={() => editorDispatch({ type: UserEditorActionType.DISMISS })}
+                onCancel={onUserEditorDismiss}
                 onSubmit={onUserEditorCommit}
-                onDepartmentSelect={() => setDepartmentPickerOpen(true)}
-                onLastNameChanged={(lastName) => {
-                    let user = editorState.user;
-                    if (user === undefined)
-                        user = { userId: newId(), permissions: [] }
-                    user!.lastName = lastName;
-                    return editorDispatch({
-                        type: UserEditorActionType.CHANGED,
-                        payload: user
-                    });
-                }}
-                onFirstNameChanged={(firstName) => {
-                    let user = editorState.user;
-                    if (user === undefined)
-                        user = { userId: newId(), permissions: [] }
-                    user!.firstName = firstName;
-                    return editorDispatch({
-                        type: UserEditorActionType.CHANGED,
-                        payload: user
-                    });
-                }}
-                onEmailChanged={(email) => {
-                    let user = editorState.user;
-                    if (user === undefined)
-                        user = { userId: newId(), permissions: [] }
-                    user!.email = email;
-                    return editorDispatch({
-                        type: UserEditorActionType.CHANGED,
-                        payload: user
-                    })
-                }}
-                onPermissionsChanged={(permissions) => {
-                    let user = editorState.user;
-                    if (user === undefined)
-                        user = { userId: newId(), permissions: [] }
-                    user!.permissions = permissions;
-                    return editorDispatch({
-                        type: UserEditorActionType.CHANGED,
-                        payload: user
-                    })
-                }}
-                onPositionChanged={(position) => {
-                    let user = editorState.user;
-                    if (user === undefined)
-                        user = { userId: newId(), permissions: [] }
-                    user!.position = position;
-                    return editorDispatch({
-                        type: UserEditorActionType.CHANGED,
-                        payload: user
-                    })
-                }}/>
+                onDepartmentSelect={onDepartmentPickerView}
+                onLastNameChanged={onUserEditorLastNameChanged}
+                onFirstNameChanged={onUserEditorFirstNameChanged}
+                onEmailChanged={onUserEditorEmailAddressChanged}
+                onPermissionsChanged={onUserEditorPermissionsChanged}
+                onPositionChanged={onUserEditorPositionChanged}/>
 
             <UserPicker
                 isOpen={isPickerOpen}
@@ -366,7 +428,7 @@ const UserScreen = (props: UserScreenProps) => {
                 hasNext={atUserEnd}
                 onPrevious={getPreviousUsers}
                 onNext={getNextUsers}
-                onDismiss={() => setPickerOpen(false)}
+                onDismiss={onUserPickerDismiss}
                 onSelectItem={onDepartmentManagerSelected}/>
 
             <DepartmentScreen
@@ -377,10 +439,8 @@ const UserScreen = (props: UserScreenProps) => {
                 hasNext={atDepartmentEnd}
                 onPrevious={getPreviousDepartments}
                 onNext={getNextDepartments}
-                onDismiss={() => setDepartmentOpen(false)}
-                onAddItem={() => departmentEditorDispatch({
-                    type: DepartmentEditorActionType.CREATE
-                })}
+                onDismiss={onDepartmentDismiss}
+                onAddItem={onDepartmentEditorView}
                 onSelectItem={onDepartmentItemSelected}
                 onDeleteItem={onDepartmentItemRequestRemove}/>
 
@@ -389,20 +449,9 @@ const UserScreen = (props: UserScreenProps) => {
                 name={departmentEditorState.department?.name}
                 manager={departmentEditorState.department?.manager}
                 onSubmit={onDepartmentEditorCommit}
-                onCancel={() => departmentEditorDispatch({
-                    type: DepartmentEditorActionType.DISMISS
-                })}
-                onManagerSelect={() => setPickerOpen(true)}
-                onNameChanged={(name) => {
-                    let department = departmentEditorState.department;
-                    if (department === undefined)
-                        department = { departmentId: newId(), count: 0 }
-                    department!.name = name;
-                    return departmentEditorDispatch({
-                        type: DepartmentEditorActionType.CHANGED,
-                        payload: department
-                    })
-                }}/>
+                onCancel={onDepartmentEditorDismiss}
+                onManagerSelect={onUserPickerView}
+                onNameChanged={onDepartmentEditorNameChanged}/>
 
             <DepartmentPicker
                 isOpen={isDepartmentPickerOpen}
@@ -412,10 +461,8 @@ const UserScreen = (props: UserScreenProps) => {
                 hasNext={atDepartmentEnd}
                 onPrevious={getPreviousDepartments}
                 onNext={getNextDepartments}
-                onDismiss={() => setDepartmentPickerOpen(false)}
-                onAddItem={() => departmentEditorDispatch({
-                    type: DepartmentEditorActionType.CREATE
-                })}
+                onDismiss={onDepartmentPickerDismiss}
+                onAddItem={onDepartmentEditorView}
                 onSelectItem={onUserDepartmentSelected}
                 onDeleteItem={onDepartmentItemRequestRemove}/>
 
@@ -423,9 +470,7 @@ const UserScreen = (props: UserScreenProps) => {
                 isOpen={departmentRemoveState.isRequest}
                 title="confirm.department_remove"
                 summary="confirm.department_remove_summary"
-                onDismiss={() => departmentRemoveDispatch({
-                    type: DepartmentRemoveActionType.DISMISS
-                })}
+                onDismiss={onDismissDepartmentConfirmation}
                 onConfirm={onDepartmentItemRemove}/>
         </Box>
     )

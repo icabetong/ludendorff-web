@@ -31,6 +31,14 @@ const CategoryEditor = (props: CategoryEditorProps) => {
     const classes = useStyles();
     const [nameError, setNameError] = useState(false);
 
+    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let name = event.target.value;
+        if (name !== '' && nameError)
+            setNameError(false);
+
+        props.onCategoryNameChanged(name);
+    }
+
     const onPreSubmit = () => {
         if (props.categoryName === '') {
             setNameError(true);
@@ -45,7 +53,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.editorOpened}
-            onClose={() => props.onCancel() }>
+            onClose={props.onCancel}>
             <DialogTitle>{ t("category_details") }</DialogTitle>
             <DialogContent>
                 <Container disableGutters>
@@ -57,19 +65,13 @@ const CategoryEditor = (props: CategoryEditorProps) => {
                         value={props.categoryName}
                         error={nameError}
                         helperText={nameError ? t("feedback.empty_category_name") : undefined }
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            let name = e.target.value;
-                            if (name !== '' && nameError)
-                                setNameError(false);
-
-                            props.onCategoryNameChanged(name);
-                        }}
+                        onChange={onNameChanged}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={props.onCancel}>{ t("button.cancel") }</Button>
+                <Button color="primary" onClick={onPreSubmit}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

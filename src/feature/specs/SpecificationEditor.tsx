@@ -33,6 +33,20 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
     const [valueError, setValueError] = useState(false);
     const specification = props.specification === undefined ? ['', ''] : props.specification;
 
+    const onKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let key = event.target.value;
+        if (key !== '' && keyError)
+            setKeyError(false);
+        props.onKeyChanged(key); 
+    }
+
+    const onValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let value = event.target.value;
+        if (value !== '' && valueError)
+            setValueError(false);
+        return props.onValueChanged(value);
+    }
+
     const onPreSubmit = () => {
         if (specification[0] === '') {
             setKeyError(true);
@@ -64,12 +78,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         value={specification[0]}
                         error={keyError}
                         helperText={keyError ? t("feedback.empty_specification_key") : undefined}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            let key = e.target.value;
-                            if (key !== '' && keyError)
-                                setKeyError(false);
-                            props.onKeyChanged(key); 
-                        }}
+                        onChange={onKeyChanged}
                         className={classes.textField}/>
                     <TextField
                         id="editor-specification-value"
@@ -78,19 +87,14 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         value={specification[1]}
                         error={valueError}
                         helperText={valueError ? t("feedback.empty_specification_value") : undefined}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            let value = e.target.value;
-                            if (value !== '' && valueError)
-                                setValueError(false);
-                            return props.onValueChanged(value);
-                        }}
+                        onChange={onValueChanged}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={props.onCancel}>{ t("button.cancel") }</Button>
+                <Button color="primary" onClick={onPreSubmit}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

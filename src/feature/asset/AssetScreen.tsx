@@ -197,7 +197,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         if (asset === undefined)
             asset = { assetId: newId() }
         asset!.assetName = name;
-        return editorDispatch({
+        editorDispatch({
             type: AssetEditorActionType.CHANGED,
             payload: asset
         })
@@ -208,7 +208,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         if (asset === undefined)
             asset = { assetId: newId() }
         asset!.status = status;
-        return editorDispatch({
+        editorDispatch({
             type: AssetEditorActionType.CHANGED,
             payload: asset
         })

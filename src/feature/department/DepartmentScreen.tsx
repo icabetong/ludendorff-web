@@ -35,7 +35,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss() }>
+            onClose={props.onDismiss}>
             <DialogTitle>{ t("navigation.departments") }</DialogTitle>
             <DialogContent dividers={true}>
                 <DepartmentList
@@ -48,9 +48,9 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                     onItemRemove={props.onDeleteItem}/>
             </DialogContent>
             <DialogActions>
-            <Button color="primary" onClick={() => props.onAddItem()}>{ t("button.add") }</Button>
+            <Button color="primary" onClick={props.onAddItem}>{ t("button.add") }</Button>
                 <div style={{flex: '1 0 0'}}></div>
-                <Button color="primary" onClick={() => props.onDismiss()}>{ t("button.close") }</Button>
+                <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
             </DialogActions>
         </Dialog>
     )

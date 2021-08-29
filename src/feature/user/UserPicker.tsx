@@ -35,7 +35,7 @@ const UserPicker = (props: UserPickerProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss()}>
+            onClose={props.onDismiss}>
             <DialogTitle>{ t("user_select") }</DialogTitle>
             <DialogContent dividers={true}>
                 <UserList
@@ -50,7 +50,7 @@ const UserPicker = (props: UserPickerProps) => {
                 }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onDismiss()}>{ t("close") }</Button>
+                <Button color="primary" onClick={props.onDismiss}>{ t("close") }</Button>
             </DialogActions>
         </Dialog>
     );

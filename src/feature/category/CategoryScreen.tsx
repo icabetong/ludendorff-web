@@ -35,7 +35,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss() }>
+            onClose={props.onDismiss}>
             <DialogTitle>{ t("navigation.categories") }</DialogTitle>
             <DialogContent dividers={true}>
                 <CategoryList 
@@ -48,9 +48,9 @@ const CategoryScreen = (props: CategoryScreenProps) => {
                     onItemRemove={props.onDeleteItem}/>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onAddItem()}>{ t("button.add") }</Button>
+                <Button color="primary" onClick={props.onAddItem}>{ t("button.add") }</Button>
                 <div style={{flex: '1 0 0'}}></div>
-                <Button color="primary" onClick={() => props.onDismiss()}>{ t("button.close") }</Button>
+                <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
             </DialogActions>
         </Dialog>
     )

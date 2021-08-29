@@ -66,6 +66,38 @@ const UserEditor = (props: UserEditorProps) => {
     const [emailError, setEmailError] = useState(false);
     const [positionError, setPositionError] = useState(false);
 
+    const onLastNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let lastName = event.target.value;
+        if (lastName !== '' && lastNameError)
+            setLastNameError(false);
+
+        props.onLastNameChanged(lastName);
+    }
+
+    const onFirstNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let firstName = event.target.value;
+        if (firstName !== '' && firstNameError)
+            setFirstNameError(false);
+
+        props.onFirstNameChanged(firstName);
+    }
+
+    const onEmailAddressChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let email = event.target.value;
+        if (email !== '' && emailError)
+            setEmailError(false);
+
+        props.onEmailChanged(email);
+    }
+
+    const onPositionChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let position = event.target.value;
+        if (position !== '' && positionError)
+            setPositionError(false);
+
+        props.onPositionChanged(position);
+    }
+
     const onPreSubmit = () => {
         if (props.lastName === undefined) {
             setLastNameError(true);
@@ -154,13 +186,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 className={classes.textField}
                                 error={lastNameError}
                                 helperText={lastNameError ? t("feedback.empty_last_name") : undefined}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    let lastName = e.target.value;
-                                    if (lastName !== '' && lastNameError)
-                                        setLastNameError(false);
-
-                                    props.onLastNameChanged(lastName);
-                                }}/>
+                                onChange={onLastNameChanged}/>
 
                             <TextField
                                 id="editor-user-first-name"
@@ -170,13 +196,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 className={classes.textField}
                                 error={firstNameError}
                                 helperText={firstNameError ? t("feedback.empty_first_name") : undefined}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    let firstName = e.target.value;
-                                    if (firstName !== '' && firstNameError)
-                                        setFirstNameError(false);
-
-                                    props.onFirstNameChanged(firstName);
-                                }}/>
+                                onChange={onFirstNameChanged}/>
 
                             <TextField
                                 id="editor-user-email"
@@ -186,13 +206,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 className={classes.textField}
                                 error={emailError}
                                 helperText={emailError ? t("feedback.empty_email_address") : undefined}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    let email = e.target.value;
-                                    if (email !== '' && emailError)
-                                        setEmailError(false);
-
-                                    props.onEmailChanged(email);
-                                }} />
+                                onChange={onEmailAddressChanged} />
 
                             <TextField
                                 id="editor-user-position"
@@ -202,19 +216,13 @@ const UserEditor = (props: UserEditorProps) => {
                                 className={classes.textField}
                                 error={positionError}
                                 helperText={positionError ? t("feedback.empty_position") : undefined}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    let position = e.target.value;
-                                    if (position !== '' && positionError)
-                                        setPositionError(false);
-
-                                    props.onPositionChanged(position);
-                                }} />
+                                onChange={onPositionChanged} />
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
                                     <Typography variant="body2">{ t("field.department") }</Typography>
                                 </FormLabel>
-                                <ListItem button onClick={() => props.onDepartmentSelect()}>
+                                <ListItem button onClick={props.onDepartmentSelect}>
                                     <Typography variant="body2">
                                         { props.department?.name !== undefined ? props.department?.name : t("not_set")  }
                                     </Typography>
@@ -283,8 +291,8 @@ const UserEditor = (props: UserEditorProps) => {
             </DialogContent>
 
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit()}>{ t("save") }</Button>
+                <Button color="primary" onClick={props.onCancel}>{ t("cancel") }</Button>
+                <Button color="primary" onClick={onPreSubmit}>{ t("save") }</Button>
             </DialogActions>
         </Dialog>
     );

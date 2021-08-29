@@ -37,6 +37,14 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
     const classes = useStyles();
     const [nameError, setNameError] = useState(false);
 
+    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let name = event.target.value;
+        if (name !== '' && nameError)
+            setNameError(false);
+
+        props.onNameChanged(name);
+    }
+
     const onPreSubmit = () => {
         if (props.name === '') {
             setNameError(true);
@@ -51,7 +59,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onCancel() }>
+            onClose={props.onCancel}>
             <DialogTitle>{ t("department_details") }</DialogTitle>
             <DialogContent>
                 <Container disableGutters>
@@ -63,19 +71,13 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                         value={props.name === undefined ? '' : props.name}
                         error={nameError}
                         helperText={nameError ? t("feedback.empty_department_name") : undefined }
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            let name = event.target.value;
-                            if (name !== '' && nameError)
-                                setNameError(false);
-
-                            props.onNameChanged(name);
-                        }}
+                        onChange={onNameChanged}
                         className={classes.textField}/>
                     <FormControl component="fieldset" className={classes.textField}>
                             <FormLabel component="legend">
                                 <Typography variant="body2">{ t("field.manager") }</Typography>
                             </FormLabel>
-                            <ListItem button onClick={() => props.onManagerSelect()}>
+                            <ListItem button onClick={props.onManagerSelect}>
                                 <Typography variant="body2">
                                     { props.manager?.name !== undefined ? props.manager?.name : t("not_set")  }
                                 </Typography>
@@ -84,8 +86,8 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                 </Container>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={props.onCancel}>{ t("button.cancel") }</Button>
+                <Button color="primary" onClick={onPreSubmit}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )
