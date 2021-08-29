@@ -11,7 +11,6 @@ Ludendorff is our capstone project that is a client app used in asset tracking a
 ## Built with
 
 * ReactJS
-* SCSS
 * TypeScript
 * Other cool open-source libraries (see Acknowledgements)
 

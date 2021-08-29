@@ -68,7 +68,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                     alignItems="center" 
                     justifyContent="center" 
                     className={classes.root}>
-                    <Grid xs={12} sm={4} item>
+                    <Grid xs={12} sm={8} md={6} lg={4} item>
                         <Paper className={classes.containerPaper}>
                             <div className={classes.container}>
                                 <Typography variant="h5">{ t("auth.hello") }</Typography>
