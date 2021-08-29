@@ -21,7 +21,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import firebase from "firebase/app";
 import { firestore } from "../../index";
-import { Asset, AssetRepository, getStatusLoc } from "./Asset";
+import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
 import { Category, CategoryRepository } from "../category/Category";
 import { Specification } from "../specs/Specification";
@@ -169,9 +169,47 @@ const AssetScreen = (props: AssetScreenProps) => {
     const [removeState, removeDispatch] = useReducer(assetRemoveReducer, assetRemoveInitialState);
     const [specEditorState, specEditorDispatch] = useReducer(specificationReducer, specificationEditorInitialState);
 
+    const onDataGridRowDoubleClicked = (params: GridRowParams) => {
+        onAssetSelected(params.row as Asset);
+    }
+
     const onAssetSelected = (asset: Asset) => {
         editorDispatch({
             type: AssetEditorActionType.UPDATE,
+            payload: asset
+        })
+    }
+
+    const onAssetEditorAddSpecification = () => {
+        specEditorDispatch({
+            type: SpecificationEditorActionType.CREATE
+        })
+    }
+
+    const onAssetEditorDismiss = () => {
+        editorDispatch({
+            type: AssetEditorActionType.DISMISS
+        })
+    }
+
+    const onAssetEditorNameChanged = (name: string) => {
+        let asset = editorState.asset;
+        if (asset === undefined)
+            asset = { assetId: newId() }
+        asset!.assetName = name;
+        return editorDispatch({
+            type: AssetEditorActionType.CHANGED,
+            payload: asset
+        })
+    }
+
+    const onAssetEditorStatusChanged = (status: Status) => {
+        let asset = editorState.asset;
+        if (asset === undefined)
+            asset = { assetId: newId() }
+        asset!.status = status;
+        return editorDispatch({
+            type: AssetEditorActionType.CHANGED,
             payload: asset
         })
     }
@@ -252,6 +290,28 @@ const AssetScreen = (props: AssetScreenProps) => {
         })
     }
 
+    const onSpecificationKeyChanged = (key: string) => {
+        let specification = specEditorState.specification;
+        if (specification === undefined)
+            specification = ['', ''];
+        specification[0] = key;
+        specEditorDispatch({
+            type: SpecificationEditorActionType.CHANGED,
+            payload: specification
+        })
+    }
+
+    const onSpecificationValueChanged = (value: string) => {
+        let specification = specEditorState.specification;
+        if (specification === undefined)
+            specification = ['', ''];
+        specification[1] = value;
+        specEditorDispatch({
+            type: SpecificationEditorActionType.CHANGED,
+            payload: specification
+        })
+    }
+
     const onSpecificationEditorCommit = () => {
         let asset = editorState.asset;
         if (asset === undefined)
@@ -273,6 +333,15 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
     }
 
+    const onSpecificationEditorDismiss = () => {
+        specEditorDispatch({ 
+            type: SpecificationEditorActionType.DISMISS 
+        })
+    }
+
+    const onQrCodeView = () => { setQrCodeOpen(true) }
+    const onQrCodeViewDismiss = () => { setQrCodeOpen(false) }
+
     const {
         items: categories,
         isLoading: isCategoriesLoading,
@@ -292,6 +361,9 @@ const AssetScreen = (props: AssetScreenProps) => {
     const [categoryEditorState, categoryEditorDispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
     const [categoryRemoveState, categoryRemoveDispatch] = useReducer(categoryRemoveReducer, categoryRemoveInitialState);
     
+    const onCategoryListView = () => { setCategoryListOpen(true) }
+    const onCategoryListDismiss = () => { setCategoryListOpen(false) }
+
     const onCategoryItemSelected = (category: Category) => {
         categoryEditorDispatch({
             type: CategoryEditorActionType.UPDATE,
@@ -325,6 +397,29 @@ const AssetScreen = (props: AssetScreenProps) => {
             })
     }
 
+    const onCategoryNameChanged = (name: string) => {
+        let category = categoryEditorState.category;
+        if (category === undefined)
+            category = { categoryId: newId(), count: 0 }
+        category!.categoryName = name;
+        return categoryEditorDispatch({
+            payload: category!,
+            type: CategoryEditorActionType.CHANGED
+        })
+    }
+
+    const onCategoryEditorView = () => {
+        categoryEditorDispatch({
+            type: CategoryEditorActionType.CREATE
+        })
+    }
+
+    const onCategoryEditorDismiss = () => {
+        categoryEditorDispatch({
+            type: CategoryEditorActionType.DISMISS
+        })
+    }
+
     const onCategoryEditorCommit = () => {
         let category = categoryEditorState.category;
         if (category !== undefined) {
@@ -355,6 +450,21 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
     }
 
+    const onCategoryPickerView = () => { setCategoryPickerOpen(true) }
+    const onCategoryPickerViewDismiss = () => { setCategoryPickerOpen(false) }
+
+    const onDismissAssetConfirmation = () => {
+        removeDispatch({
+            type: AssetRemoveActionType.DISMISS
+        })
+    }
+
+    const onDismissCategoryConfirmation = () => {
+        categoryRemoveDispatch({
+            type: CategoryRemoveActionType.DISMISS
+        })
+    }
+
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -364,7 +474,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
                 menuItems={[
-                    <MenuItem key={0} onClick={() => setCategoryListOpen(true)}>{ t("navigation.categories") }</MenuItem>
+                    <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
             <Hidden xsDown>
                 <div className={classes.wrapper}>
@@ -380,9 +490,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                         loading={isAssetsLoading}
                         paginationMode="server"
                         getRowId={(r) => r.assetId}
-                        onRowDoubleClick={(params: GridRowParams, e: any) => 
-                            onAssetSelected(params.row as Asset)
-                        }
+                        onRowDoubleClick={onDataGridRowDoubleClicked}
                         hideFooter/>
                 </div>
             </Hidden>
@@ -411,68 +519,28 @@ const AssetScreen = (props: AssetScreenProps) => {
                 status={editorState.asset?.status}
                 category={editorState.asset?.category}
                 specs={editorState.asset?.specifications}
-                onCancel={() => editorDispatch({ type: AssetEditorActionType.DISMISS })}
-                onSubmit={() => onAssetEditorCommit()}
-                onViewQrCode={() => setQrCodeOpen(true)}
-                onCategorySelect={() => setCategoryPickerOpen(true)}
-                onAddSpecification={() => 
-                    specEditorDispatch({ type: SpecificationEditorActionType.CREATE })
-                }
+                onCancel={onAssetEditorDismiss}
+                onSubmit={onAssetEditorCommit}
+                onViewQrCode={onQrCodeView}
+                onCategorySelect={onCategoryPickerView}
+                onAddSpecification={onAssetEditorAddSpecification}
                 onSelectSpecification={onSpecificationItemSelected}
-                onNameChanged={(name) => {
-                    let asset = editorState.asset;
-                    if (asset === undefined)
-                        asset = { assetId: newId() }
-                    asset!.assetName = name;
-                    return editorDispatch({
-                        type: AssetEditorActionType.CHANGED,
-                        payload: asset
-                    })
-                }}
-                onStatusChanged={(status) => {
-                    let asset = editorState.asset;
-                    if (asset === undefined)
-                        asset = { assetId: newId() }
-                    asset!.status = status;
-                    return editorDispatch({
-                        type: AssetEditorActionType.CHANGED,
-                        payload: asset
-                    })
-                }}/>
+                onNameChanged={onAssetEditorNameChanged}
+                onStatusChanged={onAssetEditorStatusChanged}/>
 
             {/* Specification Editor Screen */}
             <SpecificationEditor
                 isOpen={specEditorState.isOpen} 
                 specification={specEditorState.specification}
                 onSubmit={onSpecificationEditorCommit}
-                onCancel={() => 
-                    specEditorDispatch({ type: SpecificationEditorActionType.DISMISS })
-                }
-                onKeyChanged={(key) => {
-                    let specification = specEditorState.specification;
-                    if (specification === undefined)
-                        specification = ['', ''];
-                    specification[0] = key;
-                    specEditorDispatch({
-                        type: SpecificationEditorActionType.CHANGED,
-                        payload: specification
-                    })
-                }}
-                onValueChanged={(value) => {
-                    let specification = specEditorState.specification;
-                    if (specification === undefined)
-                        specification = ['', ''];
-                    specification[1] = value;
-                    specEditorDispatch({
-                        type: SpecificationEditorActionType.CHANGED,
-                        payload: specification
-                    })
-                }}/>
+                onCancel={onSpecificationEditorDismiss}
+                onKeyChanged={onSpecificationKeyChanged}
+                onValueChanged={onSpecificationValueChanged}/>
 
             <QrCodeViewComponent
                 assetId={editorState.asset?.assetId}
                 isOpened={isQrCodeOpen}
-                onClose={() => setQrCodeOpen(false)}/>
+                onClose={onQrCodeViewDismiss}/>
             
             {/* Category Screen */}
             <CategoryScreen
@@ -483,8 +551,8 @@ const AssetScreen = (props: AssetScreenProps) => {
                 hasNext={atCategoryEnd}
                 onPreviousBatch={getPreviousCategories}
                 onNextBatch={getNextCategories}
-                onDismiss={() => setCategoryListOpen(false)}
-                onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.CREATE })}
+                onDismiss={onCategoryListDismiss}
+                onAddItem={onCategoryEditorView}
                 onSelectItem={onCategoryItemSelected}
                 onDeleteItem={onCategoryItemRequestRemove}/>
 
@@ -496,46 +564,33 @@ const AssetScreen = (props: AssetScreenProps) => {
                 hasNext={atCategoryEnd}
                 onPreviousBatch={getPreviousCategories}
                 onNextBatch={getNextCategories}
-                onDismiss={() => setCategoryPickerOpen(false)}
-                onAddItem={() => categoryEditorDispatch({ type: CategoryEditorActionType.CREATE })}
+                onDismiss={onCategoryPickerViewDismiss}
+                onAddItem={onCategoryEditorView}
                 onSelectItem={onAssetCategorySelected}
                 onDeleteItem={onCategoryItemRequestRemove}/>
 
             {/* Category Editor Screen */}
             <CategoryEditorComponent
                 editorOpened={categoryEditorState.isOpen}
-                onCancel={() => categoryEditorDispatch({type: CategoryEditorActionType.DISMISS })}
+                onCancel={onCategoryEditorDismiss}
                 onSubmit={onCategoryEditorCommit}
                 categoryId={categoryEditorState.category?.categoryId === undefined ? "" : categoryEditorState.category?.categoryId}
                 categoryName={categoryEditorState.category?.categoryName === undefined ? "" : categoryEditorState.category?.categoryName}
                 count={categoryEditorState.category?.count === undefined ? 0 : categoryEditorState.category?.count}
-                onCategoryNameChanged={(name) => {
-                    let _cat = categoryEditorState.category;
-                    if (_cat === undefined)
-                        _cat = { categoryId: newId(), count: 0 }
-                    _cat!.categoryName = name;
-                    return categoryEditorDispatch({
-                        payload: _cat!,
-                        type: CategoryEditorActionType.CHANGED
-                    })
-                }}/>
+                onCategoryNameChanged={onCategoryNameChanged}/>
 
             <ConfirmationDialog
                 isOpen={removeState.isRequest}
                 title="confirm.asset_remove"
                 summary="confirm.asset_remove_summary"
-                onDismiss={() => removeDispatch({
-                    type: AssetRemoveActionType.DISMISS
-                })}
+                onDismiss={onDismissAssetConfirmation}
                 onConfirm={onAssetItemRemove}/>
 
             <ConfirmationDialog
                 isOpen={categoryRemoveState.isRequest}
                 title="confirm.category_remove"
                 summary="confirm.category_remove_summary"
-                onDismiss={() => categoryRemoveDispatch({
-                    type: CategoryRemoveActionType.DISMISS
-                })}
+                onDismiss={onDismissCategoryConfirmation}
                 onConfirm={onCategoryItemRemove}/>
 
         </Box>

@@ -66,6 +66,14 @@ const AssetEditor = (props: AssetEditorProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const [nameError, setNameError] = useState(false);
 
+    const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let name = event.target.value;
+        if (name !== '' && nameError)
+            setNameError(false);
+
+        props.onNameChanged(name);
+    }
+
     const onPreSubmit = () => {
         if (props.name === undefined) {
             setNameError(true);
@@ -96,13 +104,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                 className={classes.textField}
                                 error={nameError}
                                 helperText={nameError ? t("feedback.empty_asset_name") : undefined}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                    let name = e.target.value;
-                                    if (name !== '' && nameError)
-                                        setNameError(false);
-
-                                    props.onNameChanged(name);
-                                }}/>
+                                onChange={onNameChanged}/>
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
