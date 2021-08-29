@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -64,6 +64,16 @@ const AssetEditor = (props: AssetEditorProps) => {
     const classes = useStyles();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const [nameError, setNameError] = useState(false);
+
+    const onPreSubmit = () => {
+        if (props.name === undefined) {
+            setNameError(true);
+            return;
+        }
+
+        props.onSubmit();
+    }
 
     return (
         <Dialog
@@ -74,7 +84,7 @@ const AssetEditor = (props: AssetEditorProps) => {
             onClose={() => props.onCancel() }>
             <DialogTitle>{ t("asset_details") }</DialogTitle>
             <DialogContent dividers={true}>
-                <Container disableGutters>
+                <Container>
                     <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
                         <Grid item xs={6} className={classes.gridItem}>
                             <TextField
@@ -84,9 +94,15 @@ const AssetEditor = (props: AssetEditorProps) => {
                                 label={ t("field.asset_name") }
                                 value={props.name}
                                 className={classes.textField}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                    props.onNameChanged(e.target.value)
-                                }/>
+                                error={nameError}
+                                helperText={nameError ? t("feedback.empty_asset_name") : undefined}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    let name = e.target.value;
+                                    if (name !== '' && nameError)
+                                        setNameError(false);
+
+                                    props.onNameChanged(name);
+                                }}/>
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
@@ -141,7 +157,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                 <Button color="primary" onClick={() => props.onViewQrCode() } disabled={props.id === undefined}>{ t("view_qr_code")}</Button>
                 <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onCancel() }>{ t("cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit() }>{ t("save") }</Button>
+                <Button color="primary" onClick={() => onPreSubmit() }>{ t("save") }</Button>
             </DialogActions>
 
         </Dialog>

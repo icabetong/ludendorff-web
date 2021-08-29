@@ -74,6 +74,11 @@ const baseTheme = createTheme({
                 marginTop: '0.4em',
                 marginBottom: '0.4em'
             }
+        },
+        MuiDialogContent: {
+            dividers: {
+                padding: '16px 0'
+            }
         }
     }
 })

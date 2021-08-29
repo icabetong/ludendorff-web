@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -35,6 +35,16 @@ type DepartmentEditorProps = {
 const DepartmentEditor = (props: DepartmentEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const [nameError, setNameError] = useState(false);
+
+    const onPreSubmit = () => {
+        if (props.name === '') {
+            setNameError(true);
+            return;
+        }
+
+        props.onSubmit()
+    }
 
     return (
         <Dialog
@@ -43,7 +53,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
             open={props.isOpen}
             onClose={() => props.onCancel() }>
             <DialogTitle>{ t("department_details") }</DialogTitle>
-            <DialogContent dividers={true}>
+            <DialogContent>
                 <Container disableGutters>
                     <TextField
                         autoFocus
@@ -51,8 +61,14 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                         type="text"
                         label={ t("field.department_name") }
                         value={props.name === undefined ? '' : props.name}
+                        error={nameError}
+                        helperText={nameError ? t("feedback.empty_department_name") : undefined }
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            props.onNameChanged(event.target.value)
+                            let name = event.target.value;
+                            if (name !== '' && nameError)
+                                setNameError(false);
+
+                            props.onNameChanged(name);
                         }}
                         className={classes.textField}/>
                     <FormControl component="fieldset" className={classes.textField}>
@@ -69,7 +85,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )

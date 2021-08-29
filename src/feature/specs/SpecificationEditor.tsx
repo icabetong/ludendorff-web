@@ -54,7 +54,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
             open={props.isOpen}
             onClose={() => props.onCancel()}>
             <DialogTitle>{ t("specification_details") }</DialogTitle>
-            <DialogContent dividers={true}>
+            <DialogContent>
                 <Container disableGutters>
                     <TextField
                         autoFocus
@@ -63,12 +63,12 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         label={ t("field.specification_key") }
                         value={specification[0]}
                         error={keyError}
-                        helperText={keyError ? t("error.empty_specification_key") : undefined}
+                        helperText={keyError ? t("feedback.empty_specification_key") : undefined}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             let key = e.target.value;
                             if (key !== '' && keyError)
                                 setKeyError(false);
-                            return props.onKeyChanged(key); 
+                            props.onKeyChanged(key); 
                         }}
                         className={classes.textField}/>
                     <TextField
@@ -77,7 +77,7 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
                         label={ t("field.specification_value") }
                         value={specification[1]}
                         error={valueError}
-                        helperText={valueError ? t("error.empty_specification_value") : undefined}
+                        helperText={valueError ? t("feedback.empty_specification_value") : undefined}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             let value = e.target.value;
                             if (value !== '' && valueError)

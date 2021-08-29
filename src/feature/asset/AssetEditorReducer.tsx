@@ -31,7 +31,7 @@ export const assetEditorReducer = (state: AssetEditorState, action: AssetEditorA
             }
         case AssetEditorActionType.CREATE:
             return {
-                asset: payload,
+                ...state,
                 isCreate: true,
                 isOpen: true
             }

@@ -93,11 +93,19 @@ const resources = {
                 go_to_home: "Go to Home"
             },
             feedback: {
-                authenticating: "Authenticating"
+                authenticating: "Authenticating",
+                empty_specification_key: "You forgot to enter the key",
+                empty_specification_value: "You forgot to enter the value",
+                empty_category_name: "You forgot to enter the category name",
+                empty_department_name: "You forgot to enter the department name",
+                empty_asset_name: "You forgot to enter the asset name",
+                empty_first_name: "You forgot to enter the first name",
+                empty_last_name: "You forgot to enter the last name",
+                empty_department: "You forgot to enter the department",
+                empty_email_address: "You forgot to enter the email address",
+                empty_position: "You forgot to enter a position",
             },
             error: {
-                empty_specification_key: "You'll need a key for this specification",
-                empty_specification_value: "You'll need a value for this specification",
                 not_found_header: "Whoops!",
                 not_found_summary: "We can't seem to find that page you're looking for.",
                 not_found_info: "Maybe you can head back home and find it there instead?"

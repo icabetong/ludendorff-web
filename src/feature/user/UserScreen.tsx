@@ -141,7 +141,7 @@ const UserScreen = (props: UserScreenProps) => {
         })
     }
 
-    const onUserEditorCommit = (user: User) => {
+    const onUserEditorCommit = () => {
 
     }
 

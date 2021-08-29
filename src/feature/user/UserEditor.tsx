@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -18,7 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-import { User, Permission } from "./User";
+import { Permission } from "./User";
 import { DepartmentCore } from "../department/Department";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +46,7 @@ type UserEditorProps = {
     position?: string,
     department?: DepartmentCore,
     onCancel: () => void,
-    onSubmit: (user: User) => void,
+    onSubmit: () => void,
     onDepartmentSelect: () => void,
     onLastNameChanged: (lastName: string) => void,
     onFirstNameChanged: (firstName: string) => void,
@@ -61,7 +61,34 @@ const UserEditor = (props: UserEditorProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
-    const onPreSubmit = () => {}
+    const [firstNameError, setFirstNameError] = useState(false);
+    const [lastNameError, setLastNameError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [positionError, setPositionError] = useState(false);
+
+    const onPreSubmit = () => {
+        if (props.lastName === undefined) {
+            setLastNameError(true);
+            return;
+        }
+
+        if (props.firstName === undefined) {
+            setFirstNameError(true);
+            return;
+        }
+
+        if (props.email === undefined) {
+            setEmailError(true);
+            return;
+        }
+
+        if (props.position === undefined) {
+            setPositionError(true);
+            return;
+        }
+
+        props.onSubmit();
+    }
 
     const hasPermission = (permissions: number[], permission: Permission) => {
         return permissions.includes(permission);
@@ -115,7 +142,7 @@ const UserEditor = (props: UserEditorProps) => {
             onClose={() => props.onCancel()}>
             <DialogTitle>{t("user_details")}</DialogTitle>
             <DialogContent dividers={true}>
-                <Container disableGutters>
+                <Container>
                     <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
                         <Grid item xs={6} className={classes.gridItem}>
                             <TextField
@@ -125,9 +152,15 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={ t("field.last_name") }
                                 value={props.lastName}
                                 className={classes.textField}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                    props.onLastNameChanged(e.target.value)
-                                } />
+                                error={lastNameError}
+                                helperText={lastNameError ? t("feedback.empty_last_name") : undefined}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    let lastName = e.target.value;
+                                    if (lastName !== '' && lastNameError)
+                                        setLastNameError(false);
+
+                                    props.onLastNameChanged(lastName);
+                                }}/>
 
                             <TextField
                                 id="editor-user-first-name"
@@ -135,9 +168,15 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={ t("field.first_name") }
                                 value={props.firstName}
                                 className={classes.textField}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                    props.onFirstNameChanged(e.target.value)
-                                } />
+                                error={firstNameError}
+                                helperText={firstNameError ? t("feedback.empty_first_name") : undefined}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    let firstName = e.target.value;
+                                    if (firstName !== '' && firstNameError)
+                                        setFirstNameError(false);
+
+                                    props.onFirstNameChanged(firstName);
+                                }}/>
 
                             <TextField
                                 id="editor-user-email"
@@ -145,9 +184,15 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={ t("field.email") }
                                 value={props.email}
                                 className={classes.textField}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                    props.onEmailChanged(e.target.value)
-                                } />
+                                error={emailError}
+                                helperText={emailError ? t("feedback.empty_email_address") : undefined}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    let email = e.target.value;
+                                    if (email !== '' && emailError)
+                                        setEmailError(false);
+
+                                    props.onEmailChanged(email);
+                                }} />
 
                             <TextField
                                 id="editor-user-position"
@@ -155,9 +200,15 @@ const UserEditor = (props: UserEditorProps) => {
                                 label={ t("field.position") }
                                 value={props.position}
                                 className={classes.textField}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                                    props.onPositionChanged(e.target.value)
-                                } />
+                                error={positionError}
+                                helperText={positionError ? t("feedback.empty_position") : undefined}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    let position = e.target.value;
+                                    if (position !== '' && positionError)
+                                        setPositionError(false);
+
+                                    props.onPositionChanged(position);
+                                }} />
 
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">

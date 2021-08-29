@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-type CategoryEditorComponentPropsType = {
+type CategoryEditorProps = {
     editorOpened: boolean,
     categoryId: string,
     categoryName: string,
@@ -26,9 +26,19 @@ type CategoryEditorComponentPropsType = {
     onCategoryNameChanged: (name: string) => void,
 }
 
-const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
+const CategoryEditor = (props: CategoryEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const [nameError, setNameError] = useState(false);
+
+    const onPreSubmit = () => {
+        if (props.categoryName === '') {
+            setNameError(true);
+            return;
+        }
+
+        props.onSubmit();
+    }
 
     return (
         <Dialog
@@ -37,7 +47,7 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
             open={props.editorOpened}
             onClose={() => props.onCancel() }>
             <DialogTitle>{ t("category_details") }</DialogTitle>
-            <DialogContent dividers={true}>
+            <DialogContent>
                 <Container disableGutters>
                     <TextField
                         autoFocus
@@ -45,18 +55,24 @@ const CategoryEditorComponent = (props: CategoryEditorComponentPropsType) => {
                         type="text"
                         label={ t("field.category_name") }
                         value={props.categoryName}
+                        error={nameError}
+                        helperText={nameError ? t("feedback.empty_category_name") : undefined }
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            props.onCategoryNameChanged(e.target.value)
+                            let name = e.target.value;
+                            if (name !== '' && nameError)
+                                setNameError(false);
+
+                            props.onCategoryNameChanged(name);
                         }}
                         className={classes.textField}/>
                 </Container>
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.onCancel()}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={() => props.onSubmit()}>{ t("button.save") }</Button>
+                <Button color="primary" onClick={() => onPreSubmit()}>{ t("button.save") }</Button>
             </DialogActions>
         </Dialog>
     )
 }
 
-export default CategoryEditorComponent;
+export default CategoryEditor;
