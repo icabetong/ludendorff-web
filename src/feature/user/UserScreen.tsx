@@ -17,9 +17,12 @@ import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
-import { firestore } from "../../index";
+import { usePermissions } from "../auth/AuthProvider";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { User, minimize } from "./User";
 import UserList from "./UserList";
+
+import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
 
@@ -87,6 +90,7 @@ const UserScreen = (props: UserScreenProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
+    const { canRead, canManageUsers } = usePermissions();
 
     const columns = [
         { field: userId, headerName: t("field.id"), hide: true },
@@ -360,46 +364,55 @@ const UserScreen = (props: UserScreenProps) => {
             <ComponentHeader 
                 title={ t("navigation.users") } 
                 onDrawerToggle={props.onDrawerToggle}
-                buttonText={ t("button.add") }
+                buttonText={
+                    canManageUsers 
+                    ? t("button.add") 
+                    : undefined
+                }
                 buttonIcon={PlusIcon}
                 buttonOnClick={onUserEditorView}
                 menuItems={[
                     <MenuItem key={0} onClick={onDepartmentView}>{ t("navigation.departments") }</MenuItem>
                 ]}
             />
-            <Hidden xsDown>
-                <div className={classes.wrapper}>
-                    <DataGrid
-                        components={{
-                            LoadingOverlay: GridLinearProgress,
-                            NoRowsOverlay: EmptyStateOverlay,
-                            Toolbar: GridToolbar
-                        }}
-                        rows={users}
-                        columns={columns}
-                        pageSize={15}
-                        loading={isUsersLoading}
-                        paginationMode="server"
-                        getRowId={(r) => r.userId}
-                        onRowDoubleClick={onDataGridRowDoubleClick}
-                        hideFooter/>
-                        
-                </div>
-            </Hidden>
-            <Hidden smUp>
-                { !isUsersLoading 
-                    ? users.length < 1
-                        ? <UserEmptyStateComponent/>
-                        : <UserList users={users} onItemSelect={onUserSelected}/>
-                    : <LinearProgress/>
-                }
-            </Hidden>
-            { !atUserStart && !atUserEnd &&
-                <PaginationController
-                    hasPrevious={atUserStart}
-                    hasNext={atUserEnd}
-                    getPrevious={getPreviousUsers}
-                    getNext={getNextUsers}/>
+            { canRead || canManageUsers 
+                ? <>
+                    <Hidden xsDown>
+                        <div className={classes.wrapper}>
+                            <DataGrid
+                                components={{
+                                    LoadingOverlay: GridLinearProgress,
+                                    NoRowsOverlay: EmptyStateOverlay,
+                                    Toolbar: GridToolbar
+                                }}
+                                rows={users}
+                                columns={columns}
+                                pageSize={15}
+                                loading={isUsersLoading}
+                                paginationMode="server"
+                                getRowId={(r) => r.userId}
+                                onRowDoubleClick={onDataGridRowDoubleClick}
+                                hideFooter/>
+                                
+                        </div>
+                    </Hidden>
+                    <Hidden smUp>
+                        { !isUsersLoading 
+                            ? users.length < 1
+                                ? <UserEmptyStateComponent/>
+                                : <UserList users={users} onItemSelect={onUserSelected}/>
+                            : <LinearProgress/>
+                        }
+                    </Hidden>
+                    { !atUserStart && !atUserEnd &&
+                        <PaginationController
+                            hasPrevious={atUserStart}
+                            hasNext={atUserEnd}
+                            getPrevious={getPreviousUsers}
+                            getNext={getNextUsers}/>
+                    }
+                </>
+                : <ErrorNoPermissionState/>
             }
 
             <UserEditor

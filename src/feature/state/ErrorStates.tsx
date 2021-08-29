@@ -5,9 +5,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { ArrowRightIcon } from "@heroicons/react/outline"; 
+import { ArrowRightIcon, ExclamationIcon } from "@heroicons/react/outline"; 
 
 import history from "../navigation/History";
+import EmptyStateComponent from "./EmptyStates";
 import { ReactComponent as Logo } from "./404.svg";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +39,17 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.primary.main
     }
 }));
+
+export const ErrorNoPermissionState = () => {
+    const { t } = useTranslation();
+
+    return (
+        <EmptyStateComponent
+            icon={ExclamationIcon}
+            title={t("error.no_permissions_header")}
+            subtitle={t("error.no_permissions_summary_read")}/>
+    );
+}
 
 export const ErrorNotFoundState = () => {
     const classes = useStyles();

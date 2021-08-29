@@ -106,6 +106,9 @@ const resources = {
                 empty_position: "You forgot to enter a position",
             },
             error: {
+                no_permissions_header: "Insufficient Permissions",
+                no_permissions_summary_read: "The page you are trying to reach is restricted. Contact the system administrator for assistance.",
+                no_permissions_summary_write: "Unfortunately, you do not have the proper permissions to perform this operation. Contact the system administrators for assistance.",
                 not_found_header: "Whoops!",
                 not_found_summary: "We can't seem to find that page you're looking for.",
                 not_found_info: "Maybe you can head back home and find it there instead?"

@@ -13,8 +13,7 @@ import {
 import ProfileActionList from "./ProfileActionList";
 import ComponentHeader from "../../components/ComponentHeader";
 
-import useAuthState from "../auth/useAuthState";
-import { AuthStatus } from "../auth/AuthProvider";
+import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 
 const useStyles = makeStyles(() => ({
     root: {

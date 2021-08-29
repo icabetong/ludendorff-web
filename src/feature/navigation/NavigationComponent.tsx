@@ -26,8 +26,7 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
 
 import firebase from "firebase/app";
-import useAuthState from "../auth/useAuthState";
-import { AuthStatus } from "../auth/AuthProvider";
+import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 
 export enum Destination {
     HOME = 1, 

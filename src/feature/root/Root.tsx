@@ -6,8 +6,7 @@ import Hidden from "@material-ui/core/Hidden";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
 
-import useAuthState from "../auth/useAuthState";
-import { AuthStatus } from "../auth/AuthProvider";
+import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 
 import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
 import { ErrorNotFoundState } from "../state/ErrorStates";

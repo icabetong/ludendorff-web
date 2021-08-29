@@ -3,9 +3,10 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     root: {
-        minHeight: '60vh'
+        minHeight: '60vh',
+        padding: theme.spacing(4)
     },
     icon: {
         width: '4em',

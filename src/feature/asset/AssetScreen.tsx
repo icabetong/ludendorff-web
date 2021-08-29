@@ -19,12 +19,15 @@ import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
-import firebase from "firebase/app";
-import { firestore } from "../../index";
+import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
 import { Category, CategoryRepository } from "../category/Category";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Specification } from "../specs/Specification";
+
+import firebase from "firebase/app";
+import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { newId, formatDate } from "../../shared/utils";
 
@@ -110,6 +113,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
+    const { canRead, canWrite } = usePermissions();
 
     const columns = [
         { field: assetId, headerName: t("field.id"), hide: true },
@@ -470,45 +474,53 @@ const AssetScreen = (props: AssetScreenProps) => {
             <ComponentHeader 
                 title={ t("navigation.assets") } 
                 onDrawerToggle={props.onDrawerToggle} 
-                buttonText={ t("button.add") }
+                buttonText={
+                    canWrite
+                    ? t("button.add") 
+                    : undefined
+                }
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
                 menuItems={[
                     <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
-            <Hidden xsDown>
-                <div className={classes.wrapper}>
-                    <DataGrid
-                        components={{
-                            LoadingOverlay: GridLinearProgress,
-                            NoRowsOverlay: EmptyStateOverlay,
-                            Toolbar: GridToolbar
-                        }}
-                        rows={assets}
-                        columns={columns}
-                        pageSize={15}
-                        loading={isAssetsLoading}
-                        paginationMode="server"
-                        getRowId={(r) => r.assetId}
-                        onRowDoubleClick={onDataGridRowDoubleClicked}
-                        hideFooter/>
-                </div>
-            </Hidden>
-            <Hidden smUp>
-                { !isAssetsLoading 
-                    ? assets.length < 1 
-                        ? <AssetEmptyState/>
-                        : <AssetList assets={assets} onItemSelect={onAssetSelected}/>
-                    : <LinearProgress/>
-                }
-            </Hidden>
-            {
-                !atAssetStart && !atAssetEnd &&
-                <PaginationController
-                    hasPrevious={atAssetStart}
-                    hasNext={atAssetEnd}
-                    getPrevious={getPreviousAssets}
-                    getNext={getNextAssets}/>
+            { canRead
+                ? <>
+                    <Hidden xsDown>
+                        <div className={classes.wrapper}>
+                            <DataGrid
+                                components={{
+                                    LoadingOverlay: GridLinearProgress,
+                                    NoRowsOverlay: EmptyStateOverlay,
+                                    Toolbar: GridToolbar
+                                }}
+                                rows={assets}
+                                columns={columns}
+                                pageSize={15}
+                                loading={isAssetsLoading}
+                                paginationMode="server"
+                                getRowId={(r) => r.assetId}
+                                onRowDoubleClick={onDataGridRowDoubleClicked}
+                                hideFooter/>
+                        </div>
+                    </Hidden>
+                    <Hidden smUp>
+                        { !isAssetsLoading 
+                            ? assets.length < 1 
+                                ? <AssetEmptyState/>
+                                : <AssetList assets={assets} onItemSelect={onAssetSelected}/>
+                            : <LinearProgress/>
+                        }
+                    </Hidden>
+                    { !atAssetStart && !atAssetEnd &&
+                        <PaginationController
+                            hasPrevious={atAssetStart}
+                            hasNext={atAssetEnd}
+                            getPrevious={getPreviousAssets}
+                            getNext={getNextAssets}/>
+                    }
+                </>
+                : <ErrorNoPermissionState/>
             }
 
             {/* Asset Editor Screen */}

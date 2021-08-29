@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 
 import history from "../navigation/History";
-import { User } from "../user/User";
+import { User, hasPermission, Permission } from "../user/User";
 import { userCollection } from "../../shared/const";
 import { auth, firestore } from "../../index";
 
@@ -9,23 +9,6 @@ export enum AuthStatus { FETCHED, PENDING }
 export type AuthState = {
     status: AuthStatus,
     user?: User
-}
-
-export class AuthFetched {
-    user: User | null;
-
-    constructor(user: User | null) {
-        this.user = user;
-    }
-}
-export class AuthPending {
-    /**
-     *  This class is used for determining 
-     *  the state of authentication.
-     *  It signifies that the SDK is currently
-     *  fetching the necessary data whether
-     *  the user is currently signed-in or not 
-     */
 }
 
 export const AuthContext = React.createContext<AuthState>({ status: AuthStatus.PENDING })
@@ -56,3 +39,36 @@ export const AuthProvider: React.FC = ({ children }) => {
     );
 }
 
+export function useAuthState(): AuthState {
+    const authState = useContext(AuthContext);
+    return authState;
+}
+
+type PermissionHook = {
+    canRead: boolean,
+    canWrite: boolean,
+    canDelete: boolean,
+    canAudit: boolean,
+    canManageUsers: boolean
+}
+
+export function usePermissions(): PermissionHook {
+    const { status, user } = useAuthState(); 
+
+    if (status === AuthStatus.FETCHED && user !== undefined)
+        return { 
+            canRead: hasPermission(user, Permission.READ),
+            canWrite: hasPermission(user, Permission.WRITE),
+            canDelete: hasPermission(user, Permission.DELETE),
+            canAudit: hasPermission(user, Permission.AUDIT),
+            canManageUsers: hasPermission(user, Permission.MANAGE_USERS)    
+        }
+   else 
+        return { 
+            canRead: false,
+            canWrite: false,
+            canDelete: false,
+            canAudit: false,
+            canManageUsers: false    
+        }
+}

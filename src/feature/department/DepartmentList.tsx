@@ -12,6 +12,7 @@ import { OfficeBuildingIcon, TrashIcon } from "@heroicons/react/outline";
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
 
+import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,9 +46,9 @@ const DepartmentList = (props: DepartmentListProps) => {
     const { t } = useTranslation();
 
     return (
-        <React.Fragment>
+        <>
             { props.departments.length > 0
-            ?   <React.Fragment>
+            ?   <>
                     <List className={classes.root}>{
                         props.departments.map((department: Department) => {
                             return (
@@ -66,13 +67,13 @@ const DepartmentList = (props: DepartmentListProps) => {
                             getPrevious={props.onPrevious}
                             getNext={props.onNext}/>
                     }
-                </React.Fragment>
+                </>
             : <EmptyStateComponent
                 icon={OfficeBuildingIcon}
                 title={t("empty_department")}
                 subtitle={t("empty_department_summary")}/>
             }
-        </React.Fragment>
+        </>
     );
 }
 
@@ -85,6 +86,7 @@ type DepartmentItemProps = {
 const DepartmentItem = (props: DepartmentItemProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const { canDelete } = usePermissions();
 
     return (
         <ListItem
@@ -94,11 +96,13 @@ const DepartmentItem = (props: DepartmentItemProps) => {
             <ListItemText
                 primary={props.department.name}
                 secondary={props.department.manager?.name}/>
-            <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.department)}>
-                    <TrashIcon className={classes.actionIcon}/>
-                </IconButton>
-            </ListItemSecondaryAction>
+            { canDelete &&
+                <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.department)}>
+                        <TrashIcon className={classes.actionIcon}/>
+                    </IconButton>
+                </ListItemSecondaryAction>
+            }
         </ListItem>
     )
 } 
