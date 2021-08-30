@@ -14,7 +14,8 @@ import DepartmentList from "./DepartmentList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 const useStyles = makeStyles(() => ({
-    container: {
+    root: {
+        minHeight: '60vh',
         paddingTop: 0,
         paddingBottom: 0,
         '& .MuiList-padding': {
@@ -52,17 +53,18 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             open={props.isOpen}
             onClose={props.onDismiss}>
             <DialogTitle>{ t("navigation.departments") }</DialogTitle>
-            <DialogContent dividers={true} className={classes.container}>
-                { props.isLoading && <LinearProgress/> }
+            <DialogContent dividers={true} className={classes.root}>
                 { canRead
-                    ? <DepartmentList
-                        departments={props.departments}
-                        hasPrevious={props.hasPrevious}
-                        hasNext={props.hasNext}
-                        onPrevious={props.onPrevious}
-                        onNext={props.onNext}
-                        onItemSelect={props.onSelectItem}
-                        onItemRemove={props.onDeleteItem}/>
+                    ? !props.isLoading
+                        ? <DepartmentList
+                            departments={props.departments}
+                            hasPrevious={props.hasPrevious}
+                            hasNext={props.hasNext}
+                            onPrevious={props.onPrevious}
+                            onNext={props.onNext}
+                            onItemSelect={props.onSelectItem}
+                            onItemRemove={props.onDeleteItem}/>
+                        : <LinearProgress/>
                     : <ErrorNoPermissionState/>
                 }
             </DialogContent>

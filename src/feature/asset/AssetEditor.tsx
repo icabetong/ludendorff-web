@@ -136,6 +136,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                     </Typography>
                                 </ListItem>
                             </FormControl>
+                            
                         </Grid>
                         <Grid item xs={6} className={classes.gridItem}>
                             <FormLabel component="legend">

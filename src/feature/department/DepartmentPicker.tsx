@@ -16,6 +16,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 const useStyles = makeStyles(() => ({
     container: {
+        minHeight: '60vh',
         paddingTop: 0,
         paddingBottom: 0,
         '& .MuiList-padding': {
@@ -54,16 +55,17 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
             onClose={() => props.onDismiss()}>
             <DialogTitle>{ t("department_select") }</DialogTitle>
             <DialogContent dividers={true} className={classes.container}>
-                { props.isLoading && <LinearProgress/> }
                 { canRead
-                    ? <DepartmentList
-                        departments={props.departments}
-                        hasPrevious={props.hasPrevious}
-                        hasNext={props.hasNext}
-                        onPrevious={props.onPrevious}
-                        onNext={props.onNext}
-                        onItemSelect={props.onSelectItem}
-                        onItemRemove={props.onDeleteItem}/>
+                    ? !props.isLoading
+                        ? <DepartmentList
+                            departments={props.departments}
+                            hasPrevious={props.hasPrevious}
+                            hasNext={props.hasNext}
+                            onPrevious={props.onPrevious}
+                            onNext={props.onNext}
+                            onItemSelect={props.onSelectItem}
+                            onItemRemove={props.onDeleteItem}/>
+                        : <LinearProgress/>
                     : <ErrorNoPermissionState/>
                 }
             </DialogContent>

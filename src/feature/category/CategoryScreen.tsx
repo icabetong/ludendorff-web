@@ -14,7 +14,8 @@ import CategoryList from "./CategoryList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 const useStyles = makeStyles(() => ({
-    container: {
+    root: {
+        minHeight: '60vh',
         paddingTop: 0,
         paddingBottom: 0,
         '& .MuiList-padding': {
@@ -52,18 +53,19 @@ const CategoryScreen = (props: CategoryScreenProps) => {
             open={props.isOpen}
             onClose={props.onDismiss}>
             <DialogTitle>{ t("navigation.categories") }</DialogTitle>
-            <DialogContent dividers={true} className={classes.container}>
-                { props.isLoading && <LinearProgress/> }
-                { canRead
-                    ? <CategoryList 
-                        hasPrevious={props.hasPrevious}
-                        hasNext={props.hasNext}
-                        onPrevious={props.onPreviousBatch}
-                        onNext={props.onNextBatch}
-                        categories={props.categories} 
-                        onItemSelect={props.onSelectItem}
-                        onItemRemove={props.onDeleteItem}/>
-                    : <ErrorNoPermissionState/>
+            <DialogContent dividers={true} className={classes.root}>
+                { canRead 
+                    ? !props.isLoading
+                        ? <CategoryList 
+                            hasPrevious={props.hasPrevious}
+                            hasNext={props.hasNext}
+                            onPrevious={props.onPreviousBatch}
+                            onNext={props.onNextBatch}
+                            categories={props.categories} 
+                            onItemSelect={props.onSelectItem}
+                            onItemRemove={props.onDeleteItem}/>
+                        : <LinearProgress/>
+                    :  <ErrorNoPermissionState/>
                 }
             </DialogContent>
             <DialogActions>

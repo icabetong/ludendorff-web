@@ -8,15 +8,21 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
 
+import {
+    UserIcon
+} from "@heroicons/react/outline";
+
 import { User } from "./User";
 import UserList from "./UserList";
 
 import PaginationController from "../../components/PaginationController";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 
 const useStyles = makeStyles(() => ({
-    container: {
+    root: {
+        minHeight: '60vh',
         paddingTop: 0,
         paddingBottom: 0,
         '& .MuiList-padding': {
@@ -52,22 +58,27 @@ const UserPicker = (props: UserPickerProps) => {
             open={props.isOpen}
             onClose={props.onDismiss}>
             <DialogTitle>{ t("user_select") }</DialogTitle>
-            <DialogContent dividers={true} className={classes.container}>
-                { props.isLoading && <LinearProgress/> }
-                { canRead 
-                    ? 
-                    <>
-                        <UserList
-                            users={props.users}
-                            onItemSelect={props.onSelectItem}/>
-                    { props.users.length > 0 && 
-                        <PaginationController
-                            hasPrevious={props.hasPrevious}
-                            hasNext={props.hasNext}
-                            getPrevious={props.onPrevious}
-                            getNext={props.onNext}/>
-                    }
-                    </>
+            <DialogContent dividers={true} className={classes.root}>
+                { canRead ? 
+                    !props.isLoading
+                        ? props.users.length > 0
+                            ? <>
+                                <UserList
+                                    users={props.users}
+                                    onItemSelect={props.onSelectItem}/>
+                                    { !props.hasNext &&
+                                        <PaginationController
+                                            hasPrevious={props.hasPrevious}
+                                            hasNext={props.hasNext}
+                                            getPrevious={props.onPrevious}
+                                            getNext={props.onNext}/>
+                                    }
+                                </>
+                            : <EmptyStateComponent
+                                icon={UserIcon}
+                                title={t("empty_user")}
+                                subtitle={t("empty_user_summary")}/>
+                        : <LinearProgress/>       
                     : <ErrorNoPermissionState/>
                 }
             </DialogContent>

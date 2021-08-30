@@ -45,8 +45,10 @@ const resources = {
                 count: "Count: {{count}}",
                 department_name: "Department Name",
                 manager: "Manager",
+                asset: "Asset",
                 user: "User",
-                location: "Location"
+                location: "Location",
+                remarks: "Remarks"
             },
             status: {
                 operational: "Operational",
@@ -124,6 +126,7 @@ const resources = {
             specification_details: "Specification Details",
             user_details: "User Details",
             department_details: "Department Details",
+            assignment_details: "Assignment Details",
             asset_select: "Select Asset",
             category_select: "Select Category",
             user_select: "Select User",

@@ -4,13 +4,32 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
+
+import {
+    DesktopComputerIcon
+} from "@heroicons/react/outline";
 
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
 
 import PaginationController from "../../components/PaginationController";
+import { ErrorNoPermissionState} from "../state/ErrorStates";
+import EmptyStateComponent from "../state/EmptyStates";
+import { usePermissions } from "../auth/AuthProvider";
+
+const useStyles = makeStyles(() => ({
+    root: { 
+        minHeight: '60vh',
+        paddingTop: 0,
+        paddingBottom: 0,
+        '& .MuiList-padding': {
+            padding: 0
+        }
+    }
+}))
 
 type AssetPickerProps = {
     isOpen: boolean,
@@ -28,6 +47,8 @@ const AssetPicker = (props: AssetPickerProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const classes = useStyles();
+    const { canRead } = usePermissions();
 
     return (
         <Dialog
@@ -37,16 +58,27 @@ const AssetPicker = (props: AssetPickerProps) => {
             open={props.isOpen}
             onClose={props.onDismiss}>
             <DialogTitle>{ t("asset_select") }</DialogTitle>
-            <DialogContent dividers={true}>
-                <AssetList
-                    assets={props.assets}
-                    onItemSelect={props.onSelectItem}/>
-                { props.assets.length > 0 && 
-                    <PaginationController
-                        hasPrevious={props.hasPrevious}
-                        hasNext={props.hasNext}
-                        getPrevious={props.onPrevious}
-                        getNext={props.onNext}/>
+            <DialogContent dividers={true} className={classes.root}>
+                { canRead ?
+                    !props.isLoading 
+                    ? props.assets.length > 0 
+                        ? <>
+                            <AssetList
+                            assets={props.assets}
+                            onItemSelect={props.onSelectItem}/>
+                            {  !props.hasNext &&
+                                <PaginationController
+                                    hasPrevious={props.hasPrevious}
+                                    hasNext={props.hasNext}
+                                    getPrevious={props.onPrevious}
+                                    getNext={props.onNext}/>}
+                        </>
+                        : <EmptyStateComponent
+                            icon={DesktopComputerIcon}
+                            title={t("empty_asset")}
+                            subtitle={t("empty_asset_summary")}/>
+                    : <LinearProgress/>
+                : <ErrorNoPermissionState/>
                 }
             </DialogContent>
             <DialogActions>
@@ -55,3 +87,5 @@ const AssetPicker = (props: AssetPickerProps) => {
         </Dialog>
     );
 }
+
+export default AssetPicker;
