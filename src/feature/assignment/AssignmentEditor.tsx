@@ -19,10 +19,13 @@ import { Timestamp } from "@firebase/firestore-types";
 import { AssetCore } from "../asset/Asset";
 import { UserCore } from "../user/User";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     textField: {
         width: '100%',
-        margin: '0.6em 0'
+        margin: '0.6em 0',
+        '& .MuiListItem-root': {
+            borderRadius: theme.spacing(1)
+        }
     },
     gridItem: {
         maxWidth: '100%'

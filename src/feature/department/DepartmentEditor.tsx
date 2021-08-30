@@ -15,10 +15,13 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import { UserCore } from "../user/User";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     textField: {
         margin: '0.6em 0',
-        width: '100%'
+        width: '100%',
+        '& .MuiListItem-root': {
+            borderRadius: theme.spacing(1)
+        }
     }
 }));
 

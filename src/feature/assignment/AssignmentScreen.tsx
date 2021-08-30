@@ -19,10 +19,10 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Asset } from "../asset/Asset";
+import { Asset, minimize as minimizeAsset } from "../asset/Asset";
 import { Assignment } from "./Assignment";
 import AssignmentList from "./AssignmentList";
-import { User } from "../user/User";
+import { User, minimize as minimizeUser } from "../user/User";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
@@ -151,11 +151,27 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     } 
 
     const onAssignmentAssetSelected = (asset: Asset) => {
-
+        let assignment = editorState.assignment;
+        if (assignment === undefined)
+            assignment = { assignmentId: newId() }
+        assignment!.asset = minimizeAsset(asset);
+        onAssetPickerDismiss()
+        editorDispatch({
+            type: AssignmentEditorActionType.CHANGED,
+            payload: assignment
+        })
     }
 
     const onAssignmentUserSelected = (user: User) => {
-
+        let assignment = editorState.assignment;
+        if (assignment === undefined)
+            assignment = { assignmentId: newId() }
+        assignment!.user = minimizeUser(user);
+        onUserPickerDismiss()
+        editorDispatch({
+            type: AssignmentEditorActionType.CHANGED,
+            payload: assignment
+        })
     }
 
     const onAssignmentSelected = (assignment: Assignment) => {

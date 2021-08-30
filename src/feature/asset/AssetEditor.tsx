@@ -30,7 +30,10 @@ import { Specification } from "../specs/Specification";
 const useStyles = makeStyles((theme) => ({
     textField: {
         width: '100%',
-        margin: '0.6em 0'
+        margin: '0.6em 0',
+        '& .MuiListItem-root': {
+            borderRadius: theme.spacing(1)
+        }
     },
     icon: {
         width: '1em',
