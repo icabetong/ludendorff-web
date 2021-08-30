@@ -4,13 +4,24 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
 import DepartmentList from "./DepartmentList";
-import { ErrorNoPermissionState } from "../state/ErrorStates"; 
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+
+const useStyles = makeStyles(() => ({
+    container: {
+        paddingTop: 0,
+        paddingBottom: 0,
+        '& .MuiList-padding': {
+            padding: 0
+        }
+    }
+}));
 
 type DepartmentScreenProps = {
     isOpen: boolean,
@@ -30,6 +41,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const classes = useStyles();
     const { canRead, canWrite } = usePermissions();
 
     return (
@@ -40,7 +52,8 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             open={props.isOpen}
             onClose={props.onDismiss}>
             <DialogTitle>{ t("navigation.departments") }</DialogTitle>
-            <DialogContent dividers={true}>
+            <DialogContent dividers={true} className={classes.container}>
+                { props.isLoading && <LinearProgress/> }
                 { canRead
                     ? <DepartmentList
                         departments={props.departments}
@@ -54,7 +67,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                 }
             </DialogContent>
             <DialogActions>
-            <Button color="primary" onClick={props.onAddItem} disabled={canWrite}>{ t("button.add") }</Button>
+            <Button color="primary" onClick={props.onAddItem} disabled={!canWrite}>{ t("button.add") }</Button>
                 <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
             </DialogActions>

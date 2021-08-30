@@ -113,6 +113,9 @@ const resources = {
                 not_found_summary: "We can't seem to find that page you're looking for.",
                 not_found_info: "Maybe you can head back home and find it there instead?"
             },
+            info: {
+                user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules."
+            },
             unknown: "Unknown",
             actions: "Actions",
             not_set: "Not Set",

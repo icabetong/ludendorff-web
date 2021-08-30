@@ -14,8 +14,8 @@ export const hasPermission = (user: User, permission: Permission): boolean => {
      *  Check if the user has the required permissions,
      *  or has the ability to override the permission systems.
      */
-    return user.permissions.includes(permission) 
-        || user.permissions.includes(Permission.ADMINISTRATIVE);
+    return user.permissions.includes(Permission.ADMINISTRATIVE) ||
+        user.permissions.includes(permission) ;
 }
 
 export const minimize = (user: User): UserCore => {

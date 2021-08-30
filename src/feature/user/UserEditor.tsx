@@ -9,6 +9,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import Grid from "@material-ui/core/Grid";
@@ -283,6 +284,7 @@ const UserEditor = (props: UserEditorProps) => {
                                             onChange={onPermissionsChanged}
                                             name="editor-administrative"/>
                                     }/>
+                                <FormHelperText>{t("info.user_editor_admin_permission")}</FormHelperText>
                             </FormGroup>
                         </FormControl>
                         </Grid>

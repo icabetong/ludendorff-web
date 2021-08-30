@@ -6,10 +6,23 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme } from "@material-ui/core/styles";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
 
+import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
 import DepartmentList from "./DepartmentList";
+
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+
+const useStyles = makeStyles(() => ({
+    container: {
+        paddingTop: 0,
+        paddingBottom: 0,
+        '& .MuiList-padding': {
+            padding: 0
+        }
+    }
+}));
 
 type DepartmentPickerProps = {
     isOpen: boolean,
@@ -29,6 +42,8 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const classes = useStyles();
+    const { canRead, canWrite } = usePermissions();
 
     return (
         <Dialog
@@ -38,19 +53,22 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
             open={props.isOpen}
             onClose={() => props.onDismiss()}>
             <DialogTitle>{ t("department_select") }</DialogTitle>
-            <DialogContent dividers={true}>
+            <DialogContent dividers={true} className={classes.container}>
                 { props.isLoading && <LinearProgress/> }
-                <DepartmentList
-                    departments={props.departments}
-                    hasPrevious={props.hasPrevious}
-                    hasNext={props.hasNext}
-                    onPrevious={props.onPrevious}
-                    onNext={props.onNext}
-                    onItemSelect={props.onSelectItem}
-                    onItemRemove={props.onDeleteItem}/>
+                { canRead
+                    ? <DepartmentList
+                        departments={props.departments}
+                        hasPrevious={props.hasPrevious}
+                        hasNext={props.hasNext}
+                        onPrevious={props.onPrevious}
+                        onNext={props.onNext}
+                        onItemSelect={props.onSelectItem}
+                        onItemRemove={props.onDeleteItem}/>
+                    : <ErrorNoPermissionState/>
+                }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onAddItem()}>{ t("button.add") }</Button>
+                <Button color="primary" onClick={() => props.onAddItem()} disabled={!canWrite}>{ t("button.add") }</Button>
                 <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onDismiss()}>{ t("button.close") }</Button>
             </DialogActions>
