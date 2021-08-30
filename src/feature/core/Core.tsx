@@ -62,24 +62,11 @@ const baseTheme = createTheme({
                 fontWeight: 500
             },
         },
-        MuiList: {
-            root: {
-                paddingLeft: '0.6em',
-                paddingRight: '0.6em'
-            }
-        },
-        MuiListItem: {
-            root: {
-                borderRadius: '0.4em',
-                marginTop: '0.4em',
-                marginBottom: '0.4em'
-            }
-        },
         MuiDialogContent: {
             dividers: {
                 padding: '16px 0'
             }
-        }
+        },
     }
 })
 

@@ -49,7 +49,44 @@ type NavigationComponentPropsType =  {
     currentDestination: Destination
 }
 
+const useStyles = makeStyles((theme) => ({
+    container: {
+        borderRadius: theme.spacing(1),
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        [theme.breakpoints.down("xs")]: {
+            paddingLeft: '12px',
+            paddingRight: '12px',
+        },
+        '& .MuiListItemIcon-root': {
+            width: '1.6em',
+            height: '1.6em',
+            color: theme.palette.text.primary
+        },
+        '&$selected': {
+            backgroundColor: theme.palette.type === 'dark' ? 'rgba(189, 147, 249, 0.16)' : 'rgba(98, 114, 164, 0.16)',
+            '& .MuiListItemIcon-root': {
+                color: theme.palette.primary.main
+            },
+            '& .MuiListItemText-root': {
+                '& .MuiTypography-root': {
+                    color: theme.palette.primary.main
+                },
+            },
+        }
+    },
+    navigation: {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1)
+    },
+    navigationText: {
+        color: theme.palette.text.primary
+    },
+    selected: {},
+}));
+
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
+    const classes = useStyles();
     const { status, user } = useAuthState();
     const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
     const { t } = useTranslation();
@@ -63,6 +100,12 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     ]
 
     const minorDestinations: NavigationItemType[] = [
+        {   icon: UserIcon, 
+            title: status === AuthStatus.FETCHED && user?.firstName !== undefined
+                ? user!.firstName
+                : t("profile"),
+            destination: Destination.PROFILE
+        }, 
         { icon: CogIcon, title: "navigation.settings", destination: Destination.SETTINGS },
     ]
 
@@ -78,7 +121,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     return (
         <Box>
             <ListSubheader>{ t("navigation.manage") }</ListSubheader>
-            <List>
+            <List className={classes.navigation}>
                 <NavigationList 
                     items={destinations} 
                     destination={props.currentDestination}
@@ -86,18 +129,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
             </List>
             <Divider/>
             <ListSubheader>{ t("navigation.account") }</ListSubheader>
-            <List>
-                <NavigationListItem
-                    itemKey={0}
-                    navigation={{
-                        icon: UserIcon,
-                        title: status === AuthStatus.FETCHED 
-                            && user?.firstName !== undefined
-                            ? user!.firstName
-                            : t("profile")
-                    }}
-                    isActive={false}
-                    action={() => props.onNavigate(Destination.PROFILE)}/>
+            <List className={classes.navigation}>
                 <NavigationList
                     items={minorDestinations}
                     destination={props.currentDestination}
@@ -134,41 +166,21 @@ type NavigationListItemPropsType = {
 }
 
 const NavigationListItem = (props: NavigationListItemPropsType) => {
-    const useStyles = makeStyles((theme) => ({
-        container: {
-            [theme.breakpoints.down("xs")]: {
-                paddingLeft: '12px',
-                paddingRight: '12px',
-            }
-        },
-        navigationText: {
-            color: theme.palette.text.primary
-        },
-        icon: {
-            width: '1.6em',
-            height: '1.6em',
-            color: theme.palette.text.primary
-        }
-    }))
     const classes = useStyles();
     const { t } = useTranslation();
 
     return (
         <ListItem 
             button
-            className={classes.container} 
+            classes={{root: classes.container, selected: classes.selected}} 
             key={props.itemKey} 
             selected={props.isActive}
             onClick={props.action}>
-            <ListItemIcon>{
-                React.createElement(props.navigation.icon,
-                    { className: classes.icon }
-                )
+            <ListItemIcon>{ 
+                React.createElement(props.navigation.icon)
             }
             </ListItemIcon>
-            <ListItemText primary={
-                <Typography className={classes.navigationText} variant="body2" noWrap>{ t(props.navigation.title) }</Typography>
-            }/>
+            <ListItemText primary={ <Typography variant="body2">{t(props.navigation.title)}</Typography> }/>
         </ListItem> 
     )
 }

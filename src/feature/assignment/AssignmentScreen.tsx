@@ -15,11 +15,14 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+
+import { usePermissions } from "../auth/AuthProvider";
+import { Assignment } from "./Assignment";
+import AssignmentList from "./AssignmentList";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
-import { Assignment } from "./Assignment";
-import AssignmentList from "./AssignmentList";
 import { formatDate } from "../../shared/utils";
 
 import {
@@ -50,6 +53,7 @@ type AssignmentScreenProps = {
 const AssignmentScreen = (props: AssignmentScreenProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const { isAdmin } = usePermissions();
 
     const columns = [
         { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -97,41 +101,46 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
         <Box className={classes.root}>
             <ComponentHeader 
                 title={ t("navigation.assignments") }
-                buttonText={ t("add") }
+                buttonText={isAdmin ? t("add") : undefined }
                 buttonIcon={PlusIcon}
                 onDrawerToggle={props.onDrawerToggle}
             />
-            <Hidden xsDown>
-                <div className={classes.wrapper}>
-                    <DataGrid
-                        components={{
-                            LoadingOverlay: GridLinearProgress,
-                            NoRowsOverlay: EmptyStateOverlay,
-                            Toolbar: GridToolbar
-                        }}
-                        rows={assignments}
-                        columns={columns}
-                        pageSize={15}
-                        loading={isAssignmentsLoading}
-                        paginationMode="server"
-                        getRowId={(r) => r.assignmentId}
-                        hideFooter/>
-                </div>
-            </Hidden>
-            <Hidden smUp>
-                { !isAssignmentsLoading 
-                    ? assignments.length < 1
-                        ? <AssignmentEmptyState/>
-                        : <AssignmentList assignments={assignments} onItemSelect={onAssignmentSelected}/>
-                    : <LinearProgress/>
-                }
-            </Hidden>
-            { !atAssignmentStart && !atAssignmentEnd &&
-                <PaginationController
-                    hasPrevious={atAssignmentStart}
-                    hasNext={atAssignmentEnd}
-                    getPrevious={getPreviousAssignments}
-                    getNext={getNextAssignments}/>
+            { isAdmin
+                ? <>
+                    <Hidden xsDown>
+                        <div className={classes.wrapper}>
+                            <DataGrid
+                                components={{
+                                    LoadingOverlay: GridLinearProgress,
+                                    NoRowsOverlay: EmptyStateOverlay,
+                                    Toolbar: GridToolbar
+                                }}
+                                rows={assignments}
+                                columns={columns}
+                                pageSize={15}
+                                loading={isAssignmentsLoading}
+                                paginationMode="server"
+                                getRowId={(r) => r.assignmentId}
+                                hideFooter/>
+                        </div>
+                    </Hidden>
+                    <Hidden smUp>
+                        { !isAssignmentsLoading 
+                            ? assignments.length < 1
+                                ? <AssignmentEmptyState/>
+                                : <AssignmentList assignments={assignments} onItemSelect={onAssignmentSelected}/>
+                            : <LinearProgress/>
+                        }
+                    </Hidden>
+                    { !atAssignmentStart && !atAssignmentEnd &&
+                        <PaginationController
+                            hasPrevious={atAssignmentStart}
+                            hasNext={atAssignmentEnd}
+                            getPrevious={getPreviousAssignments}
+                            getNext={getNextAssignments}/>
+                    }
+                </>
+                : <ErrorNoPermissionState/>
             }
         </Box>
     )
