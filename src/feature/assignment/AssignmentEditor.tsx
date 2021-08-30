@@ -24,6 +24,9 @@ const useStyles = makeStyles(() => ({
         width: '100%',
         margin: '0.6em 0'
     },
+    gridItem: {
+        maxWidth: '100%'
+    }
 }));
 
 type AssignmentEditorProps = {
@@ -84,7 +87,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
             <DialogContent dividers={true}>
                 <Container>
                     <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} className={classes.gridItem}>
                             <FormControl component="fieldset" className={classes.textField}>
                                 <FormLabel component="legend">
                                     <Typography variant="body2">{ t("field.asset") }</Typography>
@@ -107,7 +110,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                 </ListItem>
                             </FormControl>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} className={classes.gridItem}>
                             <TextField
                                 id="editor-location"
                                 type="text"
