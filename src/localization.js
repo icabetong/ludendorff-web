@@ -118,6 +118,15 @@ const resources = {
             info: {
                 user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules."
             },
+            settings:{
+                dark_theme: "Dark Theme",
+                dark_theme_summary: "Make the interface darker and easier on the eyes.",
+                component_density: "Component Density",
+                component_density_summary: "Customize the paddings in components such as the data table and lists.",
+                component_density_compact: "Compact",
+                component_density_standard: "Standard",
+                component_density_comfortable: "Comfortable"
+            },
             unknown: "Unknown",
             actions: "Actions",
             not_set: "Not Set",
@@ -175,8 +184,6 @@ const resources = {
             feedback_assignment_create_error: "Error creating assignment",
             feedback_assignment_update_error: "Error updating assignment",
             feedback_assignment_remove_error: "Error removing department",
-            settings_dark_theme: "Dark Theme",
-            settings_dark_theme_summary: "Make the interface darker and easier on the eyes."
         }
     }
 }
