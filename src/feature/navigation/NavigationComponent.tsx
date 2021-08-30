@@ -26,7 +26,7 @@ import UserIcon from "@heroicons/react/outline/UserIcon";
 import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
 
 import firebase from "firebase/app";
-import { AuthStatus, useAuthState } from "../auth/AuthProvider";
+import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
 
 export enum Destination {
     HOME = 1, 
@@ -73,6 +73,9 @@ const useStyles = makeStyles((theme) => ({
                     color: theme.palette.primary.main
                 },
             },
+        },
+        '&:hover': {
+            backgroundColor: theme.palette.type === 'dark' ? 'rgba(189, 147, 249, 0.12)' : 'rgba(98, 114, 164, 0.12)',
         }
     },
     navigation: {
@@ -192,9 +195,18 @@ type NavigationListPropsType = {
 }
 
 const NavigationList = (props: NavigationListPropsType) => {
+    const { canRead, canManageUsers, isAdmin } = usePermissions();
+
     return (
         <React.Fragment>{
             props.items.map((navigation: NavigationItemType) => {
+                if (!canRead && (navigation.destination === Destination.ASSETS || navigation.destination === Destination.SCAN))
+                    return <></>;
+                if (!canManageUsers && navigation.destination === Destination.USERS)
+                    return <></>;
+                if (!isAdmin && navigation.destination === Destination.ASSIGNMENTS)
+                    return <></>;
+
                 return <NavigationListItem
                             key={navigation.destination}
                             itemKey={navigation.destination}
