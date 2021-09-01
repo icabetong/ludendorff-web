@@ -151,6 +151,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                     <HeroIconButton 
                         icon={TrashIcon}
                         aria-label={t("delete")}
+                        disabled={(params.row as Asset).status === Status.OPERATIONAL}
                         onClick={() => onAssetItemRemoveRequest(params.row as Asset)}/>
                 )
             }
@@ -227,10 +228,10 @@ const AssetScreen = (props: AssetScreenProps) => {
             if (editorState.isCreate) {
                 AssetRepository.create(asset)
                     .then(() => {
-                        enqueueSnackbar(t("feedback_asset_created"));
+                        enqueueSnackbar(t("feedback.asset_created"));
 
                     }).catch(() => {
-                        enqueueSnackbar(t("feedback_asset_create_error"));
+                        enqueueSnackbar(t("feedback.asset_create_error"));
 
                     }).finally(() => {
                         editorDispatch({ type: AssetEditorActionType.DISMISS })
@@ -238,10 +239,10 @@ const AssetScreen = (props: AssetScreenProps) => {
             } else {
                 AssetRepository.update(asset)
                     .then(() => {
-                        enqueueSnackbar(t("feedback_asset_updated"));
+                        enqueueSnackbar(t("feedback.asset_updated"));
 
                     }).catch(() => {
-                        enqueueSnackbar(t("feedback_asset_update_error"));
+                        enqueueSnackbar(t("feedback.asset_update_error"));
 
                     }).finally(() => {
                         editorDispatch({ type: AssetEditorActionType.DISMISS })
@@ -276,11 +277,11 @@ const AssetScreen = (props: AssetScreenProps) => {
 
         AssetRepository.remove(asset)
             .then(() => {
-                enqueueSnackbar(t("feedback_asset_removed"));
+                enqueueSnackbar(t("feedback.asset_removed"));
 
             }).catch((error) => {
                 console.log(error);
-                enqueueSnackbar(t("feedback_asset_remove_error"));
+                enqueueSnackbar(t("feedback.asset_remove_error"));
 
             }).finally(() => {
                 removeDispatch({
@@ -391,10 +392,10 @@ const AssetScreen = (props: AssetScreenProps) => {
 
         CategoryRepository.remove(category)
             .then(() => {
-                enqueueSnackbar(t("feedback_category_removed"));
+                enqueueSnackbar(t("feedback.category_removed"));
 
             }).catch(() => {
-                enqueueSnackbar(t("feedback_category_remove_error"));
+                enqueueSnackbar(t("feedback.category_remove_error"));
 
             }).finally(() => {
                 categoryRemoveDispatch({
@@ -432,10 +433,10 @@ const AssetScreen = (props: AssetScreenProps) => {
             if (categoryEditorState.isCreate) {
                 CategoryRepository.create(category)
                     .then(() => {
-                        enqueueSnackbar(t("feedback_category_created"));
+                        enqueueSnackbar(t("feedback.category_created"));
 
                     }).catch(() => {
-                        enqueueSnackbar(t("feedback_category_create_error"));
+                        enqueueSnackbar(t("feedback.category_create_error"));
 
                     }).finally(() => {
                         categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
@@ -443,10 +444,10 @@ const AssetScreen = (props: AssetScreenProps) => {
             } else {
                 CategoryRepository.update(category)
                     .then(() => {
-                        enqueueSnackbar(t("feedback_category_updated"));
+                        enqueueSnackbar(t("feedback.category_updated"));
 
                     }).catch(() => {
-                        enqueueSnackbar(t("feedback_category_update_error"));
+                        enqueueSnackbar(t("feedback.category_update_error"));
 
                     }).finally(() => {
                         categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })

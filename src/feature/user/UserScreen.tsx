@@ -307,10 +307,10 @@ const UserScreen = (props: UserScreenProps) => {
         if (departmentEditorState.isCreate) {
             DepartmentRepository.create(department)
                 .then(() => {
-                    enqueueSnackbar(t("feedback_department_created"));
+                    enqueueSnackbar(t("feedback.department_created"));
                     
                 }).catch(() => {
-                    enqueueSnackbar(t("feedback_department_create_error"));
+                    enqueueSnackbar(t("feedback.department_create_error"));
 
                 }).finally(() => {
                     departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
@@ -318,10 +318,10 @@ const UserScreen = (props: UserScreenProps) => {
         } else {
             DepartmentRepository.update(department)
                 .then(() => {
-                    enqueueSnackbar(t("feedback_department_updated"));
+                    enqueueSnackbar(t("feedback.department_updated"));
 
                 }).catch(() => {
-                    enqueueSnackbar(t("feedback_department_update_error"))
+                    enqueueSnackbar(t("feedback.department_update_error"))
 
                 }).finally(() => {
                     departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
@@ -343,10 +343,10 @@ const UserScreen = (props: UserScreenProps) => {
 
         DepartmentRepository.remove(department)
             .then(() => {
-                enqueueSnackbar(t("feedback_department_removed"));
+                enqueueSnackbar(t("feedback.department_removed"));
 
             }).catch(() => {
-                enqueueSnackbar(t("feedback_department_remove_error"));
+                enqueueSnackbar(t("feedback.department_remove_error"));
 
             }).finally(() => {
                 departmentRemoveDispatch({
