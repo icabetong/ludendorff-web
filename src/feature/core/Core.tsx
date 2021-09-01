@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Router, Route, Switch } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
-import useLocalStorage from "../../shared/persistence";
 import AuthComponent from '../auth/Auth'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
 import { ErrorNotFoundState } from "../state/ErrorStates";
+import { PreferenceContext } from "../settings/Preference";
 
 const secondaryColors = {
     main: '#ff79c6',
@@ -122,23 +122,21 @@ export const ThemeContext = React.createContext<ThemeContextType>({
 });
 
 export const CoreComponent = () => {
-    const [theme, setTheme] = useLocalStorage("preference:theme", 'dark');
+    const userPreferences = useContext(PreferenceContext);
     
     return (
-        <div>
-            <ThemeContext.Provider value={{theme, setTheme}}>
-                {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
-                <ThemeProvider theme={theme === 'dark' ? {...darkTheme} : {...lightTheme}}>
-                    <CssBaseline/>                    
-                        <Router history={history}>
-                            <Switch>
-                                <Route path="/" component={RootComponent} exact/>
-                                <Route path="/auth" component={AuthComponent}/>
-                                <Route path="*" component={ErrorNotFoundState} exact/>
-                            </Switch>
-                        </Router>
-                </ThemeProvider>
-           </ThemeContext.Provider>
-        </div>
+        <>
+        {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */} 
+            <ThemeProvider theme={userPreferences.preferences.theme === 'dark' ? {...darkTheme} : {...lightTheme}}>
+                <CssBaseline/>                    
+                    <Router history={history}>
+                        <Switch>
+                            <Route path="/" component={RootComponent} exact/>
+                            <Route path="/auth" component={AuthComponent}/>
+                            <Route path="*" component={ErrorNotFoundState} exact/>
+                        </Switch>
+                    </Router>
+            </ThemeProvider>
+        </>
     )
 }

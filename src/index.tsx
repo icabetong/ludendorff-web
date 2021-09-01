@@ -4,9 +4,12 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 
-import './index.css';
-import { CoreComponent } from './feature/core/Core';
+
 import { AuthProvider } from './feature/auth/AuthProvider';
+import { CoreComponent } from './feature/core/Core';
+import { PreferenceProvider } from './feature/settings/Preference';
+
+import './index.css';
 import './localization';
 
 const config = {
@@ -26,7 +29,9 @@ firestore.settings({ ignoreUndefinedProperties: true, merge: true })
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <CoreComponent/>
+      <PreferenceProvider>
+        <CoreComponent/>
+      </PreferenceProvider>
     </AuthProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -19,6 +19,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { usePreferences } from "../settings/Preference";
 import { User, minimize } from "./User";
 import UserList from "./UserList";
 
@@ -91,6 +92,7 @@ const UserScreen = (props: UserScreenProps) => {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const { canRead, canManageUsers } = usePermissions();
+    const preferences = usePreferences();
 
     const columns = [
         { field: userId, headerName: t("field.id"), hide: true },
@@ -387,6 +389,7 @@ const UserScreen = (props: UserScreenProps) => {
                                 }}
                                 rows={users}
                                 columns={columns}
+                                density={preferences.density}
                                 pageSize={15}
                                 loading={isUsersLoading}
                                 paginationMode="server"

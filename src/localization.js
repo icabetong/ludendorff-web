@@ -121,11 +121,11 @@ const resources = {
             settings:{
                 dark_theme: "Dark Theme",
                 dark_theme_summary: "Make the interface darker and easier on the eyes.",
-                component_density: "Component Density",
-                component_density_summary: "Customize the paddings in components such as the data table and lists.",
-                component_density_compact: "Compact",
-                component_density_standard: "Standard",
-                component_density_comfortable: "Comfortable"
+                table_row_density: "Table Row Density",
+                table_row_density_summary: "Customize the size of the row paddings in the data table.",
+                table_row_density_compact: "Compact",
+                table_row_density_standard: "Standard",
+                table_row_density_comfortable: "Comfortable"
             },
             unknown: "Unknown",
             actions: "Actions",

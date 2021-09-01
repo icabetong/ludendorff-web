@@ -25,6 +25,7 @@ import AssetList from "./AssetList";
 import { Category, CategoryRepository } from "../category/Category";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Specification } from "../specs/Specification";
+import { usePreferences } from "../settings/Preference";
 
 import firebase from "firebase/app";
 import { firestore } from "../../index";
@@ -114,6 +115,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     const { t } = useTranslation();
     const { enqueueSnackbar } = useSnackbar();
     const { canRead, canWrite } = usePermissions();
+    const userPreference = usePreferences();
 
     const columns = [
         { field: assetId, headerName: t("field.id"), hide: true },
@@ -496,6 +498,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                                 }}
                                 rows={assets}
                                 columns={columns}
+                                density={userPreference.density}
                                 pageSize={15}
                                 loading={isAssetsLoading}
                                 paginationMode="server"

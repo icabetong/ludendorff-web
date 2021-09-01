@@ -22,6 +22,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { Asset, minimize as minimizeAsset } from "../asset/Asset";
 import { Assignment } from "./Assignment";
 import AssignmentList from "./AssignmentList";
+import { usePreferences } from "../settings/Preference";
 import { User, minimize as minimizeUser } from "../user/User";
 
 import { firestore } from "../../index";
@@ -72,6 +73,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const { isAdmin } = usePermissions();
+    const preferences = usePreferences();
 
     const columns = [
         { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -232,6 +234,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                                 }}
                                 rows={assignments}
                                 columns={columns}
+                                density={preferences.density}
                                 pageSize={15}
                                 loading={isAssignmentsLoading}
                                 paginationMode="server"

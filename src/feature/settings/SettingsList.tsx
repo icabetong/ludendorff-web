@@ -8,7 +8,7 @@ import {
     ListItemSecondaryAction 
 } from "@material-ui/core";
 
-import { Preference } from "./Settings";
+import { Setting } from "./Settings";
 
 const useStyles = makeStyles((theme) => ({
     icon: { 
@@ -18,26 +18,26 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-type PreferenceListProps = {
-    preferences: Preference[]
+type SettingsListProps = {
+    preferences: Setting[]
 }
 
-const PreferenceList = (props: PreferenceListProps) => {
+const SettingsList = (props: SettingsListProps) => {
     return (
         <List>
-            {   props.preferences.map((preference: Preference) => {
-                    return <PreferenceItem preference={preference}/>
+            {   props.preferences.map((preference: Setting) => {
+                    return <SettingsItem preference={preference}/>
                 })
             }
         </List>
     );
 }
 
-type PreferenceItemType = {
-    preference: Preference
+type SettingsItemProp = {
+    preference: Setting
 }
 
-const PreferenceItem = (props: PreferenceItemType) => {
+const SettingsItem = (props: SettingsItemProp) => {
     const classes = useStyles();
 
     return (
@@ -59,4 +59,4 @@ const PreferenceItem = (props: PreferenceItemType) => {
     )
 }
 
-export default PreferenceList;
+export default SettingsList;

@@ -8,22 +8,19 @@ import Switch from "@material-ui/core/Switch";
 import {
     ChevronRightIcon,
     ColorSwatchIcon,
-    ArrowsExpandIcon
+    TableIcon,
+    ViewListIcon,
+    MenuIcon,
+    MenuAlt4Icon
 } from "@heroicons/react/outline";
 
-import { ThemeContext } from "../core/Core";
 import ComponentHeader from "../../components/ComponentHeader";
 import HeroIconButton from "../../components/HeroIconButton";
-import useLocalStorage from "../../shared/persistence";
+import HeroListItemIcon from "../../components/HeroListItemIcon";
 
-import { Preference } from "../settings/Settings";
-import PreferenceList from "../settings/SettingsList";
-
-enum Density { 
-    COMPACT = "compact", 
-    STANDARD = "standard", 
-    COMFORTABLE = "comfortable"
-}
+import { PreferenceContext } from "./Preference";
+import { Setting } from "../settings/Settings";
+import SettingsList from "../settings/SettingsList";
 
 type SettingsScreenProps = {
     onDrawerToggle: () => void,
@@ -31,34 +28,39 @@ type SettingsScreenProps = {
 
 const SettingsScreen = (props: SettingsScreenProps) => {
     const { t } = useTranslation();
-    const theme = useContext(ThemeContext);
+    const userPreferences = useContext(PreferenceContext);
 
-    const [density, setDensity] = useLocalStorage("preference:density", Density.STANDARD);
     const [densityMenuAnchor, setDensityMenuAnchor] = useState<null | HTMLElement>(null);
     const onDensityMenuView = (e: React.MouseEvent<HTMLElement>) => { setDensityMenuAnchor(e.currentTarget); }
     const onDensityMenuDismiss = () => { setDensityMenuAnchor(null) } 
 
-    const onDensityMenuItemClick = (density: Density) => {
-        setDensity(density);
+    const onDensityMenuItemClick = (density: string) => {
+        userPreferences.setPreferences({
+            ...userPreferences.preferences,
+            density: density
+        })
         setDensityMenuAnchor(null);
     }
 
     const onTriggerThemeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        theme.setTheme(event.target.checked ? 'dark' : 'light');
+        userPreferences.setPreferences({
+            ...userPreferences.preferences,
+            theme: event.target.checked ? 'dark' : 'light'
+        });
     }
 
-    const preferences: Preference[] = [
+    const preferences: Setting[] = [
         { 
             key: 'preference:theme', 
             title: t("settings.dark_theme"), 
             summary: t("settings.dark_theme_summary"),
             icon: ColorSwatchIcon,
-            action: <Switch edge="end" checked={theme.theme === 'dark'} onChange={onTriggerThemeChanged}/>
+            action: <Switch edge="end" checked={userPreferences.preferences.theme === 'dark'} onChange={onTriggerThemeChanged}/>
         },{
             key: 'preference:density',
-            title: t("settings.component_density"),
-            summary: t(`settings.component_density_${density}`),
-            icon: ArrowsExpandIcon,
+            title: t("settings.table_row_density"),
+            summary: t(`settings.table_row_density_${userPreferences.preferences.density}`),
+            icon: TableIcon,
             action: <>
                       <HeroIconButton 
                         icon={ChevronRightIcon} 
@@ -71,9 +73,24 @@ const SettingsScreen = (props: SettingsScreenProps) => {
                         anchorEl={densityMenuAnchor}
                         open={Boolean(densityMenuAnchor)}
                         onClose={onDensityMenuDismiss}>
-                        <MenuItem key={Density.COMPACT} onClick={() => onDensityMenuItemClick(Density.COMPACT)}>{t(`settings.component_density_${Density.COMPACT}`)}</MenuItem>
-                        <MenuItem key={Density.STANDARD} onClick={() => onDensityMenuItemClick(Density.STANDARD)}>{t(`settings.component_density_${Density.STANDARD}`)}</MenuItem>
-                        <MenuItem key={Density.COMFORTABLE} onClick={() => onDensityMenuItemClick(Density.COMFORTABLE)}>{t(`settings.component_density_${Density.COMFORTABLE}`)}</MenuItem>
+                        <MenuItem 
+                            key="compact"
+                            onClick={() => onDensityMenuItemClick("compact")}>
+                                <HeroListItemIcon icon={ViewListIcon}/>
+                                {t(`settings.table_row_density_compact`)}
+                        </MenuItem>
+                        <MenuItem 
+                            key="standard" 
+                            onClick={() => onDensityMenuItemClick("standard")}>
+                                <HeroListItemIcon icon={MenuIcon}/>
+                                {t(`settings.table_row_density_standard`)}
+                        </MenuItem>
+                        <MenuItem 
+                            key="comfortable" 
+                            onClick={() => onDensityMenuItemClick("comfortable")}>
+                                <HeroListItemIcon icon={MenuAlt4Icon}/>
+                                {t(`settings.table_row_density_comfortable`)}
+                        </MenuItem>
                       </Menu>
                     </>
         }
@@ -82,7 +99,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
     return (
         <Box>
             <ComponentHeader title={t("navigation.settings")} onDrawerToggle={props.onDrawerToggle}/>
-            <PreferenceList preferences={preferences}/>
+            <SettingsList preferences={preferences}/>
         </Box>
     )
 }
