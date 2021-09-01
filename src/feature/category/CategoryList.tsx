@@ -1,6 +1,4 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -11,6 +9,7 @@ import { TagIcon, TrashIcon } from "@heroicons/react/outline";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
+import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Category } from "./Category";
@@ -19,11 +18,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: '60vh'
     },
-    actionIcon: {
-        width: '1em',
-        height: '1em',
-        color: theme.palette.text.primary
-    }
 }));
 
 type CategoryListProps = {
@@ -81,7 +75,6 @@ type CategoryItemProps = {
 
 const CategoryItem = (props: CategoryItemProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { canDelete } = usePermissions();
 
     return (
@@ -94,9 +87,12 @@ const CategoryItem = (props: CategoryItemProps) => {
                 secondary={ t("field.count", { count: props.category.count }) }/>
             { canDelete &&
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.category)}>
-                        <TrashIcon className={classes.actionIcon}/>
-                    </IconButton>
+                    <HeroIconButton
+                        icon={TrashIcon}
+                        edge="end" 
+                        disabled={props.category.count > 0}
+                        aria-label={t("delete")} 
+                        onClick={() => props.onItemRemove(props.category)}/>
                 </ListItemSecondaryAction>
             }
         </ListItem>

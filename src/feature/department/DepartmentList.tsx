@@ -1,6 +1,4 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -11,6 +9,7 @@ import { OfficeBuildingIcon, TrashIcon } from "@heroicons/react/outline";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
+import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
@@ -24,11 +23,6 @@ const useStyles = makeStyles((theme) => ({
         height: '4em',
         color: theme.palette.text.primary
     },
-    actionIcon: {
-        width: '1em',
-        height: '1em',
-        color: theme.palette.text.primary
-    }
 }));
 
 type DepartmentListProps = {
@@ -85,7 +79,6 @@ type DepartmentItemProps = {
 
 const DepartmentItem = (props: DepartmentItemProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { canDelete } = usePermissions();
 
     return (
@@ -98,9 +91,12 @@ const DepartmentItem = (props: DepartmentItemProps) => {
                 secondary={props.department.manager?.name}/>
             { canDelete &&
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label={t("delete")} onClick={() => props.onItemRemove(props.department)}>
-                        <TrashIcon className={classes.actionIcon}/>
-                    </IconButton>
+                    <HeroIconButton 
+                        icon={TrashIcon}
+                        edge="end" 
+                        disabled={props.department.count > 0}
+                        aria-label={t("delete")} 
+                        onClick={() => props.onItemRemove(props.department)}/>
                 </ListItemSecondaryAction>
             }
         </ListItem>
