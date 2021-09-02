@@ -484,8 +484,8 @@ const UserScreen = (props: UserScreenProps) => {
 
             <ConfirmationDialog
                 isOpen={departmentRemoveState.isRequest}
-                title="confirm.department_remove"
-                summary="confirm.department_remove_summary"
+                title="dialog.department_remove"
+                summary="dialog.department_remove_summary"
                 onDismiss={onDismissDepartmentConfirmation}
                 onConfirm={onDepartmentItemRemove}/>
         </Box>

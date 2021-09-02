@@ -597,15 +597,15 @@ const AssetScreen = (props: AssetScreenProps) => {
 
             <ConfirmationDialog
                 isOpen={removeState.isRequest}
-                title="confirm.asset_remove"
-                summary="confirm.asset_remove_summary"
+                title="dialog.asset_remove"
+                summary="dialog.asset_remove_summary"
                 onDismiss={onDismissAssetConfirmation}
                 onConfirm={onAssetItemRemove}/>
 
             <ConfirmationDialog
                 isOpen={categoryRemoveState.isRequest}
-                title="confirm.category_remove"
-                summary="confirm.category_remove_summary"
+                title="dialog.category_remove"
+                summary="dialog.category_remove_summary"
                 onDismiss={onDismissCategoryConfirmation}
                 onConfirm={onCategoryItemRemove}/>
 

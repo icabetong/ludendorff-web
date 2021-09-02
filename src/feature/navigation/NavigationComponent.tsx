@@ -148,9 +148,9 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
                 fullWidth={true}
                 maxWidth="xs"
                 onClose={() => setTriggerConfirmSignOut(false)}>
-                <DialogTitle>{ t("confirm.signout") }</DialogTitle>
+                <DialogTitle>{ t("dialog.signout") }</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>{ t("confirm.signout_message") }</DialogContentText>
+                    <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{ t("button.cancel") }</Button>

@@ -25,12 +25,19 @@ import {
 } from "./actions/ChangeNameReducer";
 
 import {
+    ChangePasswordActionType,
+    changePasswordInitialState,
+    changePasswordReducer
+} from "./actions/ChangePasswordReducer";
+
+import {
     RequestResetActionType,
     requestResetInitialState,
     requestResetReducer
 } from "./actions/RequestResetReducer";
 
 const ChangeNamePrompt = lazy(() => import('./actions/ChangeName'));
+const ChangePasswordPrompt = lazy(() => import('./actions/ChangePassword'));
 const RequestResetPrompt = lazy(() => import('./actions/RequestReset'));
 
 const useStyles = makeStyles(() => ({
@@ -93,6 +100,26 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
     const onChangeNamePromptCommit = () => {}
 
+    const [changePasswordState, changePasswordDispatch] = useReducer(changePasswordReducer, changePasswordInitialState);
+    const onChangePasswordPromptView = () => {
+        changePasswordDispatch({
+            type: ChangePasswordActionType.INVOKE
+        })
+    }
+    const onChangePasswordPromptDismiss = () => {
+        changePasswordDispatch({
+            type: ChangePasswordActionType.DISMISS
+        })
+    }
+
+    const onOldPasswordChanged = (oldPassword: string) => {}
+    const onNewPasswordChanged = (newPassword: string) => {}
+    const onConfirmationPasswordChanged = (confirmationPassword: string) => {}
+
+    const onChangePasswordSubmit = () => {
+
+    }
+
     const [requestResetState, requestResetDispatch] = useReducer(requestResetReducer, requestResetInitialState);
     const onRequestResetPromptView = () => {
         requestResetDispatch({
@@ -119,7 +146,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     const actions = [
         { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: () => fileInput?.current?.click() },
         { key: 'action:name', icon: PencilIcon, title: "action.change_name", action: onChangeNamePromptView },
-        { key: 'action:password', icon: KeyIcon, title: "action.change_password", action: () => changePassword() },
+        { key: 'action:password', icon: KeyIcon, title: "action.change_password", action: onChangePasswordPromptView },
         { key: 'action:request', icon: PaperAirplaneIcon, title: "action.request_reset", action: onRequestResetPromptView }
     ];
     
@@ -166,6 +193,17 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 onSubmit={onChangeNamePromptCommit}
                 onFirstNameChanged={onFirstNameChanged}
                 onLastNameChanged={onLastNameChanged}/>
+
+            <ChangePasswordPrompt
+                isOpen={changePasswordState.isOpen}
+                oldPassword={changePasswordState.credentials?.old}
+                newPassword={changePasswordState.credentials?.new}
+                confirmationPassword={changePasswordState.credentials?.confirmation}
+                onDismiss={onChangePasswordPromptDismiss}
+                onSubmit={onChangePasswordSubmit}
+                onOldPasswordChanged={onOldPasswordChanged}
+                onNewPasswordChanged={onNewPasswordChanged}
+                onConfirmationPasswordChanged={onConfirmationPasswordChanged}/>
 
             <RequestResetPrompt
                 isOpen={requestResetState.isOpen}

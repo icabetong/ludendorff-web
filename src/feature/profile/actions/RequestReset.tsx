@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
@@ -65,8 +66,9 @@ const RequestResetPrompt = (props: RequestResetPromptProps) => {
             fullWidth={true}
             maxWidth="xs"
             onClose={onPreDismiss}>
-            <DialogTitle>{t("action.request_reset")}</DialogTitle>
+            <DialogTitle>{t("dialog.send_reset_link_title")}</DialogTitle>
             <DialogContent>
+                <DialogContentText>{t("dialog.send_reset_link_message")}</DialogContentText>
                 <Container disableGutters>
                     <TextField
                         autoFocus

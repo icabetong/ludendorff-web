@@ -47,7 +47,10 @@ const resources = {
                 asset: "Asset",
                 user: "User",
                 location: "Location",
-                remarks: "Remarks"
+                remarks: "Remarks",
+                old_password: "Old Password",
+                new_password: "New Password",
+                confirmation_password: "Confirm Password"
             },
             status: {
                 operational: "Operational",
@@ -62,14 +65,6 @@ const resources = {
                 audit: "Audit",
                 manage_users: "Manage Users",
                 administrative: "Administrative",
-            },
-            confirm: {
-                signout: "Sign out?",
-                signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
-                category_remove: "Remove category?",
-                category_remove_summary: "Do you want to remove this category? Once finished, this action cannot be undone.",
-                department_remove: "Remove department?",
-                department_remove_summary: "Do you want to remove this department? Once finished, this action cannot be undone."
             },
             action: {
                 update_avatar: "Update Avatar",
@@ -156,6 +151,16 @@ const resources = {
                 table_row_density_compact: "Compact",
                 table_row_density_standard: "Standard",
                 table_row_density_comfortable: "Comfortable"
+            },
+            dialog: {
+                signout: "Sign out?",
+                signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+                category_remove: "Remove category?",
+                category_remove_summary: "Do you want to remove this category? Once finished, this action cannot be undone.",
+                department_remove: "Remove department?",
+                department_remove_summary: "Do you want to remove this department? Once finished, this action cannot be undone.",
+                send_reset_link_title: "Send Password Reset Link",
+                send_reset_link_message: "Enter your email address below to receive a link that you can use to reset your password."
             },
             template: {
                 full_name: "{{first}} {{last}}",
