@@ -1,4 +1,4 @@
-import { useReducer, lazy } from "react";
+import { useRef, useReducer, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Box from "@material-ui/core/Box";
@@ -56,6 +56,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const fileInput = useRef<HTMLInputElement | null>(null);
 
     const [changeNameState, changeNameDispatch] = useReducer(changeNameReducer, changeNameInitialState);
     const onChangeNamePromptView = () => {
@@ -113,12 +114,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
     const onRequestResetPromptSubmit = () => {}
 
-    const changeName = () => {}
     const changePassword = () => {}
-    const requestPasswordReset = () => {}
 
     const actions = [
-        { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: changeName },
+        { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: () => fileInput?.current?.click() },
         { key: 'action:name', icon: PencilIcon, title: "action.change_name", action: onChangeNamePromptView },
         { key: 'action:password', icon: KeyIcon, title: "action.change_password", action: () => changePassword() },
         { key: 'action:request', icon: PaperAirplaneIcon, title: "action.request_reset", action: onRequestResetPromptView }
@@ -129,6 +128,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
             <ComponentHeader
                 title={ t("navigation.profile") }
                 onDrawerToggle={props.onDrawerToggle}/>
+            <input ref={fileInput} type="file" accept="image/*" hidden/>
 
             { status === AuthStatus.FETCHED
                 ? 

@@ -3,6 +3,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
+import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { TagIcon, TrashIcon } from "@heroicons/react/outline";
@@ -77,6 +78,15 @@ const CategoryItem = (props: CategoryItemProps) => {
     const { t } = useTranslation();
     const { canDelete } = usePermissions();
 
+    const deleteButton = (
+        <HeroIconButton
+            icon={TrashIcon}
+            edge="end" 
+            disabled={props.category.count > 0}
+            aria-label={t("delete")} 
+            onClick={() => props.onItemRemove(props.category)}/>
+    );
+
     return (
         <ListItem
             button
@@ -87,12 +97,12 @@ const CategoryItem = (props: CategoryItemProps) => {
                 secondary={ t("template.count", { count: props.category.count }) }/>
             { canDelete &&
                 <ListItemSecondaryAction>
-                    <HeroIconButton
-                        icon={TrashIcon}
-                        edge="end" 
-                        disabled={props.category.count > 0}
-                        aria-label={t("delete")} 
-                        onClick={() => props.onItemRemove(props.category)}/>
+                    { props.category.count > 0
+                        ? <Tooltip title={<>{t("error.category_count_not_zero")}</>}>
+                            <span>{deleteButton}</span>
+                          </Tooltip>
+                        : {deleteButton}
+                    }
                 </ListItemSecondaryAction>
             }
         </ListItem>
