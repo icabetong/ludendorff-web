@@ -42,7 +42,6 @@ const resources = {
                 specification_value: "Value",
                 status: "Status",
                 asset_name: "Asset Name",
-                count: "Count: {{count}}",
                 department_name: "Department Name",
                 manager: "Manager",
                 asset: "Asset",
@@ -73,6 +72,7 @@ const resources = {
                 department_remove_summary: "Do you want to remove this department? Once finished, this action cannot be undone."
             },
             action: {
+                update_avatar: "Update Avatar",
                 change_name: "Change Name",
                 change_password: "Change Password",
                 request_reset: "Request Password Reset"
@@ -156,6 +156,10 @@ const resources = {
                 table_row_density_compact: "Compact",
                 table_row_density_standard: "Standard",
                 table_row_density_comfortable: "Comfortable"
+            },
+            template: {
+                full_name: "{{first}} {{last}}",
+                count: "Count: {{count}}",
             },
             unknown: "Unknown",
             actions: "Actions",

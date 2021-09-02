@@ -58,14 +58,14 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
     const [locationError, setLocationError] = useState(false);
 
     const onLocationChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let location = event.target.value;
+        const location = event.target.value;
         if (location !== '' && locationError)
             setLocationError(false);
         
         props.onLocationChanged(location);
     }
     const onRemarksChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let remarks = event.target.value;
+        const remarks = event.target.value;
 
         props.onRemarksChanged(remarks);
     }

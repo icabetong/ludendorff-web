@@ -84,7 +84,7 @@ const CategoryItem = (props: CategoryItemProps) => {
             onClick={() => props.onItemSelect(props.category)}>
             <ListItemText 
                 primary={props.category.categoryName}
-                secondary={ t("field.count", { count: props.category.count }) }/>
+                secondary={ t("template.count", { count: props.category.count }) }/>
             { canDelete &&
                 <ListItemSecondaryAction>
                     <HeroIconButton

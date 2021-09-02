@@ -32,7 +32,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
     const [nameError, setNameError] = useState(false);
 
     const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let name = event.target.value;
+        const name = event.target.value;
         if (name !== '' && nameError)
             setNameError(false);
 

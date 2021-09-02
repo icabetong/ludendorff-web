@@ -14,8 +14,13 @@ type ProfileAction = {
     action: () => void
 }
 
-const useStyles = makeStyles(() => ({
-    icon: { width: '2em', height: '2em' }
+const useStyles = makeStyles((theme) => ({
+    icon: { width: '2em', height: '2em' },
+    container: {
+        '& .MuiListItem-root': {
+            borderRadius: theme.spacing(1)
+        }
+    }
 }));
 
 type ProfileActionListProps = {
@@ -24,11 +29,12 @@ type ProfileActionListProps = {
 
 const ProfileActionList = (props: ProfileActionListProps) => {
     const { t } = useTranslation();
+    const classes = useStyles();
 
     return (
         <React.Fragment>
             <ListSubheader>{ t("actions") }</ListSubheader>
-            <List>
+            <List className={classes.container}>
                 { props.actions.map((action) => 
                     <ProfileActionItem action={action}/>
                 )}

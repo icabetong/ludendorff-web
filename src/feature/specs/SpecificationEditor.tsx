@@ -34,14 +34,14 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
     const specification = props.specification === undefined ? ['', ''] : props.specification;
 
     const onKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let key = event.target.value;
+        const key = event.target.value;
         if (key !== '' && keyError)
             setKeyError(false);
         props.onKeyChanged(key); 
     }
 
     const onValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let value = event.target.value;
+        const value = event.target.value;
         if (value !== '' && valueError)
             setValueError(false);
         return props.onValueChanged(value);
