@@ -156,6 +156,8 @@ const resources = {
             dialog: {
                 signout: "Sign out?",
                 signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+                asset_remove: "Remove asset?",
+                asset_remove_summary: "Do you want to remove this asset? Once finished, this action cannot be undone.",
                 category_remove: "Remove category?",
                 category_remove_summary: "Do you want to remove this category? Once finished, this action cannot be undone.",
                 department_remove: "Remove department?",

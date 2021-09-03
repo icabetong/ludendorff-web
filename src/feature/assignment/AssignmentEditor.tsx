@@ -14,10 +14,14 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { MuiPickersUtilsProvider, KeyboardDateTimePicker } from "@material-ui/pickers";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import DateFnsUtils  from "@date-io/date-fns";
 import { Timestamp } from "@firebase/firestore-types";
 
 import { AssetCore } from "../asset/Asset";
 import { UserCore } from "../user/User";
+
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -45,6 +49,8 @@ type AssignmentEditorProps = {
     onSubmit: () => void,
     onAssetSelect: () => void,
     onUserSelect: () => void,
+    onDateAssignedChanged: (dateAssigned: Date) => void,
+    onDateReturnedChanged: (dateReturned: Date) => void,
     onLocationChanged: (location: string) => void,
     onRemarksChanged: (remarks: string) => void
 }
@@ -57,11 +63,25 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
 
     const [locationError, setLocationError] = useState(false);
 
+    const onDateAssignedChanged = (date: MaterialUiPickersDate) => {
+        if (date === null)
+            return;
+
+        props.onDateAssignedChanged(date);
+    }
+
+    const onDateReturnedChanged = (date: MaterialUiPickersDate) => {
+        if (date === null)
+            return;
+        
+        props.onDateReturnedChanged(date);
+    }
+
     const onLocationChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         const location = event.target.value;
         if (location !== '' && locationError)
             setLocationError(false);
-        
+
         props.onLocationChanged(location);
     }
     const onRemarksChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +132,34 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                     </Typography>
                                 </ListItem>
                             </FormControl>
+
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+
+                                <FormControl component="fieldset" className={classes.textField}>
+                                    <FormLabel component="legend">
+                                        <Typography variant="body2">{t("field.date_assigned")}</Typography>
+                                    </FormLabel>
+                                    <KeyboardDateTimePicker
+                                        id="editor-date-assigned"
+                                        variant="inline"
+                                        inputVariant="outlined"
+                                        value={props.dateAssigned?.toDate() === undefined ? null : props.dateAssigned?.toDate()}
+                                        onChange={onDateAssignedChanged}/>
+                                </FormControl>
+
+                                <FormControl component="fieldset" className={classes.textField}>
+                                    <FormLabel component="legend">
+                                        <Typography variant="body2">{t("field.date_returned")}</Typography>
+                                    </FormLabel>
+                                    <KeyboardDateTimePicker
+                                        id="editor-date-assigned"
+                                        variant="inline"
+                                        inputVariant="outlined"
+                                        value={props.dateReturned?.toDate() === undefined ? null : props.dateReturned?.toDate()}
+                                        onChange={onDateReturnedChanged}/>
+                                </FormControl>
+
+                            </MuiPickersUtilsProvider>
                         </Grid>
                         <Grid item xs={6} className={classes.gridItem}>
                             <TextField
@@ -124,7 +172,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
 
                             <TextField
                                 multiline
-                                rows={6}
+                                rows={10}
                                 id="editor-remarks"
                                 type="text"
                                 label={t("field.remarks")}

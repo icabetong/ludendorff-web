@@ -25,6 +25,7 @@ import AssignmentList from "./AssignmentList";
 import { usePreferences } from "../settings/Preference";
 import { User, minimize as minimizeUser } from "../user/User";
 
+import firebase from "firebase/app";
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { formatDate, newId } from "../../shared/utils";
@@ -128,6 +129,28 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
 
     const onAssignmentEditorCommit = () => {
 
+    }
+
+    const onAssignmentDateAssignedChanged = (dateAssigned: Date) => {
+        let assignment = editorState.assignment;
+        if (assignment === undefined)
+            assignment = { assignmentId: newId() }
+        assignment!.dateAssigned = firebase.firestore.Timestamp.fromDate(dateAssigned);
+        editorDispatch({
+            type: AssignmentEditorActionType.CHANGED,
+            payload: assignment
+        })
+    }
+
+    const onAssignmentDateReturnedChanged = (dateReturned: Date) => {
+        let assignment = editorState.assignment;
+        if (assignment === undefined)
+            assignment = { assignmentId: newId() }
+        assignment!.dateReturned = firebase.firestore.Timestamp.fromDate(dateReturned);
+        editorDispatch({
+            type: AssignmentEditorActionType.CHANGED,
+            payload: assignment
+        })
     }
 
     const onAssignmentLocationChanged = (location: string) => {
@@ -274,6 +297,8 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 onSubmit={onAssignmentEditorCommit}
                 onAssetSelect={onAssetPickerView}
                 onUserSelect={onUserPickerView}
+                onDateAssignedChanged={onAssignmentDateAssignedChanged}
+                onDateReturnedChanged={onAssignmentDateReturnedChanged}
                 onLocationChanged={onAssignmentLocationChanged}
                 onRemarksChanged={onAssignmentRemarksChanged}/>
 
