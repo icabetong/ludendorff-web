@@ -7,6 +7,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useSnackbar } from "notistack";
 
 import {
     PencilIcon, KeyIcon, PaperAirplaneIcon, PhotographIcon
@@ -36,6 +37,8 @@ import {
     requestResetReducer
 } from "./actions/RequestResetReducer";
 
+import { auth } from "../../index";
+
 const ChangeNamePrompt = lazy(() => import('./actions/ChangeName'));
 const ChangePasswordPrompt = lazy(() => import('./actions/ChangePassword'));
 const RequestResetPrompt = lazy(() => import('./actions/RequestReset'));
@@ -63,6 +66,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const { enqueueSnackbar } = useSnackbar();
 
     const fileInput = useRef<HTMLInputElement | null>(null);
 
@@ -133,14 +137,15 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         });
     }
 
-    const onEmailChanged = (email: string) => {
-        requestResetDispatch({
-            type: RequestResetActionType.CHANGED,
-            payload: email
-        })
+    const onRequestResetPromptSubmit = () => {
+        if (user?.email === undefined)
+            return;
+    
+        auth.sendPasswordResetEmail(user.email)
+            .then(() => { enqueueSnackbar(t("feedback.reset_link_sent")); })
+            .catch((error) => {})
+            .finally(() => {})
     }
-
-    const onRequestResetPromptSubmit = () => {}
 
     const actions = [
         { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: () => fileInput?.current?.click() },
@@ -206,10 +211,8 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
             <RequestResetPrompt
                 isOpen={requestResetState.isOpen}
-                email={requestResetState.email !== undefined ? requestResetState.email : ''}
                 onDismiss={onRequestResetPromptDismiss}
-                onSubmit={onRequestResetPromptSubmit}
-                onEmailChanged={onEmailChanged}/>
+                onSubmit={onRequestResetPromptSubmit}/>
         </Box>
     );
 }

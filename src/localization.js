@@ -131,6 +131,7 @@ const resources = {
                 assignment_create_error: "Error creating assignment",
                 assignment_update_error: "Error updating assignment",
                 assignment_remove_error: "Error removing department",
+                reset_link_sent: "Password reset link sent"
             },
             error: {
                 no_permissions_header: "Insufficient Permissions",
@@ -160,7 +161,7 @@ const resources = {
                 department_remove: "Remove department?",
                 department_remove_summary: "Do you want to remove this department? Once finished, this action cannot be undone.",
                 send_reset_link_title: "Send Password Reset Link",
-                send_reset_link_message: "Enter your email address below to receive a link that you can use to reset your password."
+                send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email."
             },
             template: {
                 full_name: "{{first}} {{last}}",
