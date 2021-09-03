@@ -13,6 +13,7 @@ import {
     PencilIcon, KeyIcon, PaperAirplaneIcon, PhotographIcon
 } from "@heroicons/react/outline";
 
+import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
 import ComponentHeader from "../../components/ComponentHeader";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
@@ -167,8 +168,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                     <Grid 
                         container 
                         direction={isMobile ? "column" : "row"} 
+                        alignItems="center"
+                        justifyContent="center"
                         spacing={2}>
-                        <Grid item sm={6}>
+                        <Grid container item sm={6} alignItems="center" justifyContent="center">
                             { user?.imageUrl 
                                 ? <LazyLoadImage
                                     className={classes.avatar}
@@ -181,7 +184,8 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                             </Typography>
                             <Typography align="center" variant="body1">{user?.email}</Typography>
                         </Grid>
-                        <Grid item sm={6}>
+                        <Grid container item sm={6} alignItems="center" justifyContent="flex-start">
+                            <ProfileInfoList user={user}/>
                             <ProfileActionList actions={actions}/>
                         </Grid>
                     </Grid>

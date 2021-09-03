@@ -3,6 +3,7 @@ import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { SnackbarProvider } from "notistack";
 
@@ -150,7 +151,9 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 
 const RootComponent = () => {
     const { status, user } = useAuthState();
-    const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
+    const [destination, setDestination] = useState<Destination>(Destination.HOME);
+    const theme = useTheme();
+    const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('xs'));
 
     const onNavigate = (newDestination: Destination) => {
         setDestination(newDestination)
@@ -166,7 +169,7 @@ const RootComponent = () => {
                     autoHideDuration={3000}
                     anchorOrigin={{
                         vertical: 'bottom',
-                        horizontal: 'right'
+                        horizontal: isXSDeviceWidth ? 'center' : 'right'
                     }}>
                     <RootContainerComponent 
                         onNavigate={onNavigate} 

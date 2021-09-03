@@ -170,6 +170,7 @@ const resources = {
                 count: "Count: {{count}}",
             },
             unknown: "Unknown",
+            information: "Information",
             actions: "Actions",
             not_set: "Not Set",
             asset_details: "Asset Details",
