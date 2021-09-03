@@ -64,8 +64,8 @@ const AssetPicker = (props: AssetPickerProps) => {
                     ? props.assets.length > 0 
                         ? <>
                             <AssetList
-                            assets={props.assets}
-                            onItemSelect={props.onSelectItem}/>
+                                assets={props.assets}
+                                onItemSelect={props.onSelectItem}/>
                             {  !props.hasNext &&
                                 <PaginationController
                                     hasPrevious={props.hasPrevious}

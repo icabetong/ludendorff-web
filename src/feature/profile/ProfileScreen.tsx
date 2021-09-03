@@ -63,6 +63,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+
     const fileInput = useRef<HTMLInputElement | null>(null);
 
     const [changeNameState, changeNameDispatch] = useReducer(changeNameReducer, changeNameInitialState);
@@ -140,8 +141,6 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     }
 
     const onRequestResetPromptSubmit = () => {}
-
-    const changePassword = () => {}
 
     const actions = [
         { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: () => fileInput?.current?.click() },

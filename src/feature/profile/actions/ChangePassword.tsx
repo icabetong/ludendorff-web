@@ -32,9 +32,6 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
 
-    const [oldPasswordError, setOldPasswordError] = useState(false);
-    const [newPasswordsError, setNewPasswordsError] = useState(false);
-
     const onOldPasswordChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     }

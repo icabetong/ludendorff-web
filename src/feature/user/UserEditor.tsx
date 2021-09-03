@@ -165,7 +165,6 @@ const UserEditor = (props: UserEditorProps) => {
                 else permissions = permissions.filter((v: number) => v !== Permission.ADMINISTRATIVE);
                 break;
         }
-        console.log(permissions);
         props.onPermissionsChanged(permissions);
     }
 

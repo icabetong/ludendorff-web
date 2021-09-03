@@ -105,7 +105,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
                         ? <Tooltip title={<>{t("error.department_count_not_zero")}</>}>
                             <span>{deleteButton}</span>
                           </Tooltip>
-                        : {deleteButton}
+                        : <>{deleteButton}</>
                     }
                 </ListItemSecondaryAction>
             }

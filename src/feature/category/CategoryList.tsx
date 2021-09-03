@@ -101,7 +101,7 @@ const CategoryItem = (props: CategoryItemProps) => {
                         ? <Tooltip title={<>{t("error.category_count_not_zero")}</>}>
                             <span>{deleteButton}</span>
                           </Tooltip>
-                        : {deleteButton}
+                        : <>{deleteButton}</>
                     }
                 </ListItemSecondaryAction>
             }
