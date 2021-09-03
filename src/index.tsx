@@ -4,7 +4,6 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 
-
 import { AuthProvider } from './feature/auth/AuthProvider';
 import { CoreComponent } from './feature/core/Core';
 import { PreferenceProvider } from './feature/settings/Preference';
