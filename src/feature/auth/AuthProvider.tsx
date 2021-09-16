@@ -48,7 +48,6 @@ type PermissionHook = {
     canRead: boolean,
     canWrite: boolean,
     canDelete: boolean,
-    canAudit: boolean,
     canManageUsers: boolean,
     isAdmin: boolean
 }
@@ -61,7 +60,6 @@ export function usePermissions(): PermissionHook {
             canRead: hasPermission(user, Permission.READ),
             canWrite: hasPermission(user, Permission.WRITE),
             canDelete: hasPermission(user, Permission.DELETE),
-            canAudit: hasPermission(user, Permission.AUDIT),
             canManageUsers: hasPermission(user, Permission.MANAGE_USERS),
             isAdmin: hasPermission(user, Permission.ADMINISTRATIVE) 
         }
@@ -70,7 +68,6 @@ export function usePermissions(): PermissionHook {
             canRead: false,
             canWrite: false,
             canDelete: false,
-            canAudit: false,
             canManageUsers: false,
             isAdmin: false
         }

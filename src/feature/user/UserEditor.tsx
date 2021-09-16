@@ -149,11 +149,6 @@ const UserEditor = (props: UserEditorProps) => {
                     permissions.push(Permission.DELETE);
                 else permissions = permissions.filter((v: number) => v !== Permission.DELETE);
                 break;
-            case "editor-audit":
-                if (isChecked)
-                    permissions.push(Permission.AUDIT);
-                else permissions = permissions.filter((v: number) => v !== Permission.AUDIT);
-                break;
             case "editor-manage-users":
                 if (isChecked)
                     permissions.push(Permission.MANAGE_USERS);
@@ -261,14 +256,6 @@ const UserEditor = (props: UserEditorProps) => {
                                             checked={hasPermission(props.permissions, Permission.DELETE)} 
                                             onChange={onPermissionsChanged}
                                             name="editor-delete"/>
-                                    }/>
-                                <FormControlLabel
-                                    label={t("permission.audit")}
-                                    control={
-                                        <Checkbox 
-                                            checked={hasPermission(props.permissions, Permission.AUDIT)} 
-                                            onChange={onPermissionsChanged}
-                                            name="editor-audit"/>
                                     }/>
                                 <FormControlLabel
                                     label={t("permission.manage_users")}

@@ -4,9 +4,8 @@ export enum Permission {
     READ = 1,
     WRITE = 2,
     DELETE = 4,
-    AUDIT = 8,
-    MANAGE_USERS = 16,
-    ADMINISTRATIVE = 32
+    MANAGE_USERS = 8,
+    ADMINISTRATIVE = 16
 }
 
 export const hasPermission = (user: User, permission: Permission): boolean => {

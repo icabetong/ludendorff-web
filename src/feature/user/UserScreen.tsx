@@ -7,6 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
+import axios from "axios";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
@@ -23,7 +24,7 @@ import { usePreferences } from "../settings/Preference";
 import { User, minimize } from "./User";
 import UserList from "./UserList";
 
-import { firestore } from "../../index";
+import { auth, firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
 
@@ -64,6 +65,7 @@ import {
 } from "../../shared/const";
 
 import ConfirmationDialog from "../shared/ItemRemoveDialog";
+
 
 const UserEditor = lazy(() => import("./UserEditor"));
 const UserPicker = lazy(() => import("./UserPicker"));
@@ -222,7 +224,7 @@ const UserScreen = (props: UserScreenProps) => {
     }
 
     const onUserEditorCommit = () => {
-
+        
     }
 
     const onUserSelected = (user: User) => {
