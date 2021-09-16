@@ -5,26 +5,27 @@ import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
+import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
-import axios from "axios";
 
 import PlusIcon from "@heroicons/react/outline/PlusIcon";
 import UserIcon from "@heroicons/react/outline/UserIcon";
+import TrashIcon from "@heroicons/react/outline/TrashIcon";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
+import HeroIconButton from "../../components/HeroIconButton";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
-import { User, minimize } from "./User";
+import { User, minimize, UserRepository } from "./User";
 import UserList from "./UserList";
 
-import { auth, firestore } from "../../index";
+import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
 
@@ -118,6 +119,19 @@ const UserScreen = (props: UserScreenProps) => {
                 let user = params.row as User;
                 return user.department?.name === undefined ? t("unknown") : user.department?.name;
             } 
+        },
+        {
+            field: "delete",
+            headerName: t("button.delete"),
+            flex: 0.3,
+            renderCell: (params: GridCellParams) => {
+                return (
+                    <HeroIconButton 
+                        icon={TrashIcon}
+                        aria-label={t("delete")}
+                        onClick={() => onUserRemove(params.row as User)}/>
+                )
+            }
         }
     ]
 
@@ -159,7 +173,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserEditorLastNameChanged = (lastName: string) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.lastName = lastName;
         editorDispatch({
             type: UserEditorActionType.CHANGED,
@@ -170,7 +184,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserEditorFirstNameChanged = (firstName: string) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.firstName = firstName;
         editorDispatch({
             type: UserEditorActionType.CHANGED,
@@ -181,7 +195,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserEditorEmailAddressChanged = (email: string) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.email = email;
         editorDispatch({
             type: UserEditorActionType.CHANGED,
@@ -192,7 +206,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserEditorPermissionsChanged = (permissions: number[]) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.permissions = permissions;
         editorDispatch({
             type: UserEditorActionType.CHANGED,
@@ -203,7 +217,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserEditorPositionChanged = (position: string) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.position = position;
         editorDispatch({
             type: UserEditorActionType.CHANGED,
@@ -214,7 +228,7 @@ const UserScreen = (props: UserScreenProps) => {
     const onUserDepartmentSelected = (department: Department) => {
         let user = editorState.user;
         if (user === undefined)
-            user = { userId: newId(), permissions: [] }
+            user = { userId: newId(), permissions: [], disabled: false }
         user!.department = minimizeDepartment(department);
         setDepartmentPickerOpen(false);
         editorDispatch({
@@ -224,6 +238,32 @@ const UserScreen = (props: UserScreenProps) => {
     }
 
     const onUserEditorCommit = () => {
+        let user = editorState.user;
+        if (user === undefined)
+            return;
+
+        if (editorState.isCreate) {
+            UserRepository.create(user)
+                .then(() => {
+                    enqueueSnackbar(t("feedback.user_created"));
+                }).catch(() => {
+                    enqueueSnackbar(t("feedback.user_create_error"));
+                }).finally(() => {
+                    editorDispatch({ type: UserEditorActionType.DISMISS })
+                })
+        } else {
+            UserRepository.update(user)
+                .then(() => {
+                    enqueueSnackbar(t("feedback.user_updated"))
+                }).catch(() => {
+                    enqueueSnackbar(t("feedback.user_update_error"))
+                }).finally(() => {
+                    editorDispatch({ type: UserEditorActionType.DISMISS })
+                })
+        }
+    }
+
+    const onUserRemove = (user: User) => {
         
     }
 

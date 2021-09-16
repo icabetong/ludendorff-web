@@ -78,8 +78,20 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
 
     const columns = [
         { field: assignmentId, headerName: t("field.id"), hide: true },
-        { field: assignmentAsset, headerName: t("field.name"), flex: 1 },
-        { field: assignmentUser, headerName: t("field.user"), flex: 1 },
+        { 
+            field: assignmentAsset, 
+            headerName: t("field.name"), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) => 
+                params.row.asset.assetName
+        },
+        { 
+            field: assignmentUser, 
+            headerName: t("field.user"), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams) =>
+                params.row.user.name
+        },
         { 
             field: dateAssigned, 
             headerName: t("field.date_assigned"), 
