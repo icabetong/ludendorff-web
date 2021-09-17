@@ -17,7 +17,6 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import QrcodeIcon from "@heroicons/react/outline/QrcodeIcon";
 import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
 import UserGroupIcon from "@heroicons/react/outline/UserGroupIcon";
 import IdentificationIcon from "@heroicons/react/outline/IdentificationIcon";
@@ -29,8 +28,7 @@ import firebase from "firebase/app";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
 
 export enum Destination {
-    HOME = 1, 
-    SCAN, 
+    HOME = 1,
     ASSETS, 
     USERS, 
     ASSIGNMENTS,
@@ -96,7 +94,6 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 
     const destinations: NavigationItemType[] = [
         { icon: HomeIcon, title: "navigation.home", destination: Destination.HOME },
-        { icon: QrcodeIcon, title: "navigation.scan", destination: Destination.SCAN },
         { icon: DesktopComputerIcon, title: "navigation.assets", destination: Destination.ASSETS },
         { icon: UserGroupIcon, title: "navigation.users", destination: Destination.USERS },
         { icon: IdentificationIcon, title: "navigation.assignments", destination: Destination.ASSIGNMENTS }
@@ -200,7 +197,7 @@ const NavigationList = (props: NavigationListPropsType) => {
     return (
         <React.Fragment>{
             props.items.map((navigation: NavigationItemType) => {
-                if (!canRead && (navigation.destination === Destination.ASSETS || navigation.destination === Destination.SCAN))
+                if (!canRead && navigation.destination === Destination.ASSETS)
                     return <></>;
                 if (!canManageUsers && navigation.destination === Destination.USERS)
                     return <></>;

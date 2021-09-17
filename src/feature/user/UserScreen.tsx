@@ -8,9 +8,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
-import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import UserIcon from "@heroicons/react/outline/UserIcon";
-import TrashIcon from "@heroicons/react/outline/TrashIcon";
+import {
+    BanIcon,
+    CheckIcon,
+    PlusIcon,
+    UserIcon,
+    TrashIcon,
+} from "@heroicons/react/outline";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -40,6 +44,12 @@ import {
     userEditorInitialState,
     userEditorReducer
 } from "./UserEditorReducer";
+
+import {
+    UserRemoveActionType,
+    userRemoveInitialState,
+    userRemoveReducer
+} from "./UserRemoveReducer";
 
 import {
     DepartmentEditorActionType,
@@ -119,17 +129,33 @@ const UserScreen = (props: UserScreenProps) => {
                 let user = params.row as User;
                 return user.department?.name === undefined ? t("unknown") : user.department?.name;
             } 
+        },{
+            field: "manage",
+            headerName: t("navigation.manage"),
+            flex: 0.4,
+            disableColumnMenu: true,
+            sortable: false,
+            renderCell: (params: GridCellParams) => {
+                return (
+                    <HeroIconButton
+                        icon={params.row.disabled ? CheckIcon : BanIcon}
+                        aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
+                        onClick={() => onUserRequestChangeState(params.row as User)}/>
+                )
+            }
         },
         {
             field: "delete",
             headerName: t("button.delete"),
-            flex: 0.3,
+            flex: 0.4,
+            disableColumnMenu: true,
+            sortable: false,
             renderCell: (params: GridCellParams) => {
                 return (
                     <HeroIconButton 
                         icon={TrashIcon}
                         aria-label={t("delete")}
-                        onClick={() => onUserRemove(params.row as User)}/>
+                        onClick={() => onUserRequestRemove(params.row as User)}/>
                 )
             }
         }
@@ -263,8 +289,40 @@ const UserScreen = (props: UserScreenProps) => {
         }
     }
 
-    const onUserRemove = (user: User) => {
-        
+    const [removeState, removeDispatch] = useReducer(userRemoveReducer, userRemoveInitialState);
+
+    const onUserRequestRemove = (user: User) => {
+        removeDispatch({
+            type: UserRemoveActionType.REQUEST,
+            payload: user
+        })
+    }
+
+    const onUserRequestRemoveDismiss = () => {
+        removeDispatch({
+            type: UserRemoveActionType.DISMISS
+        })
+    }
+
+    const onUserRemove = () => {
+        let user = removeState.user;
+        if (user === undefined)
+            return;
+
+        UserRepository.remove(user)
+            .then(() => {
+                enqueueSnackbar(t("feedback.user_removed"));
+            }).catch(() => {
+                enqueueSnackbar(t("feedback.user_remove_error"));
+            }).finally(() => {
+                removeDispatch({
+                    type: UserRemoveActionType.DISMISS
+                })
+            })
+    }
+
+    const onUserRequestChangeState = (user: User) => {
+
     }
 
     const onUserSelected = (user: User) => {
@@ -530,6 +588,13 @@ const UserScreen = (props: UserScreenProps) => {
                 summary="dialog.department_remove_summary"
                 onDismiss={onDismissDepartmentConfirmation}
                 onConfirm={onDepartmentItemRemove}/>
+
+            <ConfirmationDialog
+                isOpen={removeState.isRequest}
+                title="dialog.user_remove"
+                summary="dialog.user_remove_summary"
+                onDismiss={onUserRequestRemoveDismiss}
+                onConfirm={onUserRemove}/>
         </Box>
     )
 }

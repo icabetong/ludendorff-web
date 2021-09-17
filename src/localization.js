@@ -83,6 +83,8 @@ const resources = {
                 next: "Next",
                 close: "Close",
                 delete: "Delete",
+                disable: "Disable",
+                enable: "Enable",
                 show_menu: "Show menu",
                 show_drawer: "Show drawer",
                 signin: "Sign in",

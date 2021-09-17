@@ -52,7 +52,7 @@ const useStyles = makeStyles(() => ({
         height: '80%', padding: '1.4em'
     },
     avatar: {
-        width: '40vw', height: '40vh' 
+        width: '50%', height: '50%' 
     }
 }))
 
@@ -171,18 +171,20 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                         alignItems="center"
                         justifyContent="center"
                         spacing={2}>
-                        <Grid container item sm={6} alignItems="center" justifyContent="center">
-                            { user?.imageUrl 
-                                ? <LazyLoadImage
-                                    className={classes.avatar}
-                                    alt={t("info.profile_image")}
-                                    src={user?.imageUrl}/>
-                                : <Avatar className={classes.avatar}/>
-                            }
-                            <Typography align="center" variant="h4">
-                                {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
-                            </Typography>
-                            <Typography align="center" variant="body1">{user?.email}</Typography>
+                        <Grid item sm={6}>
+                            <Box>
+                                { user?.imageUrl 
+                                    ? <LazyLoadImage
+                                        className={classes.avatar}
+                                        alt={t("info.profile_image")}
+                                        src={user?.imageUrl}/>
+                                    : <Avatar className={classes.avatar}/>
+                                }
+                                <Typography align="center" variant="h4">
+                                    {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
+                                </Typography>
+                                <Typography align="center" variant="body1">{user?.email}</Typography>
+                            </Box>
                         </Grid>
                         <Grid container item sm={6} alignItems="center" justifyContent="flex-start">
                             <ProfileInfoList user={user}/>

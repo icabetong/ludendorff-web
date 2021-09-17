@@ -145,7 +145,9 @@ const AssetScreen = (props: AssetScreenProps) => {
         {
             field: "delete",
             headerName: t("button.delete"),
-            flex: 0.3,
+            flex: 0.4,
+            disableColumnMenu: true,
+            sortable: false,
             renderCell: (params: GridCellParams) => {
                 return (
                     <HeroIconButton 

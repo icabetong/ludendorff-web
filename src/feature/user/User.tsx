@@ -36,7 +36,8 @@ export const minimize = (user: User): UserCore => {
         name: `${user.firstName} ${user.lastName}`,
         email: user.email,
         imageUrl: user.imageUrl,
-        position: user.position
+        position: user.position,
+        deviceToken: user.deviceToken
     }
 }
 
@@ -62,7 +63,7 @@ export type UserCore = {
     deviceToken?: string
 }
 
-const SERVER_URL = "https://deshi-production.up.railway.app"
+const SERVER_URL = "https://deshi-production.up.railway.app";
 export class UserRepository {
 
 

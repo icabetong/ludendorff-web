@@ -14,7 +14,6 @@ import { ErrorNotFoundState } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
 
 const HomeScreen = lazy(() => import('../home/HomeScreen'));
-const ScanScreen = lazy(() => import('../scan/ScanScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
 const AssignmentScreen = lazy(() => import('../assignment/AssignmentScreen'));
@@ -30,8 +29,6 @@ const InnerComponent = (props: InnerComponentPropsType) => {
     switch(props.destination) {
         case Destination.HOME:
             return <HomeScreen onDrawerToggle={props.onDrawerToggle}/>
-        case Destination.SCAN:
-            return <ScanScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.ASSETS:
             return <AssetScreen onDrawerToggle={props.onDrawerToggle}/>
         case Destination.USERS:
