@@ -46,6 +46,12 @@ import {
 } from "./UserEditorReducer";
 
 import {
+    UserModifyActionType,
+    userModifyInitialState,
+    userModifyReducer
+} from "./UserModifyReducer";
+
+import {
     UserRemoveActionType,
     userRemoveInitialState,
     userRemoveReducer
@@ -321,7 +327,22 @@ const UserScreen = (props: UserScreenProps) => {
             })
     }
 
+    const [modifyState, modifyDispatch] = useReducer(userModifyReducer, userModifyInitialState);
+
     const onUserRequestChangeState = (user: User) => {
+        modifyDispatch({
+            type: UserModifyActionType.REQUEST,
+            payload: user
+        })
+    }
+
+    const onUserRequestChangeStateDismiss = () => {
+        modifyDispatch({
+            type: UserModifyActionType.DISMISS
+        })
+    }
+
+    const onUserModify = () => {
 
     }
 
@@ -590,11 +611,19 @@ const UserScreen = (props: UserScreenProps) => {
                 onConfirm={onDepartmentItemRemove}/>
 
             <ConfirmationDialog
+                isOpen={modifyState.isRequest}
+                title={modifyState.user?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
+                summary={modifyState.user?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
+                onDismiss={onUserRequestChangeStateDismiss}
+                onConfirm={onUserModify}/>
+            
+            <ConfirmationDialog
                 isOpen={removeState.isRequest}
                 title="dialog.user_remove"
                 summary="dialog.user_remove_summary"
                 onDismiss={onUserRequestRemoveDismiss}
-                onConfirm={onUserRemove}/>
+                 onConfirm={onUserRemove}/>
+            
         </Box>
     )
 }

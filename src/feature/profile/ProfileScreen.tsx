@@ -46,13 +46,17 @@ const RequestResetPrompt = lazy(() => import('./actions/RequestReset'));
 
 const useStyles = makeStyles(() => ({
     root: {
-        width: '100%', height: '100%'
+        width: '100%', 
+        height: '100%'
     },
     wrapper: {
-        height: '80%', padding: '1.4em'
+        height: '80%', 
+        padding: '1.4em'
     },
     avatar: {
-        width: '50%', height: '50%' 
+        width: '20em', 
+        height: '20em',
+        borderRadius: '50%'
     }
 }))
 
@@ -171,8 +175,8 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                         alignItems="center"
                         justifyContent="center"
                         spacing={2}>
-                        <Grid item sm={6}>
-                            <Box>
+                        <Grid container direction="row" item sm={6} alignItems="center" justifyContent="center">
+                            <Grid container item alignItems="center" justifyContent="center">
                                 { user?.imageUrl 
                                     ? <LazyLoadImage
                                         className={classes.avatar}
@@ -180,11 +184,15 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                                         src={user?.imageUrl}/>
                                     : <Avatar className={classes.avatar}/>
                                 }
+                            </Grid>
+                            <Grid container item alignItems="center" justifyContent="center">
                                 <Typography align="center" variant="h4">
                                     {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
                                 </Typography>
+                            </Grid>
+                            <Grid container item alignItems="center" justifyContent="center">
                                 <Typography align="center" variant="body1">{user?.email}</Typography>
-                            </Box>
+                            </Grid>
                         </Grid>
                         <Grid container item sm={6} alignItems="center" justifyContent="flex-start">
                             <ProfileInfoList user={user}/>
