@@ -122,10 +122,26 @@ const AssetEditor = (props: AssetEditorProps) => {
                                     name="editor-status" 
                                     value={props.status} 
                                     onChange={onStatusChanged}>
-                                    <FormControlLabel control={<Radio/>} value={Status.OPERATIONAL} label={ t("status.operational") } />
-                                    <FormControlLabel control={<Radio/>} value={Status.IDLE} label={ t("status.idle") }/>
-                                    <FormControlLabel control={<Radio/>} value={Status.UNDER_MAINTENANCE} label={ t("status.under_maintenance") } />
-                                    <FormControlLabel control={<Radio/>} value={Status.RETIRED} label={ t("status.retired") } />
+                                    <FormControlLabel 
+                                        control={<Radio/>} 
+                                        value={Status.OPERATIONAL} 
+                                        label={ t("status.operational") } 
+                                        disabled={props.status !== Status.OPERATIONAL} />
+                                    <FormControlLabel 
+                                        control={<Radio/>} 
+                                        value={Status.IDLE} 
+                                        label={ t("status.idle") }
+                                        disabled={props.status === Status.OPERATIONAL}/>
+                                    <FormControlLabel 
+                                        control={<Radio/>} 
+                                        value={Status.UNDER_MAINTENANCE} 
+                                        label={ t("status.under_maintenance") }
+                                        disabled={props.status === Status.OPERATIONAL} />
+                                    <FormControlLabel 
+                                        control={<Radio/>} 
+                                        value={Status.RETIRED} 
+                                        label={ t("status.retired") }
+                                        disabled={props.status === Status.OPERATIONAL} />
                                 </RadioGroup>
                             </FormControl>
 

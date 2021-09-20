@@ -147,17 +147,19 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                         onChange={onDateAssignedChanged}/>
                                 </FormControl>
 
-                                <FormControl component="fieldset" className={classes.textField}>
-                                    <FormLabel component="legend">
-                                        <Typography variant="body2">{t("field.date_returned")}</Typography>
-                                    </FormLabel>
-                                    <KeyboardDateTimePicker
-                                        id="editor-date-assigned"
-                                        variant="inline"
-                                        inputVariant="outlined"
-                                        value={props.dateReturned?.toDate() === undefined ? null : props.dateReturned?.toDate()}
-                                        onChange={onDateReturnedChanged}/>
-                                </FormControl>
+                                { props.dateReturned &&
+                                    <FormControl component="fieldset" className={classes.textField}>
+                                        <FormLabel component="legend">
+                                            <Typography variant="body2">{t("field.date_returned")}</Typography>
+                                        </FormLabel>
+                                        <KeyboardDateTimePicker
+                                            id="editor-date-assigned"
+                                            variant="inline"
+                                            inputVariant="outlined"
+                                            value={props.dateReturned?.toDate() === undefined ? null : props.dateReturned?.toDate()}
+                                            onChange={onDateReturnedChanged}/>
+                                    </FormControl>
+                                }
 
                             </MuiPickersUtilsProvider>
                         </Grid>
@@ -176,7 +178,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                 id="editor-remarks"
                                 type="text"
                                 label={t("field.remarks")}
-                                value={props.location}
+                                value={props.remarks}
                                 className={classes.textField}
                                 onChange={onRemarksChanged}/>
                         </Grid>

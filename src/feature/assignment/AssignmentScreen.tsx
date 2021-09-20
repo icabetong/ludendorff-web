@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { DataGrid, GridOverlay, GridValueGetterParams } from "@material-ui/data-grid";
+import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 
 import {
@@ -128,6 +128,10 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
 
     const [editorState, editorDispatch] = useReducer(assignmentEditorReducer, assignmentEditorInitialState);
 
+    const onDataGridRowDoubleClicked = (params: GridRowParams) => {
+        onAssignmentSelected(params.row as Assignment);
+    }
+
     const onAssignmentEditorView = () => {
         editorDispatch({
             type: AssignmentEditorActionType.CREATE
@@ -212,7 +216,10 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     }
 
     const onAssignmentSelected = (assignment: Assignment) => {
-
+        editorDispatch({
+            type: AssignmentEditorActionType.UPDATE,
+            payload: assignment
+        })
     }
 
     const {
@@ -274,6 +281,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                                 loading={isAssignmentsLoading}
                                 paginationMode="server"
                                 getRowId={(r) => r.assignmentId}
+                                onRowDoubleClick={onDataGridRowDoubleClicked}
                                 hideFooter/>
                         </div>
                     </Hidden>
