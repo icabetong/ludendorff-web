@@ -4,6 +4,7 @@ import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
+import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
@@ -142,11 +143,16 @@ const UserScreen = (props: UserScreenProps) => {
             disableColumnMenu: true,
             sortable: false,
             renderCell: (params: GridCellParams) => {
+                const user = params.row as User;
                 return (
-                    <HeroIconButton
-                        icon={params.row.disabled ? CheckIcon : BanIcon}
-                        aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                        onClick={() => onUserRequestChangeState(params.row as User)}/>
+                    <Tooltip title={<>{t(user.disabled ? "button.enable" : "button.disable")}</>} placement="bottom">
+                        <span>
+                            <HeroIconButton
+                                icon={params.row.disabled ? CheckIcon : BanIcon}
+                                aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
+                                onClick={() => onUserRequestChangeState(user)}/>
+                        </span>
+                    </Tooltip>
                 )
             }
         },

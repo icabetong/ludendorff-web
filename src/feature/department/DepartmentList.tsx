@@ -102,7 +102,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
             { canDelete &&
                 <ListItemSecondaryAction>
                     { props.department.count > 0
-                        ? <Tooltip title={<>{t("error.department_count_not_zero")}</>}>
+                        ? <Tooltip title={<>{t("info.department_count_not_zero")}</>}>
                             <span>{deleteButton}</span>
                           </Tooltip>
                         : <>{deleteButton}</>

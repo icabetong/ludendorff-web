@@ -142,7 +142,12 @@ const resources = {
                 not_found_info: "Maybe you can head back home and find it there instead?"
             },
             info: {
-                user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules."
+                user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules.",
+                asset_should_have_assignment: "You'll need to add to to an assignment before it becames \"Operational\"",
+                asset_has_assignment: "This asset is assigned; there it's status cannot be changed othan than \"Operational\"",
+                asset_has_assignment_delete: "This asset is assigned, therefore it cannot be deleted.",
+                category_count_not_zero: "There are assets with this category",
+                department_count_not_zero: "There are users who are in this department"
             },
             settings:{
                 dark_theme: "Dark Theme",

@@ -15,6 +15,7 @@ import ListItem from "@material-ui/core/ListItem";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -90,6 +91,35 @@ const AssetEditor = (props: AssetEditorProps) => {
         props.onSubmit();
     }
 
+    const radioOperational = (
+        <FormControlLabel 
+            control={<Radio/>} 
+            value={Status.OPERATIONAL} 
+            label={ t("status.operational") } 
+            disabled={props.status !== Status.OPERATIONAL} />
+    );
+    const radioIdle = (
+        <FormControlLabel 
+            control={<Radio/>} 
+            value={Status.IDLE} 
+            label={ t("status.idle") }
+            disabled={props.status === Status.OPERATIONAL}/>
+    );
+    const radioUnderMaintainance = (
+        <FormControlLabel 
+            control={<Radio/>} 
+            value={Status.UNDER_MAINTENANCE} 
+            label={ t("status.under_maintenance") }
+            disabled={props.status === Status.OPERATIONAL} />
+    );
+    const radioRetired = (
+        <FormControlLabel 
+            control={<Radio/>} 
+            value={Status.RETIRED} 
+            label={ t("status.retired") }
+            disabled={props.status === Status.OPERATIONAL} />
+    );
+
     return (
         <Dialog
             fullScreen={isMobile}
@@ -122,26 +152,30 @@ const AssetEditor = (props: AssetEditorProps) => {
                                     name="editor-status" 
                                     value={props.status} 
                                     onChange={onStatusChanged}>
-                                    <FormControlLabel 
-                                        control={<Radio/>} 
-                                        value={Status.OPERATIONAL} 
-                                        label={ t("status.operational") } 
-                                        disabled={props.status !== Status.OPERATIONAL} />
-                                    <FormControlLabel 
-                                        control={<Radio/>} 
-                                        value={Status.IDLE} 
-                                        label={ t("status.idle") }
-                                        disabled={props.status === Status.OPERATIONAL}/>
-                                    <FormControlLabel 
-                                        control={<Radio/>} 
-                                        value={Status.UNDER_MAINTENANCE} 
-                                        label={ t("status.under_maintenance") }
-                                        disabled={props.status === Status.OPERATIONAL} />
-                                    <FormControlLabel 
-                                        control={<Radio/>} 
-                                        value={Status.RETIRED} 
-                                        label={ t("status.retired") }
-                                        disabled={props.status === Status.OPERATIONAL} />
+                                    { props.status !== Status.OPERATIONAL
+                                        ? <Tooltip title={<>{t("info.asset_should_have_assignment")}</>} placement="bottom-start">
+                                            <span>{radioOperational}</span>
+                                            </Tooltip>
+                                        : <>{radioOperational}</>
+                                    }
+                                    { props.status === Status.OPERATIONAL
+                                        ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
+                                            <span>{radioIdle}</span>
+                                            </Tooltip>
+                                        : <>{radioIdle}</>
+                                    }
+                                    { props.status === Status.OPERATIONAL
+                                        ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
+                                            <span>{radioUnderMaintainance}</span>
+                                            </Tooltip>
+                                        : <>{radioUnderMaintainance}</>
+                                    }
+                                    { props.status === Status.OPERATIONAL
+                                        ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
+                                            <span>{radioRetired}</span>
+                                            </Tooltip>
+                                        : <>{radioRetired}</>
+                                    }
                                 </RadioGroup>
                             </FormControl>
 

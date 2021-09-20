@@ -4,6 +4,7 @@ import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
+import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
@@ -149,16 +150,29 @@ const AssetScreen = (props: AssetScreenProps) => {
             disableColumnMenu: true,
             sortable: false,
             renderCell: (params: GridCellParams) => {
-                return (
+                const asset = params.row as Asset;
+                const deleteButton = (
                     <HeroIconButton 
                         icon={TrashIcon}
                         aria-label={t("delete")}
-                        disabled={(params.row as Asset).status === Status.OPERATIONAL}
-                        onClick={() => onAssetItemRemoveRequest(params.row as Asset)}/>
+                        disabled={asset.status === Status.OPERATIONAL}
+                        onClick={() => onAssetItemRemoveRequest(asset)}/>
+                );
+                return (
+                    <>
+                    { asset.status === Status.OPERATIONAL
+                        ? <Tooltip title={<>{t("info.asset_has_assignment_delete")}</>} placement="bottom">
+                            <span>{deleteButton}</span>
+                        </Tooltip>
+                        : <>{deleteButton}</>
+                    }
+                    </>
                 )
             }
         }
     ];
+
+    
 
     const {
         items: assets,
