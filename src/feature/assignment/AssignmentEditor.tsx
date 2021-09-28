@@ -52,7 +52,7 @@ type AssignmentEditorProps = {
     onDateAssignedChanged: (dateAssigned: Date) => void,
     onDateReturnedChanged: (dateReturned: Date) => void,
     onLocationChanged: (location: string) => void,
-    onRemarksChanged: (remarks: string) => void
+    onRemarksChanged: (remarks: string) => void,
 }
 
 const AssignmentEditor = (props: AssignmentEditorProps) => {

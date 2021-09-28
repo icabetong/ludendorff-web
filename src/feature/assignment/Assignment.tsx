@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { auth, firestore } from "../../index";
-import { DocumentSnapshot, DocumentData, Timestamp } from "@firebase/firestore-types";
+import { Timestamp } from "@firebase/firestore-types";
 
 import { Status, AssetCore } from "../asset/Asset";
 import { UserCore } from "../user/User";
@@ -37,6 +37,41 @@ export class AssignmentRepository {
         await batch.commit();
         let idToken = await auth.currentUser?.getIdToken(false);
     
+        return await axios.post(`${SERVER_URL}/send-notification`, {
+            token: idToken,
+            title: "notification_assigned_title",
+            body: "notification_assigned_body",
+            payload: assignment.assignmentId,
+            senderId: auth.currentUser?.uid,
+            receiverId: assignment.user?.userId,
+            extras: {
+                sender: sender,
+                target: assignment.asset?.assetName
+            }
+        })
+    }
+
+    static async update(assignment: Assignment, sender: string, previousAssetId: string | undefined, previousUserId: string | undefined): Promise<any> {
+        const batch = firestore.batch();
+
+        batch.set(firestore.collection(assignmentCollection)
+            .doc(assignment.assignmentId), assignment);
+
+        if (assignment.asset?.assetId !== previousAssetId) {
+            batch.update(firestore.collection(assetCollection)
+                .doc(previousAssetId), assetStatus, Status.IDLE);
+
+            batch.update(firestore.collection(assetCollection)
+                .doc(assignment.asset?.assetId), assetStatus, Status.OPERATIONAL);
+        }
+
+        if (assignment.user?.userId === previousUserId) {
+            return await batch.commit();
+        }
+
+        await batch.commit();
+
+        let idToken = await auth.currentUser?.getIdToken(false);
         return await axios.post(`${SERVER_URL}/send-notification`, {
             token: idToken,
             title: "notification_assigned_title",
