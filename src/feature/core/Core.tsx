@@ -80,6 +80,9 @@ const lightTheme = createTheme({
         },
         secondary: secondaryColors,
         error: errorColors,
+        info: {
+            main: '#6272a4'
+        },
         background: {
             default: '#ffffff',
             paper: '#ffffff'
@@ -100,6 +103,9 @@ const darkTheme = createTheme({
         },
         secondary: secondaryColors,
         error: errorColors,
+        info: {
+            main: '#8be9fd'
+        },
         background: {
             default: '#1e1f29',
             paper: '#44475a'

@@ -66,7 +66,6 @@ export type UserCore = {
 const SERVER_URL = "https://deshi-production.up.railway.app";
 export class UserRepository {
 
-
     static async create(user: User): Promise<AxiosResponse<any>> {
         let idToken = await auth.currentUser?.getIdToken(false);
 

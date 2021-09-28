@@ -134,8 +134,11 @@ const AssetScreen = (props: AssetScreenProps) => {
             field: dateCreated, 
             headerName: t("field.date_created"), 
             flex: 1, 
-            valueGetter: (params: GridValueGetterParams) => 
-                t(formatDate(params.row.dateCreated)) 
+            valueGetter: (params: GridValueGetterParams) => {
+                const formatted = formatDate(params.row.dateCreated);
+                return formatted === 'unknown' ? t("not_yet_returned") : formatted;
+
+            } 
         },
         { 
             field: assetStatus, 

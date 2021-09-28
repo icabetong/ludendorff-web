@@ -96,15 +96,19 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             field: dateAssigned, 
             headerName: t("field.date_assigned"), 
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) => 
-                t(formatDate(params.row.dateAssigned))
+            valueGetter: (params: GridValueGetterParams) => {
+                const formatted = formatDate(params.row.dateAssigned);
+                return formatted === 'unknown' ? t("not_yet_returned") : formatted;
+            }                
         },
         { 
             field: dateReturned, 
             headerName: t("field.date_returned"), 
             flex: 1,
-            valueGetter: (params: GridValueGetterParams) =>
-                t(formatDate(params.row.dateReturned))
+            valueGetter: (params: GridValueGetterParams) => {
+                const formatted = formatDate(params.row.dateReturned);
+                return formatted === 'unknown' ? t("not_yet_returned") : formatted;
+            }
         },
         { 
             field: location,

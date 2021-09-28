@@ -178,6 +178,7 @@ const resources = {
                 full_name: "{{first}} {{last}}",
                 count: "Count: {{count}}",
             },
+            not_yet_returned: "Not Yet Returned",
             unknown: "Unknown",
             information: "Information",
             actions: "Actions",
