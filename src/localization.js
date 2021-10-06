@@ -18,6 +18,7 @@ const resources = {
                 assignments: "Assignments",
                 categories: "Categories",
                 departments: "Departments",
+                requests: "Requests",
                 profile: "Profile",
                 settings: "Settings",
             },

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import MenuItem from "@material-ui/core/MenuItem";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSnackbar } from "notistack";
@@ -23,6 +24,8 @@ import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { Asset, minimize as minimizeAsset } from "../asset/Asset";
 import { Assignment, AssignmentRepository } from "./Assignment";
 import AssignmentList from "./AssignmentList";
+import { Request } from "../requests/Request";
+import RequestScreen from "../requests/RequestScreen"; 
 import { usePreferences } from "../settings/Preference";
 import { User, minimize as minimizeUser } from "../user/User";
 
@@ -43,7 +46,9 @@ import {
     assignmentUser,
     dateAssigned,
     dateReturned,
-    location
+    location,
+    requestCollection,
+    requestedAssetName
 } from "../../shared/const";
 
 import {
@@ -277,6 +282,32 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     }
 
     const {
+        items: requests,
+        isLoading: isRequestsLoading,
+        isStart: atRequestStart,
+        isEnd: atRequestEnd,
+        getPrev: getPreviousRequests,
+        getNext: getNextRequests
+    } = usePagination<Request>(
+        firestore
+            .collection(requestCollection)
+            .orderBy(requestedAssetName, "asc"), { limit: 15 }
+    )
+
+    const [isRequestListOpen, setRequestListOpen] = useState(false);
+
+    const onRequestListView = () => { setRequestListOpen(true) }
+    const onRequestListDismiss = () => { setRequestListOpen(false) }
+
+    const onRequestItemSelected = (request: Request) => {
+
+    }
+
+    const onRequestItemConfirmRemove = (request: Request) => {
+
+    }
+
+    const {
         items: assets,
         isLoading: isAssetsLoading,
         isStart: atAssetStart,
@@ -317,6 +348,9 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 buttonIcon={PlusIcon}
                 buttonOnClick={onAssignmentEditorView}
                 onDrawerToggle={props.onDrawerToggle}
+                menuItems={[
+                    <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>
+                ]}
             />
             { isAdmin
                 ? <>
@@ -375,6 +409,18 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 onDateReturnedChanged={onAssignmentDateReturnedChanged}
                 onLocationChanged={onAssignmentLocationChanged}
                 onRemarksChanged={onAssignmentRemarksChanged}/>
+
+            <RequestScreen
+                isOpen={isRequestListOpen}
+                requests={requests}
+                isLoading={isRequestsLoading}
+                hasPrevious={atRequestStart}
+                hasNext={atRequestEnd}
+                onPreviousBatch={getPreviousRequests}
+                onNextBatch={getNextRequests}
+                onDismiss={onRequestListDismiss}
+                onSelectItem={onRequestItemSelected}
+                onDeleteItem={onRequestItemConfirmRemove}/>
 
             <AssetPicker
                 isOpen={isAssetPickerOpen}

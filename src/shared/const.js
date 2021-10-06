@@ -3,6 +3,7 @@ export const categoryCollection = "categories";
 export const userCollection = "users";
 export const departmentCollection = "departments";
 export const assignmentCollection = "assignments";
+export const requestCollection = "requests";
 
 export const categoryId = "categoryId";
 export const categoryName = "categoryName";
@@ -49,3 +50,7 @@ export const dateAssigned = "dateAssigned";
 export const dateReturned = "dateReturned";
 export const location = "location";
 export const remarks = "remarks";
+
+export const requestId = "requestId";
+export const requestedAsset = "asset";
+export const requestedAssetName = `${requestedAsset}.${assetName}`;
