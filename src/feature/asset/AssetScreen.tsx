@@ -1,17 +1,27 @@
 import { useState, useReducer, lazy } from "react";
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import Hidden from "@material-ui/core/Hidden";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import MenuItem from "@material-ui/core/MenuItem";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridRowParams, GridValueGetterParams, GridOverlay, GridCellParams } from "@material-ui/data-grid";
+import {
+    Box,
+    Hidden,
+    LinearProgress,
+    MenuItem,
+    Tooltip,
+    makeStyles
+} from "@material-ui/core";
+import { 
+    DataGrid, 
+    GridRowParams, 
+    GridValueGetterParams, 
+    GridOverlay, 
+    GridCellParams 
+} from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 
-import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
-import PlusIcon from "@heroicons/react/outline/PlusIcon";
-import TrashIcon from "@heroicons/react/outline/TrashIcon";
+import {
+    DesktopComputerIcon,
+    PlusIcon,
+    TrashIcon
+} from "@heroicons/react/outline";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";

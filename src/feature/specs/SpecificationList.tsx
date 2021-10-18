@@ -1,6 +1,5 @@
 import React from "react";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import { ListItem, ListItemText } from "@material-ui/core";
 
 type SpecificationListProps = {
     specifications?: Map<string, string>,
