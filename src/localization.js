@@ -173,6 +173,8 @@ const resources = {
                 user_disable_summary: "Are you sure you want to disable this user account? With proper permissions, you can always enable this account in the future.",
                 user_enable: "Enable this user account?",
                 user_enable_summary: "Are you sure you want to enable this user account? With proper permissions, you can always disable this account in the future.",
+                user_remove: "Remove this user?",
+                user_remove_summary: "Are you sure you want to remove this user account? All data associated with this account will be removed as well and cannot be recovered.",
                 send_reset_link_title: "Send Password Reset Link",
                 send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email."
             },
