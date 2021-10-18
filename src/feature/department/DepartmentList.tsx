@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+    List,
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
+    Tooltip,
+    makeStyles
+} from "@material-ui/core";
+import { useSnackbar } from "notistack";
 
 import { OfficeBuildingIcon, TrashIcon } from "@heroicons/react/outline";
 
@@ -13,7 +17,8 @@ import PaginationController from "../../components/PaginationController";
 import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Department } from "./Department";
+import { Department, DepartmentRepository } from "./Department";
+import ConfirmationDialog from "../shared/ItemRemoveDialog";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,13 +37,26 @@ type DepartmentListProps = {
     hasNext: boolean,
     onPrevious: () => void,
     onNext: () => void,
-    onItemSelect: (department: Department) => void,
-    onItemRemove: (department: Department) => void
+    onItemSelect: (department: Department) => void
 }
 
 const DepartmentList = (props: DepartmentListProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    const { enqueueSnackbar } = useSnackbar();
+    const [department, setDepartment] = useState<Department | undefined>(undefined);
+
+    const onRemoveInvoke = (department: Department) => setDepartment(department);
+    const onRemoveDismiss = () => setDepartment(undefined);
+
+    const onDepartmentRemove = () => {
+        if (department !== undefined) {
+            DepartmentRepository.remove(department)
+                .then(() => enqueueSnackbar(t("feedback.department_removed")))
+                .catch(() => enqueueSnackbar(t("feedback.department_remove_error")))
+                .finally(onRemoveDismiss)
+        }
+    }
 
     return (
         <>
@@ -51,7 +69,7 @@ const DepartmentList = (props: DepartmentListProps) => {
                                     key={department.departmentId}
                                     department={department}
                                     onItemSelect={props.onItemSelect}
-                                    onItemRemove={props.onItemRemove}/>
+                                    onItemRemove={onRemoveInvoke}/>
                             )
                         })
                     }</List>
@@ -67,6 +85,14 @@ const DepartmentList = (props: DepartmentListProps) => {
                 icon={OfficeBuildingIcon}
                 title={t("empty_department")}
                 subtitle={t("empty_department_summary")}/>
+            }
+            { department &&
+                <ConfirmationDialog
+                    isOpen={department !== undefined}
+                    title="dialog.department_remove"
+                    summary="dialog.department_remove_summary"
+                    onDismiss={onRemoveDismiss}
+                    onConfirm={onDepartmentRemove}/>
             }
         </>
     );

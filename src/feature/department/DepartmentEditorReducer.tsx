@@ -34,7 +34,7 @@ export const departmentEditorReducer = (state: DepartmentEditorState, action: De
             }
         case DepartmentEditorActionType.CREATE:
             return {
-                department: payload,
+                department: undefined,
                 isCreate: true,
                 isOpen: true
             }

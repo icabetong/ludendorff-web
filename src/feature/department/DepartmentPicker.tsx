@@ -35,8 +35,7 @@ type DepartmentPickerProps = {
     onNext: () => void,
     onDismiss: () => void,
     onAddItem: () => void,
-    onSelectItem: (department: Department) => void,
-    onDeleteItem: (department: Department) => void,
+    onSelectItem: (department: Department) => void
 }
 
 const DepartmentPicker = (props: DepartmentPickerProps) => {
@@ -63,8 +62,7 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
                             hasNext={props.hasNext}
                             onPrevious={props.onPrevious}
                             onNext={props.onNext}
-                            onItemSelect={props.onSelectItem}
-                            onItemRemove={props.onDeleteItem}/>
+                            onItemSelect={props.onSelectItem}/>
                         : <LinearProgress/>
                     : <ErrorNoPermissionState/>
                 }

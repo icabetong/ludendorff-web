@@ -35,8 +35,7 @@ import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
 
 import { 
-    Department, 
-    DepartmentRepository,
+    Department,
     minimize as minimizeDepartment 
 } from "../department/Department";
 
@@ -65,12 +64,6 @@ import {
 } from "../department/DepartmentEditorReducer";
 
 import {
-    DepartmentRemoveActionType,
-    departmentRemoveInitialState,
-    departmentRemoveReducer
-} from "../department/DepartmentRemoveReducer";
-
-import {
     userCollection,
     departmentCollection,
     userId,
@@ -84,12 +77,10 @@ import {
 
 import ConfirmationDialog from "../shared/ItemRemoveDialog";
 
-
 const UserEditor = lazy(() => import("./UserEditor"));
 const UserPicker = lazy(() => import("./UserPicker"));
 
 const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
-const DepartmentEditor = lazy(() => import("../department/DepartmentEditor"));
 const DepartmentPicker = lazy(() => import("../department/DepartmentPicker"));
 
 const useStyles = makeStyles(() => ({
@@ -189,7 +180,6 @@ const UserScreen = (props: UserScreenProps) => {
     const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
     const [isPickerOpen, setPickerOpen] = useState(false);
 
-    const onUserPickerView = () => { setPickerOpen(true) }
     const onUserPickerDismiss = () => { setPickerOpen(false) }
 
     const onDataGridRowDoubleClick = (params: GridRowParams) => {
@@ -376,7 +366,6 @@ const UserScreen = (props: UserScreenProps) => {
     const [isDepartmentPickerOpen, setDepartmentPickerOpen] = useState(false);
     
     const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
-    const [departmentRemoveState, departmentRemoveDispatch] = useReducer(departmentRemoveReducer, departmentRemoveInitialState);
 
     const onDepartmentView = () => { setDepartmentOpen(true) }
     const onDepartmentDismiss = () => { setDepartmentOpen(false) }
@@ -406,85 +395,6 @@ const UserScreen = (props: UserScreenProps) => {
     const onDepartmentEditorView = () => {
         departmentEditorDispatch({
             type: DepartmentEditorActionType.CREATE
-        })
-    }
-
-    const onDepartmentEditorDismiss = () => {
-        departmentEditorDispatch({
-            type: DepartmentEditorActionType.DISMISS
-        })
-    }
-
-    const onDepartmentEditorNameChanged = (name: string) => {
-        let department = departmentEditorState.department;
-        if (department === undefined)
-            department = { departmentId: newId(), count: 0 }
-        department!.name = name;
-        departmentEditorDispatch({
-            type: DepartmentEditorActionType.CHANGED,
-            payload: department
-        })
-    }
-
-    const onDepartmentEditorCommit = () => {
-        let department = departmentEditorState.department;
-        if (department === undefined)
-            return;
-
-        if (departmentEditorState.isCreate) {
-            DepartmentRepository.create(department)
-                .then(() => {
-                    enqueueSnackbar(t("feedback.department_created"));
-                    
-                }).catch(() => {
-                    enqueueSnackbar(t("feedback.department_create_error"));
-
-                }).finally(() => {
-                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
-                })
-        } else {
-            DepartmentRepository.update(department)
-                .then(() => {
-                    enqueueSnackbar(t("feedback.department_updated"));
-
-                }).catch(() => {
-                    enqueueSnackbar(t("feedback.department_update_error"))
-
-                }).finally(() => {
-                    departmentEditorDispatch({ type: DepartmentEditorActionType.DISMISS })
-                })
-        }
-    }
-
-    const onDepartmentItemRequestRemove = (department: Department) => {
-        departmentRemoveDispatch({
-            type: DepartmentRemoveActionType.REQUEST,
-            payload: department
-        })
-    }
-
-    const onDepartmentItemRemove = () => {
-        let department = departmentRemoveState.department;
-        if (department === undefined)
-            return;
-
-        DepartmentRepository.remove(department)
-            .then(() => {
-                enqueueSnackbar(t("feedback.department_removed"));
-
-            }).catch(() => {
-                enqueueSnackbar(t("feedback.department_remove_error"));
-
-            }).finally(() => {
-                departmentRemoveDispatch({
-                    type: DepartmentRemoveActionType.DISMISS
-                })
-            })
-    }
-
-    const onDismissDepartmentConfirmation = () => {
-        departmentRemoveDispatch({
-            type: DepartmentRemoveActionType.DISMISS
         })
     }
     
@@ -584,17 +494,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onNext={getNextDepartments}
                 onDismiss={onDepartmentDismiss}
                 onAddItem={onDepartmentEditorView}
-                onSelectItem={onDepartmentItemSelected}
-                onDeleteItem={onDepartmentItemRequestRemove}/>
-
-            <DepartmentEditor
-                isOpen={departmentEditorState.isOpen}
-                name={departmentEditorState.department?.name}
-                manager={departmentEditorState.department?.manager}
-                onSubmit={onDepartmentEditorCommit}
-                onCancel={onDepartmentEditorDismiss}
-                onManagerSelect={onUserPickerView}
-                onNameChanged={onDepartmentEditorNameChanged}/>
+                onSelectItem={onDepartmentItemSelected}/>
 
             <DepartmentPicker
                 isOpen={isDepartmentPickerOpen}
@@ -606,15 +506,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onNext={getNextDepartments}
                 onDismiss={onDepartmentPickerDismiss}
                 onAddItem={onDepartmentEditorView}
-                onSelectItem={onUserDepartmentSelected}
-                onDeleteItem={onDepartmentItemRequestRemove}/>
-
-            <ConfirmationDialog
-                isOpen={departmentRemoveState.isRequest}
-                title="dialog.department_remove"
-                summary="dialog.department_remove_summary"
-                onDismiss={onDismissDepartmentConfirmation}
-                onConfirm={onDepartmentItemRemove}/>
+                onSelectItem={onUserDepartmentSelected}/>
 
             <ConfirmationDialog
                 isOpen={modifyState.isRequest}
