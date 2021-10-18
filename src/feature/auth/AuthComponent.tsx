@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { 
+    Button,
+    Container,
+    Grid,
+    Paper,
+    TextField,
+    Typography,
+    makeStyles
+} from "@material-ui/core";
 
 import firebase from "firebase/app";
 import { auth } from "../../index";
@@ -24,19 +27,22 @@ const useStyles = makeStyles(() => ({
         padding: '1em 0em',
     },
 }));
+
+type FormValues = {
+    email: string,
+    password: string
+}
+
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) => {
     const classes = useStyles();
     const { t } = useTranslation();
-
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
     const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
     const [error, setError] = useState<firebase.auth.Error | undefined>(undefined);
 
-    const onAuthTriggered = (event: React.SyntheticEvent) => {
-        event.preventDefault();
-        setIsAuthenticating(true);
-        auth.signInWithEmailAndPassword(email, password)
+    const onSubmit = (data: FormValues) => {
+        setIsAuthenticating(true)
+        auth.signInWithEmailAndPassword(data.email, data.password)
             .then(() => {
                 setIsAuthenticating(false);
                 history.push('/');
@@ -47,20 +53,9 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
             })
     }
 
-    const onEmailInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (error != null)
-            setPassword("");
-        setError(undefined);
-        setEmail(event.target.value)
-    }
-    const onPasswordInputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setError(undefined);
-        setPassword(event.target.value)
-    }
-    
     return (
         <Container>
-            <form onSubmit={onAuthTriggered}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid 
                     container 
                     spacing={4} 
@@ -83,22 +78,20 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
                                 <br/>
                                 <TextField
                                     style={{ marginBottom: '1em', marginTop: '1em' }}
-                                    id="authentication-email"
+                                    id="email"
                                     type="text"
-                                    value={email}
                                     label={ t("field.email") }
-                                    error={!!error}
+                                    error={errors.email !== undefined}
                                     disabled={isAuthenticating}
-                                    onChange={onEmailInputChanged}/>
+                                    {...register("email", { required: true })}/>
                                 <br/>
                                 <TextField
-                                    id="authentication-password"
+                                    id="password"
                                     type="password"
-                                    value={password}
                                     label={ t("field.password") }
-                                    error={!!error}
+                                    error={errors.password !== undefined}
                                     disabled={isAuthenticating}
-                                    onChange={onPasswordInputChanged}/>
+                                    {...register("password", { required: false})}/>
                             </div>
                             <div className={classes.container}>
                                 <Button 

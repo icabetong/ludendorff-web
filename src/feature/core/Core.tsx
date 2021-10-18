@@ -3,7 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
-import AuthComponent from '../auth/Auth'
+import AuthComponent from '../auth/AuthComponent'
 import RootComponent from '../root/Root';
 import history from "../navigation/History";
 import { ErrorNotFoundState } from "../state/ErrorStates";

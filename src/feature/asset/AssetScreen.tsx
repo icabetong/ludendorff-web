@@ -254,13 +254,11 @@ const AssetScreen = (props: AssetScreenProps) => {
                 </>
                 : <ErrorNoPermissionState/>
             }
-            { editorState.isOpen &&
-                <AssetEditor
-                    isOpen={editorState.isOpen}
-                    isCreate={editorState.isCreate}
-                    asset={editorState.asset}
-                    onDismiss={onAssetEditorDismiss}/>
-            }
+            <AssetEditor
+                isOpen={editorState.isOpen}
+                isCreate={editorState.isCreate}
+                asset={editorState.asset}
+                onDismiss={onAssetEditorDismiss}/>
             { isCategoryOpen &&
                 <CategoryScreen
                     isOpen={isCategoryOpen}
