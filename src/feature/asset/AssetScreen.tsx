@@ -23,15 +23,13 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
-import { Category, CategoryRepository } from "../category/Category";
+import { Category } from "../category/Category";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { Specification } from "../specs/Specification";
 import { usePreferences } from "../settings/Preference";
 
-import firebase from "firebase/app";
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
-import { newId, formatDate } from "../../shared/utils";
+import { formatDate } from "../../shared/utils";
 
 import {
     assetCollection,
@@ -50,39 +48,9 @@ import {
     assetEditorReducer
 } from "./AssetEditorReducer";
 
-import {
-    AssetRemoveActionType,
-    assetRemoveInitialState,
-    assetRemoveReducer
-} from "./AssetRemoveReducer";
-
-import {
-    SpecificationEditorActionType,
-    specificationEditorInitialState,
-    specificationReducer
-} from "../specs/SpecificationEditorReducer";
-
-import { 
-    CategoryEditorActionType, 
-    categoryEditorInitialState, 
-    categoryEditorReducer 
-} from "../category/CategoryEditorReducer";
-
-import {
-    CategoryRemoveActionType,
-    categoryRemoveInitialState,
-    categoryRemoveReducer
-} from "../category/CategoryRemoveReducer";
-
 import ConfirmationDialog from "../shared/ItemRemoveDialog";
-
 const AssetEditor = lazy(() => import("./AssetEditor"));
-const QrCodeViewComponent = lazy(() => import("../qrcode/QrCodeViewComponent"));
-const SpecificationEditor = lazy(() => import("../specs/SpecificationEditor"));
-
 const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
-const CategoryPicker = lazy(() => import("../category/CategoryPicker"));
-const CategoryEditorComponent = lazy(() => import("../category/CategoryEditor"));
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -117,6 +85,19 @@ const AssetScreen = (props: AssetScreenProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const { canRead, canWrite } = usePermissions();
     const userPreference = usePreferences();
+    const [asset, setAsset] = useState<Asset | undefined>(undefined);
+
+    const onRemoveInvoke = (asset: Asset) => setAsset(asset);
+    const onRemoveDismiss = () => setAsset(undefined);
+    
+    const onAssetRemove = () => {
+        if (asset !== undefined) {
+            AssetRepository.remove(asset)
+            .then(() => enqueueSnackbar(t("feedback.asset_removed")))
+            .catch(() =>  enqueueSnackbar(t("feedback.asset_remove_error")))
+            .finally(onRemoveDismiss)
+        }
+    }
 
     const columns = [
         { field: assetId, headerName: t("field.id"), hide: true },
@@ -159,7 +140,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                         icon={TrashIcon}
                         aria-label={t("delete")}
                         disabled={asset.status === Status.OPERATIONAL}
-                        onClick={() => onAssetItemRemoveRequest(asset)}/>
+                        onClick={() => onRemoveInvoke(asset)}/>
                 );
                 return (
                     <>
@@ -175,8 +156,6 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
     ];
 
-    
-
     const {
         items: assets,
         isLoading: isAssetsLoading,
@@ -190,10 +169,8 @@ const AssetScreen = (props: AssetScreenProps) => {
             .orderBy(assetName, "asc"), { limit: 15 }
     )
 
-    const [isQrCodeOpen, setQrCodeOpen] = useState<boolean>(false);
     const [editorState, editorDispatch] = useReducer(assetEditorReducer, assetEditorInitialState);
-    const [removeState, removeDispatch] = useReducer(assetRemoveReducer, assetRemoveInitialState);
-    const [specEditorState, specEditorDispatch] = useReducer(specificationReducer, specificationEditorInitialState);
+    const onAssetEditorDismiss = () => editorDispatch({ type: AssetEditorActionType.DISMISS })
 
     const onDataGridRowDoubleClicked = (params: GridRowParams) => {
         onAssetSelected(params.row as Asset);
@@ -205,168 +182,6 @@ const AssetScreen = (props: AssetScreenProps) => {
             payload: asset
         })
     }
-
-    const onAssetEditorAddSpecification = () => {
-        specEditorDispatch({
-            type: SpecificationEditorActionType.CREATE
-        })
-    }
-
-    const onAssetEditorDismiss = () => {
-        editorDispatch({
-            type: AssetEditorActionType.DISMISS
-        })
-    }
-
-    const onAssetEditorNameChanged = (name: string) => {
-        let asset = editorState.asset;
-        if (asset === undefined)
-            asset = { assetId: newId() }
-        asset!.assetName = name;
-        editorDispatch({
-            type: AssetEditorActionType.CHANGED,
-            payload: asset
-        })
-    }
-
-    const onAssetEditorStatusChanged = (status: Status) => {
-        let asset = editorState.asset;
-        if (asset === undefined)
-            asset = { assetId: newId() }
-        asset!.status = status;
-        editorDispatch({
-            type: AssetEditorActionType.CHANGED,
-            payload: asset
-        })
-    }
-
-    const onAssetEditorCommit = () => {
-        let asset = editorState.asset;
-        if (asset !== undefined) {
-            asset.dateCreated = firebase.firestore.Timestamp.now();
-            if (editorState.isCreate) {
-                AssetRepository.create(asset)
-                    .then(() => {
-                        enqueueSnackbar(t("feedback.asset_created"));
-
-                    }).catch(() => {
-                        enqueueSnackbar(t("feedback.asset_create_error"));
-
-                    }).finally(() => {
-                        editorDispatch({ type: AssetEditorActionType.DISMISS })
-                    })
-            } else {
-                AssetRepository.update(asset)
-                    .then(() => {
-                        enqueueSnackbar(t("feedback.asset_updated"));
-
-                    }).catch(() => {
-                        enqueueSnackbar(t("feedback.asset_update_error"));
-
-                    }).finally(() => {
-                        editorDispatch({ type: AssetEditorActionType.DISMISS })
-                    })
-            }
-        }
-    }
-
-    const onAssetCategorySelected = (category: Category) => {
-        let asset = editorState.asset;
-        if (asset === undefined)
-            asset = { assetId: newId() }
-        asset!.category = category;
-        editorDispatch({
-            type: AssetEditorActionType.CHANGED,
-            payload: asset
-        })
-        setCategoryPickerOpen(false);
-    }
-
-    const onAssetItemRemoveRequest = (asset: Asset) => {
-        removeDispatch({
-            type: AssetRemoveActionType.REQUEST,
-            payload: asset
-        })
-    }
-
-    const onAssetItemRemove = () => {
-        let asset = removeState.asset;
-        if (asset === undefined)
-            return;
-
-        AssetRepository.remove(asset)
-            .then(() => {
-                enqueueSnackbar(t("feedback.asset_removed"));
-
-            }).catch((error) => {
-                console.log(error);
-                enqueueSnackbar(t("feedback.asset_remove_error"));
-
-            }).finally(() => {
-                removeDispatch({
-                    type: AssetRemoveActionType.DISMISS
-                })
-            })
-    }
-
-    const onSpecificationItemSelected = (spec: [string, string]) => {
-        specEditorDispatch({
-            type: SpecificationEditorActionType.UPDATE,
-            payload: spec,
-        })
-    }
-
-    const onSpecificationKeyChanged = (key: string) => {
-        let specification = specEditorState.specification;
-        if (specification === undefined)
-            specification = ['', ''];
-        specification[0] = key;
-        specEditorDispatch({
-            type: SpecificationEditorActionType.CHANGED,
-            payload: specification
-        })
-    }
-
-    const onSpecificationValueChanged = (value: string) => {
-        let specification = specEditorState.specification;
-        if (specification === undefined)
-            specification = ['', ''];
-        specification[1] = value;
-        specEditorDispatch({
-            type: SpecificationEditorActionType.CHANGED,
-            payload: specification
-        })
-    }
-
-    const onSpecificationEditorCommit = () => {
-        let asset = editorState.asset;
-        if (asset === undefined)
-            asset = { assetId: newId() }
-
-        let specification = specEditorState.specification;
-        if (specification !== undefined) {
-            let specifications: Specification = {};
-            specifications[specification[0]] = specification[1];
-            asset!.specifications = specifications;
-    
-            specEditorDispatch({
-                type: SpecificationEditorActionType.DISMISS
-            })
-            editorDispatch({
-                type: AssetEditorActionType.CHANGED,
-                payload: asset
-            })
-        }
-    }
-
-    const onSpecificationEditorDismiss = () => {
-        specEditorDispatch({ 
-            type: SpecificationEditorActionType.DISMISS 
-        })
-    }
-
-    const onQrCodeView = () => { setQrCodeOpen(true) }
-    const onQrCodeViewDismiss = () => { setQrCodeOpen(false) }
 
     const {
         items: categories,
@@ -381,116 +196,10 @@ const AssetScreen = (props: AssetScreenProps) => {
             .orderBy(categoryName, "asc"), { limit: 15 }   
     )
 
-    const [isCategoryListOpen, setCategoryListOpen] = useState(false);
-    const [isCategoryPickerOpen, setCategoryPickerOpen] = useState(false);
+    const [isCategoryOpen, setCategoryOpen] = useState(false);
+    const onCategoryListView = () => setCategoryOpen(true)
+    const onCategoryListDismiss = () => setCategoryOpen(false)
     
-    const [categoryEditorState, categoryEditorDispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
-    const [categoryRemoveState, categoryRemoveDispatch] = useReducer(categoryRemoveReducer, categoryRemoveInitialState);
-    
-    const onCategoryListView = () => { setCategoryListOpen(true) }
-    const onCategoryListDismiss = () => { setCategoryListOpen(false) }
-
-    const onCategoryItemSelected = (category: Category) => {
-        categoryEditorDispatch({
-            type: CategoryEditorActionType.UPDATE,
-            payload: category,
-        })
-    }
-
-    const onCategoryItemRequestRemove = (category: Category) => {
-        categoryRemoveDispatch({
-            type: CategoryRemoveActionType.REQUEST,
-            payload: category
-        })
-    }
-
-    const onCategoryItemRemove = () => {
-        let category = categoryRemoveState.category;
-        if (category === undefined) 
-            return;
-
-        CategoryRepository.remove(category)
-            .then(() => {
-                enqueueSnackbar(t("feedback.category_removed"));
-
-            }).catch(() => {
-                enqueueSnackbar(t("feedback.category_remove_error"));
-
-            }).finally(() => {
-                categoryRemoveDispatch({
-                    type: CategoryRemoveActionType.DISMISS
-                })
-            })
-    }
-
-    const onCategoryNameChanged = (name: string) => {
-        let category = categoryEditorState.category;
-        if (category === undefined)
-            category = { categoryId: newId(), count: 0 }
-        category!.categoryName = name;
-        return categoryEditorDispatch({
-            payload: category!,
-            type: CategoryEditorActionType.CHANGED
-        })
-    }
-
-    const onCategoryEditorView = () => {
-        categoryEditorDispatch({
-            type: CategoryEditorActionType.CREATE
-        })
-    }
-
-    const onCategoryEditorDismiss = () => {
-        categoryEditorDispatch({
-            type: CategoryEditorActionType.DISMISS
-        })
-    }
-
-    const onCategoryEditorCommit = () => {
-        let category = categoryEditorState.category;
-        if (category !== undefined) {
-            if (categoryEditorState.isCreate) {
-                CategoryRepository.create(category)
-                    .then(() => {
-                        enqueueSnackbar(t("feedback.category_created"));
-
-                    }).catch(() => {
-                        enqueueSnackbar(t("feedback.category_create_error"));
-
-                    }).finally(() => {
-                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
-                    })
-            } else {
-                CategoryRepository.update(category)
-                    .then(() => {
-                        enqueueSnackbar(t("feedback.category_updated"));
-
-                    }).catch(() => {
-                        enqueueSnackbar(t("feedback.category_update_error"));
-
-                    }).finally(() => {
-                        categoryEditorDispatch({ type: CategoryEditorActionType.DISMISS })
-
-                    })
-            }
-        }
-    }
-
-    const onCategoryPickerView = () => { setCategoryPickerOpen(true) }
-    const onCategoryPickerViewDismiss = () => { setCategoryPickerOpen(false) }
-
-    const onDismissAssetConfirmation = () => {
-        removeDispatch({
-            type: AssetRemoveActionType.DISMISS
-        })
-    }
-
-    const onDismissCategoryConfirmation = () => {
-        categoryRemoveDispatch({
-            type: CategoryRemoveActionType.DISMISS
-        })
-    }
-
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -545,89 +254,32 @@ const AssetScreen = (props: AssetScreenProps) => {
                 </>
                 : <ErrorNoPermissionState/>
             }
-
-            {/* Asset Editor Screen */}
-            <AssetEditor
-                isOpen={editorState.isOpen}
-                id={editorState.asset?.assetId}
-                name={editorState.asset?.assetName}
-                status={editorState.asset?.status}
-                category={editorState.asset?.category}
-                specs={editorState.asset?.specifications}
-                onCancel={onAssetEditorDismiss}
-                onSubmit={onAssetEditorCommit}
-                onViewQrCode={onQrCodeView}
-                onCategorySelect={onCategoryPickerView}
-                onAddSpecification={onAssetEditorAddSpecification}
-                onSelectSpecification={onSpecificationItemSelected}
-                onNameChanged={onAssetEditorNameChanged}
-                onStatusChanged={onAssetEditorStatusChanged}/>
-
-            {/* Specification Editor Screen */}
-            <SpecificationEditor
-                isOpen={specEditorState.isOpen} 
-                specification={specEditorState.specification}
-                onSubmit={onSpecificationEditorCommit}
-                onCancel={onSpecificationEditorDismiss}
-                onKeyChanged={onSpecificationKeyChanged}
-                onValueChanged={onSpecificationValueChanged}/>
-
-            <QrCodeViewComponent
-                assetId={editorState.asset?.assetId}
-                isOpened={isQrCodeOpen}
-                onClose={onQrCodeViewDismiss}/>
-            
-            {/* Category Screen */}
-            <CategoryScreen
-                isOpen={isCategoryListOpen}
-                categories={categories}
-                isLoading={isCategoriesLoading}
-                hasPrevious={atCategoryStart}
-                hasNext={atCategoryEnd}
-                onPreviousBatch={getPreviousCategories}
-                onNextBatch={getNextCategories}
-                onDismiss={onCategoryListDismiss}
-                onAddItem={onCategoryEditorView}
-                onSelectItem={onCategoryItemSelected}
-                onDeleteItem={onCategoryItemRequestRemove}/>
-
-            <CategoryPicker
-                isOpen={isCategoryPickerOpen}
-                categories={categories}
-                isLoading={isCategoriesLoading}
-                hasPrevious={atCategoryStart}
-                hasNext={atCategoryEnd}
-                onPreviousBatch={getPreviousCategories}
-                onNextBatch={getNextCategories}
-                onDismiss={onCategoryPickerViewDismiss}
-                onAddItem={onCategoryEditorView}
-                onSelectItem={onAssetCategorySelected}
-                onDeleteItem={onCategoryItemRequestRemove}/>
-
-            {/* Category Editor Screen */}
-            <CategoryEditorComponent
-                editorOpened={categoryEditorState.isOpen}
-                onCancel={onCategoryEditorDismiss}
-                onSubmit={onCategoryEditorCommit}
-                categoryId={categoryEditorState.category?.categoryId === undefined ? "" : categoryEditorState.category?.categoryId}
-                categoryName={categoryEditorState.category?.categoryName === undefined ? "" : categoryEditorState.category?.categoryName}
-                count={categoryEditorState.category?.count === undefined ? 0 : categoryEditorState.category?.count}
-                onCategoryNameChanged={onCategoryNameChanged}/>
-
-            <ConfirmationDialog
-                isOpen={removeState.isRequest}
-                title="dialog.asset_remove"
-                summary="dialog.asset_remove_summary"
-                onDismiss={onDismissAssetConfirmation}
-                onConfirm={onAssetItemRemove}/>
-
-            <ConfirmationDialog
-                isOpen={categoryRemoveState.isRequest}
-                title="dialog.category_remove"
-                summary="dialog.category_remove_summary"
-                onDismiss={onDismissCategoryConfirmation}
-                onConfirm={onCategoryItemRemove}/>
-
+            { editorState.isOpen &&
+                <AssetEditor
+                    isOpen={editorState.isOpen}
+                    isCreate={editorState.isCreate}
+                    asset={editorState.asset}
+                    onDismiss={onAssetEditorDismiss}/>
+            }
+            { isCategoryOpen &&
+                <CategoryScreen
+                    isOpen={isCategoryOpen}
+                    categories={categories}
+                    isLoading={isCategoriesLoading}
+                    hasPrevious={atCategoryStart}
+                    hasNext={atCategoryEnd}
+                    onPreviousBatch={getPreviousCategories}
+                    onNextBatch={getNextCategories}
+                    onDismiss={onCategoryListDismiss}/>
+            }
+            { asset &&
+                <ConfirmationDialog
+                    isOpen={asset !== undefined}
+                    title="dialog.asset_remove"
+                    summary="dialog.asset_remove_summary"
+                    onDismiss={onRemoveDismiss}
+                    onConfirm={onAssetRemove}/>
+            }
         </Box>
     )
 }

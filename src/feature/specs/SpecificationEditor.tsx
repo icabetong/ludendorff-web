@@ -1,14 +1,15 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-import React from "react";
+import { useForm } from "react-hook-form";
+import {
+    Button,
+    Container, 
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
+    makeStyles
+} from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
     textField: {
@@ -17,49 +18,24 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-type SpecificationEditorProps = {
-    isOpen: boolean,
-    specification?: [string, string],
-    onSubmit: () => void,
-    onCancel: () => void,
-    onKeyChanged: (key: string) => void,
-    onValueChanged: (value: string) => void
+export type FormValues = {
+    key: string,
+    value: string
 }
 
-const SpecificationEditor = (props: SpecificationEditorProps) => {
+type SpecificationEditorProps = {
+    isOpen: boolean,
+    isCreate: boolean,
+    specification?: [string, string],
+    onSubmit: (data: FormValues) => void,
+    onCancel: () => void,
+}
+
+export const SpecificationEditor = (props: SpecificationEditorProps) => {
     const { t } = useTranslation();
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const classes = useStyles();
-    const [keyError, setKeyError] = useState(false);
-    const [valueError, setValueError] = useState(false);
     const specification = props.specification === undefined ? ['', ''] : props.specification;
-
-    const onKeyChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const key = event.target.value;
-        if (key !== '' && keyError)
-            setKeyError(false);
-        props.onKeyChanged(key); 
-    }
-
-    const onValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        if (value !== '' && valueError)
-            setValueError(false);
-        return props.onValueChanged(value);
-    }
-
-    const onPreSubmit = () => {
-        if (specification[0] === '') {
-            setKeyError(true);
-            return;
-        }
-
-        if (specification[1] === '') {
-            setValueError(true);
-            return;
-        }
-
-        props.onSubmit();
-    }
 
     return (
         <Dialog
@@ -67,37 +43,37 @@ const SpecificationEditor = (props: SpecificationEditorProps) => {
             maxWidth="xs"
             open={props.isOpen}
             onClose={() => props.onCancel()}>
-            <DialogTitle>{ t("specification_details") }</DialogTitle>
-            <DialogContent>
-                <Container disableGutters>
-                    <TextField
-                        autoFocus
-                        id="editor-specification-key"
-                        type="text"
-                        label={ t("field.specification_key") }
-                        value={specification[0]}
-                        error={keyError}
-                        helperText={keyError ? t("feedback.empty_specification_key") : undefined}
-                        onChange={onKeyChanged}
-                        className={classes.textField}/>
-                    <TextField
-                        id="editor-specification-value"
-                        type="text"
-                        label={ t("field.specification_value") }
-                        value={specification[1]}
-                        error={valueError}
-                        helperText={valueError ? t("feedback.empty_specification_value") : undefined}
-                        onChange={onValueChanged}
-                        className={classes.textField}/>
-                </Container>
-            </DialogContent>
+            <form onSubmit={handleSubmit(props.onSubmit)}>
+                <DialogTitle>{ t("specification_details") }</DialogTitle>
+                <DialogContent>
+                    <Container disableGutters>
+                        <TextField
+                            autoFocus
+                            id="key"
+                            type="text"
+                            label={ t("field.specification_key") }
+                            defaultValue={specification[0]}
+                            error={errors.key !== undefined}
+                            helperText={errors.key && t(errors.key.message)}
+                            className={classes.textField}
+                            {...register("key", { required: "feedback.empty_specification_key" })}/>
+                        <TextField
+                            id="value"
+                            type="text"
+                            label={ t("field.specification_value") }
+                            defaultValue={specification[1]}
+                            error={errors.value !== undefined}
+                            helperText={errors.value && t(errors.value.message)}
+                            className={classes.textField}
+                            {...register("value", { required: "feedback.empty_specification_value" })}/>
+                    </Container>
+                </DialogContent>
 
-            <DialogActions>
-                <Button color="primary" onClick={props.onCancel}>{ t("button.cancel") }</Button>
-                <Button color="primary" onClick={onPreSubmit}>{ t("button.save") }</Button>
-            </DialogActions>
+                <DialogActions>
+                    <Button color="primary" onClick={props.onCancel}>{ t("button.cancel") }</Button>
+                    <Button color="primary" type="submit">{ t("button.save") }</Button>
+                </DialogActions>
+            </form>
         </Dialog>
     )
 }
-
-export default SpecificationEditor;

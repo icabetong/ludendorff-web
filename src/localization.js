@@ -92,6 +92,7 @@ const resources = {
             },
             feedback: {
                 authenticating: "Authenticating",
+                saving: "Saving",
                 empty_specification_key: "You forgot to enter the key",
                 empty_specification_value: "You forgot to enter the value",
                 empty_category_name: "You forgot to enter the category name",

@@ -2,10 +2,8 @@ import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
-import { Specification } from "./Specification";
-
 type SpecificationListProps = {
-    specifications?: Specification,
+    specifications?: Map<string, string>,
     onItemSelected: (specs: [string, string]) => void
 }
 
@@ -13,14 +11,14 @@ const SpecificationList = (props: SpecificationListProps) => {
     return (
         <React.Fragment>
             { props.specifications &&
-                Object.keys(props.specifications).map((key) => {
+                Array.from(props.specifications).map(([key, value]) => {
                     return (
                         <SpecificationItem
                             key={key}
                             specificationKey={key}
-                            specificationValue={props.specifications![key]}
+                            specificationValue={value}
                             onItemSelected={props.onItemSelected}/>
-                    );
+                    )
                 })
             }
         </React.Fragment>

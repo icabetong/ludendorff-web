@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
-
-import { TagIcon, TrashIcon } from "@heroicons/react/outline";
+import {
+    List, 
+    ListItem, 
+    ListItemSecondaryAction, 
+    ListItemText,
+    Tooltip,
+    makeStyles
+} from "@material-ui/core";
+import { 
+    TagIcon, 
+    TrashIcon 
+} from "@heroicons/react/outline";
+import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
 import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Category } from "./Category";
+import ConfirmationDialog from "../shared/ItemRemoveDialog";
+import { Category, CategoryRepository } from "./Category";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,13 +34,26 @@ type CategoryListProps = {
     hasNext: boolean,
     onPrevious: () => void,
     onNext: () => void,
-    onItemSelect: (category: Category) => void,
-    onItemRemove: (category: Category) => void
+    onItemSelect: (category: Category) => void
 }
 
 const CategoryList = (props: CategoryListProps) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    const { enqueueSnackbar } = useSnackbar();
+    const [category, setCategory] = useState<Category | undefined>(undefined);
+
+    const onRemoveInvoke = (category: Category) => setCategory(category);
+    const onRemoveDismiss = () => setCategory(undefined);
+    
+    const onCategoryRemove = () => {
+        if (category !== undefined) {
+            CategoryRepository.remove(category)
+                .then(() => enqueueSnackbar(t("feedback.category_removed")))
+                .catch(() => enqueueSnackbar(t("feedback.category_remove_error")))
+                .finally(onRemoveDismiss)
+        }
+    }
 
     return (
         <>
@@ -43,10 +63,10 @@ const CategoryList = (props: CategoryListProps) => {
                         props.categories.map((category: Category) => {
                             return (
                                 <CategoryItem 
-                                        key={category.categoryId} 
-                                        category={category} 
-                                        onItemSelect={props.onItemSelect}
-                                        onItemRemove={props.onItemRemove}/>
+                                    key={category.categoryId} 
+                                    category={category} 
+                                    onItemSelect={props.onItemSelect}
+                                    onItemRemove={onRemoveInvoke}/>
                             );
                         })
                     }</List>
@@ -62,7 +82,14 @@ const CategoryList = (props: CategoryListProps) => {
                 icon={TagIcon}
                 title={t("empty_category")}
                 subtitle={t("empty_category_summary")}/>
-
+        }
+        { category &&
+            <ConfirmationDialog
+                isOpen={category !== undefined}
+                title="dialog.category_remove"
+                summary="dialog.category_remove_summary"
+                onDismiss={onRemoveDismiss}
+                onConfirm={onCategoryRemove}/>
         }
         </>
     );

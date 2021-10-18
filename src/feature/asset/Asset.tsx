@@ -3,7 +3,6 @@ import { firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
 import { CategoryCore } from '../category/Category';
-import { Specification } from "../specs/Specification";
 import { 
     assetCollection, 
     categoryCollection,
@@ -18,7 +17,7 @@ export type Asset = {
     dateCreated?: Timestamp,
     status?: Status,
     category?: CategoryCore,
-    specifications?: Specification,
+    specifications?: Map<string, string>,
 }
 
 export type AssetCore = {

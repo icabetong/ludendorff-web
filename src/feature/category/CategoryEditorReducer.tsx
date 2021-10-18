@@ -32,7 +32,7 @@ export const categoryEditorReducer = (state: CategoryEditorState, action: Catego
             }
         case CategoryEditorActionType.CREATE: 
             return {
-                category: payload,
+                category: undefined,
                 isCreate: true,
                 isOpen: true,
             }

@@ -9,10 +9,9 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
 
 import { usePermissions } from "../auth/AuthProvider";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Category } from "./Category";
 import CategoryList from "./CategoryList";
-
-import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -34,9 +33,7 @@ type CategoryPickerProps = {
     onPreviousBatch: () => void,
     onNextBatch: () => void,
     onDismiss: () => void,
-    onAddItem: () => void,
-    onSelectItem: (category: Category) => void,
-    onDeleteItem: (category: Category) => void,
+    onSelectItem: (category: Category) => void
 }
 
 const CategoryPicker = (props: CategoryPickerProps) => {
@@ -44,7 +41,7 @@ const CategoryPicker = (props: CategoryPickerProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const classes = useStyles();
-    const { canRead, canWrite } = usePermissions();
+    const { canRead } = usePermissions();
 
     return (
         <Dialog
@@ -52,27 +49,24 @@ const CategoryPicker = (props: CategoryPickerProps) => {
             fullWidth={true}
             maxWidth="xs"
             open={props.isOpen}
-            onClose={() => props.onDismiss() }>
+            onClose={props.onDismiss}>
             <DialogTitle>{ t("category_select") }</DialogTitle>
             <DialogContent dividers={true} className={classes.root}>
                 { canRead 
                     ? !props.isLoading
                         ? <CategoryList 
-                            hasPrevious={props.hasPrevious}
-                            hasNext={props.hasNext}
-                            onPrevious={props.onPreviousBatch}
-                            onNext={props.onNextBatch}
-                            categories={props.categories} 
-                            onItemSelect={props.onSelectItem}
-                            onItemRemove={props.onDeleteItem}/>
+                                hasPrevious={props.hasPrevious}
+                                hasNext={props.hasNext}
+                                onPrevious={props.onPreviousBatch}
+                                onNext={props.onNextBatch}
+                                categories={props.categories} 
+                                onItemSelect={props.onSelectItem}/>
                         : <LinearProgress/>
                     :  <ErrorNoPermissionState/>
                 }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onAddItem()} disabled={!canWrite}>{ t("button.add") }</Button>
-                <div style={{flex: '1 0 0'}}></div>
-                <Button color="primary" onClick={() => props.onDismiss()}>{ t("button.close") }</Button>
+                <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
             </DialogActions>
         </Dialog>
     )

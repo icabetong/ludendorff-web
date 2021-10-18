@@ -1,17 +1,27 @@
+import { useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { useTheme, makeStyles } from "@material-ui/core/styles";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    LinearProgress,
+    useMediaQuery,
+    useTheme,
+    makeStyles
+} from "@material-ui/core";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Category } from "./Category";
-import CategoryList from "./CategoryList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { Category } from "./Category";
+import CategoryEditorComponent from "./CategoryEditor";
+import CategoryList from "./CategoryList";
+import { 
+    CategoryEditorActionType, 
+    categoryEditorInitialState, 
+    categoryEditorReducer 
+} from "./CategoryEditorReducer";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -33,47 +43,57 @@ type CategoryScreenProps = {
     onPreviousBatch: () => void,
     onNextBatch: () => void,
     onDismiss: () => void,
-    onAddItem: () => void,
-    onSelectItem: (category: Category) => void,
-    onDeleteItem: (category: Category) => void,
 }
 
 const CategoryScreen = (props: CategoryScreenProps) => {
     const { t } = useTranslation();
+    const [state, dispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { canRead, canWrite } = usePermissions();
     const classes = useStyles();
 
+    const onEditorCreate = () => dispatch({ type: CategoryEditorActionType.CREATE })
+    const onEditorDismiss = () => dispatch({ type: CategoryEditorActionType.DISMISS })
+    const onEditorUpdate = (category: Category) => dispatch({ type: CategoryEditorActionType.UPDATE, payload: category })
+
     return (
-        <Dialog
-            fullScreen={isMobile}
-            fullWidth={true}
-            maxWidth="xs"
-            open={props.isOpen}
-            onClose={props.onDismiss}>
-            <DialogTitle>{ t("navigation.categories") }</DialogTitle>
-            <DialogContent dividers={true} className={classes.root}>
-                { canRead 
-                    ? !props.isLoading
-                        ? <CategoryList 
-                            hasPrevious={props.hasPrevious}
-                            hasNext={props.hasNext}
-                            onPrevious={props.onPreviousBatch}
-                            onNext={props.onNextBatch}
-                            categories={props.categories} 
-                            onItemSelect={props.onSelectItem}
-                            onItemRemove={props.onDeleteItem}/>
-                        : <LinearProgress/>
-                    :  <ErrorNoPermissionState/>
-                }
-            </DialogContent>
-            <DialogActions>
-                <Button color="primary" onClick={props.onAddItem} disabled={!canWrite}>{ t("button.add") }</Button>
-                <div style={{flex: '1 0 0'}}></div>
-                <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
-            </DialogActions>
-        </Dialog>
+        <>
+            <Dialog
+                fullScreen={isMobile}
+                fullWidth={true}
+                maxWidth="xs"
+                open={props.isOpen}
+                onClose={props.onDismiss}>
+                <DialogTitle>{ t("navigation.categories") }</DialogTitle>
+                <DialogContent dividers={true} className={classes.root}>
+                    { canRead 
+                        ? !props.isLoading
+                            ? <CategoryList 
+                                hasPrevious={props.hasPrevious}
+                                hasNext={props.hasNext}
+                                onPrevious={props.onPreviousBatch}
+                                onNext={props.onNextBatch}
+                                categories={props.categories} 
+                                onItemSelect={onEditorUpdate}/>
+                            : <LinearProgress/>
+                        :  <ErrorNoPermissionState/>
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={onEditorCreate} disabled={!canWrite}>{ t("button.add") }</Button>
+                    <div style={{flex: '1 0 0'}}></div>
+                    <Button color="primary" onClick={props.onDismiss}>{ t("button.close") }</Button>
+                </DialogActions>
+            </Dialog>
+            {   state.isOpen &&
+                <CategoryEditorComponent
+                    isOpen={state.isOpen}
+                    isCreate={state.isCreate}
+                    category={state.category}
+                    onDismiss={onEditorDismiss}/>
+            }
+        </>
     )
 }
 export default CategoryScreen;
