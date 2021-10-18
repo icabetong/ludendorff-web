@@ -253,18 +253,6 @@ const UserScreen = (props: UserScreenProps) => {
         })
     }
 
-    const onUserDepartmentSelected = (department: Department) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.department = minimizeDepartment(department);
-        setDepartmentPickerOpen(false);
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        })
-    }
-
     const onUserEditorCommit = () => {
         let user = editorState.user;
         if (user === undefined)
@@ -363,15 +351,10 @@ const UserScreen = (props: UserScreenProps) => {
     );
 
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
-    const [isDepartmentPickerOpen, setDepartmentPickerOpen] = useState(false);
-    
     const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
 
     const onDepartmentView = () => { setDepartmentOpen(true) }
     const onDepartmentDismiss = () => { setDepartmentOpen(false) }
-
-    const onDepartmentPickerView = () => { setDepartmentPickerOpen(true) }
-    const onDepartmentPickerDismiss = () => { setDepartmentPickerOpen(false) }
 
     const onDepartmentItemSelected = (department: Department) => {
         departmentEditorDispatch({
@@ -457,6 +440,7 @@ const UserScreen = (props: UserScreenProps) => {
 
             <UserEditor
                 isOpen={editorState.isOpen}
+                isCreate={editorState.isCreate}
                 id={editorState.user?.userId}
                 lastName={editorState.user?.lastName}
                 firstName={editorState.user?.firstName}
@@ -466,7 +450,6 @@ const UserScreen = (props: UserScreenProps) => {
                 department={editorState.user?.department}
                 onCancel={onUserEditorDismiss}
                 onSubmit={onUserEditorCommit}
-                onDepartmentSelect={onDepartmentPickerView}
                 onLastNameChanged={onUserEditorLastNameChanged}
                 onFirstNameChanged={onUserEditorFirstNameChanged}
                 onEmailChanged={onUserEditorEmailAddressChanged}
@@ -495,18 +478,6 @@ const UserScreen = (props: UserScreenProps) => {
                 onDismiss={onDepartmentDismiss}
                 onAddItem={onDepartmentEditorView}
                 onSelectItem={onDepartmentItemSelected}/>
-
-            <DepartmentPicker
-                isOpen={isDepartmentPickerOpen}
-                departments={departments}
-                isLoading={isDepartmentsLoading}
-                hasPrevious={atDepartmentStart}
-                hasNext={atDepartmentEnd}
-                onPrevious={getPreviousDepartments}
-                onNext={getNextDepartments}
-                onDismiss={onDepartmentPickerDismiss}
-                onAddItem={onDepartmentEditorView}
-                onSelectItem={onUserDepartmentSelected}/>
 
             <ConfirmationDialog
                 isOpen={modifyState.isRequest}

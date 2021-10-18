@@ -36,8 +36,7 @@ type DepartmentPickerProps = {
     hasNext: boolean,
     onPrevious: () => void,
     onNext: () => void,
-    onDismiss: () => void,
-    onAddItem: () => void,
+    onDismiss: () => void
     onSelectItem: (department: Department) => void
 }
 
@@ -71,8 +70,6 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
                 }
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.onAddItem()} disabled={!canWrite}>{ t("button.add") }</Button>
-                <div style={{flex: '1 0 0'}}></div>
                 <Button color="primary" onClick={() => props.onDismiss()}>{ t("button.close") }</Button>
             </DialogActions>
         </Dialog>

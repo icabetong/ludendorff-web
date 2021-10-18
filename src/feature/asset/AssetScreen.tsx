@@ -269,17 +269,15 @@ const AssetScreen = (props: AssetScreenProps) => {
                 isCreate={editorState.isCreate}
                 asset={editorState.asset}
                 onDismiss={onAssetEditorDismiss}/>
-            { isCategoryOpen &&
-                <CategoryScreen
-                    isOpen={isCategoryOpen}
-                    categories={categories}
-                    isLoading={isCategoriesLoading}
-                    hasPrevious={atCategoryStart}
-                    hasNext={atCategoryEnd}
-                    onPreviousBatch={getPreviousCategories}
-                    onNextBatch={getNextCategories}
-                    onDismiss={onCategoryListDismiss}/>
-            }
+            <CategoryScreen
+                isOpen={isCategoryOpen}
+                categories={categories}
+                isLoading={isCategoriesLoading}
+                hasPrevious={atCategoryStart}
+                hasNext={atCategoryEnd}
+                onPreviousBatch={getPreviousCategories}
+                onNextBatch={getNextCategories}
+                onDismiss={onCategoryListDismiss}/>
             { asset &&
                 <ConfirmationDialog
                     isOpen={asset !== undefined}

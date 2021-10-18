@@ -34,7 +34,7 @@ export const userEditorReducer = (state: UserEditorState, action: UserEditorActi
             }
         case UserEditorActionType.CREATE:
             return {
-                user: payload,
+                user: undefined,
                 isCreate: true,
                 isOpen: true
             }

@@ -84,7 +84,7 @@ const AssetEditor = (props: AssetEditorProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
     const [category, setCategory] = useState<Category | undefined>(undefined);
-    const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? props.asset?.specifications : new Map());
+    const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
     const [isPickerOpen, setPickerOpen] = useState(false);
     const [isQRCodeOpen, setQRCodeOpen] = useState(false);
     const [state, dispatch] = useReducer(specificationEditorReducer, specificationEditorInitialState)
