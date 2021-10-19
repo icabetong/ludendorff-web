@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
     Button,
     Card,
@@ -24,7 +24,7 @@ import {
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 
-import { User, Permission } from "./User";
+import { User, Permission, UserRepository } from "./User";
 import { Department, DepartmentCore, minimize } from "../department/Department";
 import DepartmentPicker from "../department/DepartmentPicker";
 import { usePagination } from "../../shared/pagination";
@@ -32,6 +32,7 @@ import {
     departmentCollection,
     departmentName
 } from "../../shared/const";
+import { newId } from "../../shared/utils";
 import { firestore } from "../..";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,42 +60,61 @@ type UserEditorProps = {
     isOpen: boolean,
     isCreate: boolean,
     user?: User,
-    id?: string,
-    lastName?: string,
-    firstName?: string,
-    email?: string,
-    permissions: number[],
-    position?: string,
-    department?: DepartmentCore,
-    onCancel: () => void,
-    onSubmit: () => void,
-    onLastNameChanged: (lastName: string) => void,
-    onFirstNameChanged: (firstName: string) => void,
-    onEmailChanged: (email: string) => void,
-    onPermissionsChanged: (permissions: number[]) => void,
-    onPositionChanged: (position: string) => void
+    onDismiss: () => void,
 }
 
 type FormValues = {
     lastName: string,
     firstName: string,
     email: string,
-    permissions: number[],
-    position: string
+    position: string,
+    permissionRead: boolean,
+    permissionWrite: boolean,
+    permissionDelete: boolean,
+    permissionManageUsers: boolean,
+    permissionAdmin: boolean
 }
 
 const UserEditor = (props: UserEditorProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
     const theme = useTheme();
+    const { enqueueSnackbar } = useSnackbar();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
     const [isPickerOpen, setPickerOpen] = useState(false);
     const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department)
-    const [permissions, setPermissions] = useState<number[]>(props.user?.permissions !== undefined ? props.user?.permissions : []);
 
     const onSubmit = (data: FormValues) => {
-        console.log(data)
+        const permissions = [];
+        if (data.permissionRead) permissions.push(Permission.READ)
+        if (data.permissionWrite) permissions.push(Permission.WRITE)
+        if (data.permissionDelete) permissions.push(Permission.DELETE)
+        if (data.permissionManageUsers) permissions.push(Permission.MANAGE_USERS)
+        if (data.permissionAdmin) permissions.push(Permission.ADMINISTRATIVE)
+
+        const user: User = {
+            userId: props.user !== undefined ? props.user?.userId : newId(),
+            department: department,
+            disabled: props.user !== undefined ? props.user?.disabled : false,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            position: data.position,
+            permissions: permissions
+        }
+
+        if (props.isCreate) {
+            UserRepository.create(user)
+                .then(() => enqueueSnackbar(t("feedback.user_created")))
+                .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
+                .finally(props.onDismiss)
+        } else {
+            UserRepository.update(user)
+                .then(() => enqueueSnackbar(t("feedback.user_updated")))
+                .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
+                .finally(props.onDismiss)
+        }
     }
 
     const onPickerView = () => setPickerOpen(true);
@@ -102,56 +122,17 @@ const UserEditor = (props: UserEditorProps) => {
 
     const onDepartmentSelected = (department: Department) => {
         setDepartment(minimize(department))
+        onPickerDismiss()
     }
 
-    const {
-        items: departments,
-        isLoading: isDepartmentsLoading,
-        isStart: atDepartmentStart,
-        isEnd: atDepartmentEnd,
-        getPrev: getPreviousDepartments,
-        getNext: getNextDepartments,
-    } = usePagination<Department>(
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
         firestore
             .collection(departmentCollection)
             .orderBy(departmentName, "asc"), { limit: 15 } 
     );
 
     const hasPermission = (permission: Permission) => {
-        return permissions.includes(permission);
-    }
-
-    const onPermissionsChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const isChecked = event.target.checked;
-        let _permissions = permissions;
-        switch(event.target.name) {
-            case "editor-read": 
-                if (isChecked)
-                    _permissions.push(Permission.READ);
-                else _permissions = _permissions.filter((v: number) => v !== Permission.READ);
-                break;
-            case "editor-write":
-                if (isChecked)
-                    _permissions.push(Permission.WRITE);
-                else _permissions = _permissions.filter((v: number) => v !== Permission.WRITE);
-                break;
-            case "editor-delete":
-                if (isChecked)
-                    _permissions.push(Permission.DELETE);
-                else _permissions = _permissions.filter((v: number) => v !== Permission.DELETE);
-                break;
-            case "editor-manage-users":
-                if (isChecked)
-                    _permissions.push(Permission.MANAGE_USERS);
-                else _permissions = _permissions.filter((v: number) => v !== Permission.MANAGE_USERS);
-                break;
-            case "editor-administrative":
-                if (isChecked)
-                    _permissions.push(Permission.ADMINISTRATIVE);
-                else _permissions = _permissions.filter((v: number) => v !== Permission.ADMINISTRATIVE);
-                break;
-        }
-        setPermissions(_permissions)
+        return props.user?.permissions.includes(permission);
     }
 
     return (
@@ -161,7 +142,7 @@ const UserEditor = (props: UserEditorProps) => {
                 fullWidth={true}
                 maxWidth={isMobile ? "xs" : "md"}
                 open={props.isOpen}
-                onClose={() => props.onCancel()}>
+                onClose={() => props.onDismiss()}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <DialogTitle>{t("user_details")}</DialogTitle>
                     <DialogContent dividers={true}>
@@ -173,7 +154,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         id="lastName"
                                         type="text"
                                         label={ t("field.last_name") }
-                                        defaultValue={props.lastName}
+                                        defaultValue={props.user?.lastName}
                                         className={classes.textField}
                                         error={errors.lastName !== undefined}
                                         helperText={errors.lastName?.message !== undefined ? t(errors.lastName?.message) : undefined}
@@ -183,7 +164,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         id="firstName"
                                         type="text"
                                         label={ t("field.first_name") }
-                                        defaultValue={props.firstName}
+                                        defaultValue={props.user?.firstName}
                                         className={classes.textField}
                                         error={errors.firstName !== undefined}
                                         helperText={errors.firstName?.message !== undefined ? t(errors.firstName?.message) : undefined}
@@ -193,7 +174,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         id="email"
                                         type="text"
                                         label={ t("field.email") }
-                                        value={props.email}
+                                        defaultValue={props.user?.email}
                                         className={classes.textField}
                                         error={errors.email !== undefined}
                                         helperText={errors.email?.message !== undefined ? t(errors.email?.message) : undefined}
@@ -203,7 +184,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         id="position"
                                         type="text"
                                         label={ t("field.position") }
-                                        value={props.position}
+                                        defaultValue={props.user?.position}
                                         className={classes.textField}
                                         error={errors.position !== undefined}
                                         helperText={errors.position?.message !== undefined ? t(errors.position?.message) : undefined}
@@ -215,7 +196,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         </FormLabel>
                                         <ListItem button onClick={onPickerView}>
                                             <Typography variant="body2">
-                                                { department?.name !== undefined ? department?.name : t("not_set")  }
+                                                { department !== undefined ? department?.name : t("not_set")  }
                                             </Typography>
                                         </ListItem>
                                     </FormControl>
@@ -229,46 +210,72 @@ const UserEditor = (props: UserEditorProps) => {
                                         <FormControlLabel
                                             label={t("permission.read")}
                                             control={
-                                                <Checkbox 
-                                                    checked={hasPermission(Permission.READ)} 
-                                                    onChange={onPermissionsChanged}
-                                                    name="editor-read"/>
+                                                <Controller
+                                                    name="permissionRead"
+                                                    control={control}
+                                                    render={({ field: { onChange, value } }) => (
+                                                        <Checkbox 
+                                                            defaultChecked={hasPermission(Permission.READ)}
+                                                            checked={value} 
+                                                            onChange={onChange}/>
+                                                    )} />
                                             }/>
                                         <FormControlLabel
                                             label={t("permission.write")}
                                             control={
-                                                <Checkbox 
-                                                    checked={hasPermission(Permission.WRITE)} 
-                                                    onChange={onPermissionsChanged}
-                                                    name="editor-write"/>
+                                                <Controller
+                                                    name="permissionWrite"
+                                                    control={control}
+                                                    render={({ field: { onChange, value }}) => (
+                                                        <Checkbox 
+                                                            defaultChecked={hasPermission(Permission.WRITE)}
+                                                            checked={value} 
+                                                            onChange={onChange}/>
+                                                    )}/>
                                             }/>
                                         <FormControlLabel
                                             label={t("permission.delete")}
                                             control={
-                                                <Checkbox 
-                                                    checked={hasPermission(Permission.DELETE)} 
-                                                    onChange={onPermissionsChanged}
-                                                    name="editor-delete"/>
+                                                <Controller
+                                                    name="permissionDelete"
+                                                    control={control}
+                                                    render={({ field: { onChange, value }}) => (
+                                                        <Checkbox 
+                                                            defaultChecked={hasPermission(Permission.DELETE)}
+                                                            checked={value} 
+                                                            onChange={onChange}/>
+                                                    )} />
+                                                
                                             }/>
                                         <FormControlLabel
                                             label={t("permission.manage_users")}
                                             control={
-                                                <Checkbox 
-                                                    checked={hasPermission(Permission.MANAGE_USERS)} 
-                                                    onChange={onPermissionsChanged}
-                                                    name="editor-manage-users"/>
+                                                <Controller
+                                                    name="permissionManageUsers"
+                                                    control={control}
+                                                    render={({ field: { onChange, value }}) => (
+                                                        <Checkbox 
+                                                            defaultChecked={hasPermission(Permission.MANAGE_USERS)}
+                                                            checked={value} 
+                                                            onChange={onChange}/>
+                                                    )} />
                                             }/>
                                         <FormControlLabel
                                             label={t("permission.administrative")}
                                             control={
-                                                <Checkbox 
-                                                    checked={hasPermission(Permission.ADMINISTRATIVE)} 
-                                                    onChange={onPermissionsChanged}
-                                                    name="editor-administrative"/>
+                                                <Controller
+                                                    name="permissionAdmin"
+                                                    control={control}
+                                                    render={({ field: { onChange, value }}) => (
+                                                        <Checkbox
+                                                            defaultChecked={hasPermission(Permission.ADMINISTRATIVE)}
+                                                            checked={value} 
+                                                            onChange={onChange}/>
+                                                    )} />
                                             }/>
                                     </FormGroup>
                                 </FormControl>
-                                { props.permissions.includes(Permission.ADMINISTRATIVE) &&
+                                { props.user?.permissions.includes(Permission.ADMINISTRATIVE) &&
                                     <Card variant="outlined" className={classes.card}>
                                         {t("info.user_editor_admin_permission")}
                                     </Card>
@@ -279,19 +286,19 @@ const UserEditor = (props: UserEditorProps) => {
                     </DialogContent>
 
                     <DialogActions>
-                        <Button color="primary" onClick={props.onCancel}>{ t("cancel") }</Button>
+                        <Button color="primary" onClick={props.onDismiss}>{ t("cancel") }</Button>
                         <Button color="primary" type="submit">{ t("save") }</Button>
                     </DialogActions>
                 </form>
             </Dialog>
             <DepartmentPicker
                 isOpen={isPickerOpen}
-                departments={departments}
-                isLoading={isDepartmentsLoading}
-                hasPrevious={atDepartmentStart}
-                hasNext={atDepartmentEnd}
-                onPrevious={getPreviousDepartments}
-                onNext={getNextDepartments}
+                departments={items}
+                isLoading={isLoading}
+                hasPrevious={isStart}
+                hasNext={isEnd}
+                onPrevious={getPrev}
+                onNext={getNext}
                 onDismiss={onPickerDismiss}
                 onSelectItem={onDepartmentSelected}/>
         </>

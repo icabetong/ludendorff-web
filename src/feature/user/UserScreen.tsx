@@ -32,12 +32,11 @@ import UserList from "./UserList";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
-import { newId } from "../../shared/utils";
 
 import {
-    UserEditorActionType,
-    userEditorInitialState,
-    userEditorReducer
+    ActionType,
+    initialState,
+    reducer
 } from "./UserEditorReducer";
 
 import {
@@ -162,104 +161,15 @@ const UserScreen = (props: UserScreenProps) => {
             .orderBy(lastName, "asc"), { limit: 15 }
     )
 
-    const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     const onDataGridRowDoubleClick = (params: GridRowParams) => {
         onUserSelected(params.row as User)
     }
 
-    const onUserEditorView = () => {
-        editorDispatch({ 
-            type: UserEditorActionType.CREATE 
-        })
-    }
-
-    const onUserEditorDismiss = () => {
-        editorDispatch({
-            type: UserEditorActionType.DISMISS
-        })
-    }
-
-    const onUserEditorLastNameChanged = (lastName: string) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.lastName = lastName;
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        });
-    }
-
-    const onUserEditorFirstNameChanged = (firstName: string) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.firstName = firstName;
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        });
-    }
-
-    const onUserEditorEmailAddressChanged = (email: string) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.email = email;
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        })
-    }
-
-    const onUserEditorPermissionsChanged = (permissions: number[]) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.permissions = permissions;
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        })
-    }
-
-    const onUserEditorPositionChanged = (position: string) => {
-        let user = editorState.user;
-        if (user === undefined)
-            user = { userId: newId(), permissions: [], disabled: false }
-        user!.position = position;
-        editorDispatch({
-            type: UserEditorActionType.CHANGED,
-            payload: user
-        })
-    }
-
-    const onUserEditorCommit = () => {
-        let user = editorState.user;
-        if (user === undefined)
-            return;
-
-        if (editorState.isCreate) {
-            UserRepository.create(user)
-                .then(() => {
-                    enqueueSnackbar(t("feedback.user_created"));
-                }).catch(() => {
-                    enqueueSnackbar(t("feedback.user_create_error"));
-                }).finally(() => {
-                    editorDispatch({ type: UserEditorActionType.DISMISS })
-                })
-        } else {
-            UserRepository.update(user)
-                .then(() => {
-                    enqueueSnackbar(t("feedback.user_updated"))
-                }).catch(() => {
-                    enqueueSnackbar(t("feedback.user_update_error"))
-                }).finally(() => {
-                    editorDispatch({ type: UserEditorActionType.DISMISS })
-                })
-        }
-    }
+    const onUserEditorView = () => dispatch({ type: ActionType.CREATE })
+    const onUserEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+    
 
     const [removeState, removeDispatch] = useReducer(userRemoveReducer, userRemoveInitialState);
 
@@ -313,8 +223,8 @@ const UserScreen = (props: UserScreenProps) => {
     }
 
     const onUserSelected = (user: User) => {
-        editorDispatch({
-            type: UserEditorActionType.UPDATE,
+        dispatch({
+            type: ActionType.UPDATE,
             payload: user
         })
     }
@@ -382,22 +292,10 @@ const UserScreen = (props: UserScreenProps) => {
             }
 
             <UserEditor
-                isOpen={editorState.isOpen}
-                isCreate={editorState.isCreate}
-                id={editorState.user?.userId}
-                lastName={editorState.user?.lastName}
-                firstName={editorState.user?.firstName}
-                email={editorState.user?.email}
-                permissions={editorState.user?.permissions === undefined ? [] : editorState.user?.permissions}
-                position={editorState.user?.position}
-                department={editorState.user?.department}
-                onCancel={onUserEditorDismiss}
-                onSubmit={onUserEditorCommit}
-                onLastNameChanged={onUserEditorLastNameChanged}
-                onFirstNameChanged={onUserEditorFirstNameChanged}
-                onEmailChanged={onUserEditorEmailAddressChanged}
-                onPermissionsChanged={onUserEditorPermissionsChanged}
-                onPositionChanged={onUserEditorPositionChanged}/>
+                isOpen={state.isOpen}
+                isCreate={state.isCreate}
+                user={state.user}
+                onDismiss={onUserEditorDismiss}/>
 
             <DepartmentScreen
                 isOpen={isDepartmentOpen}

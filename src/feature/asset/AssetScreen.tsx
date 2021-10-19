@@ -1,4 +1,4 @@
-import { useState, useReducer, lazy } from "react";
+import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
     Box,
@@ -50,14 +50,14 @@ import {
 } from "../../shared/const";
 
 import {
-    AssetEditorActionType,
-    assetEditorInitialState,
-    assetEditorReducer
+    ActionType,
+    initialState,
+    reducer
 } from "./AssetEditorReducer";
 
+import AssetEditor from "./AssetEditor";
+import CategoryScreen from "../category/CategoryScreen";
 import ConfirmationDialog from "../shared/ItemRemoveDialog";
-const AssetEditor = lazy(() => import("./AssetEditor"));
-const CategoryScreen = lazy(() => import("../category/CategoryScreen"));
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -163,29 +163,22 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
     ];
 
-    const {
-        items: assets,
-        isLoading: isAssetsLoading,
-        isStart: atAssetStart,
-        isEnd: atAssetEnd,
-        getPrev: getPreviousAssets,
-        getNext: getNextAssets,
-    } = usePagination<Asset>(
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
         firestore
             .collection(assetCollection)
             .orderBy(assetName, "asc"), { limit: 15 }
     )
 
-    const [editorState, editorDispatch] = useReducer(assetEditorReducer, assetEditorInitialState);
-    const onAssetEditorDismiss = () => editorDispatch({ type: AssetEditorActionType.DISMISS })
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
 
     const onDataGridRowDoubleClicked = (params: GridRowParams) => {
         onAssetSelected(params.row as Asset);
     }
 
     const onAssetSelected = (asset: Asset) => {
-        editorDispatch({
-            type: AssetEditorActionType.UPDATE,
+        dispatch({
+            type: ActionType.UPDATE,
             payload: asset
         })
     }
@@ -205,7 +198,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                     : undefined
                 }
                 buttonIcon={PlusIcon}
-                buttonOnClick={() => editorDispatch({ type: AssetEditorActionType.CREATE }) }
+                buttonOnClick={() => dispatch({ type: ActionType.CREATE }) }
                 menuItems={[
                     <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
@@ -219,11 +212,11 @@ const AssetScreen = (props: AssetScreenProps) => {
                                     NoRowsOverlay: EmptyStateOverlay,
                                     Toolbar: GridToolbar
                                 }}
-                                rows={assets}
+                                rows={items}
                                 columns={columns}
                                 density={userPreference.density}
                                 pageSize={15}
-                                loading={isAssetsLoading}
+                                loading={isLoading}
                                 paginationMode="server"
                                 getRowId={(r) => r.assetId}
                                 onRowDoubleClick={onDataGridRowDoubleClicked}
@@ -231,27 +224,27 @@ const AssetScreen = (props: AssetScreenProps) => {
                         </div>
                     </Hidden>
                     <Hidden smUp>
-                        { !isAssetsLoading 
-                            ? assets.length < 1 
+                        { !isLoading 
+                            ? items.length < 1 
                                 ? <AssetEmptyState/>
-                                : <AssetList assets={assets} onItemSelect={onAssetSelected}/>
+                                : <AssetList assets={items} onItemSelect={onAssetSelected}/>
                             : <LinearProgress/>
                         }
                     </Hidden>
-                    { !atAssetStart && !atAssetEnd &&
+                    { !isStart && !isEnd &&
                         <PaginationController
-                            hasPrevious={atAssetStart}
-                            hasNext={atAssetEnd}
-                            getPrevious={getPreviousAssets}
-                            getNext={getNextAssets}/>
+                            hasPrevious={isStart}
+                            hasNext={isEnd}
+                            getPrevious={getPrev}
+                            getNext={getNext}/>
                     }
                 </>
                 : <ErrorNoPermissionState/>
             }
             <AssetEditor
-                isOpen={editorState.isOpen}
-                isCreate={editorState.isCreate}
-                asset={editorState.asset}
+                isOpen={state.isOpen}
+                isCreate={state.isCreate}
+                asset={state.asset}
                 onDismiss={onAssetEditorDismiss}/>
             <CategoryScreen
                 isOpen={isCategoryOpen}

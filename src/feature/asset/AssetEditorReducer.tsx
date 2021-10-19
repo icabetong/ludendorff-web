@@ -1,14 +1,13 @@
 import { Asset, Status } from "./Asset";
 import { newId } from "../../shared/utils";
 
-export enum AssetEditorActionType {
-    CHANGED = "changed",
+export enum ActionType {
     CREATE = "create",
     UPDATE = "update",
     DISMISS = "dismiss"
 }
 type AssetEditorAction = {
-    type: AssetEditorActionType,
+    type: ActionType,
     payload?: Asset
 }
 type AssetEditorState = {
@@ -16,32 +15,27 @@ type AssetEditorState = {
     isCreate: boolean,
     isOpen: boolean
 }
-export const assetEditorInitialState: AssetEditorState = {
+export const initialState: AssetEditorState = {
     asset: { assetId: newId(), status: Status.IDLE },
     isCreate: true,
     isOpen: false,
 }
-export const assetEditorReducer = (state: AssetEditorState, action: AssetEditorAction) => {
+export const reducer = (state: AssetEditorState, action: AssetEditorAction) => {
     const { type, payload } = action;
     switch(type) {
-        case AssetEditorActionType.CHANGED:
-            return {
-                ...state,
-                asset: payload
-            }
-        case AssetEditorActionType.CREATE:
+        case ActionType.CREATE:
             return {
                 ...state,
                 isCreate: true,
                 isOpen: true
             }
-        case AssetEditorActionType.UPDATE: 
+        case ActionType.UPDATE: 
             return {
                 asset: payload,
                 isCreate: false,
                 isOpen: true
             }
-        case AssetEditorActionType.DISMISS:
+        case ActionType.DISMISS:
             return {
                 ...state,
                 isOpen: false,
