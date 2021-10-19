@@ -33,7 +33,6 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
-import { Category } from "../category/Category";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 
@@ -43,13 +42,11 @@ import { formatDate } from "../../shared/utils";
 
 import {
     assetCollection,
-    categoryCollection,
     assetId,
     assetName,
     assetCategory,
     dateCreated,
     assetStatus,
-    categoryName
 } from "../../shared/const";
 
 import {
@@ -193,19 +190,6 @@ const AssetScreen = (props: AssetScreenProps) => {
         })
     }
 
-    const {
-        items: categories,
-        isLoading: isCategoriesLoading,
-        isStart: atCategoryStart,
-        isEnd: atCategoryEnd,
-        getPrev: getPreviousCategories,
-        getNext: getNextCategories
-    } = usePagination<Category>(
-        firestore
-            .collection(categoryCollection)
-            .orderBy(categoryName, "asc"), { limit: 15 }   
-    )
-
     const [isCategoryOpen, setCategoryOpen] = useState(false);
     const onCategoryListView = () => setCategoryOpen(true)
     const onCategoryListDismiss = () => setCategoryOpen(false)
@@ -271,12 +255,6 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onDismiss={onAssetEditorDismiss}/>
             <CategoryScreen
                 isOpen={isCategoryOpen}
-                categories={categories}
-                isLoading={isCategoriesLoading}
-                hasPrevious={atCategoryStart}
-                hasNext={atCategoryEnd}
-                onPreviousBatch={getPreviousCategories}
-                onNextBatch={getNextCategories}
                 onDismiss={onCategoryListDismiss}/>
             { asset &&
                 <ConfirmationDialog

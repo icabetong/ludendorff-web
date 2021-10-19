@@ -23,6 +23,12 @@ import {
     departmentEditorInitialState,
     departmentEditorReducer
 } from "./DepartmentEditorReducer";
+import {
+    departmentCollection,
+    departmentName
+} from "../../shared/const";
+import { usePagination } from "../../shared/pagination";
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -37,15 +43,7 @@ const useStyles = makeStyles(() => ({
 
 type DepartmentScreenProps = {
     isOpen: boolean,
-    departments: Department[],
-    isLoading: boolean,
-    hasPrevious: boolean,
-    hasNext: boolean,
-    onPrevious: () => void,
-    onNext: () => void,
-    onDismiss: () => void,
-    onAddItem: () => void,
-    onSelectItem: (department: Department) => void
+    onDismiss: () => void
 }
 
 const DepartmentScreen = (props: DepartmentScreenProps) => {
@@ -63,6 +61,12 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
         payload: department
     })
 
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
+        firestore
+            .collection(departmentCollection)
+            .orderBy(departmentName, "asc"), { limit: 15 } 
+    );
+
     return (
         <>
             <Dialog
@@ -74,13 +78,13 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                 <DialogTitle>{ t("navigation.departments") }</DialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
                     { canRead
-                        ? !props.isLoading
+                        ? !isLoading
                             ? <DepartmentList
-                                departments={props.departments}
-                                hasPrevious={props.hasPrevious}
-                                hasNext={props.hasNext}
-                                onPrevious={props.onPrevious}
-                                onNext={props.onNext}
+                                departments={items}
+                                hasPrevious={isStart}
+                                hasNext={isEnd}
+                                onPrevious={getPrev}
+                                onNext={getNext}
                                 onItemSelect={onEditorUpdate}/>
                             : <LinearProgress/>
                         : <ErrorNoPermissionState/>

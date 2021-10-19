@@ -45,7 +45,7 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const classes = useStyles();
-    const { canRead, canWrite } = usePermissions();
+    const { canRead } = usePermissions();
 
     return (
         <Dialog

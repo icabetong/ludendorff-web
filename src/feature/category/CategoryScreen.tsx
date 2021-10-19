@@ -22,6 +22,12 @@ import {
     categoryEditorInitialState, 
     categoryEditorReducer 
 } from "./CategoryEditorReducer";
+import {
+    categoryCollection,
+    categoryName
+} from "../../shared/const";
+import { usePagination } from "../../shared/pagination";
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -36,12 +42,6 @@ const useStyles = makeStyles(() => ({
 
 type CategoryScreenProps = {
     isOpen: boolean,
-    categories: Category[],
-    isLoading: boolean,
-    hasPrevious: boolean,
-    hasNext: boolean,
-    onPreviousBatch: () => void,
-    onNextBatch: () => void,
     onDismiss: () => void,
 }
 
@@ -52,6 +52,12 @@ const CategoryScreen = (props: CategoryScreenProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { canRead, canWrite } = usePermissions();
     const classes = useStyles();
+
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
+        firestore
+            .collection(categoryCollection)
+            .orderBy(categoryName, "asc"), { limit: 15 }   
+    )
 
     const onEditorCreate = () => dispatch({ type: CategoryEditorActionType.CREATE })
     const onEditorDismiss = () => dispatch({ type: CategoryEditorActionType.DISMISS })
@@ -68,13 +74,13 @@ const CategoryScreen = (props: CategoryScreenProps) => {
                 <DialogTitle>{ t("navigation.categories") }</DialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
                     { canRead 
-                        ? !props.isLoading
+                        ? !isLoading
                             ? <CategoryList 
-                                hasPrevious={props.hasPrevious}
-                                hasNext={props.hasNext}
-                                onPrevious={props.onPreviousBatch}
-                                onNext={props.onNextBatch}
-                                categories={props.categories} 
+                                categories={items}
+                                hasPrevious={isStart}
+                                hasNext={isEnd}
+                                onPrevious={getPrev}
+                                onNext={getNext} 
                                 onItemSelect={onEditorUpdate}/>
                             : <LinearProgress/>
                         :  <ErrorNoPermissionState/>

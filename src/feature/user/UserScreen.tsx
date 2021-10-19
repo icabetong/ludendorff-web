@@ -27,17 +27,12 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
-import { User, minimize, UserRepository } from "./User";
+import { User, UserRepository } from "./User";
 import UserList from "./UserList";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
-
-import { 
-    Department,
-    minimize as minimizeDepartment 
-} from "../department/Department";
 
 import {
     UserEditorActionType,
@@ -58,30 +53,20 @@ import {
 } from "./UserRemoveReducer";
 
 import {
-    DepartmentEditorActionType,
-    departmentEditorInitialState,
-    departmentEditorReducer
-} from "../department/DepartmentEditorReducer";
-
-import {
     userCollection,
-    departmentCollection,
     userId,
     firstName,
     lastName,
     email,
     position,
     department,
-    departmentName
 } from "../../shared/const";
 
 import ConfirmationDialog from "../shared/ItemRemoveDialog";
 
 const UserEditor = lazy(() => import("./UserEditor"));
-const UserPicker = lazy(() => import("./UserPicker"));
 
 const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
-const DepartmentPicker = lazy(() => import("../department/DepartmentPicker"));
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -178,9 +163,6 @@ const UserScreen = (props: UserScreenProps) => {
     )
 
     const [editorState, editorDispatch] = useReducer(userEditorReducer, userEditorInitialState);
-    const [isPickerOpen, setPickerOpen] = useState(false);
-
-    const onUserPickerDismiss = () => { setPickerOpen(false) }
 
     const onDataGridRowDoubleClick = (params: GridRowParams) => {
         onUserSelected(params.row as User)
@@ -337,49 +319,10 @@ const UserScreen = (props: UserScreenProps) => {
         })
     }
 
-    const {
-        items: departments,
-        isLoading: isDepartmentsLoading,
-        isStart: atDepartmentStart,
-        isEnd: atDepartmentEnd,
-        getPrev: getPreviousDepartments,
-        getNext: getNextDepartments,
-    } = usePagination<Department>(
-        firestore
-            .collection(departmentCollection)
-            .orderBy(departmentName, "asc"), { limit: 15 } 
-    );
-
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
-    const [departmentEditorState, departmentEditorDispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
 
     const onDepartmentView = () => { setDepartmentOpen(true) }
     const onDepartmentDismiss = () => { setDepartmentOpen(false) }
-
-    const onDepartmentItemSelected = (department: Department) => {
-        departmentEditorDispatch({
-            type: DepartmentEditorActionType.UPDATE,
-            payload: department
-        })
-    }
-
-    const onDepartmentManagerSelected = (user: User) => {
-        let department = departmentEditorState.department;
-        if (department === undefined)
-            department = { departmentId: newId(), count: 0 }
-        department!.manager = minimize(user);
-        setPickerOpen(false);
-        departmentEditorDispatch({
-            type: DepartmentEditorActionType.CHANGED,
-            payload: department,
-        })
-    }
-
-    const onDepartmentEditorView = () => {
-        departmentEditorDispatch({
-            type: DepartmentEditorActionType.CREATE
-        })
-    }
     
     return (
         <Box className={classes.root}>
@@ -456,28 +399,9 @@ const UserScreen = (props: UserScreenProps) => {
                 onPermissionsChanged={onUserEditorPermissionsChanged}
                 onPositionChanged={onUserEditorPositionChanged}/>
 
-            <UserPicker
-                isOpen={isPickerOpen}
-                users={users}
-                isLoading={isUsersLoading}
-                hasPrevious={atUserStart}
-                hasNext={atUserEnd}
-                onPrevious={getPreviousUsers}
-                onNext={getNextUsers}
-                onDismiss={onUserPickerDismiss}
-                onSelectItem={onDepartmentManagerSelected}/>
-
             <DepartmentScreen
                 isOpen={isDepartmentOpen}
-                departments={departments}
-                isLoading={isDepartmentsLoading}
-                hasPrevious={atDepartmentStart}
-                hasNext={atDepartmentEnd}
-                onPrevious={getPreviousDepartments}
-                onNext={getNextDepartments}
-                onDismiss={onDepartmentDismiss}
-                onAddItem={onDepartmentEditorView}
-                onSelectItem={onDepartmentItemSelected}/>
+                onDismiss={onDepartmentDismiss}/>
 
             <ConfirmationDialog
                 isOpen={modifyState.isRequest}
