@@ -12,6 +12,12 @@ import { usePermissions } from "../auth/AuthProvider";
 import { Request } from "./Request";
 import RequestList from "./RequestList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { usePagination } from "../../shared/pagination";
+import {
+    requestCollection,
+    requestedAssetName
+} from "../../shared/const";
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -33,8 +39,7 @@ type RequestScreenProps = {
     onPreviousBatch: () => void,
     onNextBatch: () => void,
     onDismiss: () => void,
-    onSelectItem: (request: Request) => void,
-    onDeleteItem: (request: Request) => void,
+    onSelectItem: (request: Request) => void
 }
 
 const RequestScreen = (props: RequestScreenProps) => {
@@ -43,6 +48,11 @@ const RequestScreen = (props: RequestScreenProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { isAdmin } = usePermissions();
     const classes = useStyles();
+
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
+        firestore.collection(requestCollection)
+            .orderBy(requestedAssetName, "asc"), { limit: 15 }
+    )
 
     return (
         <Dialog
@@ -54,15 +64,14 @@ const RequestScreen = (props: RequestScreenProps) => {
             <DialogTitle>{ t("navigation.requests") }</DialogTitle>
             <DialogContent dividers={true} className={classes.root}>
                 { isAdmin
-                    ? !props.isLoading
+                    ? !isLoading
                         ? <RequestList 
-                            hasPrevious={props.hasPrevious}
-                            hasNext={props.hasNext}
-                            onPrevious={props.onPreviousBatch}
-                            onNext={props.onNextBatch}
-                            requests={props.requests} 
-                            onItemSelect={props.onSelectItem}
-                            onItemRemove={props.onDeleteItem}/>
+                            requests={items}
+                            hasPrevious={isStart}
+                            hasNext={isEnd}
+                            onPrevious={getPrev}
+                            onNext={getNext}
+                            onItemSelect={props.onSelectItem}/>
                         : <LinearProgress/>
                     :  <ErrorNoPermissionState/>
                 }

@@ -6,7 +6,6 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { useSnackbar } from "notistack";
 
 import {
     PlusIcon,
@@ -20,7 +19,7 @@ import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
-import { useAuthState, usePermissions } from "../auth/AuthProvider";
+import { usePermissions } from "../auth/AuthProvider";
 import { Assignment } from "./Assignment";
 import AssignmentList from "./AssignmentList";
 import { Request } from "../requests/Request";
@@ -71,7 +70,6 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     const classes = useStyles();
     const { isAdmin } = usePermissions();
     const preferences = usePreferences();
-    const { enqueueSnackbar } = useSnackbar();
 
     const columns = [
         { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -169,13 +167,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     const onRequestListView = () => { setRequestListOpen(true) }
     const onRequestListDismiss = () => { setRequestListOpen(false) }
 
-    const onRequestItemSelected = (request: Request) => {
-
-    }
-
-    const onRequestItemConfirmRemove = (request: Request) => {
-
-    }
+    const onRequestItemSelected = (request: Request) => {}
 
     return (
         <Box className={classes.root}>
@@ -245,8 +237,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 onPreviousBatch={getPreviousRequests}
                 onNextBatch={getNextRequests}
                 onDismiss={onRequestListDismiss}
-                onSelectItem={onRequestItemSelected}
-                onDeleteItem={onRequestItemConfirmRemove}/>
+                onSelectItem={onRequestItemSelected}/>
 
         </Box>
     )
