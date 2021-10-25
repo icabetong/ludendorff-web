@@ -290,12 +290,13 @@ const UserScreen = (props: UserScreenProps) => {
                 </>
                 : <ErrorNoPermissionState/>
             }
-
-            <UserEditor
-                isOpen={state.isOpen}
-                isCreate={state.isCreate}
-                user={state.user}
-                onDismiss={onUserEditorDismiss}/>
+            { state.isOpen &&
+                <UserEditor
+                    isOpen={state.isOpen}
+                    isCreate={state.isCreate}
+                    user={state.user}
+                    onDismiss={onUserEditorDismiss}/>
+            }
 
             <DepartmentScreen
                 isOpen={isDepartmentOpen}

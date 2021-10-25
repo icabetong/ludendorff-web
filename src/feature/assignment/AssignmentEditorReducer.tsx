@@ -2,7 +2,6 @@ import { Assignment } from "./Assignment";
 import { newId } from "../../shared/utils";
 
 export enum AssignmentEditorActionType {
-    CHANGED = "changed",
     CREATE = "create",
     UPDATE = "update",
     DISMISS = "dismiss"
@@ -28,14 +27,9 @@ export const assignmentEditorReducer = (state: AssignmentEditorState, action: As
     const { type, payload } = action;
 
     switch(type) {
-        case AssignmentEditorActionType.CHANGED:
-            return {
-                ...state,
-                assignment: payload
-            }
         case AssignmentEditorActionType.CREATE: 
             return {
-                ...state,
+                assignment: undefined,
                 isCreate: true,
                 isOpen: true
             }

@@ -15,8 +15,8 @@ export type Assignment = {
     assignmentId: string
     asset?: AssetCore
     user?: UserCore
-    dateAssigned?: Timestamp
-    dateReturned?: Timestamp
+    dateAssigned?: Timestamp | undefined
+    dateReturned?: Timestamp | undefined
     location?: string
     remarks?: string
 }

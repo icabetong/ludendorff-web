@@ -50,6 +50,11 @@ const AssetPicker = (props: AssetPickerProps) => {
     const classes = useStyles();
     const { canRead } = usePermissions();
 
+    const onSelect = (asset: Asset) => {
+        props.onSelectItem(asset);
+        props.onDismiss();
+    }
+
     return (
         <Dialog
             fullScreen={isMobile}
@@ -65,7 +70,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                         ? <>
                             <AssetList
                                 assets={props.assets}
-                                onItemSelect={props.onSelectItem}/>
+                                onItemSelect={onSelect}/>
                             {  !props.hasNext &&
                                 <PaginationController
                                     hasPrevious={props.hasPrevious}

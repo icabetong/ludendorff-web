@@ -50,6 +50,11 @@ const UserPicker = (props: UserPickerProps) => {
     const classes = useStyles();
     const { canRead } = usePermissions();
 
+    const onSelect = (user: User) => {
+        props.onSelectItem(user);
+        props.onDismiss();
+    }
+
     return (
         <Dialog
             fullScreen={isMobile}
@@ -65,7 +70,7 @@ const UserPicker = (props: UserPickerProps) => {
                             ? <>
                                 <UserList
                                     users={props.users}
-                                    onItemSelect={props.onSelectItem}/>
+                                    onItemSelect={onSelect}/>
                                     { !props.hasNext &&
                                         <PaginationController
                                             hasPrevious={props.hasPrevious}
