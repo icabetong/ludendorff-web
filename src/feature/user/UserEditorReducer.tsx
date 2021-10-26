@@ -6,23 +6,23 @@ export enum ActionType {
     UPDATE = "update",
     DISMISS = "dismiss"
 }
-type UserEditorAction = {
+type Action = {
     type: ActionType,
     payload?: User
 }
-type UserEditorState = {
+type State = {
     user?: User,
     isCreate: boolean,
     isOpen: boolean
 }
 
-export const initialState: UserEditorState = {
+export const initialState: State = {
     user: { userId: newId(), permissions: [], disabled: false },
     isCreate: true,
     isOpen: false
 }
 
-export const reducer = (state: UserEditorState, action: UserEditorAction): UserEditorState => {
+export const reducer = (state: State, action: Action): State => {
     const { type, payload } = action;
 
     switch(type) {

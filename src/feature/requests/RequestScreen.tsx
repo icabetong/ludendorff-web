@@ -13,11 +13,11 @@ import {
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 
-import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { Request, RequestRepository } from "./Request";
 import RequestList from "./RequestList";
-import { minimize } from "../user/User";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { minimize } from "../user/User";
 import { usePagination } from "../../shared/pagination";
 import {
     requestCollection,

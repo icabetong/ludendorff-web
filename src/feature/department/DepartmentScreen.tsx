@@ -12,21 +12,13 @@ import {
     makeStyles
 } from "@material-ui/core";
 
-import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
-import DepartmentList from "./DepartmentList";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
-
 import DepartmentEditor from "./DepartmentEditor";
-import {
-    DepartmentEditorActionType,
-    departmentEditorInitialState,
-    departmentEditorReducer
-} from "./DepartmentEditorReducer";
-import {
-    departmentCollection,
-    departmentName
-} from "../../shared/const";
+import { ActionType, initialState, reducer } from "./DepartmentEditorReducer";
+import DepartmentList from "./DepartmentList";
+import { usePermissions } from "../auth/AuthProvider";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { departmentCollection, departmentName } from "../../shared/const";
 import { usePagination } from "../../shared/pagination";
 import { firestore } from "../../index";
 
@@ -52,12 +44,12 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const classes = useStyles();
     const { canRead, canWrite } = usePermissions();
-    const [state, dispatch] = useReducer(departmentEditorReducer, departmentEditorInitialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
     
-    const onEditorCreate = () => dispatch({ type: DepartmentEditorActionType.CREATE })
-    const onEditorDismiss = () => dispatch({ type: DepartmentEditorActionType.DISMISS })
+    const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
+    const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
     const onEditorUpdate = (department: Department) => dispatch({
-        type: DepartmentEditorActionType.UPDATE,
+        type: ActionType.UPDATE,
         payload: department
     })
 

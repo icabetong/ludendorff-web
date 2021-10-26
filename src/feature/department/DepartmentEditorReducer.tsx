@@ -1,50 +1,44 @@
 import { Department } from "./Department";
 import { newId } from "../../shared/utils";
 
-export enum DepartmentEditorActionType {
-    CHANGED = "changed",
+export enum ActionType {
     CREATE = "create",
     UPDATE = "update",
     DISMISS = "dismiss"
 }
-type DepartmentEditorAction = {
-    type: DepartmentEditorActionType,
+type Action = {
+    type: ActionType,
     payload?: Department
 }
-type DepartmentEditorState = {
+type State = {
     department?: Department,
     isCreate: boolean,
     isOpen: boolean
 }
 
-export const departmentEditorInitialState: DepartmentEditorState = {
+export const initialState: State = {
     department: { departmentId: newId(), count: 0 },
     isCreate: true,
     isOpen: false
 }
 
-export const departmentEditorReducer = (state: DepartmentEditorState, action: DepartmentEditorAction): DepartmentEditorState => {
+export const reducer = (state: State, action: Action): State => {
     const { type, payload } = action;
 
     switch(type) {
-        case DepartmentEditorActionType.CHANGED: 
-            return {
-                ...state,
-                department: payload
-            }
-        case DepartmentEditorActionType.CREATE:
+        case ActionType.CREATE:
             return {
                 department: undefined,
                 isCreate: true,
                 isOpen: true
             }
-        case DepartmentEditorActionType.UPDATE:
+        case ActionType.UPDATE:
             return {
                 department: payload,
                 isCreate: true,
                 isOpen: true
             }
-        case DepartmentEditorActionType.DISMISS:
+        case ActionType.DISMISS:
             return {
                 ...state,
                 isOpen: false,

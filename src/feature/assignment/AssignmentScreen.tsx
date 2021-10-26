@@ -50,13 +50,8 @@ import {
     location
 } from "../../shared/const";
 
-import {
-    AssignmentEditorActionType,
-    assignmentEditorInitialState,
-    assignmentEditorReducer
-} from "./AssignmentEditorReducer";
-
 import AssignmentEditor from './AssignmentEditor';
+import { ActionType, initialState, reducer } from "./AssignmentEditorReducer";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 const useStyles = makeStyles(() => ({
@@ -149,7 +144,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             .orderBy(assignmentAssetName, "asc"), { limit: 15 }
     );
 
-    const [editorState, editorDispatch] = useReducer(assignmentEditorReducer, assignmentEditorInitialState);
+    const [editorState, editorDispatch] = useReducer(reducer, initialState);
     const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
 
     const onRemoveInvoke = (assignment: Assignment) => setAssignment(assignment);
@@ -166,12 +161,12 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
 
     const onDataGridRowDoubleClicked = (params: GridRowParams) => onAssignmentSelected(params.row as Assignment);
     
-    const onAssignmentEditorView = () => editorDispatch({ type: AssignmentEditorActionType.CREATE })
-    const onAssignmentEditorDismiss = () => editorDispatch({ type: AssignmentEditorActionType.DISMISS })
+    const onAssignmentEditorView = () => editorDispatch({ type: ActionType.CREATE })
+    const onAssignmentEditorDismiss = () => editorDispatch({ type: ActionType.DISMISS })
 
     const onAssignmentSelected = (assignment: Assignment) => {
         editorDispatch({
-            type: AssignmentEditorActionType.UPDATE,
+            type: ActionType.UPDATE,
             payload: assignment
         })
     }

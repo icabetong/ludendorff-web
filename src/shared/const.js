@@ -54,3 +54,7 @@ export const remarks = "remarks";
 export const requestId = "requestId";
 export const requestedAsset = "asset";
 export const requestedAssetName = `${requestedAsset}.${assetName}`;
+export const petitioner = "petitioner"
+export const petitionerId = `${petitioner}.${userId}`;
+export const endorser = "endorser"
+export const endorserId = `${endorser}.${userId}`

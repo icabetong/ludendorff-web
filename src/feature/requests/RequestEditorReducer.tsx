@@ -1,5 +1,4 @@
-import { Asset, Status } from "./Asset";
-import { newId } from "../../shared/utils";
+import { Request } from "./Request";
 
 export enum ActionType {
     CREATE = "create",
@@ -8,38 +7,41 @@ export enum ActionType {
 }
 type Action = {
     type: ActionType,
-    payload?: Asset
+    payload?: Request,
 }
 type State = {
-    asset?: Asset,
+    request?: Request,
     isCreate: boolean,
     isOpen: boolean
 }
+
 export const initialState: State = {
-    asset: { assetId: newId(), status: Status.IDLE },
-    isCreate: true,
+    isCreate: false,
     isOpen: false,
+    request: undefined,
 }
+
 export const reducer = (state: State, action: Action) => {
     const { type, payload } = action;
+
     switch(type) {
         case ActionType.CREATE:
             return {
-                ...state,
+                request: undefined,
                 isCreate: true,
-                isOpen: true
+                isOpen: true,
             }
-        case ActionType.UPDATE: 
+        case ActionType.UPDATE:
             return {
-                asset: payload,
+                request: payload,
                 isCreate: false,
                 isOpen: true
             }
         case ActionType.DISMISS:
             return {
-                ...state,
+                request: undefined,
                 isOpen: false,
-                asset: undefined
+                isCreate: false
             }
         default: return state;
     }

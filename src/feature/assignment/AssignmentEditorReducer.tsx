@@ -1,45 +1,45 @@
 import { Assignment } from "./Assignment";
 import { newId } from "../../shared/utils";
 
-export enum AssignmentEditorActionType {
+export enum ActionType {
     CREATE = "create",
     UPDATE = "update",
     DISMISS = "dismiss"
 }
 
-type AssignmentEditorAction = {
-    type: AssignmentEditorActionType,
+type Action = {
+    type: ActionType,
     payload?: Assignment
 }
-type AssignmentEditorState = {
+type State = {
     assignment?: Assignment,
     isCreate: boolean,
     isOpen: boolean
 }
 
-export const assignmentEditorInitialState: AssignmentEditorState = {
+export const initialState: State = {
     assignment: { assignmentId: newId() },
     isCreate: true,
     isOpen: false
 }
 
-export const assignmentEditorReducer = (state: AssignmentEditorState, action: AssignmentEditorAction): AssignmentEditorState => {
+export const reducer = (state: State, action: Action): State => {
     const { type, payload } = action;
 
     switch(type) {
-        case AssignmentEditorActionType.CREATE: 
+        case ActionType.CREATE: 
             return {
                 assignment: undefined,
                 isCreate: true,
                 isOpen: true
             }
-        case AssignmentEditorActionType.UPDATE:
+        case ActionType.UPDATE:
             return {
                 assignment: payload,
                 isCreate: false,
                 isOpen: true
             }
-        case AssignmentEditorActionType.DISMISS:
+        case ActionType.DISMISS:
             return {
                 ...state,
                 isOpen: false,

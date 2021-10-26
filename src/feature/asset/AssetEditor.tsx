@@ -31,20 +31,12 @@ import { Category, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
+import { ActionType, initialState, reducer } from "../specs/SpecificationEditorReducer";
 import SpecificationList from "../specs/SpecificationList";
 import { usePagination } from "../../shared/pagination";
 import { newId } from "../../shared/utils";
-import {
-    categoryCollection,
-    categoryName
-} from "../../shared/const";
+import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
-
-import {
-    SpecificationEditorActionType,
-    specificationEditorInitialState,
-    specificationEditorReducer
-} from "../specs/SpecificationEditorReducer";
 
 const useStyles = makeStyles((theme) => ({
     textField: {
@@ -87,7 +79,7 @@ const AssetEditor = (props: AssetEditorProps) => {
     const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
     const [isPickerOpen, setPickerOpen] = useState(false);
     const [isQRCodeOpen, setQRCodeOpen] = useState(false);
-    const [state, dispatch] = useReducer(specificationEditorReducer, specificationEditorInitialState)
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     const onPickerView = () => setPickerOpen(true);
     const onPickerDismiss = () => setPickerOpen(false);
@@ -95,10 +87,10 @@ const AssetEditor = (props: AssetEditorProps) => {
     const onQRCodeView = () => setQRCodeOpen(true);
     const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-    const onEditorCreate = () => dispatch({ type: SpecificationEditorActionType.CREATE })
-    const onEditorDismiss = () => dispatch({ type: SpecificationEditorActionType.DISMISS })
+    const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
+    const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
     const onEditorUpdate = (specification: [string, string]) => dispatch({
-        type: SpecificationEditorActionType.UPDATE,
+        type: ActionType.UPDATE,
         payload: specification
     })
 

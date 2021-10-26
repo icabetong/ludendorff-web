@@ -17,15 +17,8 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Category } from "./Category";
 import CategoryEditorComponent from "./CategoryEditor";
 import CategoryList from "./CategoryList";
-import { 
-    CategoryEditorActionType, 
-    categoryEditorInitialState, 
-    categoryEditorReducer 
-} from "./CategoryEditorReducer";
-import {
-    categoryCollection,
-    categoryName
-} from "../../shared/const";
+import { ActionType, initialState, reducer } from "./CategoryEditorReducer";
+import { categoryCollection, categoryName } from "../../shared/const";
 import { usePagination } from "../../shared/pagination";
 import { firestore } from "../../index";
 
@@ -47,7 +40,7 @@ type CategoryScreenProps = {
 
 const CategoryScreen = (props: CategoryScreenProps) => {
     const { t } = useTranslation();
-    const [state, dispatch] = useReducer(categoryEditorReducer, categoryEditorInitialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { canRead, canWrite } = usePermissions();
@@ -59,9 +52,9 @@ const CategoryScreen = (props: CategoryScreenProps) => {
             .orderBy(categoryName, "asc"), { limit: 15 }   
     )
 
-    const onEditorCreate = () => dispatch({ type: CategoryEditorActionType.CREATE })
-    const onEditorDismiss = () => dispatch({ type: CategoryEditorActionType.DISMISS })
-    const onEditorUpdate = (category: Category) => dispatch({ type: CategoryEditorActionType.UPDATE, payload: category })
+    const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
+    const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+    const onEditorUpdate = (category: Category) => dispatch({ type: ActionType.UPDATE, payload: category })
 
     return (
         <>
