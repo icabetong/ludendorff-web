@@ -1,15 +1,24 @@
-import { useState, useReducer, lazy } from "react";
+import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import Hidden from "@material-ui/core/Hidden";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import MenuItem from "@material-ui/core/MenuItem";
-import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams } from "@material-ui/data-grid";
-import { makeStyles } from "@material-ui/core/styles";
-
 import {
-    PlusIcon,
-    IdentificationIcon
+    Box,
+    Hidden,
+    LinearProgress,
+    MenuItem,
+    makeStyles
+} from "@material-ui/core";
+import { 
+    DataGrid, 
+    GridOverlay, 
+    GridRowParams, 
+    GridValueGetterParams, 
+    GridCellParams 
+} from "@material-ui/data-grid";
+import { useSnackbar } from "notistack";
+import { 
+    PlusIcon, 
+    IdentificationIcon, 
+    TrashIcon 
 } from "@heroicons/react/outline";
 
 import ComponentHeader from "../../components/ComponentHeader";
@@ -17,12 +26,12 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
+import HeroIconButton from "../../components/HeroIconButton";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Assignment } from "./Assignment";
+import { Assignment, AssignmentRepository } from "./Assignment";
 import AssignmentList from "./AssignmentList";
-import { Request } from "../requests/Request";
 import RequestScreen from "../requests/RequestScreen"; 
 import { usePreferences } from "../settings/Preference";
 
@@ -38,9 +47,7 @@ import {
     assignmentUser,
     dateAssigned,
     dateReturned,
-    location,
-    requestCollection,
-    requestedAssetName
+    location
 } from "../../shared/const";
 
 import {
@@ -49,7 +56,8 @@ import {
     assignmentEditorReducer
 } from "./AssignmentEditorReducer";
 
-const AssignmentEditor = lazy(() => import('./AssignmentEditor'));
+import AssignmentEditor from './AssignmentEditor';
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -70,6 +78,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     const classes = useStyles();
     const { isAdmin } = usePermissions();
     const preferences = usePreferences();
+    const { enqueueSnackbar } = useSnackbar(); 
 
     const columns = [
         { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -109,6 +118,21 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             field: location,
             headerName: t("field.location"),
             flex: 1
+        },
+        {
+            field: "delete",
+            headerName: t("button.delete"),
+            flex: 0.4,
+            disableColumnMenu: true,
+            sortable: false,
+            renderCell: (params: GridCellParams) => {
+                return (
+                    <HeroIconButton
+                        icon={TrashIcon}
+                        aria-label={t("button.delete")}
+                        onClick={() => onRemoveInvoke(params.row as Assignment)}/>
+                )
+            }
         }
     ];
 
@@ -126,21 +150,24 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     );
 
     const [editorState, editorDispatch] = useReducer(assignmentEditorReducer, assignmentEditorInitialState);
+    const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
 
-    const onDataGridRowDoubleClicked = (params: GridRowParams) => {
-        onAssignmentSelected(params.row as Assignment);
+    const onRemoveInvoke = (assignment: Assignment) => setAssignment(assignment);
+    const onRemoveDismiss = () => setAssignment(undefined);
+
+    const onRemoveAssignment = () => {
+        if (assignment !== undefined) {
+            AssignmentRepository.remove(assignment)
+                .then(() => enqueueSnackbar(t("feedback.assignment_removed")))
+                .catch(() => enqueueSnackbar(t("feedback.assignment_remove_error")))
+                .finally(onRemoveDismiss)
+        }
     }
 
-    const onAssignmentEditorView = () => {
-        editorDispatch({
-            type: AssignmentEditorActionType.CREATE
-        })
-    }
-    const onAssignmentEditorDismiss = () => {
-        editorDispatch({
-            type: AssignmentEditorActionType.DISMISS
-        })
-    }
+    const onDataGridRowDoubleClicked = (params: GridRowParams) => onAssignmentSelected(params.row as Assignment);
+    
+    const onAssignmentEditorView = () => editorDispatch({ type: AssignmentEditorActionType.CREATE })
+    const onAssignmentEditorDismiss = () => editorDispatch({ type: AssignmentEditorActionType.DISMISS })
 
     const onAssignmentSelected = (assignment: Assignment) => {
         editorDispatch({
@@ -149,25 +176,9 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
         })
     }
 
-    const {
-        items: requests,
-        isLoading: isRequestsLoading,
-        isStart: atRequestStart,
-        isEnd: atRequestEnd,
-        getPrev: getPreviousRequests,
-        getNext: getNextRequests
-    } = usePagination<Request>(
-        firestore
-            .collection(requestCollection)
-            .orderBy(requestedAssetName, "asc"), { limit: 15 }
-    )
-
     const [isRequestListOpen, setRequestListOpen] = useState(false);
-
-    const onRequestListView = () => { setRequestListOpen(true) }
-    const onRequestListDismiss = () => { setRequestListOpen(false) }
-
-    const onRequestItemSelected = (request: Request) => {}
+    const onRequestListView = () => setRequestListOpen(true)
+    const onRequestListDismiss = () => setRequestListOpen(false)
 
     return (
         <Box className={classes.root}>
@@ -227,18 +238,17 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                     assignment={editorState.assignment}
                     onCancel={onAssignmentEditorDismiss}/>
             }
-
+            { assignment &&
+                <ConfirmationDialog
+                    isOpen={assignment !== undefined}
+                    title="dialog.assignment_remove"
+                    summary="dialog.assignment_remove_summary"
+                    onDismiss={onRemoveDismiss}
+                    onConfirm={onRemoveAssignment}/>
+            }
             <RequestScreen
                 isOpen={isRequestListOpen}
-                requests={requests}
-                isLoading={isRequestsLoading}
-                hasPrevious={atRequestStart}
-                hasNext={atRequestEnd}
-                onPreviousBatch={getPreviousRequests}
-                onNextBatch={getNextRequests}
-                onDismiss={onRequestListDismiss}
-                onSelectItem={onRequestItemSelected}/>
-
+                onDismiss={onRequestListDismiss}/>
         </Box>
     )
 }

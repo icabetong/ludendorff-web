@@ -91,6 +91,7 @@ const resources = {
                 go_to_home: "Go to Home"
             },
             feedback: {
+                error_generic: "An internal error occured",
                 authenticating: "Authenticating",
                 saving: "Saving",
                 empty_specification_key: "You forgot to enter the key",

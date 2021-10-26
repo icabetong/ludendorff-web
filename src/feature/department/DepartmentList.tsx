@@ -18,7 +18,7 @@ import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Department, DepartmentRepository } from "./Department";
-import ConfirmationDialog from "../shared/ItemRemoveDialog";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 const useStyles = makeStyles((theme) => ({
     root: {

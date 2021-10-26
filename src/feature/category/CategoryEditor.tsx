@@ -54,17 +54,21 @@ const CategoryEditor = (props: CategoryEditorProps) => {
                     enqueueSnackbar(t("feedback.category_created"))
                 ).catch(() => 
                     enqueueSnackbar(t("feedback.category_create_error"))
-                ).finally(() => setWritePending(false))
+                ).finally(() => {
+                    setWritePending(false);
+                    props.onDismiss();
+                })
         } else {
             CategoryRepository.update(category)
                 .then(() => 
                     enqueueSnackbar(t("feedback.category_updated"))
                 ).catch(() => 
                     enqueueSnackbar(t("feedback.category_update_error"))
-                ).finally(() => setWritePending(false))
+                ).finally(() => {
+                    setWritePending(false);
+                    props.onDismiss();
+                })
         }
-
-        props.onDismiss();
     }
 
     return (
@@ -78,6 +82,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
                 <DialogContent>
                     <Container disableGutters>
                         <TextField
+                            disabled={isWritePending}
                             autoFocus
                             id="name"
                             type="text"
@@ -92,12 +97,14 @@ const CategoryEditor = (props: CategoryEditorProps) => {
                 <DialogActions>
                     <Button 
                         color="primary"
-                        onClick={props.onDismiss}>
+                        onClick={props.onDismiss}
+                        disabled={isWritePending}>
                         { t("button.cancel") }
                     </Button>
                     <Button 
                         color="primary" 
-                        type="submit">
+                        type="submit"
+                        disabled={isWritePending}>
                         { t("button.save") }
                     </Button>
                 </DialogActions>

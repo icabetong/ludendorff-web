@@ -82,10 +82,12 @@ const UserEditor = (props: UserEditorProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
+    const [isWritePending, setWritePending] = useState<boolean>(false);
     const [isPickerOpen, setPickerOpen] = useState(false);
     const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department)
 
     const onSubmit = (data: FormValues) => {
+        setWritePending(true);
         const permissions = [];
         if (data.permissionRead) permissions.push(Permission.READ)
         if (data.permissionWrite) permissions.push(Permission.WRITE)
@@ -108,12 +110,18 @@ const UserEditor = (props: UserEditorProps) => {
             UserRepository.create(user)
                 .then(() => enqueueSnackbar(t("feedback.user_created")))
                 .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
-                .finally(props.onDismiss)
+                .finally(() => {
+                    setWritePending(false);
+                    props.onDismiss();
+                })
         } else {
             UserRepository.update(user)
                 .then(() => enqueueSnackbar(t("feedback.user_updated")))
                 .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
-                .finally(props.onDismiss)
+                .finally(() => {
+                    setWritePending(false);
+                    props.onDismiss();
+                })
         }
     }
 
@@ -151,6 +159,7 @@ const UserEditor = (props: UserEditorProps) => {
                                 <Grid item xs={6} className={classes.gridItem}>
                                     <TextField
                                         autoFocus
+                                        disabled={isWritePending}
                                         id="lastName"
                                         type="text"
                                         label={ t("field.last_name") }
@@ -161,6 +170,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         {...register("lastName", { required: "feedback.empty_last_name" })}/>
 
                                     <TextField
+                                        disabled={isWritePending}
                                         id="firstName"
                                         type="text"
                                         label={ t("field.first_name") }
@@ -171,6 +181,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         {...register("firstName", { required: "feedback.empty_first_name" })}/>
 
                                     <TextField
+                                        disabled={isWritePending}
                                         id="email"
                                         type="text"
                                         label={ t("field.email") }
@@ -181,6 +192,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         {...register("email", { required: "feedback.empty_email" })} />
 
                                     <TextField
+                                        disabled={isWritePending}
                                         id="position"
                                         type="text"
                                         label={ t("field.position") }
@@ -194,7 +206,7 @@ const UserEditor = (props: UserEditorProps) => {
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.department") }</Typography>
                                         </FormLabel>
-                                        <ListItem button onClick={onPickerView}>
+                                        <ListItem button onClick={onPickerView} disabled={isWritePending}>
                                             <Typography variant="body2">
                                                 { department !== undefined ? department?.name : t("not_set")  }
                                             </Typography>
@@ -215,6 +227,7 @@ const UserEditor = (props: UserEditorProps) => {
                                                     control={control}
                                                     render={({ field: { onChange, value } }) => (
                                                         <Checkbox 
+                                                            disabled={isWritePending}
                                                             defaultChecked={hasPermission(Permission.READ)}
                                                             checked={value} 
                                                             onChange={onChange}/>
@@ -228,6 +241,7 @@ const UserEditor = (props: UserEditorProps) => {
                                                     control={control}
                                                     render={({ field: { onChange, value }}) => (
                                                         <Checkbox 
+                                                            disabled={isWritePending}
                                                             defaultChecked={hasPermission(Permission.WRITE)}
                                                             checked={value} 
                                                             onChange={onChange}/>
@@ -241,6 +255,7 @@ const UserEditor = (props: UserEditorProps) => {
                                                     control={control}
                                                     render={({ field: { onChange, value }}) => (
                                                         <Checkbox 
+                                                            disabled={isWritePending}
                                                             defaultChecked={hasPermission(Permission.DELETE)}
                                                             checked={value} 
                                                             onChange={onChange}/>
@@ -255,6 +270,7 @@ const UserEditor = (props: UserEditorProps) => {
                                                     control={control}
                                                     render={({ field: { onChange, value }}) => (
                                                         <Checkbox 
+                                                            disabled={isWritePending}
                                                             defaultChecked={hasPermission(Permission.MANAGE_USERS)}
                                                             checked={value} 
                                                             onChange={onChange}/>
@@ -268,6 +284,7 @@ const UserEditor = (props: UserEditorProps) => {
                                                     control={control}
                                                     render={({ field: { onChange, value }}) => (
                                                         <Checkbox
+                                                            disabled={isWritePending}
                                                             defaultChecked={hasPermission(Permission.ADMINISTRATIVE)}
                                                             checked={value} 
                                                             onChange={onChange}/>
@@ -286,8 +303,8 @@ const UserEditor = (props: UserEditorProps) => {
                     </DialogContent>
 
                     <DialogActions>
-                        <Button color="primary" onClick={props.onDismiss}>{ t("cancel") }</Button>
-                        <Button color="primary" type="submit">{ t("save") }</Button>
+                        <Button color="primary" onClick={props.onDismiss} disabled={isWritePending}>{ t("cancel") }</Button>
+                        <Button color="primary" type="submit" disabled={isWritePending}>{ t("save") }</Button>
                     </DialogActions>
                 </form>
             </Dialog>

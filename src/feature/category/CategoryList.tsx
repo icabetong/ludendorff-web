@@ -18,11 +18,11 @@ import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
 import HeroIconButton from "../../components/HeroIconButton";
 
-import { usePermissions } from "../auth/AuthProvider";
-import ConfirmationDialog from "../shared/ItemRemoveDialog";
 import { Category, CategoryRepository } from "./Category";
+import { usePermissions } from "../auth/AuthProvider";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         minHeight: '60vh'
     },

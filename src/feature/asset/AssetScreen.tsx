@@ -57,7 +57,7 @@ import {
 
 import AssetEditor from "./AssetEditor";
 import CategoryScreen from "../category/CategoryScreen";
-import ConfirmationDialog from "../shared/ItemRemoveDialog";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 const useStyles = makeStyles(() => ({
     root: {

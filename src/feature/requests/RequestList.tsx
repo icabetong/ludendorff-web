@@ -14,7 +14,7 @@ import { MailOpenIcon, TrashIcon } from "@heroicons/react/outline";
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
 import HeroIconButton from "../../components/HeroIconButton";
-import ConfirmationDialog from "../shared/ItemRemoveDialog";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Request, RequestRepository } from "./Request";

@@ -1,4 +1,4 @@
-import { useState, useReducer, lazy } from "react";
+import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
@@ -40,18 +40,6 @@ import {
 } from "./UserEditorReducer";
 
 import {
-    UserModifyActionType,
-    userModifyInitialState,
-    userModifyReducer
-} from "./UserModifyReducer";
-
-import {
-    UserRemoveActionType,
-    userRemoveInitialState,
-    userRemoveReducer
-} from "./UserRemoveReducer";
-
-import {
     userCollection,
     userId,
     firstName,
@@ -61,11 +49,9 @@ import {
     department,
 } from "../../shared/const";
 
-import ConfirmationDialog from "../shared/ItemRemoveDialog";
-
-const UserEditor = lazy(() => import("./UserEditor"));
-
-const DepartmentScreen = lazy(() => import("../department/DepartmentScreen"));
+import UserEditor from "./UserEditor";
+import DepartmentScreen from "../department/DepartmentScreen";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -125,7 +111,7 @@ const UserScreen = (props: UserScreenProps) => {
                             <HeroIconButton
                                 icon={params.row.disabled ? CheckIcon : BanIcon}
                                 aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                                onClick={() => onUserRequestChangeState(user)}/>
+                                onClick={() => onModificationInvoke(user)}/>
                         </span>
                     </Tooltip>
                 )
@@ -142,7 +128,7 @@ const UserScreen = (props: UserScreenProps) => {
                     <HeroIconButton 
                         icon={TrashIcon}
                         aria-label={t("delete")}
-                        onClick={() => onUserRequestRemove(params.row as User)}/>
+                        onClick={() => onRemoveInvoke(params.row as User)}/>
                 )
             }
         }
@@ -162,6 +148,25 @@ const UserScreen = (props: UserScreenProps) => {
     )
 
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [userModify, setUserModify] = useState<User | undefined>(undefined);
+    const [userRemove, setUserRemove] = useState<User | undefined>(undefined);
+
+    const onModificationInvoke = (user: User) => setUserModify(user);
+    const onModificationDismiss = () => setUserModify(undefined);
+    const onModificationConfirmed = () => {
+
+    }
+
+    const onRemoveInvoke = (user: User) => setUserRemove(user);
+    const onRemoveDismiss = () => setUserRemove(undefined);
+    const onRemoveConfirmed = () => {
+        if (userRemove !== undefined) {
+            UserRepository.remove(userRemove)
+                .then(() => enqueueSnackbar(t("feedback.user_removed")))
+                .catch(() => enqueueSnackbar(t("feedback.user_remove_error")))
+                .finally(onRemoveDismiss)
+        }
+    }
 
     const onDataGridRowDoubleClick = (params: GridRowParams) => {
         onUserSelected(params.row as User)
@@ -169,58 +174,6 @@ const UserScreen = (props: UserScreenProps) => {
 
     const onUserEditorView = () => dispatch({ type: ActionType.CREATE })
     const onUserEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-    
-
-    const [removeState, removeDispatch] = useReducer(userRemoveReducer, userRemoveInitialState);
-
-    const onUserRequestRemove = (user: User) => {
-        removeDispatch({
-            type: UserRemoveActionType.REQUEST,
-            payload: user
-        })
-    }
-
-    const onUserRequestRemoveDismiss = () => {
-        removeDispatch({
-            type: UserRemoveActionType.DISMISS
-        })
-    }
-
-    const onUserRemove = () => {
-        let user = removeState.user;
-        if (user === undefined)
-            return;
-
-        UserRepository.remove(user)
-            .then(() => {
-                enqueueSnackbar(t("feedback.user_removed"));
-            }).catch(() => {
-                enqueueSnackbar(t("feedback.user_remove_error"));
-            }).finally(() => {
-                removeDispatch({
-                    type: UserRemoveActionType.DISMISS
-                })
-            })
-    }
-
-    const [modifyState, modifyDispatch] = useReducer(userModifyReducer, userModifyInitialState);
-
-    const onUserRequestChangeState = (user: User) => {
-        modifyDispatch({
-            type: UserModifyActionType.REQUEST,
-            payload: user
-        })
-    }
-
-    const onUserRequestChangeStateDismiss = () => {
-        modifyDispatch({
-            type: UserModifyActionType.DISMISS
-        })
-    }
-
-    const onUserModify = () => {
-
-    }
 
     const onUserSelected = (user: User) => {
         dispatch({
@@ -297,25 +250,25 @@ const UserScreen = (props: UserScreenProps) => {
                     user={state.user}
                     onDismiss={onUserEditorDismiss}/>
             }
-
+            { userModify &&
+                <ConfirmationDialog
+                    isOpen={userModify !== undefined}
+                    title={userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
+                    summary={userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
+                    onDismiss={onModificationDismiss}
+                    onConfirm={onModificationConfirmed}/>
+            }
+            { userRemove &&
+                <ConfirmationDialog
+                    isOpen={userRemove !== undefined}
+                    title="dialog.user_remove"
+                    summary="dialog.user_remove_summary"
+                    onDismiss={onRemoveDismiss}
+                    onConfirm={onRemoveConfirmed}/>
+            }
             <DepartmentScreen
                 isOpen={isDepartmentOpen}
                 onDismiss={onDepartmentDismiss}/>
-
-            <ConfirmationDialog
-                isOpen={modifyState.isRequest}
-                title={modifyState.user?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
-                summary={modifyState.user?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
-                onDismiss={onUserRequestChangeStateDismiss}
-                onConfirm={onUserModify}/>
-            
-            <ConfirmationDialog
-                isOpen={removeState.isRequest}
-                title="dialog.user_remove"
-                summary="dialog.user_remove_summary"
-                onDismiss={onUserRequestRemoveDismiss}
-                 onConfirm={onUserRemove}/>
-            
         </Box>
     )
 }
