@@ -106,7 +106,7 @@ const RequestItem = (props: RequestItemProps) => {
         <ListItem
             button
             key={props.request.requestId}
-            onClick={() => props.onItemRemove(props.request)}>
+            onClick={() => props.onItemSelect(props.request)}>
             <ListItemText
                 primary={props.request.asset?.assetName}
                 secondary={props.request.petitioner?.name}/>

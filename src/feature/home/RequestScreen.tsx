@@ -13,15 +13,16 @@ import {
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 
-import { Request, RequestRepository } from "./Request";
-import RequestList from "./RequestList";
+import { Request, RequestRepository } from "../requests/Request";
+import RequestList from "../requests/RequestList";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { minimize } from "../user/User";
 import { usePagination } from "../../shared/pagination";
 import {
     requestCollection,
-    requestedAssetName
+    requestedAssetName,
+    petitionerId
 } from "../../shared/const";
 import { firestore } from "../../index";
 
@@ -65,6 +66,7 @@ const RequestScreen = (props: RequestScreenProps) => {
 
     const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
         firestore.collection(requestCollection)
+            .where(petitionerId, "==", user?.userId)
             .orderBy(requestedAssetName, "asc"), { limit: 15 }
     )
 
@@ -76,7 +78,7 @@ const RequestScreen = (props: RequestScreenProps) => {
                 maxWidth="xs"
                 open={props.isOpen}
                 onClose={props.onDismiss}>
-                <DialogTitle>{ t("navigation.requests") }</DialogTitle>
+                <DialogTitle>{ t("navigation.sent_requests") }</DialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
                     { isAdmin
                         ? !isLoading

@@ -14,6 +14,7 @@ import {
     makeStyles,
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
+import firebase from "firebase";
 import { Request, RequestRepository } from "./Request";
 import { useAuthState } from "../auth/AuthProvider";
 import { Asset } from "../asset/Asset";
@@ -56,7 +57,8 @@ const RequestEditor = (props: RequestEditorProps) => {
             const request: Request = {
                 requestId: props.request !== undefined ? props.request?.requestId : newId(),
                 asset: asset,
-                petitioner: minimize(user) 
+                petitioner: minimize(user),
+                submittedTimestamp: props.request !== undefined ? props.request?.submittedTimestamp : firebase.firestore.Timestamp.now()
             }
 
             if (props.isCreate) {
