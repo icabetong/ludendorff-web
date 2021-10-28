@@ -83,7 +83,10 @@ const HomeScreen = (props: HomeScreenProps) => {
             field: dateReturned,
             headerName: t("field.date_returned"),
             flex: 0.75,
-            valueGetter: (params: GridValueGetterParams) => formatDate(params.row.dateReturned)
+            valueGetter: (params: GridValueGetterParams) => {
+                const formatted = formatDate(params.row.dateReturned);
+                return formatted === 'unknown' ? t("not_yet_returned") : formatted;
+            }
         },
         {
             field: location,
