@@ -21,6 +21,7 @@ const resources = {
                 requests: "Requests",
                 profile: "Profile",
                 settings: "Settings",
+                sent_requests: "Sent Requests"
             },
             field: {
                 email: "Email",
@@ -50,7 +51,8 @@ const resources = {
                 remarks: "Remarks",
                 old_password: "Old Password",
                 new_password: "New Password",
-                confirmation_password: "Confirm Password"
+                confirmation_password: "Confirm Password",
+                submitted_date: "Submitted Date"
             },
             status: {
                 operational: "Operational",
@@ -84,6 +86,7 @@ const resources = {
                 delete: "Delete",
                 disable: "Disable",
                 enable: "Enable",
+                dismiss: "Dismiss",
                 show_menu: "Show menu",
                 show_drawer: "Show drawer",
                 signin: "Sign in",
@@ -176,6 +179,12 @@ const resources = {
                 user_enable_summary: "Are you sure you want to enable this user account? With proper permissions, you can always disable this account in the future.",
                 user_remove: "Remove this user?",
                 user_remove_summary: "Are you sure you want to remove this user account? All data associated with this account will be removed as well and cannot be recovered.",
+                assignment_remove: "Remove assignment?",
+                assignment_remove_summary: "Are you sure you want to remove this assignment? Once finished, this action cannot be undone.",
+                request_cancel: "Cancel request?",
+                request_cancel_summary: "Are you sure you want to cancel this request? Once finished, this action cannot be undone.",
+                request_remove: "Remove request?",
+                request_remove_summary: "Are you sure you want to cancel this request? Once finished, this action cannot be undone.",
                 send_reset_link_title: "Send Password Reset Link",
                 send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email."
             },
@@ -194,6 +203,7 @@ const resources = {
             user_details: "User Details",
             department_details: "Department Details",
             assignment_details: "Assignment Details",
+            request_details: "Request Details",
             asset_select: "Select Asset",
             category_select: "Select Category",
             user_select: "Select User",
@@ -212,6 +222,8 @@ const resources = {
             empty_assignment_summary: "There are currently no records of assigned assets to the users.",
             empty_scanned_code: "Scan a QR-Code",
             empty_scanned_code_summary: "You'll need to scan a valid QR-Code first to view its embedded data.",
+            empty_request: "No Requests Available",
+            empty_request_summary: "There are no requests available at this time."
         }
     }
 }

@@ -79,7 +79,8 @@ const RequestScreen = (props: RequestScreenProps) => {
                 <DialogContent dividers={true} className={classes.root}>
                     { isAdmin
                         ? !isLoading
-                            ? <RequestList 
+                            ? <RequestList
+                                isHome={true}
                                 requests={items}
                                 hasPrevious={isStart}
                                 hasNext={isEnd}

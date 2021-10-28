@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type RequestListProps = {
+    isHome?: boolean | undefined
     requests: Request[],
     hasPrevious: boolean,
     hasNext: boolean,
@@ -77,14 +78,14 @@ const RequestList = (props: RequestListProps) => {
                 </>
             : <EmptyStateComponent
                 icon={MailOpenIcon}
-                title={t("empty.requests")}
-                subtitle={t("empty.requests_summary")}/>
+                title={t("empty_request")}
+                subtitle={t("empty_request_summary")}/>
             }
             { request &&
                 <ConfirmationDialog
                     isOpen={request !== undefined}
-                    title="dialog.request_remove"
-                    summary="dialog.request_remove_summary"
+                    title={props.isHome ? "dialog.request_cancel" : "dialog.request_remove"}
+                    summary={props.isHome ? "dialog.request_cancel_summary" : "dialog.request_remove_summary"}
                     onDismiss={onRemoveDismiss}
                     onConfirm={onRequestRemove}/>
             }
