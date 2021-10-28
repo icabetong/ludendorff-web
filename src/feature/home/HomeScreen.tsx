@@ -17,12 +17,12 @@ import { PlusIcon, PrinterIcon } from "@heroicons/react/outline";
 
 import RequestScreen from "./RequestScreen";
 import { Assignment } from "../assignment/Assignment";
+import AssignmentList from "../assignment/AssignmentList";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import { useAuthState } from "../auth/AuthProvider";
-import { Request } from "../requests/Request";
 import RequestEditor from "../requests/RequestEditor";
 import { ActionType, reducer, initialState } from "../requests/RequestEditorReducer";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -105,14 +105,10 @@ const HomeScreen = (props: HomeScreenProps) => {
         //TODO
     }
 
+    const onAssignmentSelected = (assignment: Assignment) => {}
+
     const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
     const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-    const onEditorUpdate = (request: Request) => {
-        dispatch({
-            type: ActionType.UPDATE,
-            payload: request
-        })
-    }
 
     const [isRequestsOpen, setRequestsOpen] = useState<boolean>(false);
     const onRequestsView = () => setRequestsOpen(true);
@@ -150,7 +146,7 @@ const HomeScreen = (props: HomeScreenProps) => {
                 { !isLoading
                     ? items.length < 1
                         ? <HomeEmptyState/>
-                        : <></>
+                        : <AssignmentList assignments={items} onItemSelect={onAssignmentSelected}/>
                     : <LinearProgress/>
                 }
             </Hidden>

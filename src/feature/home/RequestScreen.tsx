@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     LinearProgress,
+    TextField,
     useMediaQuery,
     useTheme,
     makeStyles
@@ -24,9 +26,10 @@ import {
     requestedAssetName,
     petitionerId
 } from "../../shared/const";
+import { formatDate } from "../../shared/utils";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: '60vh',
         paddingTop: 0,
@@ -34,7 +37,14 @@ const useStyles = makeStyles(() => ({
         '& .MuiList-padding': {
             padding: 0
         }
-    }
+    },
+    textField: {
+        width: '100%',
+        margin: '0.6em 0',
+        '& .MuiListItem-root': {
+            borderRadius: theme.spacing(1)
+        }
+    },
 }));
 
 type RequestScreenProps = {
@@ -103,18 +113,26 @@ const RequestScreen = (props: RequestScreenProps) => {
                     fullWidth={true}
                     open={request !== undefined}
                     onClose={onEndorsementDismiss}>
-                    <DialogTitle>{t("dialog.request_endorse")}</DialogTitle>
-                    <DialogContent>{t("dialog.request_endorse_summary")}</DialogContent>
+                    <DialogTitle>{t("request_details")}</DialogTitle>
+                    <DialogContent>
+                        <Box>
+                            <TextField
+                                label={t("field.asset")}
+                                className={classes.textField}
+                                value={request.asset?.assetName}
+                                inputProps={{readOnly: true}}/>
+                            <TextField
+                                label={t("field.submitted_date")}
+                                className={classes.textField}
+                                value={formatDate(request.submittedTimestamp)}
+                                inputProps={{readOnly: true}}/>
+                        </Box>
+                    </DialogContent>
                     <DialogActions>
                         <Button
                             color="primary"
                             onClick={onEndorsementDismiss}>
-                            {t("button.cancel")}
-                        </Button>
-                        <Button
-                            color="primary"
-                            onClick={onEndorsementConfirmed}>
-                            {t("button.endorse")}
+                            {t("button.dismiss")}
                         </Button>
                     </DialogActions>
                 </Dialog>
