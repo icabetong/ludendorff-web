@@ -9,8 +9,7 @@ import {
 } from "@material-ui/core";
 import { 
     DataGrid, 
-    GridOverlay, 
-    GridRowParams, 
+    GridOverlay,
     GridValueGetterParams
 } from "@material-ui/data-grid";
 import { PlusIcon, PrinterIcon } from "@heroicons/react/outline";
@@ -100,10 +99,6 @@ const HomeScreen = (props: HomeScreenProps) => {
     );
 
     const [state, dispatch] = useReducer(reducer, initialState);
-
-    const onDataGridRowDoubleClicked = (params: GridRowParams) => {
-        //TODO
-    }
 
     const onAssignmentSelected = (assignment: Assignment) => {}
 

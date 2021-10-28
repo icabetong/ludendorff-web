@@ -13,13 +13,11 @@ import {
     useTheme,
     makeStyles
 } from "@material-ui/core";
-import { useSnackbar } from "notistack";
 
-import { Request, RequestRepository } from "../requests/Request";
+import { Request } from "../requests/Request";
 import RequestList from "../requests/RequestList";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { minimize } from "../user/User";
 import { usePagination } from "../../shared/pagination";
 import {
     requestCollection,
@@ -60,19 +58,8 @@ const RequestScreen = (props: RequestScreenProps) => {
     const { isAdmin } = usePermissions();
     const { user } = useAuthState();
     const classes = useStyles();
-    const { enqueueSnackbar } = useSnackbar();
 
-    const onEndorsementDismiss = () => setRequest(undefined);
-    const onEndorsementConfirmed = () => {
-        if (user !== undefined && request !== undefined) {
-            const endorser = minimize(user);
-
-            RequestRepository.approve(request, endorser)
-                .then(() => enqueueSnackbar(t("feedback.request_endorsed")))
-                .catch(() => enqueueSnackbar(t("feedback.request_endorse_error")))
-                .finally(onEndorsementDismiss)
-        } else enqueueSnackbar(t("feedback.error_generic."))
-    }
+    const onRequestDismiss = () => setRequest(undefined);
 
     const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
         firestore.collection(requestCollection)
@@ -112,7 +99,7 @@ const RequestScreen = (props: RequestScreenProps) => {
                     maxWidth="xs"
                     fullWidth={true}
                     open={request !== undefined}
-                    onClose={onEndorsementDismiss}>
+                    onClose={onRequestDismiss}>
                     <DialogTitle>{t("request_details")}</DialogTitle>
                     <DialogContent>
                         <Box>
@@ -131,7 +118,7 @@ const RequestScreen = (props: RequestScreenProps) => {
                     <DialogActions>
                         <Button
                             color="primary"
-                            onClick={onEndorsementDismiss}>
+                            onClick={onRequestDismiss}>
                             {t("button.dismiss")}
                         </Button>
                     </DialogActions>
