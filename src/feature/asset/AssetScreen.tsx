@@ -33,6 +33,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
+import AssetSearchScreen from "./AssetSearchScreen";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 
@@ -183,6 +184,10 @@ const AssetScreen = (props: AssetScreenProps) => {
         })
     }
 
+    const [search, setSearch] = useState<boolean>(false);
+    const onSearchInvoke = () => setSearch(true);
+    const onSearchDismiss = () => setSearch(false);
+
     const [isCategoryOpen, setCategoryOpen] = useState(false);
     const onCategoryListView = () => setCategoryOpen(true)
     const onCategoryListDismiss = () => setCategoryOpen(false)
@@ -199,6 +204,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 }
                 buttonIcon={PlusIcon}
                 buttonOnClick={() => dispatch({ type: ActionType.CREATE }) }
+                onSearch={onSearchInvoke}
                 menuItems={[
                     <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
@@ -247,6 +253,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                     isCreate={state.isCreate}
                     asset={state.asset}
                     onDismiss={onAssetEditorDismiss}/>
+            }
+            { search &&
+                <AssetSearchScreen
+                    isOpen={search}
+                    onDismiss={onSearchDismiss}
+                    onEditorInvoke={onAssetSelected}/>
             }
             <CategoryScreen
                 isOpen={isCategoryOpen}

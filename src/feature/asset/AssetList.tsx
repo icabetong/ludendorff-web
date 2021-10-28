@@ -6,7 +6,6 @@ type AssetListProps = {
     assets: Asset[],
     onItemSelect: (asset: Asset) => void,
 }
-
 const AssetList = (props: AssetListProps) => {
     return (
         <List>{
@@ -26,7 +25,6 @@ type AssetItemProps = {
     asset: Asset,
     onItemSelect: (asset: Asset) => void,
 }
-
 const AssetItem = (props: AssetItemProps) => {
     return (
         <ListItem

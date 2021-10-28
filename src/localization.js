@@ -52,7 +52,8 @@ const resources = {
                 old_password: "Old Password",
                 new_password: "New Password",
                 confirmation_password: "Confirm Password",
-                submitted_date: "Submitted Date"
+                submitted_date: "Submitted Date",
+                search: "Search"
             },
             status: {
                 operational: "Operational",
