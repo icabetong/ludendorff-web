@@ -77,6 +77,7 @@ export class AssignmentRepository {
             title: "notification_assigned_title",
             body: "notification_assigned_body",
             payload: assignment.assignmentId,
+            deviceToken: assignment.user?.deviceToken,
             senderId: auth.currentUser?.uid,
             receiverId: assignment.user?.userId,
             extras: {
@@ -94,7 +95,7 @@ export class AssignmentRepository {
         
         if (assignment.asset?.assetId !== undefined)
             batch.update(firestore.collection(assetCollection)
-                .doc(assignment.assignmentId), assetStatus, Status.IDLE);
+                .doc(assignment.asset?.assetId), assetStatus, Status.IDLE);
 
         await batch.commit();
     }

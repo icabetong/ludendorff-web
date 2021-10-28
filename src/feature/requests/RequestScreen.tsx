@@ -21,7 +21,8 @@ import { minimize } from "../user/User";
 import { usePagination } from "../../shared/pagination";
 import {
     requestCollection,
-    requestedAssetName
+    requestedAssetName,
+    endorser
 } from "../../shared/const";
 import { firestore } from "../../index";
 
@@ -65,6 +66,7 @@ const RequestScreen = (props: RequestScreenProps) => {
 
     const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
         firestore.collection(requestCollection)
+            .where(endorser, "==", null)
             .orderBy(requestedAssetName, "asc"), { limit: 15 }
     )
 

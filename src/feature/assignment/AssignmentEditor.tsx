@@ -80,7 +80,6 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
     const [dateReturned, setDateReturned] = useState<Date | undefined>(props.assignment?.dateReturned?.toDate());
     const [isAssetPickerOpen, setAssetPickerOpen] = useState<boolean>(false);
     const [isUserPickerOpen, setUserPickerOpen] = useState<boolean>(false);
-    console.log(props.assignment)
 
     const onAssetPickerView = () => setAssetPickerOpen(true);
     const onAssetPickerDismiss = () => setAssetPickerOpen(false);

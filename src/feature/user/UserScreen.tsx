@@ -154,7 +154,12 @@ const UserScreen = (props: UserScreenProps) => {
     const onModificationInvoke = (user: User) => setUserModify(user);
     const onModificationDismiss = () => setUserModify(undefined);
     const onModificationConfirmed = () => {
-
+        if (userModify !== undefined) {
+            UserRepository.modify(userModify.userId, !userModify.disabled)
+                .then(() => enqueueSnackbar(t("feedback.user_modified")))
+                .catch(() => enqueueSnackbar(t("feedback.user_modify_error")))
+                .finally(onModificationDismiss)
+        }
     }
 
     const onRemoveInvoke = (user: User) => setUserRemove(user);
