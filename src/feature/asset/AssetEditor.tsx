@@ -289,7 +289,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     </DialogActions>
                 </form>
             </Dialog>
-            {
+            { state.isOpen &&
                 <SpecificationEditor
                     isOpen={state.isOpen} 
                     isCreate={state.isCreate}
