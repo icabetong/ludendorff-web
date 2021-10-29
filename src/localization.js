@@ -224,7 +224,9 @@ const resources = {
             empty_scanned_code: "Scan a QR-Code",
             empty_scanned_code_summary: "You'll need to scan a valid QR-Code first to view its embedded data.",
             empty_request: "No Requests Available",
-            empty_request_summary: "There are no requests available at this time."
+            empty_request_summary: "There are no requests available at this time.",
+            empty_search: "No Results",
+            empty_search_summary: "There are no items matched on your query \"{{query}}\""
         }
     }
 }

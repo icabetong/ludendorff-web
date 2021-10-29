@@ -27,7 +27,7 @@ import { useSnackbar } from "notistack";
 import { PlusIcon } from "@heroicons/react/outline";
 
 import { Asset, Status, AssetRepository } from "./Asset";
-import { Category, minimize } from "../category/Category";
+import { Category, CategoryCore, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
@@ -75,7 +75,7 @@ const AssetEditor = (props: AssetEditorProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
     const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
-    const [category, setCategory] = useState<Category | undefined>(undefined);
+    const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
     const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
     const [isPickerOpen, setPickerOpen] = useState(false);
     const [isQRCodeOpen, setQRCodeOpen] = useState(false);
@@ -107,25 +107,34 @@ const AssetEditor = (props: AssetEditorProps) => {
             .orderBy(categoryName, "asc"), { limit: 15 }   
     );
 
+    let previousCategoryId: string | undefined = undefined;
     const onSubmit = (data: FormValues) => {
-        const asset = {
+        const asset: Asset = {
             ...data,
             assetId: props.asset === undefined ? newId() : props.asset?.assetId,
-            category: category !== undefined ? minimize(category) : undefined,
-            specifications: specifications
+            category: category !== undefined ? category : undefined,
+            specifications: Object.fromEntries(specifications)
         }
  
         if (props.isCreate) {
             AssetRepository.create(asset)
                 .then(() => enqueueSnackbar(t("feedback.asset_created")))
-                .catch(() => enqueueSnackbar(t("asset_create_error")))
+                .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
                 .finally(props.onDismiss)
         } else {
-            AssetRepository.update(asset)
-                .then(() => enqueueSnackbar(t("asset_updated")))
-                .catch(() => enqueueSnackbar(t("asset_update_error")))
+            AssetRepository.update(asset, previousCategoryId)
+                .then(() => enqueueSnackbar(t("feedback.asset_updated")))
+                .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
                 .finally(props.onDismiss)
         }
+    }
+
+    const onCategoryChanged = (newCategory: Category) => {
+        if (props.asset?.category !== undefined && props.asset?.category?.categoryId !== newCategory.categoryId) 
+            previousCategoryId = props.asset?.category?.categoryId;
+        
+        setCategory(minimize(newCategory));
+        onPickerDismiss();
     }
 
     const onSpecificationCommit = (specification: SpecFormValues) => {
@@ -238,7 +247,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                         </FormLabel>
                                         <ListItem button onClick={onPickerView}>
                                             <Typography variant="body2">
-                                                { props.asset?.category?.categoryName !== undefined ? props.asset?.category?.categoryName : t("not_set")  }
+                                                { category?.categoryName !== undefined ? category?.categoryName : t("not_set")  }
                                             </Typography>
                                         </ListItem>
                                     </FormControl>
@@ -298,7 +307,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     onPreviousBatch={getPreviousCategories}
                     onNextBatch={getNextCategories}
                     onDismiss={onPickerDismiss}
-                    onSelectItem={setCategory}/>
+                    onSelectItem={onCategoryChanged}/>
             }
             { isQRCodeOpen && props.asset !== undefined &&
                 <QrCodeViewComponent

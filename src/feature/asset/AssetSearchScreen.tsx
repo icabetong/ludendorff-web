@@ -6,15 +6,16 @@ import {
     ListItemText,
     makeStyles
 } from "@material-ui/core";
-import { InstantSearch, connectHits } from "react-instantsearch-dom";
+import { InstantSearch, Highlight, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { SearchBox, Provider } from "../../components/Search";
+import { SearchBox, Provider, Results } from "../../components/Search";
 import { Asset } from "./Asset";
+import { assetName, assetCategoryName } from "../../shared/const";
 
 const useStyles = makeStyles((theme) => ({
     container: {
         padding: theme.spacing(2),
-        minHeight: '60vh'
+        minHeight: '80vh'
     }
 }))
 
@@ -34,10 +35,12 @@ const AssetSearchScreen = (props: AssetSearchScreenProps) => {
             fullWidth={true}
             maxWidth="md">
             <DialogContent dividers={true}>
-                <Container disableGutters className={classes.container}>
+                <Container className={classes.container}>
                     <InstantSearch searchClient={Provider} indexName="assets">
                         <SearchBox/>
-                        <AssetHits onItemSelect={props.onEditorInvoke}/>
+                        <Results>
+                            <AssetHits onItemSelect={props.onEditorInvoke}/>
+                        </Results>
                     </InstantSearch>
                 </Container>
             </DialogContent>
@@ -72,8 +75,8 @@ const AssetListItem = (props: AssetListItemProps) => {
             key={props.asset.assetId}
             onClick={() => props.onItemSelect(props.asset)}>
             <ListItemText
-                primary={props.asset.assetName}
-                secondary={props.asset.category?.categoryName}/>
+                primary={<Highlight attribute={assetName} hit={props.asset}/>}
+                secondary={<Highlight attribute={assetCategoryName} hit={props.asset}/>}/>
         </ListItem>
     )
 }

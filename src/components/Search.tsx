@@ -8,9 +8,11 @@ import {
 } from "@material-ui/core";
 import { SearchIcon } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch/lite";
-import { connectSearchBox } from "react-instantsearch-dom";
-import { SearchBoxProvided } from "react-instantsearch-core";
+import { connectSearchBox, connectStateResults } from "react-instantsearch-dom";
+import { SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import HeroIconButton from "./HeroIconButton";
+import EmptyStateComponent from "../feature/state/EmptyStates";
+import React from "react";
 
 const useStyles = makeStyles(() => ({
     textField: { width: '100%' }
@@ -39,5 +41,35 @@ const CustomSearchBox = (props: SearchBoxProvided) => {
         </FormControl>
     )
 }
+
+type EmptySearchStateProps = {
+    query: string | undefined
+}
+const EmptySearchState = (props: EmptySearchStateProps) => {
+    const { t } = useTranslation();
+
+    return (
+        <EmptyStateComponent
+            icon={SearchIcon}
+            title={t("empty_search")}
+            subtitle={t("empty_search_summary", { query: props.query })}/>
+    );
+}
+
+interface ResultsProps extends StateResultsProvided {
+    children?: React.ReactNode | React.ReactNode[]
+}
+const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => { 
+    return (
+        <>
+        { searchResults && searchResults.nbHits !== 0
+           ? children
+           : <EmptySearchState query={searchState.query}/>
+        }
+        </>
+    )
+}
+export const Results = connectStateResults(ResultsComponent)
+
 export const SearchBox = connectSearchBox(CustomSearchBox);
 export const Provider = algoliasearch("H1BMXJXRBE", "ecfcef9a59b7ec023817ef3041de6416");

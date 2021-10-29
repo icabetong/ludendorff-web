@@ -50,6 +50,7 @@ import {
 } from "../../shared/const";
 
 import UserEditor from "./UserEditor";
+import UserSearchScreen from "./UserSearchScreen";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
@@ -187,6 +188,10 @@ const UserScreen = (props: UserScreenProps) => {
         })
     }
 
+    const [search, setSearch] = useState<boolean>(false);
+    const onSearchInvoke = () => setSearch(true);
+    const onSearchDismiss = () => setSearch(false);
+
     const [isDepartmentOpen, setDepartmentOpen] = useState(false);
 
     const onDepartmentView = () => { setDepartmentOpen(true) }
@@ -204,6 +209,7 @@ const UserScreen = (props: UserScreenProps) => {
                 }
                 buttonIcon={PlusIcon}
                 buttonOnClick={onUserEditorView}
+                onSearch={onSearchInvoke}
                 menuItems={[
                     <MenuItem key={0} onClick={onDepartmentView}>{ t("navigation.departments") }</MenuItem>
                 ]}
@@ -254,6 +260,12 @@ const UserScreen = (props: UserScreenProps) => {
                     isCreate={state.isCreate}
                     user={state.user}
                     onDismiss={onUserEditorDismiss}/>
+            }
+            { search &&
+                <UserSearchScreen
+                    isOpen={search}
+                    onDismiss={onSearchDismiss}
+                    onEditorInvoke={onUserSelected}/>
             }
             { userModify &&
                 <ConfirmationDialog

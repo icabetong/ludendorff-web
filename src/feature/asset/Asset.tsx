@@ -3,6 +3,7 @@ import { firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
 import { CategoryCore } from '../category/Category';
+import { Specification } from "../specs/Specification";
 import { 
     assetCollection, 
     categoryCollection,
@@ -17,7 +18,7 @@ export type Asset = {
     dateCreated?: Timestamp,
     status?: Status,
     category?: CategoryCore,
-    specifications?: Map<string, string>,
+    specifications?: Specification,
 }
 
 export type AssetCore = {
@@ -77,11 +78,15 @@ export class AssetRepository {
         let batch = firestore.batch()
         batch.set(firestore.collection(assetCollection)
             .doc(asset.assetId), asset)
-        batch.update(firestore.collection(categoryCollection)
-            .doc(asset.category?.categoryId), FieldValue.increment(1))
-        batch.update(firestore.collection(categoryCollection)
-            .doc(previousCategoryId), categoryCount,
+        
+        if (previousCategoryId !== undefined && asset.category?.categoryId !== previousCategoryId) {
+            batch.update(firestore.collection(categoryCollection)
+                .doc(asset.category?.categoryId), FieldValue.increment(1))
+
+            batch.update(firestore.collection(categoryCollection)
+                .doc(previousCategoryId), categoryCount,
                 FieldValue.increment(-1))
+        }
 
         return batch.commit()
     }

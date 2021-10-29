@@ -51,6 +51,7 @@ import {
 } from "../../shared/const";
 
 import AssignmentEditor from './AssignmentEditor';
+import AssignmentSearchScreen from "./AssignmentSearchScreen";
 import { ActionType, initialState, reducer } from "./AssignmentEditorReducer";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
@@ -168,6 +169,10 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
         })
     }
 
+    const [search, setSearch] = useState(false);
+    const onSearchInvoke = () => setSearch(true)
+    const onSearchDismiss = () => setSearch(false)
+
     const [isRequestListOpen, setRequestListOpen] = useState(false);
     const onRequestListView = () => setRequestListOpen(true)
     const onRequestListDismiss = () => setRequestListOpen(false)
@@ -179,6 +184,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 buttonText={isAdmin ? t("add") : undefined }
                 buttonIcon={PlusIcon}
                 buttonOnClick={onAssignmentEditorView}
+                onSearch={onSearchInvoke}
                 onDrawerToggle={props.onDrawerToggle}
                 menuItems={[
                     <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>
@@ -229,6 +235,12 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                     isCreate={editorState.isCreate}
                     assignment={editorState.assignment}
                     onCancel={onAssignmentEditorDismiss}/>
+            }
+            { search &&
+                <AssignmentSearchScreen
+                    isOpen={search}
+                    onDismiss={onSearchDismiss}
+                    onEditorInvoke={onAssignmentSelected}/>
             }
             { assignment &&
                 <ConfirmationDialog

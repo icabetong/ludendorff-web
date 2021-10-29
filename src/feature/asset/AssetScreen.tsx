@@ -125,8 +125,7 @@ const AssetScreen = (props: AssetScreenProps) => {
             flex: 1, 
             valueGetter: (params: GridValueGetterParams) => {
                 const formatted = formatDate(params.row.dateCreated);
-                return formatted === 'unknown' ? t("not_yet_returned") : formatted;
-
+                return formatted === 'unknown' ? t("unknown") : formatted;
             } 
         },
         { 
