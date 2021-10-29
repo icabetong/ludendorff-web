@@ -6,9 +6,9 @@ import {
     ListItemText,
     makeStyles
 } from "@material-ui/core";
-import { InstantSearch, Highlight, connectHits } from "react-instantsearch-dom";
+import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { SearchBox, Provider, Results } from "../../components/Search";
+import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { Asset } from "./Asset";
 import { assetName, assetCategoryName } from "../../shared/const";
 

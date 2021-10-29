@@ -8,15 +8,40 @@ import {
 } from "@material-ui/core";
 import { SearchIcon } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch/lite";
-import { connectSearchBox, connectStateResults } from "react-instantsearch-dom";
-import { SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
+import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
+import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import HeroIconButton from "./HeroIconButton";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
 
-const useStyles = makeStyles(() => ({
-    textField: { width: '100%' }
+const useStyles = makeStyles((theme) => ({
+    textField: { width: '100%' },
+    highlightResult: {
+        color: theme.palette.primary.main
+    }
 }))
+
+const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
+    const classes = useStyles();
+    const parsedHit = highlight({
+        highlightProperty: '_highlightResult',
+        attribute,
+        hit
+    })
+
+    return (
+        <span>
+            { parsedHit.map((part, index) => 
+                part.isHighlighted ? (
+                    <span className={classes.highlightResult} key={index}>{part.value}</span>
+                ): (
+                    <span key={index}>{part.value}</span>
+                ))
+            }
+        </span>
+    )
+}
+export const Highlight = connectHighlight(CustomHighlight)
 
 const CustomSearchBox = (props: SearchBoxProvided) => {
     const classes = useStyles();
