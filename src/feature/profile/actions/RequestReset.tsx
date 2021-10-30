@@ -1,19 +1,34 @@
 import { useTranslation } from "react-i18next";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
+} from "@material-ui/core";
+import { useSnackbar } from "notistack";
+import { useAuthState } from "../../auth/AuthProvider";
+import { auth } from "../../../index";
 
 type RequestResetPromptProps = {
     isOpen: boolean,
-    onDismiss: () => void,
-    onSubmit: () => void,
+    onDismiss: () => void
 }
 
 const RequestResetPrompt = (props: RequestResetPromptProps) => {
     const { t } = useTranslation();
+    const { user } = useAuthState();
+    const { enqueueSnackbar } = useSnackbar();
+
+    const onSubmit = () => {
+        if (user?.email !== undefined) {
+            auth.sendPasswordResetEmail(user.email)
+                .then(() => enqueueSnackbar(t("feedback.reset_link_set")))
+                .catch(() => enqueueSnackbar(t("error.generic")))
+                .finally(props.onDismiss)
+        }
+    }
 
     return (
         <Dialog
@@ -27,7 +42,7 @@ const RequestResetPrompt = (props: RequestResetPromptProps) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={props.onDismiss}>{t("button.cancel")}</Button>
-                <Button color="primary" onClick={props.onSubmit}>{t("button.continue")}</Button>
+                <Button color="primary" onClick={onSubmit}>{t("button.continue")}</Button>
             </DialogActions>
         </Dialog>
     );

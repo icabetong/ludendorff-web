@@ -1,13 +1,15 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
+import { useForm } from "react-hook-form";
+import {
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
+    makeStyles
+} from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
     textField: {
@@ -18,76 +20,59 @@ const useStyles = makeStyles(() => ({
 
 type ChangePasswordPromptProps = {
     isOpen: boolean,
-    oldPassword?: string,
-    newPassword?: string,
-    confirmationPassword?: string,
     onDismiss: () => void,
-    onSubmit: () => void,
-    onOldPasswordChanged: (oldPassword: string) => void,
-    onNewPasswordChanged: (newPassword: string) => void,
-    onConfirmationPasswordChanged: (confirmationPassword: string) => void 
 }
 
+type FormValues = {
+    oldPassword: string,
+    newPassword: string,
+    confirmPassword: string,
+}
 const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
     const { t } = useTranslation();
     const classes = useStyles();
+    const { register, handleSubmit } = useForm<FormValues>();
 
-    const onOldPasswordChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    }
-
-    const onNewPasswordChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    }
-
-    const onConfirmationPasswordChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-
-    }
-
-    const onPreDismiss = () => {
-        props.onDismiss();
-    }
-    const onPreSubmit = () => {}
+    const onSubmit = (data: FormValues) => {}
 
     return (
         <Dialog
             open={props.isOpen}
             fullWidth={true}
             maxWidth="xs"
-            onClose={onPreDismiss}>
+            onClose={props.onDismiss}>
             <DialogTitle>{t("action.change_password")}</DialogTitle>
-            <DialogContent>
-                <Container disableGutters>
-                    <TextField
-                        autoFocus
-                        id="change-password-old"
-                        type="password"
-                        label={t("field.old_password")}
-                        value={props.oldPassword === undefined ? '' : props.oldPassword}
-                        onChange={onOldPasswordChanged}
-                        className={classes.textField}/>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <DialogContent>
+                    <Container disableGutters>
+                        <TextField
+                            autoFocus
+                            id="old-password"
+                            type="password"
+                            label={t("field.old_password")}
+                            className={classes.textField}
+                            {...register("oldPassword", { required: true })}/>
 
-                    <TextField
-                        id="change-password-new"
-                        type="password"
-                        label={t("field.new_password")}
-                        value={props.newPassword === undefined ? '' : props.newPassword}
-                        onChange={onNewPasswordChanged}
-                        className={classes.textField}/>
+                        <TextField
+                            id="new-password"
+                            type="password"
+                            label={t("field.new_password")}
+                            className={classes.textField}
+                            {...register("newPassword", { required: true })}/>
 
-                    <TextField
-                        id="change-password-confirm"
-                        type="password"
-                        label={t("field.confirmation_password")}
-                        value={props.confirmationPassword === undefined ? '' : props.confirmationPassword}
-                        onChange={onConfirmationPasswordChanged}
-                        className={classes.textField}/>
-                </Container>
-            </DialogContent>
-            <DialogActions>
-                <Button color="primary" onClick={onPreDismiss}>{t("button.cancel")}</Button>
-                <Button color="primary" onClick={onPreSubmit}>{t("button.continue")}</Button>
-            </DialogActions>
+                        <TextField
+                            id="confirm-password"
+                            type="password"
+                            label={t("field.confirmation_password")}
+                            className={classes.textField}
+                            {...register("confirmPassword", { required: true })}/>
+                    </Container>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="primary" onClick={props.onDismiss}>{t("button.cancel")}</Button>
+                    <Button color="primary" type="submit">{t("button.continue")}</Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 }
