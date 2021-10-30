@@ -1,16 +1,20 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
     LinearProgress,
+    ListItem,
+    ListItemText,
     useMediaQuery,
     useTheme,
     makeStyles
 } from "@material-ui/core";
+import { InstantSearch, connectHits } from "react-instantsearch-dom";
+import { HitsProvided } from "react-instantsearch-core";
 
 import { Department } from "./Department";
 import DepartmentEditor from "./DepartmentEditor";
@@ -18,7 +22,9 @@ import { ActionType, initialState, reducer } from "./DepartmentEditorReducer";
 import DepartmentList from "./DepartmentList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { departmentCollection, departmentName } from "../../shared/const";
+import CustomDialogTitle from "../../components/CustomDialogTitle";
+import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
+import { departmentCollection, departmentName, departmentManagerName } from "../../shared/const";
 import { usePagination } from "../../shared/pagination";
 import { firestore } from "../../index";
 
@@ -30,6 +36,12 @@ const useStyles = makeStyles(() => ({
         '& .MuiList-padding': {
             padding: 0
         }
+    },
+    search: {
+        minHeight: '60vh'
+    },
+    searchBox: {
+        margin: '0.6em 1em'
     }
 }));
 
@@ -45,19 +57,22 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
     const classes = useStyles();
     const { canRead, canWrite } = usePermissions();
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [search, setSearch] = useState(false);
+
+    const onSearchInvoked = () => setSearch(!search)
     
+    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
+        firestore
+            .collection(departmentCollection)
+            .orderBy(departmentName, "asc"), { limit: 15 } 
+    );
+
     const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
     const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
     const onEditorUpdate = (department: Department) => dispatch({
         type: ActionType.UPDATE,
         payload: department
     })
-
-    const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-        firestore
-            .collection(departmentCollection)
-            .orderBy(departmentName, "asc"), { limit: 15 } 
-    );
 
     return (
         <>
@@ -67,19 +82,33 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                 maxWidth="xs"
                 open={props.isOpen}
                 onClose={props.onDismiss}>
-                <DialogTitle>{ t("navigation.departments") }</DialogTitle>
+                <CustomDialogTitle onSearch={onSearchInvoked}>{ t("navigation.departments") }</CustomDialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
-                    { canRead
-                        ? !isLoading
-                            ? <DepartmentList
-                                departments={items}
-                                hasPrevious={isStart}
-                                hasNext={isEnd}
-                                onPrevious={getPrev}
-                                onNext={getNext}
-                                onItemSelect={onEditorUpdate}/>
-                            : <LinearProgress/>
-                        : <ErrorNoPermissionState/>
+                    { search
+                        ? 
+                        <Box>
+                            <InstantSearch searchClient={Provider} indexName="departments">
+                                <Box className={classes.searchBox}>
+                                    <SearchBox/>
+                                </Box>
+                                <Box className={classes.search}>
+                                    <Results>
+                                        <DepartmentHits onItemSelect={onEditorUpdate}/>
+                                    </Results>
+                                </Box>
+                            </InstantSearch>
+                        </Box>
+                        : canRead
+                            ? !isLoading
+                                ? <DepartmentList
+                                    departments={items}
+                                    hasPrevious={isStart}
+                                    hasNext={isEnd}
+                                    onPrevious={getPrev}
+                                    onNext={getNext}
+                                    onItemSelect={onEditorUpdate}/>
+                                : <LinearProgress/>
+                            : <ErrorNoPermissionState/>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -100,3 +129,35 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
 }
 
 export default DepartmentScreen;
+
+type DepartmentHitsListProps = HitsProvided<Department> & {
+    onItemSelect: (department: Department) => void
+}
+const DepartmentHitsList = (props: DepartmentHitsListProps) => {
+    return (
+        <>
+        { props.hits.map((d: Department) => (
+            <DepartmentListItem department={d} onItemSelect={props.onItemSelect}/>
+        ))
+        }
+        </>
+    )
+}
+const DepartmentHits = connectHits<DepartmentHitsListProps, Department>(DepartmentHitsList)
+
+type DepartmentListItemProps = {
+    department: Department,
+    onItemSelect: (department: Department) => void
+}
+const DepartmentListItem = (props: DepartmentListItemProps) => {
+    return (
+        <ListItem
+            button
+            key={props.department.departmentId}
+            onClick={() => props.onItemSelect(props.department)}>
+            <ListItemText
+                primary={<Highlight attribute={departmentName} hit={props.department}/>}
+                secondary={<Highlight attribute={departmentManagerName} hit={props.department}/>}/>
+        </ListItem>
+    )
+}

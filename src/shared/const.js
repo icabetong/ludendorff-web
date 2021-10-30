@@ -23,6 +23,7 @@ export const departmentId = "departmentId";
 export const departmentName = "name";
 export const departmentManager = "manager";
 export const departmentManagerId = `${departmentManager}.${userId}`;
+export const departmentManagerName = `${departmentManager}.name`;
 export const departmentCount = "count";
 
 export const firstName = "firstName";
