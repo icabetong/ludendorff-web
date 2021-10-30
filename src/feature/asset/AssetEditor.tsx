@@ -39,13 +39,6 @@ import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
 
 const useStyles = makeStyles((theme) => ({
-    textField: {
-        width: '100%',
-        margin: '0.6em 0',
-        '& .MuiListItem-root': {
-            borderRadius: theme.spacing(1)
-        }
-    },
     icon: {
         width: '1em',
         height: '1em',
@@ -196,10 +189,9 @@ const AssetEditor = (props: AssetEditorProps) => {
                                         error={errors.assetName !== undefined}
                                         helperText={errors.assetName?.message !== undefined ? t(errors.assetName.message) : undefined}
                                         defaultValue={props.asset !== undefined ? props.asset.assetName : ""}
-                                        className={classes.textField}
                                         {...register("assetName", { required: "feedback.empty_asset_name" })}/>
 
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.status") }</Typography>
                                         </FormLabel>
@@ -241,7 +233,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                             )}/>
                                     </FormControl>
 
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.category") }</Typography>
                                         </FormLabel>
@@ -262,7 +254,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                                             specifications={specifications} 
                                             onItemSelected={onEditorUpdate}/>
                                         <Button
-                                            className={classes.textField}
+                                            fullWidth
                                             startIcon={<PlusIcon className={classes.icon}/>}
                                             onClick={onEditorCreate}>
                                                 { t("add") }

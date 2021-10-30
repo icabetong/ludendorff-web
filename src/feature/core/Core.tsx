@@ -38,6 +38,7 @@ const baseTheme = createTheme({
     },
     props: {
         MuiTextField: {
+            fullWidth: true,
             variant: "outlined",
             size: "small"
         }
@@ -67,6 +68,11 @@ const baseTheme = createTheme({
                 padding: '16px 0'
             }
         },
+        MuiTextField: {
+            root: {
+                margin: '0.6em 0'
+            }
+        }
     }
 })
 

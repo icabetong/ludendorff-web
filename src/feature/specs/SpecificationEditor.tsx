@@ -7,16 +7,8 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField,
-    makeStyles
+    TextField
 } from "@material-ui/core";
-
-const useStyles = makeStyles(() => ({
-    textField: {
-        margin: '0.6em 0',
-        width: '100%'
-    }
-}));
 
 export type FormValues = {
     key: string,
@@ -34,7 +26,6 @@ type SpecificationEditorProps = {
 export const SpecificationEditor = (props: SpecificationEditorProps) => {
     const { t } = useTranslation();
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const classes = useStyles();
     const specification = props.specification === undefined ? ['', ''] : props.specification;
 
     return (
@@ -55,7 +46,6 @@ export const SpecificationEditor = (props: SpecificationEditorProps) => {
                             defaultValue={specification[0]}
                             error={errors.key !== undefined}
                             helperText={errors.key && t(errors.key.message)}
-                            className={classes.textField}
                             {...register("key", { required: "feedback.empty_specification_key" })}/>
                         <TextField
                             id="value"
@@ -64,7 +54,6 @@ export const SpecificationEditor = (props: SpecificationEditorProps) => {
                             defaultValue={specification[1]}
                             error={errors.value !== undefined}
                             helperText={errors.value && t(errors.value.message)}
-                            className={classes.textField}
                             {...register("value", { required: "feedback.empty_specification_value" })}/>
                     </Container>
                 </DialogContent>

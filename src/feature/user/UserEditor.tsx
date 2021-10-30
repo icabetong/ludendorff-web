@@ -36,13 +36,6 @@ import { newId } from "../../shared/utils";
 import { firestore } from "../..";
 
 const useStyles = makeStyles((theme) => ({
-    textField: {
-        width: '100%',
-        margin: '0.6em 0',
-        '& .MuiListItem-root': {
-            borderRadius: theme.spacing(1)
-        }
-    },
     icon: {
         width: '1em',
         height: '1em',
@@ -164,7 +157,6 @@ const UserEditor = (props: UserEditorProps) => {
                                         type="text"
                                         label={ t("field.last_name") }
                                         defaultValue={props.user?.lastName}
-                                        className={classes.textField}
                                         error={errors.lastName !== undefined}
                                         helperText={errors.lastName?.message !== undefined ? t(errors.lastName?.message) : undefined}
                                         {...register("lastName", { required: "feedback.empty_last_name" })}/>
@@ -175,7 +167,6 @@ const UserEditor = (props: UserEditorProps) => {
                                         type="text"
                                         label={ t("field.first_name") }
                                         defaultValue={props.user?.firstName}
-                                        className={classes.textField}
                                         error={errors.firstName !== undefined}
                                         helperText={errors.firstName?.message !== undefined ? t(errors.firstName?.message) : undefined}
                                         {...register("firstName", { required: "feedback.empty_first_name" })}/>
@@ -186,7 +177,6 @@ const UserEditor = (props: UserEditorProps) => {
                                         type="text"
                                         label={ t("field.email") }
                                         defaultValue={props.user?.email}
-                                        className={classes.textField}
                                         error={errors.email !== undefined}
                                         helperText={errors.email?.message !== undefined ? t(errors.email?.message) : undefined}
                                         {...register("email", { required: "feedback.empty_email" })} />
@@ -197,12 +187,11 @@ const UserEditor = (props: UserEditorProps) => {
                                         type="text"
                                         label={ t("field.position") }
                                         defaultValue={props.user?.position}
-                                        className={classes.textField}
                                         error={errors.position !== undefined}
                                         helperText={errors.position?.message !== undefined ? t(errors.position?.message) : undefined}
                                         {...register("position", { required: "feedback.empty_postion"})} />
 
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.department") }</Typography>
                                         </FormLabel>
@@ -214,7 +203,7 @@ const UserEditor = (props: UserEditorProps) => {
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6} className={classes.gridItem}>
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                     <FormLabel component="legend">
                                         <Typography variant="body2">{ t("field.permissions") }</Typography>
                                     </FormLabel>

@@ -7,16 +7,8 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField,
-    makeStyles
+    TextField
 } from "@material-ui/core";
-
-const useStyles = makeStyles(() => ({
-    textField: {
-        margin: '0.6em 0',
-        width: '100%'
-    }
-}));
 
 type ChangePasswordPromptProps = {
     isOpen: boolean,
@@ -30,7 +22,6 @@ type FormValues = {
 }
 const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { register, handleSubmit } = useForm<FormValues>();
 
     const onSubmit = (data: FormValues) => {}
@@ -50,21 +41,18 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
                             id="old-password"
                             type="password"
                             label={t("field.old_password")}
-                            className={classes.textField}
                             {...register("oldPassword", { required: true })}/>
 
                         <TextField
                             id="new-password"
                             type="password"
                             label={t("field.new_password")}
-                            className={classes.textField}
                             {...register("newPassword", { required: true })}/>
 
                         <TextField
                             id="confirm-password"
                             type="password"
                             label={t("field.confirmation_password")}
-                            className={classes.textField}
                             {...register("confirmPassword", { required: true })}/>
                     </Container>
                 </DialogContent>

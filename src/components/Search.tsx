@@ -15,7 +15,6 @@ import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({
-    textField: { width: '100%' },
     highlightResult: {
         color: theme.palette.primary.main
     }
@@ -44,11 +43,10 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
 export const Highlight = connectHighlight(CustomHighlight)
 
 const CustomSearchBox = (props: SearchBoxProvided) => {
-    const classes = useStyles();
     const { t } = useTranslation();
 
     return (
-        <FormControl className={classes.textField} variant="outlined">
+        <FormControl fullWidth variant="outlined">
             <InputLabel htmlFor="search">{t("field.search")}</InputLabel>
             <OutlinedInput
                 id="search"

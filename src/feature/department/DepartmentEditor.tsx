@@ -12,8 +12,7 @@ import {
     FormLabel,
     ListItem,
     TextField,
-    Typography,
-    makeStyles
+    Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import { Department, DepartmentRepository } from "./Department";
@@ -26,16 +25,6 @@ import {
 } from "../../shared/const";
 import { newId } from "../../shared/utils";
 import { firestore } from "../..";
-
-const useStyles = makeStyles((theme) => ({
-    textField: {
-        margin: '0.6em 0',
-        width: '100%',
-        '& .MuiListItem-root': {
-            borderRadius: theme.spacing(1)
-        }
-    }
-}));
 
 type DepartmentEditorProps = {
     isOpen: boolean,
@@ -50,7 +39,6 @@ type FormValues = {
 
 const DepartmentEditor = (props: DepartmentEditorProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
     const [isWritePending, setWritePending] = useState<boolean>(false);
@@ -125,9 +113,8 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                                 defaultValue={props.department !== undefined ? props.department?.name : ""}
                                 error={errors.name !== undefined}
                                 helperText={errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined}
-                                className={classes.textField}
                                 {...register("name", { required: "feedback.empty_department_name" })}/>
-                            <FormControl component="fieldset" className={classes.textField}>
+                            <FormControl component="fieldset" fullWidth>
                                     <FormLabel component="legend">
                                         <Typography variant="body2">{ t("field.manager") }</Typography>
                                     </FormLabel>

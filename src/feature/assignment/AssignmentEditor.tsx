@@ -41,13 +41,6 @@ import {
 import { firestore } from "../../index";
 
 const useStyles = makeStyles((theme) => ({
-    textField: {
-        width: '100%',
-        margin: '0.6em 0',
-        '& .MuiListItem-root': {
-            borderRadius: theme.spacing(1)
-        }
-    },
     gridItem: {
         maxWidth: '100%'
     }
@@ -181,7 +174,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                         <Container>
                             <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
                                 <Grid item xs={6} className={classes.gridItem}>
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.asset") }</Typography>
                                         </FormLabel>
@@ -192,7 +185,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                         </ListItem>
                                     </FormControl>
 
-                                    <FormControl component="fieldset" className={classes.textField}>
+                                    <FormControl component="fieldset" fullWidth>
                                         <FormLabel component="legend">
                                             <Typography variant="body2">{ t("field.user") }</Typography>
                                         </FormLabel>
@@ -205,7 +198,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
 
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
 
-                                        <FormControl component="fieldset" className={classes.textField}>
+                                        <FormControl component="fieldset" fullWidth>
                                             <FormLabel component="legend">
                                                 <Typography variant="body2">{t("field.date_assigned")}</Typography>
                                             </FormLabel>
@@ -219,7 +212,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                         </FormControl>
 
                                         { dateReturned &&
-                                            <FormControl component="fieldset" className={classes.textField}>
+                                            <FormControl component="fieldset" fullWidth>
                                                 <FormLabel component="legend">
                                                     <Typography variant="body2">{t("field.date_returned")}</Typography>
                                                 </FormLabel>
@@ -242,7 +235,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                         label={t("field.location")}
                                         disabled={isWritePending}
                                         defaultValue={props.assignment !== undefined ? props.assignment?.location : ""}
-                                        className={classes.textField}
+                                        fullWidth
                                         {...register("location")}/>
 
                                     <TextField
@@ -253,7 +246,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
                                         label={t("field.remarks")}
                                         disabled={isWritePending}
                                         defaultValue={props.assignment !== undefined ? props.assignment?.remarks : ""}
-                                        className={classes.textField}
+                                        fullWidth
                                         {...register("remarks")}/>
                                 </Grid>
                             </Grid>

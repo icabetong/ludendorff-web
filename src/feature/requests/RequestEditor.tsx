@@ -10,8 +10,7 @@ import {
     FormControl,
     FormLabel,
     ListItem,
-    Typography,
-    makeStyles,
+    Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import firebase from "firebase";
@@ -25,16 +24,6 @@ import { assetCollection, assetName, assetStatus } from "../../shared/const";
 import { newId } from "../../shared/utils";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles((theme) => ({
-    textField: {
-        margin: '0.6em 0',
-        width: '100%',
-        '& .MuiListItem-root': {
-            borderRadius: theme.spacing(1)
-        }
-    }
-}));
-
 type RequestEditorProps = {
     isOpen: boolean,
     isCreate: boolean,
@@ -44,7 +33,6 @@ type RequestEditorProps = {
 
 const RequestEditor = (props: RequestEditorProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [asset, setAsset] = useState<Asset | undefined>(undefined);
     const [isPickerOpen, setPickerOpen] = useState<boolean>(false);
@@ -101,7 +89,7 @@ const RequestEditor = (props: RequestEditorProps) => {
                 <DialogTitle>{t("request_details")}</DialogTitle>
                 <DialogContent>
                     <Container disableGutters>
-                        <FormControl component="fieldset" className={classes.textField}>
+                        <FormControl component="fieldset" fullWidth>
                             <FormLabel component="legend">
                                 <Typography variant="body2">{t("field.asset")}</Typography>
                             </FormLabel>

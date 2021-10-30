@@ -7,17 +7,9 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField,
-    makeStyles
+    TextField
 } from "@material-ui/core";
 import { useAuthState } from "../../auth/AuthProvider";
-
-const useStyles = makeStyles(() => ({
-    textField: {
-        margin: '0.6em 0',
-        width: '100%'
-    }
-}))
 
 type FormValues = {
     firstName: string,
@@ -31,7 +23,6 @@ type ChangeNamePromptProps = {
 
 const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
     const { t } = useTranslation();
-    const classes = useStyles();
     const { user } = useAuthState();
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
@@ -57,7 +48,6 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
                             label={t("field.first_name")}
                             error={errors.firstName !== undefined}
                             helperText={errors.firstName?.message && t(errors.firstName.message)}
-                            className={classes.textField}
                             {...register("firstName", { required: "feedback.empty_first_name"} )}/>
                             
                         <TextField
@@ -67,7 +57,6 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
                             label={t("field.last_name")}
                             error={errors.lastName !== undefined}
                             helperText={errors.lastName?.message && t(errors.lastName.message)}
-                            className={classes.textField}
                             {...register("lastName", { required: "feedback.empty_last_name"} )}/>
                     </Container>
                 </DialogContent>
