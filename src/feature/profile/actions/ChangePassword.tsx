@@ -9,6 +9,9 @@ import {
     DialogTitle,
     TextField
 } from "@material-ui/core";
+import { useSnackbar } from "notistack";
+import firebase from "firebase/app";
+import { auth } from "../../../index";
 
 type ChangePasswordPromptProps = {
     isOpen: boolean,
@@ -22,9 +25,25 @@ type FormValues = {
 }
 const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
     const { t } = useTranslation();
-    const { register, handleSubmit } = useForm<FormValues>();
+    const { enqueueSnackbar } = useSnackbar();
+    const { register, handleSubmit, getValues, formState: { errors } } = useForm<FormValues>();
 
-    const onSubmit = (data: FormValues) => {}
+    const onSubmit = async (data: FormValues) => {
+        const user = auth.currentUser;
+
+        if (user?.email) {
+            try {
+                const credential = firebase.auth.EmailAuthProvider.credential(user?.email, data.oldPassword)
+                await user.reauthenticateWithCredential(credential);
+
+                await user.updatePassword(data.newPassword)
+
+                enqueueSnackbar(t("feedback.changed_password_success"));
+            } catch (error) {
+                enqueueSnackbar(t("feedback.error_generic"));
+            }
+        }
+    }
 
     return (
         <Dialog
@@ -40,6 +59,7 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
                             autoFocus
                             id="old-password"
                             type="password"
+                            error={errors.oldPassword !== undefined}
                             label={t("field.old_password")}
                             {...register("oldPassword", { required: true })}/>
 
@@ -47,13 +67,15 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
                             id="new-password"
                             type="password"
                             label={t("field.new_password")}
-                            {...register("newPassword", { required: true })}/>
+                            error={errors.newPassword !== undefined}
+                            {...register("newPassword", { required: true, validate: value => value === getValues('confirmPassword') })}/>
 
                         <TextField
                             id="confirm-password"
                             type="password"
+                            error={errors.confirmPassword !== undefined}
                             label={t("field.confirmation_password")}
-                            {...register("confirmPassword", { required: true })}/>
+                            {...register("confirmPassword", { required: true, validate: value => value === getValues('newPassword') })}/>
                     </Container>
                 </DialogContent>
                 <DialogActions>

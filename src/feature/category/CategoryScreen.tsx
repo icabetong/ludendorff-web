@@ -7,11 +7,11 @@ import {
     DialogActions,
     DialogContent,
     LinearProgress,
+    ListItem,
+    ListItemText,
     useMediaQuery,
     useTheme,
     makeStyles,
-    ListItem,
-    ListItemText
 } from "@material-ui/core";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
@@ -82,18 +82,16 @@ const CategoryScreen = (props: CategoryScreenProps) => {
                 <CustomDialogTitle onSearch={onSearchInvoked}>{ t("navigation.categories") }</CustomDialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
                     { search
-                        ?   <Box className={classes.search}>
-                                <InstantSearch searchClient={Provider} indexName="categories">
-                                    <Box className={classes.searchBox}>
-                                        <SearchBox/>
-                                    </Box>
-                                    <Box className={classes.search}>
-                                        <Results>
-                                            <CategoryHits onItemSelect={onEditorUpdate}/>
-                                        </Results>
-                                    </Box>
-                                </InstantSearch>
-                            </Box>
+                        ?   <InstantSearch searchClient={Provider} indexName="categories">
+                                <Box className={classes.searchBox}>
+                                    <SearchBox/>
+                                </Box>
+                                <Box className={classes.search}>
+                                    <Results>
+                                        <CategoryHits onItemSelect={onEditorUpdate}/>
+                                    </Results>
+                                </Box>
+                            </InstantSearch>
                         : canRead 
                             ? !isLoading
                                 ? <CategoryList 

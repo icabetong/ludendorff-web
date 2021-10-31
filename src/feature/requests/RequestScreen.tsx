@@ -1,28 +1,36 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     LinearProgress,
+    ListItem,
+    ListItemText,
     useMediaQuery,
     useTheme,
     makeStyles
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
+import { InstantSearch, connectHits } from "react-instantsearch-dom";
+import { HitsProvided } from "react-instantsearch-core";
 
 import { Request, RequestRepository } from "./Request";
 import RequestList from "./RequestList";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { minimize } from "../user/User";
+import CustomDialogTitle from "../../components/CustomDialogTitle";
+import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { usePagination } from "../../shared/pagination";
 import {
     requestCollection,
     requestedAssetName,
-    endorser
+    endorser,
+    petitionerName
 } from "../../shared/const";
 import { firestore } from "../../index";
 
@@ -34,6 +42,12 @@ const useStyles = makeStyles(() => ({
         '& .MuiList-padding': {
             padding: 0
         }
+    },
+    search: {
+        minHeight: '60vh'
+    },
+    searchBox: {
+        margin: '0.6em 1em'
     }
 }));
 
@@ -46,11 +60,14 @@ const RequestScreen = (props: RequestScreenProps) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const [search, setSearch] = useState(false);
     const [request, setRequest] = useState<Request | undefined>(undefined);
     const { isAdmin } = usePermissions();
     const { user } = useAuthState();
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
+
+    const onSearchInvoked = () => setSearch(!search)
 
     const onEndorsementDismiss = () => setRequest(undefined);
     const onEndorsementConfirmed = () => {
@@ -78,19 +95,30 @@ const RequestScreen = (props: RequestScreenProps) => {
                 maxWidth="xs"
                 open={props.isOpen}
                 onClose={props.onDismiss}>
-                <DialogTitle>{ t("navigation.requests") }</DialogTitle>
+                <CustomDialogTitle onSearch={onSearchInvoked}>{ t("navigation.requests") }</CustomDialogTitle>
                 <DialogContent dividers={true} className={classes.root}>
-                    { isAdmin
-                        ? !isLoading
-                            ? <RequestList 
-                                requests={items}
-                                hasPrevious={isStart}
-                                hasNext={isEnd}
-                                onPrevious={getPrev}
-                                onNext={getNext}
-                                onItemSelect={setRequest}/>
-                            : <LinearProgress/>
-                        :  <ErrorNoPermissionState/>
+                    { search 
+                        ?   <InstantSearch searchClient={Provider} indexName="requests">
+                                <Box className={classes.searchBox}>
+                                    <SearchBox/>
+                                </Box>
+                                <Box className={classes.search}>
+                                    <Results>
+                                        <RequestHits onItemSelect={setRequest}/>
+                                    </Results>
+                                </Box>
+                            </InstantSearch>
+                        : isAdmin
+                            ? !isLoading
+                                ? <RequestList 
+                                    requests={items}
+                                    hasPrevious={isStart}
+                                    hasNext={isEnd}
+                                    onPrevious={getPrev}
+                                    onNext={getNext}
+                                    onItemSelect={setRequest}/>
+                                : <LinearProgress/>
+                            :  <ErrorNoPermissionState/>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -124,3 +152,35 @@ const RequestScreen = (props: RequestScreenProps) => {
 }
 
 export default RequestScreen;
+
+type RequestHitsListProps = HitsProvided<Request> & {
+    onItemSelect: (request: Request) => void
+}
+const RequestHitsList = (props: RequestHitsListProps) => {
+    return (
+        <>
+        { props.hits.map((r: Request) => (
+            <RequestListItem request={r} onItemSelect={props.onItemSelect}/>
+        ))
+        }
+        </>
+    )
+}
+const RequestHits = connectHits<RequestHitsListProps, Request>(RequestHitsList);
+
+type RequestListItemProps = {
+    request: Request,
+    onItemSelect: (request: Request) => void
+}
+const RequestListItem = (props: RequestListItemProps) => {
+    return (
+        <ListItem
+            button
+            key={props.request.requestId}
+            onClick={() => props.onItemSelect(props.request)}>
+            <ListItemText
+                primary={<Highlight attribute={requestedAssetName} hit={props.request}/>}
+                secondary={<Highlight attribute={petitionerName} hit={props.request}/>}/>
+        </ListItem>
+    )
+}
