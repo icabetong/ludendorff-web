@@ -7,6 +7,7 @@ import 'firebase/firestore'
 import { AuthProvider } from './feature/auth/AuthProvider';
 import { CoreComponent } from './feature/core/Core';
 import { PreferenceProvider } from './feature/settings/Preference';
+import * as serviceWorker from "./serviceWorkerRegistration";
 
 import './index.css';
 import './localization';
@@ -35,3 +36,8 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: http://bit.ly/CRA-PWA
+serviceWorker.unregister();

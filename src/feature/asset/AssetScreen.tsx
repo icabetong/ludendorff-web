@@ -97,7 +97,6 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const onRemoveInvoke = (asset: Asset) => setAsset(asset);
     const onRemoveDismiss = () => setAsset(undefined);
-    
     const onAssetRemove = () => {
         if (asset !== undefined) {
             AssetRepository.remove(asset)

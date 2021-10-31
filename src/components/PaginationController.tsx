@@ -36,7 +36,7 @@ const PaginationController = (props: PaginationControllerPropsType) => {
                         color="primary" 
                         disabled={props.hasPrevious}
                         startIcon={<ChevronLeftIcon className={classes.icon}/>}
-                        onClick={() => props.getPrevious}>
+                        onClick={props.getPrevious}>
                             { t("button.previous") }
                     </Button>
                 </Grid>
@@ -46,7 +46,7 @@ const PaginationController = (props: PaginationControllerPropsType) => {
                         color="primary" 
                         disabled={props.hasNext}
                         endIcon={<ChevronRightIcon className={classes.icon}/>}
-                        onClick={() => props.getNext}>
+                        onClick={props.getNext}>
                             { t("button.next") }
                     </Button>
                 </Grid>
