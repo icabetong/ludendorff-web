@@ -29,6 +29,7 @@
     "firebase": "^8.10.0",
     "i18next": "^20.6.1",
     "install": "^0.13.0",
+    "jspdf": "^2.4.0",
     "jsqr": "^1.4.0",
     "notistack": "^1.0.10",
     "qrcode.react": "^1.0.1",

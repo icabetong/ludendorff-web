@@ -1,28 +1,32 @@
 import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListSubheader,
+    Divider,
+    Typography,
+    makeStyles
+} from "@material-ui/core";
 
-import HomeIcon from "@heroicons/react/outline/HomeIcon";
-import DesktopComputerIcon from "@heroicons/react/outline/DesktopComputerIcon";
-import UserGroupIcon from "@heroicons/react/outline/UserGroupIcon";
-import IdentificationIcon from "@heroicons/react/outline/IdentificationIcon";
-import CogIcon from "@heroicons/react/outline/CogIcon";
-import UserIcon from "@heroicons/react/outline/UserIcon";
-import LogoutIcon from "@heroicons/react/outline/LogoutIcon";
+import {
+    HomeIcon,
+    DesktopComputerIcon,
+    UserGroupIcon,
+    IdentificationIcon,
+    CogIcon,
+    UserIcon,
+    LogoutIcon
+} from "@heroicons/react/outline";
 
 import firebase from "firebase/app";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
@@ -96,7 +100,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
         { icon: HomeIcon, title: "navigation.home", destination: Destination.HOME },
         { icon: DesktopComputerIcon, title: "navigation.assets", destination: Destination.ASSETS },
         { icon: UserGroupIcon, title: "navigation.users", destination: Destination.USERS },
-        { icon: IdentificationIcon, title: "navigation.assignments", destination: Destination.ASSIGNMENTS }
+        { icon: IdentificationIcon, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
     ]
 
     const minorDestinations: NavigationItemType[] = [

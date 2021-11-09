@@ -20,6 +20,7 @@ import {
     IdentificationIcon, 
     TrashIcon 
 } from "@heroicons/react/outline";
+import { jsPDF } from "jspdf";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -177,6 +178,19 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     const onRequestListView = () => setRequestListOpen(true)
     const onRequestListDismiss = () => setRequestListOpen(false)
 
+    const onTest = () => {
+        const doc = new jsPDF('p', 'px', 'letter');
+        doc.text('Information', 10, 10);
+
+        const frameworks = [
+            {name: 'react', author: 'facebook', platform: 'web'},
+            {name: 'svelte', author: 'inde', platform: 'web'},
+            {name: 'android', author: 'google', platform: 'android'}
+        ]
+        doc.table(10, 20, frameworks, ['name', 'author', 'platform'], { autoSize: true })
+        doc.save();
+    }
+    
     return (
         <Box className={classes.root}>
             <ComponentHeader 
@@ -187,7 +201,8 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 onSearch={onSearchInvoke}
                 onDrawerToggle={props.onDrawerToggle}
                 menuItems={[
-                    <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>
+                    <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>,
+                    <MenuItem key={1} onClick={onTest}>Generate Report</MenuItem>
                 ]}
             />
             { isAdmin
