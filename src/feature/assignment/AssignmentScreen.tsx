@@ -17,9 +17,11 @@ import {
 import { useSnackbar } from "notistack";
 import { 
     PlusIcon, 
+    DocumentDownloadIcon,
     IdentificationIcon, 
     TrashIcon 
 } from "@heroicons/react/outline";
+import { jsPDF } from "jspdf";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -113,6 +115,21 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             flex: 1
         },
         {
+            field: "export",
+            headerName: t("button.export"),
+            flex: 0.4,
+            disableColumnMenu: true,
+            sortable: false,
+            renderCell: (params: GridCellParams) => {
+                return (
+                    <HeroIconButton
+                        icon={DocumentDownloadIcon}
+                        aria-label={t("button.export")}
+                        onClick={() => onExport(params.row as Assignment) }/>
+                )
+            }
+        },
+        {
             field: "delete",
             headerName: t("button.delete"),
             flex: 0.4,
@@ -128,6 +145,36 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             }
         }
     ];
+
+    const onExport = (assignment: Assignment) => {
+        const catSize = 18;
+        const dataSize = 14;
+        const addHeader = (category: string, x: number, y: number): jsPDF => {
+            return doc.setFontSize(catSize).setFont('', 'bold').text(category, x, y);
+        }
+        const addData = (header: string, data: string | null | undefined, x: number, y: number): jsPDF => {
+            return data ? doc.setFontSize(dataSize).setFont('', 'normal').text(`${header}: ${data}`, x, y) : doc;
+        }
+
+        const doc = new jsPDF(); 
+        doc.setFontSize(20);
+        doc.setFont('', 'bold');
+        doc.text(t("assignment_details"), 20, 20);
+
+        addData(t("field.location"), assignment.location, 20, 30);
+        //
+        addHeader(t("field.asset"), 20, 35);
+        addData(t("field.name"), assignment.asset?.assetName, 20, 45);
+        addData(t("field.status"), assignment.asset?.status?.toString(), 20, 50);
+        addData(t("field.category"), assignment.asset?.category?.categoryName, 20, 55);
+        //
+        addHeader(t("field.user"), 20, 65);
+        addData(t("field.name"), assignment?.user?.name, 20, 70);
+        addData(t("field.email"), assignment.user?.email, 20, 75);
+        addData(t("field.position"), assignment?.user?.position, 20, 80);
+    
+        doc.save("b5.pdf");
+    }
 
     const {
         items: assignments,

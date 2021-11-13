@@ -87,6 +87,7 @@ const resources = {
                 delete: "Delete",
                 disable: "Disable",
                 enable: "Enable",
+                export: "Export",
                 dismiss: "Dismiss",
                 show_menu: "Show menu",
                 show_drawer: "Show drawer",
