@@ -34,6 +34,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
 import AssetSearchScreen from "./AssetSearchScreen";
+import ReportScreen from "../report/ReportScreen";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 
@@ -186,6 +187,9 @@ const AssetScreen = (props: AssetScreenProps) => {
     const onSearchInvoke = () => setSearch(true);
     const onSearchDismiss = () => setSearch(false);
 
+    const [reports, setReports] = useState(false);
+    const onReportsInvoke = () => setReports(!reports);
+
     const [isCategoryOpen, setCategoryOpen] = useState(false);
     const onCategoryListView = () => setCategoryOpen(true)
     const onCategoryListDismiss = () => setCategoryOpen(false)
@@ -204,7 +208,8 @@ const AssetScreen = (props: AssetScreenProps) => {
                 buttonOnClick={() => dispatch({ type: ActionType.CREATE }) }
                 onSearch={onSearchInvoke}
                 menuItems={[
-                    <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
+                    <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>,
+                    <MenuItem key={1} onClick={onReportsInvoke}>{t("navigation.reports")}</MenuItem>
                 ]}/>
             { canRead
                 ? <>
@@ -231,7 +236,10 @@ const AssetScreen = (props: AssetScreenProps) => {
                         { !isLoading 
                             ? items.length < 1 
                                 ? <AssetEmptyState/>
-                                : <AssetList assets={items} onItemSelect={onAssetSelected}/>
+                                : <AssetList 
+                                    assets={items} 
+                                    onItemSelect={onAssetSelected}
+                                    onItemRemove={onRemoveInvoke}/>
                             : <LinearProgress/>
                         }
                     </Hidden>
@@ -268,6 +276,11 @@ const AssetScreen = (props: AssetScreenProps) => {
                     summary="dialog.asset_remove_summary"
                     onDismiss={onRemoveDismiss}
                     onConfirm={onAssetRemove}/>
+            }
+            {  reports &&
+                <ReportScreen
+                    isOpen={reports}
+                    onDismiss={onReportsInvoke}/>
             }
         </Box>
     )

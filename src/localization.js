@@ -21,7 +21,8 @@ const resources = {
                 requests: "Requests",
                 profile: "Profile",
                 settings: "Settings",
-                sent_requests: "Sent Requests"
+                sent_requests: "Sent Requests",
+                reports: "Reports"
             },
             field: {
                 email: "Email",
@@ -53,7 +54,11 @@ const resources = {
                 new_password: "New Password",
                 confirmation_password: "Confirm Password",
                 submitted_date: "Submitted Date",
-                search: "Search"
+                search: "Search",
+                source: "Source"
+            },
+            placeholder: {
+                none: "None"
             },
             status: {
                 operational: "Operational",
