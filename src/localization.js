@@ -200,6 +200,8 @@ const resources = {
                 count: "Count: {{count}}",
             },
             not_yet_returned: "Not Yet Returned",
+            no_remarks: "No Remarks",
+            no_location_data: "No Location Provided",
             unknown: "Unknown",
             information: "Information",
             actions: "Actions",

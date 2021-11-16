@@ -156,22 +156,27 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
             return data ? doc.setFontSize(dataSize).setFont('', 'normal').text(`${header}: ${data}`, x, y) : doc;
         }
 
-        const doc = new jsPDF(); 
+        const doc = new jsPDF('portrait', undefined, 'b5'); 
         doc.setFontSize(20);
         doc.setFont('', 'bold');
         doc.text(t("assignment_details"), 20, 20);
 
-        addData(t("field.location"), assignment.location, 20, 30);
+        addData(t("field.location"), assignment.location ? assignment?.location : t("no_location_data"), 20, 30);
+        addData(t("field.date_assigned"), formatDate(assignment.dateAssigned), 20, 35);
+        addData(t("field.date_returned"), assignment.dateReturned ? formatDate(assignment.dateReturned) : t("not_yet_returned"), 20, 40);
         //
-        addHeader(t("field.asset"), 20, 35);
-        addData(t("field.name"), assignment.asset?.assetName, 20, 45);
-        addData(t("field.status"), assignment.asset?.status?.toString(), 20, 50);
-        addData(t("field.category"), assignment.asset?.category?.categoryName, 20, 55);
+        addHeader(t("field.asset"), 20, 50);
+        addData(t("field.name"), assignment.asset?.assetName, 20, 60);
+        addData(t("field.status"), assignment.asset?.status?.toString(), 20, 65);
+        addData(t("field.category"), assignment.asset?.category?.categoryName, 20, 70);
+        
         //
-        addHeader(t("field.user"), 20, 65);
-        addData(t("field.name"), assignment?.user?.name, 20, 75);
-        addData(t("field.email"), assignment.user?.email, 20, 75);
-        addData(t("field.position"), assignment?.user?.position, 20, 80);
+        addHeader(t("field.user"), 20, 80);
+        addData(t("field.name"), assignment?.user?.name, 20, 90);
+        addData(t("field.email"), assignment.user?.email, 20, 95);
+        addData(t("field.position"), assignment?.user?.position, 20, 100);
+
+        addData(t("field.remarks"), assignment?.remarks ? assignment?.remarks : t("no_remarks"), 20, 110);
     
         doc.save("b5.pdf");
     }
