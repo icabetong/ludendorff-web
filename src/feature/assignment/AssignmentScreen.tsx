@@ -169,7 +169,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
         addData(t("field.category"), assignment.asset?.category?.categoryName, 20, 55);
         //
         addHeader(t("field.user"), 20, 65);
-        addData(t("field.name"), assignment?.user?.name, 20, 70);
+        addData(t("field.name"), assignment?.user?.name, 20, 75);
         addData(t("field.email"), assignment.user?.email, 20, 75);
         addData(t("field.position"), assignment?.user?.position, 20, 80);
     
