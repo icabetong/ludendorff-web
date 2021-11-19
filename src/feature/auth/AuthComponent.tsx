@@ -5,6 +5,7 @@ import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
 import { 
     Button,
+    Box,
     Container,
     Grid,
     Paper,
@@ -54,61 +55,63 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({history}) 
     }
 
     return (
-        <Container>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Grid 
-                    container 
-                    spacing={4} 
-                    direction="column" 
-                    alignItems="center" 
-                    justifyContent="center" 
-                    className={classes.root}>
-                    <Grid xs={12} sm={8} md={6} lg={4} item>
-                        <Paper className={classes.containerPaper}>
-                            <div className={classes.container}>
-                                <Typography variant="h5">{ t("auth.hello") }</Typography>
-                                <Typography variant="h5">{ t("auth.welcome_back") }</Typography>
-                            </div>
-                            <div className={classes.container}>
-                                { error != null && 
-                                    <Typography variant="body2" color="error">
-                                        {error.message}
-                                    </Typography>
-                                }
-                                <br/>
-                                <TextField
-                                    style={{ marginBottom: '1em', marginTop: '1em' }}
-                                    id="email"
-                                    type="text"
-                                    label={ t("field.email") }
-                                    error={errors.email !== undefined}
-                                    disabled={isAuthenticating}
-                                    {...register("email", { required: true })}/>
-                                <br/>
-                                <TextField
-                                    id="password"
-                                    type="password"
-                                    label={ t("field.password") }
-                                    error={errors.password !== undefined}
-                                    disabled={isAuthenticating}
-                                    {...register("password", { required: false})}/>
-                            </div>
-                            <div className={classes.container}>
-                                <Button 
-                                    type="submit" 
-                                    variant="contained" 
-                                    color="primary"
-                                    aria-label={ t("button.signin") }
-                                    fullWidth={true}
-                                    disabled={isAuthenticating}>
-                                    { isAuthenticating ? t("feedback.authenticating") : t("button.signin") }
-                                </Button>
-                            </div>
-                        </Paper>
+        <Box className="auth">
+            <Container>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Grid 
+                        container 
+                        spacing={4} 
+                        direction="column" 
+                        alignItems="center" 
+                        justifyContent="center" 
+                        className={classes.root}>
+                        <Grid xs={12} sm={8} md={6} lg={4} item>
+                            <Paper className={classes.containerPaper}>
+                                <div className={classes.container}>
+                                    <Typography variant="h5">{ t("auth.hello") }</Typography>
+                                    <Typography variant="h5">{ t("auth.welcome_back") }</Typography>
+                                </div>
+                                <div className={classes.container}>
+                                    { error != null && 
+                                        <Typography variant="body2" color="error">
+                                            {error.message}
+                                        </Typography>
+                                    }
+                                    <br/>
+                                    <TextField
+                                        style={{ marginBottom: '1em', marginTop: '1em' }}
+                                        id="email"
+                                        type="text"
+                                        label={ t("field.email") }
+                                        error={errors.email !== undefined}
+                                        disabled={isAuthenticating}
+                                        {...register("email", { required: true })}/>
+                                    <br/>
+                                    <TextField
+                                        id="password"
+                                        type="password"
+                                        label={ t("field.password") }
+                                        error={errors.password !== undefined}
+                                        disabled={isAuthenticating}
+                                        {...register("password", { required: false})}/>
+                                </div>
+                                <div className={classes.container}>
+                                    <Button 
+                                        type="submit" 
+                                        variant="contained" 
+                                        color="primary"
+                                        aria-label={ t("button.signin") }
+                                        fullWidth={true}
+                                        disabled={isAuthenticating}>
+                                        { isAuthenticating ? t("feedback.authenticating") : t("button.signin") }
+                                    </Button>
+                                </div>
+                            </Paper>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </form>
-        </Container>
+                </form>
+            </Container>
+        </Box>
     );
 }
 
