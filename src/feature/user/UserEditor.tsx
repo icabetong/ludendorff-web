@@ -102,7 +102,7 @@ const UserEditor = (props: UserEditorProps) => {
         if (props.isCreate) {
             UserRepository.create(user)
                 .then(() => enqueueSnackbar(t("feedback.user_created")))
-                .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
+                .catch(() => enqueueSnackbar(t("feedback.user_create_error")))
                 .finally(() => {
                     setWritePending(false);
                     props.onDismiss();
@@ -110,7 +110,7 @@ const UserEditor = (props: UserEditorProps) => {
         } else {
             UserRepository.update(user)
                 .then(() => enqueueSnackbar(t("feedback.user_updated")))
-                .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
+                .catch(() => enqueueSnackbar(t("feedback.user_update_error")))
                 .finally(() => {
                     setWritePending(false);
                     props.onDismiss();
