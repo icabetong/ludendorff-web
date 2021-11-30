@@ -25,6 +25,7 @@ import {
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import { PlusIcon } from "@heroicons/react/outline";
+import firebase from "firebase";
 
 import { Asset, Status, AssetRepository } from "./Asset";
 import { Category, CategoryCore, minimize } from "../category/Category";
@@ -106,9 +107,10 @@ const AssetEditor = (props: AssetEditorProps) => {
             ...data,
             assetId: props.asset === undefined ? newId() : props.asset?.assetId,
             category: category !== undefined ? category : undefined,
-            specifications: Object.fromEntries(specifications)
+            specifications: Object.fromEntries(specifications),
+            dateCreated: firebase.firestore.Timestamp.now()
         }
- 
+        
         if (props.isCreate) {
             AssetRepository.create(asset)
                 .then(() => enqueueSnackbar(t("feedback.asset_created")))
