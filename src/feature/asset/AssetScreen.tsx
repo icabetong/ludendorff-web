@@ -19,9 +19,11 @@ import { useSnackbar } from "notistack";
 
 import {
     DesktopComputerIcon,
+    DuplicateIcon,
     PlusIcon,
     TrashIcon
 } from "@heroicons/react/outline";
+import firebase from "firebase";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -35,12 +37,13 @@ import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
 import AssetList from "./AssetList";
 import AssetSearchScreen from "./AssetSearchScreen";
 import ReportScreen from "../report/ReportScreen";
+import DuplicationDialog from "../shared/DuplicationDialog";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 
 import { firestore } from "../../index";
 import { usePagination } from "../../shared/pagination";
-import { formatDate } from "../../shared/utils";
+import { formatDate, newId } from "../../shared/utils";
 
 import {
     assetCollection,
@@ -135,9 +138,25 @@ const AssetScreen = (props: AssetScreenProps) => {
             valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status)) 
         },
         {
+            field: "copy",
+            headerName: t("button.copy"),
+            flex: 0.2,
+            disableColumnMenu: true,
+            sortable: false,
+            renderCell: (params: GridCellParams) => {
+                const asset = params.row as Asset;
+                return (
+                    <HeroIconButton
+                        icon={DuplicateIcon}
+                        aria-label={t("button.copy")}
+                        onClick={() => onCopyInvoke(asset)}/>
+                )
+            }
+        },
+        {
             field: "delete",
             headerName: t("button.delete"),
-            flex: 0.4,
+            flex: 0.2,
             disableColumnMenu: true,
             sortable: false,
             renderCell: (params: GridCellParams) => {
@@ -145,7 +164,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 const deleteButton = (
                     <HeroIconButton 
                         icon={TrashIcon}
-                        aria-label={t("delete")}
+                        aria-label={t("button.delete")}
                         disabled={asset.status === Status.OPERATIONAL}
                         onClick={() => onRemoveInvoke(asset)}/>
                 );
@@ -171,6 +190,19 @@ const AssetScreen = (props: AssetScreenProps) => {
 
     const [state, dispatch] = useReducer(reducer, initialState);
     const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+    
+    const [assetCopy, setAssetCopy] = useState<Asset | undefined>(undefined);
+    const onCopyInvoke = (asset: Asset) => setAssetCopy(asset);
+    const onCopyDismiss = () => setAssetCopy(undefined);
+
+    const onCopyConfirmed = (copies: number) => {
+        let assets: Asset[] = [];
+        for (let index = 0; index <= copies; index++) {
+            assets.push({...assetCopy, assetId: newId(), dateCreated: firebase.firestore.Timestamp.now() });
+        }
+        AssetRepository.createFromList(assets);
+        onCopyDismiss();
+    }
 
     const onDataGridRowDoubleClicked = (params: GridRowParams) => {
         onAssetSelected(params.row as Asset);
@@ -242,13 +274,11 @@ const AssetScreen = (props: AssetScreenProps) => {
                             : <LinearProgress/>
                         }
                     </Hidden>
-                    { !isStart && !isEnd &&
-                        <PaginationController
-                            hasPrevious={isStart}
-                            hasNext={isEnd}
-                            getPrevious={getPrev}
-                            getNext={getNext}/>
-                    }
+                    <PaginationController
+                        hasPrevious={isStart}
+                        hasNext={isEnd}
+                        getPrevious={getPrev}
+                        getNext={getNext}/>
                 </>
                 : <ErrorNoPermissionState/>
             }
@@ -275,6 +305,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                     summary="dialog.asset_remove_summary"
                     onDismiss={onRemoveDismiss}
                     onConfirm={onAssetRemove}/>
+            }
+            { assetCopy &&
+                <DuplicationDialog
+                    isOpen={assetCopy !== undefined}
+                    onConfirm={onCopyConfirmed}
+                    onDismiss={onCopyDismiss}/>
             }
             {  reports &&
                 <ReportScreen

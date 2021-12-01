@@ -62,6 +62,24 @@ export const getStatusLoc = (status: Status | undefined): string => {
 
 export class AssetRepository {
 
+    static async createFromList(assets: Asset[]): Promise<void> {
+        if (assets.length < 0) {
+            return;
+        }
+
+        let batch = firestore.batch();
+        assets.forEach((asset) => {
+            batch.set(firestore.collection(assetCollection)
+            .doc(asset.assetId), asset);
+        })
+
+        batch.update(firestore.collection(categoryCollection)
+            .doc(assets[0].category?.categoryId), categoryCount, 
+                FieldValue.increment(assets.length))
+    
+        return await batch.commit();
+    }
+
     static async create(asset: Asset): Promise<void> {
         let batch = firestore.batch();
 

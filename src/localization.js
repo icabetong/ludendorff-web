@@ -55,7 +55,8 @@ const resources = {
                 confirmation_password: "Confirm Password",
                 submitted_date: "Submitted Date",
                 search: "Search",
-                source: "Source"
+                source: "Source",
+                copies: "Copies"
             },
             placeholder: {
                 none: "None"
@@ -94,6 +95,8 @@ const resources = {
                 enable: "Enable",
                 export: "Export",
                 dismiss: "Dismiss",
+                copy: "Copy",
+                duplicate: "Duplicate",
                 show_menu: "Show menu",
                 show_drawer: "Show drawer",
                 signin: "Sign in",
