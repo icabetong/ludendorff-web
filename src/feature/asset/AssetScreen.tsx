@@ -208,8 +208,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 buttonOnClick={() => dispatch({ type: ActionType.CREATE }) }
                 onSearch={onSearchInvoke}
                 menuItems={[
-                    <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>,
-                    <MenuItem key={1} onClick={onReportsInvoke}>{t("navigation.reports")}</MenuItem>
+                    <MenuItem key={0} onClick={onCategoryListView}>{ t("navigation.categories") }</MenuItem>
                 ]}/>
             { canRead
                 ? <>
