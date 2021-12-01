@@ -149,7 +149,8 @@ const resources = {
                 assignment_update_error: "Error updating assignment",
                 assignment_remove_error: "Error removing department",
                 request_remove_error: "Error canceling request",
-                reset_link_sent: "Password reset link sent"
+                reset_link_sent: "Password reset link sent",
+                empty_copies: "Number of copies cannot be empty",
             },
             error: {
                 no_permissions_header: "Insufficient Permissions",
@@ -198,7 +199,9 @@ const resources = {
                 request_remove: "Remove request?",
                 request_remove_summary: "Are you sure you want to cancel this request? Once finished, this action cannot be undone.",
                 send_reset_link_title: "Send Password Reset Link",
-                send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email."
+                send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email.",
+                duplicate_title: "Duplicate Record",
+                duplicate_summary: "You can create duplicated copy of the records in the database, to avoid manual input."
             },
             template: {
                 full_name: "{{first}} {{last}}",
