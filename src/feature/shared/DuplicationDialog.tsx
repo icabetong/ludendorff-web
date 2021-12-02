@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
@@ -35,7 +34,7 @@ const DuplicationDialog = (props: DuplicationDialogProps) => {
             fullWidth={true}
             open={props.isOpen}
             onClose={props.onDismiss}>
-            <DialogTitle>{ t("dialog.duplicate") }</DialogTitle>
+            <DialogTitle>{ t("dialog.duplicate_title") }</DialogTitle>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogContent>
                     <DialogContentText>{ t("dialog.duplicate_summary") }</DialogContentText>
