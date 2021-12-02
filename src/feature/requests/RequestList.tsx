@@ -68,13 +68,11 @@ const RequestList = (props: RequestListProps) => {
                         );
                     })
                 }</List>
-                { !props.hasNext && !props.hasPrevious &&
-                    <PaginationController
-                        hasPrevious={props.hasPrevious}
-                        hasNext={props.hasNext}
-                        getPrevious={props.onPrevious}
-                        getNext={props.onNext}/>
-                }
+                <PaginationController
+                    hasPrevious={props.hasPrevious}
+                    hasNext={props.hasNext}
+                    getPrevious={props.onPrevious}
+                    getNext={props.onNext}/>
                 </>
             : <EmptyStateComponent
                 icon={MailOpenIcon}

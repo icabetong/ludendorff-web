@@ -148,13 +148,11 @@ const HomeScreen = (props: HomeScreenProps) => {
                     : <LinearProgress/>
                 }
             </Hidden>
-            { !isStart && !isEnd &&
-                <PaginationController
-                    hasPrevious={isStart}
-                    hasNext={isEnd}
-                    getPrevious={getPrev}
-                    getNext={getNext}/>
-            }
+            <PaginationController
+                hasPrevious={isStart}
+                hasNext={isEnd}
+                getPrevious={getPrev}
+                getNext={getNext}/>
             { state.isOpen &&
                 <RequestEditor
                     isOpen={state.isOpen}

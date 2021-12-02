@@ -244,13 +244,11 @@ const UserScreen = (props: UserScreenProps) => {
                             : <LinearProgress/>
                         }
                     </Hidden>
-                    { !atUserStart && !atUserEnd &&
-                        <PaginationController
-                            hasPrevious={atUserStart}
-                            hasNext={atUserEnd}
-                            getPrevious={getPreviousUsers}
-                            getNext={getNextUsers}/>
-                    }
+                    <PaginationController
+                        hasPrevious={atUserStart}
+                        hasNext={atUserEnd}
+                        getPrevious={getPreviousUsers}
+                        getNext={getNextUsers}/>
                 </>
                 : <ErrorNoPermissionState/>
             }

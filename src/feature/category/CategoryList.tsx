@@ -70,13 +70,11 @@ const CategoryList = (props: CategoryListProps) => {
                             );
                         })
                     }</List>
-                    { !props.hasNext && !props.hasPrevious &&
-                        <PaginationController
-                            hasPrevious={props.hasPrevious}
-                            hasNext={props.hasNext}
-                            getPrevious={props.onPrevious}
-                            getNext={props.onNext}/>
-                    }
+                    <PaginationController
+                        hasPrevious={props.hasPrevious}
+                        hasNext={props.hasNext}
+                        getPrevious={props.onPrevious}
+                        getNext={props.onNext}/>
                 </>
             : <EmptyStateComponent
                 icon={TagIcon}
