@@ -1,7 +1,6 @@
 import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    AppBar,
     Box,
     Button,
     Dialog,
@@ -15,7 +14,6 @@ import {
     ListItemText,
     ListSubheader,
     Divider,
-    Toolbar,
     Typography,
     makeStyles
 } from "@material-ui/core";
