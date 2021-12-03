@@ -245,7 +245,7 @@ const UserScreen = (props: UserScreenProps) => {
                         }
                     </Hidden>
                     <PaginationController
-                        hasPrevious={atUserStart}
+                        hasPrevious={atUserStart && users.length === 0}
                         hasNext={atUserEnd}
                         getPrevious={getPreviousUsers}
                         getNext={getNextUsers}/>

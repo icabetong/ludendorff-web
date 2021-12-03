@@ -149,7 +149,7 @@ const HomeScreen = (props: HomeScreenProps) => {
                 }
             </Hidden>
             <PaginationController
-                hasPrevious={isStart}
+                hasPrevious={isStart || items.length === 0}
                 hasNext={isEnd}
                 getPrevious={getPrev}
                 getNext={getNext}/>

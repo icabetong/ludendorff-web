@@ -272,7 +272,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                         }
                     </Hidden>
                 <PaginationController
-                        hasPrevious={atAssignmentStart}
+                        hasPrevious={atAssignmentStart || assignments.length === 0}
                         hasNext={atAssignmentEnd}
                         getPrevious={getPreviousAssignments}
                         getNext={getNextAssignments}/>
