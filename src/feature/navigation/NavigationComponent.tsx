@@ -52,6 +52,9 @@ type NavigationComponentPropsType =  {
 }
 
 const useStyles = makeStyles((theme) => ({
+    inset: {
+        marginBottom: '1em'
+    },
     container: {
         borderRadius: theme.spacing(1),
         marginTop: theme.spacing(1),
@@ -124,6 +127,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     
     return (
         <Box>
+            <Box className="inset"/>
             <ListSubheader>{ t("navigation.manage") }</ListSubheader>
             <List className={classes.navigation}>
                 <NavigationList 
