@@ -35,7 +35,7 @@ export const reducer = (state: State, action: Action): State => {
         case ActionType.UPDATE:
             return {
                 department: payload,
-                isCreate: true,
+                isCreate: false,
                 isOpen: true
             }
         case ActionType.DISMISS:
