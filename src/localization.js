@@ -132,6 +132,7 @@ const resources = {
                 assignment_created: "Assignment created successfully",
                 assignment_updated: "Assignment updated successfully",
                 assignment_removed: "Assignment removed successfully",
+                request_created: "Request created successfully",
                 request_removed: "Request cancelled successfully",
                 asset_create_error: "Error creating asset",
                 asset_update_error: "Error updating asset",
