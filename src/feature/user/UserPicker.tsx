@@ -9,7 +9,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
 
 import {
-    UserIcon
+  UserIcon
 } from "@heroicons/react/outline";
 
 import { User } from "./User";
@@ -21,77 +21,77 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 
 const useStyles = makeStyles(() => ({
-    root: {
-        minHeight: '60vh',
-        paddingTop: 0,
-        paddingBottom: 0,
-        '& .MuiList-padding': {
-            padding: 0
-        }
+  root: {
+    minHeight: '60vh',
+    paddingTop: 0,
+    paddingBottom: 0,
+    '& .MuiList-padding': {
+      padding: 0
     }
+  }
 }));
 
 type UserPickerProps = {
-    isOpen: boolean,
-    users: User[],
-    isLoading: boolean,
-    hasPrevious: boolean,
-    hasNext: boolean,
-    onPrevious: () => void,
-    onNext: () => void,
-    onDismiss: () => void,
-    onSelectItem: (user: User) => void,
+  isOpen: boolean,
+  users: User[],
+  isLoading: boolean,
+  hasPrevious: boolean,
+  hasNext: boolean,
+  onPrevious: () => void,
+  onNext: () => void,
+  onDismiss: () => void,
+  onSelectItem: (user: User) => void,
 }
 
 const UserPicker = (props: UserPickerProps) => {
-    const { t } = useTranslation();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-    const classes = useStyles();
-    const { canRead } = usePermissions();
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const classes = useStyles();
+  const { canRead } = usePermissions();
 
-    const onSelect = (user: User) => {
-        props.onSelectItem(user);
-        props.onDismiss();
-    }
+  const onSelect = (user: User) => {
+    props.onSelectItem(user);
+    props.onDismiss();
+  }
 
-    return (
-        <Dialog
-            fullScreen={isMobile}
-            fullWidth={true}
-            maxWidth="xs"
-            open={props.isOpen}
-            onClose={props.onDismiss}>
-            <DialogTitle>{ t("user_select") }</DialogTitle>
-            <DialogContent dividers={true} className={classes.root}>
-                { canRead ? 
-                    !props.isLoading
-                        ? props.users.length > 0
-                            ? <>
-                                <UserList
-                                    users={props.users}
-                                    onItemSelect={onSelect}/>
-                                    { !props.hasNext &&
-                                        <PaginationController
-                                            hasPrevious={props.hasPrevious}
-                                            hasNext={props.hasNext}
-                                            getPrevious={props.onPrevious}
-                                            getNext={props.onNext}/>
-                                    }
-                                </>
-                            : <EmptyStateComponent
-                                icon={UserIcon}
-                                title={t("empty_user")}
-                                subtitle={t("empty_user_summary")}/>
-                        : <LinearProgress/>       
-                    : <ErrorNoPermissionState/>
+  return (
+    <Dialog
+      fullScreen={isMobile}
+      fullWidth={true}
+      maxWidth="xs"
+      open={props.isOpen}
+      onClose={props.onDismiss}>
+      <DialogTitle>{t("user_select")}</DialogTitle>
+      <DialogContent dividers={true} className={classes.root}>
+        {canRead ?
+          !props.isLoading
+            ? props.users.length > 0
+              ? <>
+                <UserList
+                  users={props.users}
+                  onItemSelect={onSelect} />
+                {!props.hasNext &&
+                  <PaginationController
+                    hasPrevious={props.hasPrevious}
+                    hasNext={props.hasNext}
+                    getPrevious={props.onPrevious}
+                    getNext={props.onNext} />
                 }
-            </DialogContent>
-            <DialogActions>
-                <Button color="primary" onClick={props.onDismiss}>{ t("close") }</Button>
-            </DialogActions>
-        </Dialog>
-    );
+              </>
+              : <EmptyStateComponent
+                icon={UserIcon}
+                title={t("empty_user")}
+                subtitle={t("empty_user_summary")} />
+            : <LinearProgress />
+          : <ErrorNoPermissionState />
+        }
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={props.onDismiss}>{t("close")}</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default UserPicker;

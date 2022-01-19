@@ -30,25 +30,25 @@ type ActionBase<K, V = void> = V extends void ? { type: K } : { type: K } & V;
 
 type Action =
   | ActionBase<
-      'SET-QUERY',
-      {
-        payload: {
-          query: Query;
-          queryRef: MutableRefObject<Query | undefined>;
-          firstDocRef: MutableRefObject<QueryDocumentSnapshot | undefined>;
-          limit: number;
-        };
-      }
-    >
+    'SET-QUERY',
+    {
+      payload: {
+        query: Query;
+        queryRef: MutableRefObject<Query | undefined>;
+        firstDocRef: MutableRefObject<QueryDocumentSnapshot | undefined>;
+        limit: number;
+      };
+    }
+  >
   | ActionBase<
-      'LOAD',
-      {
-        payload: {
-          value: QuerySnapshot;
-          query: Query;
-        };
-      }
-    >
+    'LOAD',
+    {
+      payload: {
+        value: QuerySnapshot;
+        query: Query;
+      };
+    }
+  >
   | ActionBase<'PREV'>
   | ActionBase<'NEXT'>;
 

@@ -5,54 +5,54 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 
 import {
-    ChevronLeftIcon,
-    ChevronRightIcon
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from "@heroicons/react/outline";
 
 const useStyles = makeStyles(() => ({
-    icon: {
-        width: '1em',
-        height: '1em'
-    }
+  icon: {
+    width: '1em',
+    height: '1em'
+  }
 }));
 
 type PaginationControllerPropsType = {
-    hasPrevious: boolean,
-    hasNext: boolean,
-    getPrevious: () => void,
-    getNext: () => void
+  hasPrevious: boolean,
+  hasNext: boolean,
+  getPrevious: () => void,
+  getNext: () => void
 }
 
 const PaginationController = (props: PaginationControllerPropsType) => {
-    const { t } = useTranslation();
-    const classes = useStyles();
+  const { t } = useTranslation();
+  const classes = useStyles();
 
-    return (
-        <Container>
-            <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
-                <Grid item>
-                    <Button 
-                        variant="outlined" 
-                        color="primary" 
-                        disabled={props.hasPrevious}
-                        startIcon={<ChevronLeftIcon className={classes.icon}/>}
-                        onClick={props.getPrevious}>
-                            { t("button.previous") }
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button 
-                        variant="outlined" 
-                        color="primary" 
-                        disabled={props.hasNext}
-                        endIcon={<ChevronRightIcon className={classes.icon}/>}
-                        onClick={props.getNext}>
-                            { t("button.next") }
-                    </Button>
-                </Grid>
-            </Grid>
-        </Container>
-    )
+  return (
+    <Container>
+      <Grid container spacing={2} alignItems="center" justifyContent="center" direction="row">
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={props.hasPrevious}
+            startIcon={<ChevronLeftIcon className={classes.icon} />}
+            onClick={props.getPrevious}>
+            {t("button.previous")}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={props.hasNext}
+            endIcon={<ChevronRightIcon className={classes.icon} />}
+            onClick={props.getNext}>
+            {t("button.next")}
+          </Button>
+        </Grid>
+      </Grid>
+    </Container>
+  )
 }
 
 export default PaginationController;

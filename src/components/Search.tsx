@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { 
-    FormControl, 
-    InputAdornment, 
-    InputLabel, 
-    OutlinedInput,
-    makeStyles
+import {
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  makeStyles
 } from "@material-ui/core";
 import { SearchIcon } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch/lite";
@@ -15,82 +15,82 @@ import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({
-    highlightResult: {
-        color: theme.palette.primary.main
-    }
+  highlightResult: {
+    color: theme.palette.primary.main
+  }
 }))
 
 const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
-    const classes = useStyles();
-    const parsedHit = highlight({
-        highlightProperty: '_highlightResult',
-        attribute,
-        hit
-    })
+  const classes = useStyles();
+  const parsedHit = highlight({
+    highlightProperty: '_highlightResult',
+    attribute,
+    hit
+  })
 
-    return (
-        <span>
-            { parsedHit.map((part, index) => 
-                part.isHighlighted ? (
-                    <span className={classes.highlightResult} key={index}>{part.value}</span>
-                ): (
-                    <span key={index}>{part.value}</span>
-                ))
-            }
-        </span>
-    )
+  return (
+    <span>
+      {parsedHit.map((part, index) =>
+        part.isHighlighted ? (
+          <span className={classes.highlightResult} key={index}>{part.value}</span>
+        ) : (
+          <span key={index}>{part.value}</span>
+        ))
+      }
+    </span>
+  )
 }
 export const Highlight = connectHighlight(CustomHighlight)
 
 const CustomSearchBox = (props: SearchBoxProvided) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    return (
-        <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="search">{t("field.search")}</InputLabel>
-            <OutlinedInput
-                id="search"
-                value={props.currentRefinement}
-                label={t("field.search")}
-                endAdornment={
-                    <InputAdornment position="end">
-                        <HeroIconButton
-                            aria-label={t("button.search")}
-                            icon={SearchIcon}
-                            edge="end"/>
-                    </InputAdornment>
-                }
-                onChange={e => props.refine(e.target.value)}/>
-        </FormControl>
-    )
+  return (
+    <FormControl fullWidth variant="outlined">
+      <InputLabel htmlFor="search">{t("field.search")}</InputLabel>
+      <OutlinedInput
+        id="search"
+        value={props.currentRefinement}
+        label={t("field.search")}
+        endAdornment={
+          <InputAdornment position="end">
+            <HeroIconButton
+              aria-label={t("button.search")}
+              icon={SearchIcon}
+              edge="end" />
+          </InputAdornment>
+        }
+        onChange={e => props.refine(e.target.value)} />
+    </FormControl>
+  )
 }
 
 type EmptySearchStateProps = {
-    query: string | undefined
+  query: string | undefined
 }
 const EmptySearchState = (props: EmptySearchStateProps) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    return (
-        <EmptyStateComponent
-            icon={SearchIcon}
-            title={t("empty_search")}
-            subtitle={t("empty_search_summary", { query: props.query })}/>
-    );
+  return (
+    <EmptyStateComponent
+      icon={SearchIcon}
+      title={t("empty_search")}
+      subtitle={t("empty_search_summary", { query: props.query })} />
+  );
 }
 
 interface ResultsProps extends StateResultsProvided {
-    children?: React.ReactNode | React.ReactNode[]
+  children?: React.ReactNode | React.ReactNode[]
 }
-const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => { 
-    return (
-        <>
-        { searchResults && searchResults.nbHits !== 0
-           ? children
-           : <EmptySearchState query={searchState.query}/>
-        }
-        </>
-    )
+const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => {
+  return (
+    <>
+      {searchResults && searchResults.nbHits !== 0
+        ? children
+        : <EmptySearchState query={searchState.query} />
+      }
+    </>
+  )
 }
 export const Results = connectStateResults(ResultsComponent)
 
