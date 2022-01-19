@@ -115,6 +115,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       {changeName &&
         <ChangeNamePrompt
           isOpen={changeName}
+          user={user}
           onDismiss={onChangeNameDismiss} />
       }
       {changePassword &&

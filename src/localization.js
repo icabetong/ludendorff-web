@@ -152,6 +152,12 @@ const resources = {
         request_remove_error: "Error canceling request",
         reset_link_sent: "Password reset link sent",
         empty_copies: "Number of copies cannot be empty",
+        name_changed: "Name changed successfully",
+        password_changed: "Password changed succesfully",
+        avatar_changed: "Profile Picture changed successfully",
+        name_change_error: "Error updating name",
+        password_change_error: "Error updating password",
+        avatar_change_error: "Error updating user profile picture",
       },
       error: {
         no_permissions_header: "Insufficient Permissions",
