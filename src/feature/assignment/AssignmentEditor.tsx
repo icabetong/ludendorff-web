@@ -41,7 +41,7 @@ import {
 import { firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   gridItem: {
     maxWidth: '100%'
   }

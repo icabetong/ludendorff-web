@@ -7,7 +7,6 @@ import {
   Button,
   Box,
   Container,
-  Grid,
   Paper,
   TextField,
   Typography,
@@ -21,7 +20,12 @@ const useStyles = makeStyles(() => ({
   root: {
     minHeight: '100vh',
   },
+  rootWrapper: {
+    height: '100%',
+    margin: 'auto'
+  },
   containerPaper: {
+    height: '100%',
     padding: '2em',
   },
   container: {
@@ -56,60 +60,52 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
 
   return (
     <Box className="auth">
-      <Container>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid
-            container
-            spacing={4}
-            direction="column"
-            alignItems="center"
-            justifyContent="center"
-            className={classes.root}>
-            <Grid xs={12} sm={8} md={6} lg={4} item>
-              <Paper className={classes.containerPaper}>
-                <div className={classes.container}>
-                  <Typography variant="h5">{t("auth.hello")}</Typography>
-                  <Typography variant="h5">{t("auth.welcome_back")}</Typography>
-                </div>
-                <div className={classes.container}>
-                  {error != null &&
-                    <Typography variant="body2" color="error">
-                      {error.message}
-                    </Typography>
-                  }
-                  <br />
-                  <TextField
-                    style={{ marginBottom: '1em', marginTop: '1em' }}
-                    id="email"
-                    type="text"
-                    label={t("field.email")}
-                    error={errors.email !== undefined}
-                    disabled={isAuthenticating}
-                    {...register("email", { required: true })} />
-                  <br />
-                  <TextField
-                    id="password"
-                    type="password"
-                    label={t("field.password")}
-                    error={errors.password !== undefined}
-                    disabled={isAuthenticating}
-                    {...register("password", { required: false })} />
-                </div>
-                <div className={classes.container}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    aria-label={t("button.signin")}
-                    fullWidth={true}
-                    disabled={isAuthenticating}>
-                    {isAuthenticating ? t("feedback.authenticating") : t("button.signin")}
-                  </Button>
-                </div>
-              </Paper>
-            </Grid>
-          </Grid>
-        </form>
+      <Container className={classes.rootWrapper}>
+        <Box display="flex" justifyContent="center" alignItems="center" className={classes.rootWrapper}>
+          <Container component="form" onSubmit={handleSubmit(onSubmit)} maxWidth="xs">
+            <Paper className={classes.containerPaper}>
+              <div className={classes.container}>
+                <Typography variant="h5">{t("auth.hello")}</Typography>
+                <Typography variant="h5">{t("auth.welcome_back")}</Typography>
+              </div>
+              <div className={classes.container}>
+                {error != null &&
+                  <Typography variant="body2" color="error" paragraph>
+                    {error.message}
+                  </Typography>
+                }
+                <br />
+                <TextField
+                  style={{ marginBottom: '1em', marginTop: '1em' }}
+                  id="email"
+                  type="text"
+                  label={t("field.email")}
+                  error={errors.email !== undefined}
+                  disabled={isAuthenticating}
+                  {...register("email", { required: true })} />
+                <br />
+                <TextField
+                  id="password"
+                  type="password"
+                  label={t("field.password")}
+                  error={errors.password !== undefined}
+                  disabled={isAuthenticating}
+                  {...register("password", { required: false })} />
+              </div>
+              <div className={classes.container}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  aria-label={t("button.signin")}
+                  fullWidth={true}
+                  disabled={isAuthenticating}>
+                  {isAuthenticating ? t("feedback.authenticating") : t("button.signin")}
+                </Button>
+              </div>
+            </Paper>
+          </Container>
+        </Box>
       </Container>
     </Box>
   );
