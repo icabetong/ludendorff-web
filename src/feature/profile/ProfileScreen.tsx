@@ -1,12 +1,15 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import Typography from "@material-ui/core/Typography";
-import useMediaQuery from "@material-ui/core/useMediaQuery"
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import {
+  Box,
+  Grid,
+  LinearProgress,
+  Typography,
+  makeStyles,
+  useTheme,
+  useMediaQuery
+} from "@material-ui/core";
 
 import {
   PencilIcon, KeyIcon, PaperAirplaneIcon, PhotographIcon

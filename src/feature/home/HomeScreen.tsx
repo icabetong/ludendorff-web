@@ -13,7 +13,7 @@ import {
   GridValueGetterParams
 } from "@material-ui/data-grid";
 import { PlusIcon, PrinterIcon } from "@heroicons/react/outline";
-
+import { query, collection, orderBy, where } from "firebase/firestore";
 import RequestScreen from "./RequestScreen";
 import { Assignment } from "../assignment/Assignment";
 import AssignmentList from "../assignment/AssignmentList";
@@ -36,7 +36,7 @@ import {
   location,
 } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -96,9 +96,9 @@ const HomeScreen = (props: HomeScreenProps) => {
   ]
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Assignment>(
-    firestore.collection(assignmentCollection)
-      .where(assignmentUserId, "==", user?.userId)
-      .orderBy(assignmentAssetName, "asc"), { limit: 15 }
+    query(collection(firestore, assignmentCollection),
+      where(assignmentUserId, '==', user?.userId),
+      orderBy(assignmentAssetName, "asc")), { limit: 15 }
   );
 
   const [state, dispatch] = useReducer(reducer, initialState);

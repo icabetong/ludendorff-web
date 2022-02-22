@@ -17,6 +17,7 @@ import {
 import { useSnackbar } from "notistack";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
+import { collection, query, orderBy } from "firebase/firestore";
 
 import { Request, RequestRepository } from "./Request";
 import RequestList from "./RequestList";
@@ -25,12 +26,12 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { minimize } from "../user/User";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import {
   requestCollection,
   requestedAssetName,
-  endorser,
-  petitionerName
+  petitionerName,
+  endorserName
 } from "../../shared/const";
 import { firestore } from "../../index";
 
@@ -82,9 +83,7 @@ const RequestScreen = (props: RequestScreenProps) => {
   }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
-    firestore.collection(requestCollection)
-      .where(endorser, "==", null)
-      .orderBy(requestedAssetName, "asc"), { limit: 15 }
+    query(collection(firestore, requestCollection), orderBy(endorserName, "asc")), { limit: 15 }
   )
 
   return (

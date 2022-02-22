@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-
+import { onAuthStateChanged, Unsubscribe } from 'firebase/auth';
+import { onSnapshot, doc } from "firebase/firestore";
 import history from "../navigation/History";
 import { User, hasPermission, Permission } from "../user/User";
 import { userCollection } from "../../shared/const";
-import { auth, firestore } from "../../index";
+import { auth, firestore } from '../../index';
 
 export enum AuthStatus { FETCHED, PENDING }
 export type AuthState = {
@@ -17,19 +18,22 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({ status: AuthStatus.PENDING });
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+    let dataUnsubscribe: Unsubscribe;
+    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser != null) {
-        firestore.collection(userCollection)
-          .doc(firebaseUser.uid)
-          .onSnapshot((document) => {
-            setAuthState({ status: AuthStatus.FETCHED, user: document.data() as User });
-          });
+        dataUnsubscribe = onSnapshot(doc(firestore, userCollection, firebaseUser.uid), (doc) => {
+          setAuthState({ status: AuthStatus.FETCHED, user: doc.data() as User });
+        })
       } else {
         auth.signOut();
         history.push("/auth");
       }
     });
-    return unsubscribe;
+    return () => {
+      if (dataUnsubscribe)
+        dataUnsubscribe();
+      authUnsubscribe();
+    };
   }, []);
 
   return (

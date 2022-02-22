@@ -8,7 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
-
+import { query, collection, orderBy } from "firebase/firestore";
 import {
   BanIcon,
   CheckIcon,
@@ -30,8 +30,7 @@ import { usePreferences } from "../settings/Preference";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
 
-import { firestore } from "../../index";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 
 import {
   ActionType,
@@ -53,6 +52,7 @@ import UserEditor from "./UserEditor";
 import UserSearchScreen from "./UserSearchScreen";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -143,9 +143,7 @@ const UserScreen = (props: UserScreenProps) => {
     getPrev: getPreviousUsers,
     getNext: getNextUsers
   } = usePagination<User>(
-    firestore
-      .collection(userCollection)
-      .orderBy(lastName, "asc"), { limit: 15 }
+    query(collection(firestore, userCollection), orderBy(lastName, "asc")), { limit: 15 }
   )
 
   const [state, dispatch] = useReducer(reducer, initialState);

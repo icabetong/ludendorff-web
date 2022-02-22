@@ -12,8 +12,7 @@ import {
   Typography,
   makeStyles
 } from "@material-ui/core";
-
-import firebase from "firebase/app";
+import { signInWithEmailAndPassword, AuthError } from "firebase/auth";
 import { auth } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -43,16 +42,16 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
   const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
-  const [error, setError] = useState<firebase.auth.Error | undefined>(undefined);
+  const [error, setError] = useState<AuthError | undefined>(undefined);
 
   const onSubmit = (data: FormValues) => {
     setIsAuthenticating(true)
-    auth.signInWithEmailAndPassword(data.email, data.password)
+    signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
         setIsAuthenticating(false);
         history.push('/');
       })
-      .catch((error: firebase.auth.Error) => {
+      .catch((error: AuthError) => {
         setError(error);
         setIsAuthenticating(false);
       })

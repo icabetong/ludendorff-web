@@ -48,8 +48,6 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
           setSubmitting(false);
           props.onDismiss();
         })
-    } else {
-      console.log('undefined')
     }
   }
 

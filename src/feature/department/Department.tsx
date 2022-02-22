@@ -1,4 +1,5 @@
-import { firestore } from "../../index"
+import { firestore } from "../..";
+import { deleteDoc, writeBatch, doc } from "firebase/firestore";
 
 import { UserCore } from "../user/User";
 import { minimize as minimizeDepartment } from "./Department";
@@ -30,35 +31,35 @@ export type DepartmentCore = {
 
 export class DepartmentRepository {
   static async create(department: Department): Promise<void> {
-    let batch = firestore.batch();
+    let batch = writeBatch(firestore);
 
-    batch.set(firestore.collection(departmentCollection)
-      .doc(department.departmentId), department);
+    batch.set(doc(firestore, departmentCollection, 
+      department.departmentId), department);
 
     if (department.manager !== undefined)
-      batch.update(firestore.collection(userCollection)
-        .doc(department.manager!.userId), departmentField,
+      batch.update(doc(firestore, departmentCollection, 
+        department.departmentId), departmentField,
         minimizeDepartment(department))
 
-    return batch.commit()
+    return await batch.commit();
   }
 
   static async update(department: Department): Promise<void> {
-    let batch = firestore.batch();
+    let batch = writeBatch(firestore);
 
     if (department.manager !== undefined)
-      batch.update(firestore.collection(userCollection)
-        .doc(department.manager!.userId), departmentField,
+      batch.update(doc(firestore, userCollection, 
+        department.departmentId), departmentField,
         minimizeDepartment(department))
 
-    return await firestore.collection(departmentCollection)
-      .doc(department.departmentId)
-      .set(department)
+    batch.set(doc(firestore, departmentCollection, department.departmentId), 
+      department);
+
+    return await batch.commit();
   }
 
   static async remove(department: Department): Promise<void> {
-    return await firestore.collection(departmentCollection)
-      .doc(department.departmentId)
-      .delete()
+    return await deleteDoc(doc(firestore, departmentCollection, 
+      department.departmentId))
   }
 }

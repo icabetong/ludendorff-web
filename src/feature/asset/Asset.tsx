@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import { increment, doc, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
@@ -9,8 +9,6 @@ import {
   categoryCollection,
   categoryCount
 } from "../../shared/const";
-
-const FieldValue = firebase.firestore.FieldValue;
 
 export type Asset = {
   assetId: string,
@@ -67,57 +65,59 @@ export class AssetRepository {
       return;
     }
 
-    let batch = firestore.batch();
+    let batch = writeBatch(firestore);
     assets.forEach((asset) => {
-      batch.set(firestore.collection(assetCollection)
-        .doc(asset.assetId), asset);
+      batch.set(doc(firestore, assetCollection, asset.assetId), asset);
     })
-
-    batch.update(firestore.collection(categoryCollection)
-      .doc(assets[0].category?.categoryId), categoryCount,
-      FieldValue.increment(assets.length))
-
+    
+    let id = assets[0].category?.categoryId;
+    if (id) {
+      batch.update(doc(firestore, categoryCollection, id), categoryCount, increment(assets.length))
+    }
     return await batch.commit();
   }
 
   static async create(asset: Asset): Promise<void> {
-    let batch = firestore.batch();
+    let batch = writeBatch(firestore);
 
-    batch.set(firestore.collection(assetCollection)
-      .doc(asset.assetId), asset);
-
-    batch.update(firestore.collection(categoryCollection)
-      .doc(asset.category?.categoryId), categoryCount, FieldValue.increment(1))
+    batch.set(doc(firestore, assetCollection, asset.assetId), asset);
+    
+    let id = asset.category?.categoryId;
+    if (id) {
+      batch.update(doc(firestore, categoryCollection, id), 
+        categoryCollection, increment(1));
+    }
 
     return await batch.commit()
   }
 
   static async update(asset: Asset, previousCategoryId?: string): Promise<void> {
-    let batch = firestore.batch()
-    batch.set(firestore.collection(assetCollection)
-      .doc(asset.assetId), asset)
+    let batch = writeBatch(firestore);
+    batch.set(doc(firestore, assetCollection, asset.assetId), asset)
 
-    if (previousCategoryId !== undefined && asset.category?.categoryId !== previousCategoryId) {
-      batch.update(firestore.collection(categoryCollection)
-        .doc(asset.category?.categoryId), FieldValue.increment(1))
+    let currentCategoryId = asset.category?.categoryId;
+    if (previousCategoryId && currentCategoryId && currentCategoryId !== previousCategoryId) {
+      batch.update(doc(firestore, categoryCollection, currentCategoryId), categoryCount,
+        increment(1))
 
-      batch.update(firestore.collection(categoryCollection)
-        .doc(previousCategoryId), categoryCount,
-        FieldValue.increment(-1))
+      batch.update(doc(firestore, categoryCollection, previousCategoryId), categoryCount,
+        increment(-1))
     }
 
     return batch.commit()
   }
 
   static async remove(asset: Asset): Promise<void> {
-    let batch = firestore.batch()
-    batch.delete(firestore.collection(assetCollection)
-      .doc(asset.assetId))
-    batch.update(firestore.collection(categoryCollection)
-      .doc(asset.category?.categoryId), categoryCount,
-      FieldValue.increment(-1))
+    let batch = writeBatch(firestore);
 
-    return batch.commit()
+    batch.delete(doc(firestore, assetCollection, asset.assetId));
+
+    let categoryId = asset.category?.categoryId;
+    if (categoryId) {
+      batch.update(doc(firestore, categoryCollection, categoryId), categoryCount, increment(-1));
+    }
+
+    return await batch.commit();
   }
 }
 

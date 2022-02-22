@@ -15,6 +15,8 @@ import {
 } from "@material-ui/core";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
+import { query, collection, orderBy } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
 
 import { Category } from "./Category";
 import CategoryEditorComponent from "./CategoryEditor";
@@ -25,7 +27,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { categoryCollection, categoryName } from "../../shared/const";
-import { usePagination } from "../../shared/pagination";
+
 import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -62,9 +64,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
   const onSearchInvoked = () => setSearch(!search)
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    firestore
-      .collection(categoryCollection)
-      .orderBy(categoryName, "asc"), { limit: 15 }
+    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), { limit: 15 }
   )
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })

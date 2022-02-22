@@ -23,7 +23,7 @@ import {
   PlusIcon,
   TrashIcon
 } from "@heroicons/react/outline";
-import firebase from "firebase";
+import { query, collection, orderBy, Timestamp } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -41,8 +41,7 @@ import DuplicationDialog from "../shared/DuplicationDialog";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 
-import { firestore } from "../../index";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import { formatDate, newId } from "../../shared/utils";
 
 import {
@@ -63,6 +62,7 @@ import {
 import AssetEditor from "./AssetEditor";
 import CategoryScreen from "../category/CategoryScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -183,9 +183,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   ];
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    firestore
-      .collection(assetCollection)
-      .orderBy(assetName, "asc"), { limit: 15 }
+    query(collection(firestore, assetCollection), orderBy(assetName, "asc")), { limit: 15 }
   )
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -198,7 +196,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCopyConfirmed = (copies: number) => {
     let assets: Asset[] = [];
     for (let index = 0; index <= copies; index++) {
-      assets.push({ ...assetCopy, assetId: newId(), dateCreated: firebase.firestore.Timestamp.now() });
+      assets.push({ ...assetCopy, assetId: newId(), dateCreated: Timestamp.now() });
     }
     AssetRepository.createFromList(assets);
     onCopyDismiss();

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { writeBatch, doc } from "firebase/firestore";
 import { auth, firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
@@ -25,14 +26,14 @@ const SERVER_URL = "https://deshi-production.up.railway.app";
 export class AssignmentRepository {
 
   static async create(assignment: Assignment, sender: string): Promise<AxiosResponse<any>> {
-    let batch = firestore.batch();
+    let batch = writeBatch(firestore);
 
-    batch.set(firestore.collection(assignmentCollection)
-      .doc(assignment.assignmentId), assignment);
+    batch.set(doc(firestore, assignmentCollection, assignment.assignmentId), 
+      assignment);
 
     if (assignment.asset?.assetId !== undefined)
-      batch.update(firestore.collection(assetCollection)
-        .doc(assignment.asset?.assetId), assetStatus, Status.OPERATIONAL);
+      batch.update(doc(firestore, assetCollection, assignment.asset?.assetId), 
+        assetStatus, Status.OPERATIONAL);
 
     await batch.commit();
     let idToken = await auth.currentUser?.getIdToken(false);
@@ -53,18 +54,17 @@ export class AssignmentRepository {
   }
 
   static async update(assignment: Assignment, sender: string, previousAssetId: string | undefined, previousUserId: string | undefined): Promise<any> {
-    const batch = firestore.batch();
+    const batch = writeBatch(firestore);
 
-    batch.set(firestore.collection(assignmentCollection)
-      .doc(assignment.assignmentId), assignment);
+    batch.set(doc(firestore, assignmentCollection, assignment.assignmentId), 
+      assignment);
 
-    if (previousAssetId !== undefined && assignment.asset?.assetId !== previousAssetId) {
-      console.log("changed")
-      batch.update(firestore.collection(assetCollection)
-        .doc(previousAssetId), assetStatus, Status.IDLE);
+    if (previousAssetId && assignment.asset?.assetId) {
+      batch.update(doc(firestore, assetCollection, previousAssetId), 
+        assetStatus, Status.IDLE);
 
-      batch.update(firestore.collection(assetCollection)
-        .doc(assignment.asset?.assetId), assetStatus, Status.OPERATIONAL);
+      batch.update(doc(firestore, assetCollection, assignment.asset?.assetId), 
+        assetStatus, Status.OPERATIONAL);
     }
 
     if (assignment.user?.userId === previousUserId) {
@@ -90,14 +90,13 @@ export class AssignmentRepository {
   }
 
   static async remove(assignment: Assignment): Promise<any> {
-    const batch = firestore.batch();
+    const batch = writeBatch(firestore);
 
-    batch.delete(firestore.collection(assignmentCollection)
-      .doc(assignment.assignmentId));
+    batch.delete(doc(firestore, assignmentCollection, assignment.assignmentId));
 
-    if (assignment.asset?.assetId !== undefined)
-      batch.update(firestore.collection(assetCollection)
-        .doc(assignment.asset?.assetId), assetStatus, Status.IDLE);
+    if (assignment.asset?.assetId)
+      batch.update(doc(firestore, assignmentCollection, 
+        assignment.asset?.assetId), assetStatus, Status.IDLE);
 
     await batch.commit();
   }

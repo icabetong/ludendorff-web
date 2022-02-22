@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/firestore'
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 import { AuthProvider } from './feature/auth/AuthProvider';
 import { CoreComponent } from './feature/core/Core';
@@ -21,10 +21,12 @@ const config = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 }
-firebase.initializeApp(config)
-export const auth = firebase.auth()
-export const firestore = firebase.firestore()
-firestore.settings({ ignoreUndefinedProperties: true, merge: true })
+
+const firebaseApp = initializeApp(config);
+const auth = getAuth(firebaseApp);
+const firestore = getFirestore(firebaseApp);
+export { firebaseApp, auth, firestore };
+//firebaseApp.settings({ ignoreUndefinedProperties: true, merge: true })
 
 ReactDOM.render(
   <React.StrictMode>

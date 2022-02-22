@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
+import { writeBatch, doc, getDocs, collection, where, query } from "firebase/firestore";
 import { auth, firestore } from "../../index";
-
 import { Department, DepartmentCore } from "../department/Department";
-
 import {
   userCollection,
   departmentCollection,
@@ -76,14 +75,13 @@ export class UserRepository {
   }
 
   static async update(user: User): Promise<void> {
-    let batch = firestore.batch();
-    batch.set(firestore.collection(userCollection).doc(user.userId),
+    let batch = writeBatch(firestore);
+    batch.set(doc(firestore, userCollection, user.userId),
       user);
 
     if (user.department !== undefined) {
-      let docs = await firestore.collection(departmentCollection)
-        .where(departmentManagerId, "==", user.userId)
-        .get();
+      let docs = await getDocs(query(collection(firestore, departmentCollection), 
+        where(departmentManagerId, '==', user.userId)));
 
       docs.forEach((doc) => {
         let department = doc.data() as Department;
@@ -92,9 +90,8 @@ export class UserRepository {
       })
     }
 
-    let docs = await firestore.collection(assignmentCollection)
-      .where(assignmentUserId, "==", user.userId)
-      .get()
+    let docs = await getDocs(query(collection(firestore, assignmentCollection), 
+      where(assignmentUserId, '==', user.userId)));
     docs.forEach((doc) => {
       batch.update(doc.ref, assignmentUser, minimize(user))
     })

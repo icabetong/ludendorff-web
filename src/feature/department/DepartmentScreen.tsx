@@ -15,6 +15,8 @@ import {
 } from "@material-ui/core";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
+import { collection, query, orderBy } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
 
 import { Department } from "./Department";
 import DepartmentEditor from "./DepartmentEditor";
@@ -25,7 +27,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { departmentCollection, departmentName, departmentManagerName } from "../../shared/const";
-import { usePagination } from "../../shared/pagination";
+
 import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -62,9 +64,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   const onSearchInvoked = () => setSearch(!search)
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    firestore
-      .collection(departmentCollection)
-      .orderBy(departmentName, "asc"), { limit: 15 }
+    query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), { limit: 15 }
   );
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })

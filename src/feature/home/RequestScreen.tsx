@@ -13,12 +13,12 @@ import {
   useTheme,
   makeStyles
 } from "@material-ui/core";
-
+import { query, collection, orderBy, where } from "firebase/firestore";
 import { Request } from "../requests/Request";
 import RequestList from "../requests/RequestList";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import {
   requestCollection,
   requestedAssetName,
@@ -62,9 +62,9 @@ const RequestScreen = (props: RequestScreenProps) => {
   const onRequestDismiss = () => setRequest(undefined);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
-    firestore.collection(requestCollection)
-      .where(petitionerId, "==", user?.userId)
-      .orderBy(requestedAssetName, "asc"), { limit: 15 }
+    query(collection(firestore, requestCollection),
+      where(petitionerId, '==', user?.userId),
+      orderBy(requestedAssetName, "asc")), { limit: 15 }
   )
 
   return (

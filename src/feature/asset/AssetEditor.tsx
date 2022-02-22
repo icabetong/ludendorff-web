@@ -25,7 +25,7 @@ import {
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
 import { PlusIcon } from "@heroicons/react/outline";
-import firebase from "firebase";
+import { query, collection, orderBy, Timestamp } from "firebase/firestore";
 
 import { Asset, Status, AssetRepository } from "./Asset";
 import { Category, CategoryCore, minimize } from "../category/Category";
@@ -34,7 +34,7 @@ import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
 import { ActionType, initialState, reducer } from "../specs/SpecificationEditorReducer";
 import SpecificationList from "../specs/SpecificationList";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import { newId } from "../../shared/utils";
 import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
@@ -96,9 +96,7 @@ const AssetEditor = (props: AssetEditorProps) => {
     getPrev: getPreviousCategories,
     getNext: getNextCategories
   } = usePagination<Category>(
-    firestore
-      .collection(categoryCollection)
-      .orderBy(categoryName, "asc"), { limit: 15 }
+    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), { limit: 15 }
   );
 
   let previousCategoryId: string | undefined = undefined;
@@ -108,7 +106,7 @@ const AssetEditor = (props: AssetEditorProps) => {
       assetId: props.asset === undefined ? newId() : props.asset?.assetId,
       category: category !== undefined ? category : undefined,
       specifications: Object.fromEntries(specifications),
-      dateCreated: firebase.firestore.Timestamp.now()
+      dateCreated: Timestamp.now()
     }
 
     if (props.isCreate) {
