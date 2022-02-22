@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2)
   },
   title: {
-    width: '100%',
+    flexGrow: 1,
   },
   toolbarButtonIcon: {
     color: theme.palette.text.primary
@@ -88,24 +88,26 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
           </Typography>
         </Hidden>
         <Hidden smUp>
-          <Typography variant="h6">
+          <Typography variant="h6" className={classes.title}>
             {props.title}
           </Typography>
         </Hidden>
-        {props.buttonText &&
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.actionButton}
-            startIcon={props.buttonIcon &&
-              React.createElement(props.buttonIcon,
-                { className: clsx(classes.icon, classes.actionButtonIcon) })
-            }
-            onClick={props.buttonOnClick}
-            aria-label={props.buttonText}>
-            {props.buttonText}
-          </Button>
-        }
+        <Hidden xsUp>
+          {props.buttonText &&
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.actionButton}
+              startIcon={props.buttonIcon &&
+                React.createElement(props.buttonIcon,
+                  { className: clsx(classes.icon, classes.actionButtonIcon) })
+              }
+              onClick={props.buttonOnClick}
+              aria-label={props.buttonText}>
+              {props.buttonText}
+            </Button>
+          }
+        </Hidden>
         {props.onSearch &&
           <HeroIconButton
             className={classes.searchButton}

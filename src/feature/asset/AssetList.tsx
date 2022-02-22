@@ -1,15 +1,10 @@
-import { useTranslation } from "react-i18next";
 import {
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction
+  ListItemText
 } from "@material-ui/core";
-import { TrashIcon } from "@heroicons/react/outline";
 
-import { Asset, Status } from "./Asset";
-import { usePermissions } from "../auth/AuthProvider";
-import HeroIconButton from "../../components/HeroIconButton";
+import { Asset } from "./Asset";
 
 type AssetListProps = {
   assets: Asset[],
@@ -38,9 +33,6 @@ type AssetItemProps = {
   onItemRemove?: (asset: Asset) => void,
 }
 const AssetItem = (props: AssetItemProps) => {
-  const { t } = useTranslation();
-  const { canDelete } = usePermissions();
-
   return (
     <ListItem
       button
@@ -49,15 +41,6 @@ const AssetItem = (props: AssetItemProps) => {
       <ListItemText
         primary={props.asset.assetName}
         secondary={props.asset.category?.categoryName} />
-      {canDelete &&
-        <ListItemSecondaryAction>
-          <HeroIconButton
-            icon={TrashIcon}
-            aria-label={t("button.delete")}
-            disabled={props.asset.status === Status.OPERATIONAL}
-            onClick={() => props.onItemRemove && props.onItemRemove(props.asset)} />
-        </ListItemSecondaryAction>
-      }
     </ListItem>
   )
 }
