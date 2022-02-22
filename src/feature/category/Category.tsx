@@ -1,3 +1,12 @@
+import { 
+  writeBatch, 
+  doc, setDoc, 
+  getDocs, 
+  collection, 
+  deleteDoc, 
+  query, 
+  where 
+} from "firebase/firestore";
 import { firestore } from "../../index";
 
 import {
@@ -32,28 +41,24 @@ export const minimize = (category: Category): CategoryCore => {
 export class CategoryRepository {
 
   static async create(category: Category): Promise<void> {
-    return await firestore.collection(categoryCollection)
-      .doc(category.categoryId)
-      .set({ ...category })
+    return await setDoc(doc(firestore, categoryCollection, category.categoryId), 
+      {...category});
   }
 
   static async update(category: Category): Promise<void> {
-    let batch = firestore.batch()
+    let batch = writeBatch(firestore);
 
-    batch.set(firestore.collection(categoryCollection)
-      .doc(category.categoryId), category)
+    batch.set(doc(firestore, categoryCollection, category.categoryId), 
+      category)
 
-    let assetTask = await firestore.collection(assetCollection)
-      .where(assetCategoryId, "==", category.categoryId)
-      .get()
+    let assetTask = await getDocs(query(collection(firestore, assetCollection), 
+      where(assetCategoryId, '==', category.categoryId)));
     assetTask.docs.forEach(doc => {
       batch.update(doc.ref, assetCategory, minimize(category))
-    })
+    });
 
-    let assignmentTask = await firestore.collection(assignmentCollection)
-      .where(assignmentAssetCategoryId, "==", category.categoryId)
-      .get()
-
+    let assignmentTask = await getDocs(query(collection(firestore, assignmentCollection), 
+      where(assignmentAssetCategoryId, "==", category.categoryId)));
     assignmentTask.docs.forEach(doc => {
       batch.update(doc.ref, assignmentAssetCategory, minimize(category))
     })
@@ -62,8 +67,6 @@ export class CategoryRepository {
   }
 
   static async remove(category: Category): Promise<void> {
-    return await firestore.collection(categoryCollection)
-      .doc(category.categoryId)
-      .delete()
+    return await deleteDoc(doc(firestore, categoryCollection, category.categoryId));
   }
 }

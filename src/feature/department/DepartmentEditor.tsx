@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -15,10 +15,11 @@ import {
   Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
+import { collection, query, orderBy } from "firebase/firestore"; 
 import { Department, DepartmentRepository } from "./Department";
 import { User, UserCore, minimize } from "../user/User";
 import UserPicker from "../user/UserPicker";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import {
   userCollection,
   lastName
@@ -88,9 +89,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
     getPrev: getPreviousUsers,
     getNext: getNextUsers
   } = usePagination<User>(
-    firestore
-      .collection(userCollection)
-      .orderBy(lastName, "asc"), { limit: 15 }
+    query(collection(firestore, userCollection), orderBy(lastName, "desc")), { limit: 15 }
   )
 
   return (

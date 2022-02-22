@@ -13,13 +13,13 @@ import {
   Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import firebase from "firebase";
+import { query, collection, orderBy, where, Timestamp } from "firebase/firestore";
 import { Request, RequestRepository } from "./Request";
 import { useAuthState } from "../auth/AuthProvider";
 import { Asset } from "../asset/Asset";
 import AssetPicker from "../asset/AssetPicker";
 import { minimize } from "../user/User";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import { assetCollection, assetName, assetStatus } from "../../shared/const";
 import { newId } from "../../shared/utils";
 import { firestore } from "../../index";
@@ -46,7 +46,7 @@ const RequestEditor = (props: RequestEditorProps) => {
         requestId: props.request !== undefined ? props.request?.requestId : newId(),
         asset: asset,
         petitioner: minimize(user),
-        submittedTimestamp: props.request !== undefined ? props.request?.submittedTimestamp : firebase.firestore.Timestamp.now()
+        submittedTimestamp: props.request !== undefined ? props.request?.submittedTimestamp : Timestamp.now()
       }
 
       if (props.isCreate) {
@@ -73,10 +73,10 @@ const RequestEditor = (props: RequestEditorProps) => {
   const onPickerDismiss = () => setPickerOpen(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    firestore.collection(assetCollection)
-      .where(assetStatus, "!=", "OPERATIONAL")
-      .orderBy(assetStatus, "asc")
-      .orderBy(assetName, "asc"), { limit: 15 }
+    query(collection(firestore, assetCollection), 
+      where(assetStatus, '!=', "OPERATIONAL"),
+      orderBy(assetStatus, "asc"),
+      orderBy(assetName, "asc")), { limit: 15 }
   )
 
   return (

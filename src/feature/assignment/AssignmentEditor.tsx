@@ -22,7 +22,7 @@ import { useSnackbar } from "notistack";
 import { MuiPickersUtilsProvider, KeyboardDateTimePicker } from "@material-ui/pickers";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import DateFnsUtils from "@date-io/date-fns";
-import firebase from "firebase";
+import { query, collection, orderBy, Timestamp } from "firebase/firestore";
 
 import { useAuthState } from "../auth/AuthProvider";
 import { Assignment, AssignmentRepository } from "./Assignment";
@@ -31,7 +31,7 @@ import AssetPicker from "../asset/AssetPicker";
 import { User, UserCore, minimize as minimizeUser } from "../user/User";
 import UserPicker from "../user/UserPicker";
 import { newId } from "../../shared/utils";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import {
   assetCollection,
   userCollection,
@@ -39,7 +39,6 @@ import {
   lastName
 } from "../../shared/const";
 import { firestore } from "../../index";
-import { Timestamp } from "@firebase/firestore-types";
 
 const useStyles = makeStyles((theme) => ({
   gridItem: {
@@ -115,9 +114,8 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
     getPrev: getPreviousAssets,
     getNext: getNextAssets
   } = usePagination<Asset>(
-    firestore
-      .collection(assetCollection)
-      .orderBy(assetName, "asc"), { limit: 15 }
+    query(collection(firestore, assetCollection),
+      orderBy(assetName, "asc")), { limit: 15 }
   );
 
   const {
@@ -128,8 +126,8 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
     getPrev: getPreviousUsers,
     getNext: getNextUsers,
   } = usePagination<User>(
-    firestore.collection(userCollection)
-      .orderBy(lastName, "asc"), { limit: 15 }
+    query(collection(firestore, userCollection),
+      orderBy(lastName, "asc")), { limit: 15 }
   );
 
   let previousAssetId: string | undefined;
@@ -140,8 +138,8 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
       assignmentId: props.assignment ? props.assignment.assignmentId : newId(),
       asset: asset ? asset : undefined,
       user: user ? user : undefined,
-      dateAssigned: dateAssigned ? firebase.firestore.Timestamp.fromDate(dateAssigned) : firebase.firestore.Timestamp.now(),
-      dateReturned: dateReturned ? firebase.firestore.Timestamp.fromDate(dateReturned) : undefined,
+      dateAssigned: dateAssigned ? Timestamp.fromDate(dateAssigned) : Timestamp.now(),
+      dateReturned: dateReturned ? Timestamp.fromDate(dateReturned) : undefined,
       ...data
     }
 

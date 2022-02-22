@@ -10,7 +10,7 @@ import {
   TextField
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import firebase from "firebase/app";
+import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
 import { auth } from "../../../index";
 
 type ChangePasswordPromptProps = {
@@ -33,10 +33,13 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
 
     if (user?.email) {
       try {
-        const credential = firebase.auth.EmailAuthProvider.credential(user?.email, data.oldPassword)
-        await user.reauthenticateWithCredential(credential);
-
-        await user.updatePassword(data.newPassword)
+        const credential = EmailAuthProvider.credential(user?.email, data.oldPassword)
+        if (auth.currentUser) {
+          await reauthenticateWithCredential(auth.currentUser, credential);
+          await updatePassword(auth.currentUser, data.newPassword);
+        } else {
+          throw Error("There are no user signed in");
+        }
 
         enqueueSnackbar(t("feedback.changed_password_success"));
       } catch (error) {

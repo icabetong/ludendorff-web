@@ -22,6 +22,7 @@ import {
   TrashIcon
 } from "@heroicons/react/outline";
 import { jsPDF } from "jspdf";
+import { query, collection, orderBy } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -37,8 +38,7 @@ import AssignmentList from "./AssignmentList";
 import RequestScreen from "../requests/RequestScreen";
 import { usePreferences } from "../settings/Preference";
 
-import { firestore } from "../../index";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import { formatDate } from "../../shared/utils";
 
 import {
@@ -56,6 +56,8 @@ import AssignmentEditor from './AssignmentEditor';
 import AssignmentSearchScreen from "./AssignmentSearchScreen";
 import { ActionType, initialState, reducer } from "./AssignmentEditorReducer";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+
+import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -189,9 +191,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     getPrev: getPreviousAssignments,
     getNext: getNextAssignments
   } = usePagination<Assignment>(
-    firestore
-      .collection(assignmentCollection)
-      .orderBy(assignmentAssetName, "asc"), { limit: 15 }
+    query(collection(firestore, assignmentCollection), orderBy(assignmentAssetName, "asc")), { limit: 15 }
   );
 
   const [editorState, editorDispatch] = useReducer(reducer, initialState);

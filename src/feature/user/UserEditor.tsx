@@ -23,11 +23,11 @@ import {
   makeStyles
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-
+import { query, collection, orderBy } from "firebase/firestore";
 import { User, Permission, UserRepository } from "./User";
 import { Department, DepartmentCore, minimize } from "../department/Department";
 import DepartmentPicker from "../department/DepartmentPicker";
-import { usePagination } from "../../shared/pagination";
+import { usePagination } from "use-pagination-firestore";
 import {
   departmentCollection,
   departmentName
@@ -136,9 +136,7 @@ const UserEditor = (props: UserEditorProps) => {
   }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    firestore
-      .collection(departmentCollection)
-      .orderBy(departmentName, "asc"), { limit: 15 }
+    query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), { limit: 15 }
   );
 
   const hasPermission = (permission: Permission) => {

@@ -8,6 +8,7 @@ import {
   DialogTitle
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useAuthState } from "../../auth/AuthProvider";
 import { auth } from "../../../index";
 
@@ -23,7 +24,7 @@ const RequestResetPrompt = (props: RequestResetPromptProps) => {
 
   const onSubmit = () => {
     if (user?.email !== undefined) {
-      auth.sendPasswordResetEmail(user.email)
+      sendPasswordResetEmail(auth, user.email)
         .then(() => enqueueSnackbar(t("feedback.reset_link_set")))
         .catch(() => enqueueSnackbar(t("error.generic")))
         .finally(props.onDismiss)

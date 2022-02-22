@@ -17,7 +17,6 @@ import {
   Typography,
   makeStyles
 } from "@material-ui/core";
-
 import {
   HomeIcon,
   DesktopComputerIcon,
@@ -27,9 +26,9 @@ import {
   UserIcon,
   LogoutIcon
 } from "@heroicons/react/outline";
-
-import firebase from "firebase/app";
+import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
+import { auth } from "../../index";
 
 export enum Destination {
   HOME = 1,
@@ -121,8 +120,8 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     setTriggerConfirmSignOut(true);
   }
 
-  const triggerSignOut = () => {
-    firebase.auth().signOut();
+  const triggerSignOut = async () => {
+    await signOut(auth);
     setTriggerConfirmSignOut(false);
   }
 
