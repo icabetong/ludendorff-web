@@ -31,6 +31,7 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
+import { getDataGridTheme } from "../core/Core";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
@@ -63,14 +64,15 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
     width: '100%'
   },
   wrapper: {
     height: '80%',
-    padding: '1.4em'
+    padding: '1.4em',
+    ...getDataGridTheme(theme)
   }
 }));
 

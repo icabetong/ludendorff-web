@@ -42,16 +42,18 @@ import {
 import { formatDate } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
 import { firestore } from "../../index";
+import { getDataGridTheme } from "../core/Core";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
-    width: '100%'
+    width: '100%',
   },
   wrapper: {
     height: '80%',
-    padding: '1.4em'
-  }
+    padding: '1.4em',
+    ...getDataGridTheme(theme),
+  },
 }))
 
 type HomeScreenProps = {

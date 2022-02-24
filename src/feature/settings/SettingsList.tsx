@@ -12,8 +12,8 @@ import { Setting } from "./Settings";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
-    width: '2em',
-    height: '2em',
+    width: '1.2em',
+    height: '1.2em',
     color: theme.palette.text.primary
   }
 }));

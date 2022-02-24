@@ -4,6 +4,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import {
   Box,
   Grid,
+  Hidden,
   LinearProgress,
   Typography,
   makeStyles,
@@ -16,6 +17,7 @@ import {
   LockOutlined,
   SendOutlined,
 } from "@material-ui/icons";
+import PageHeader from "../../components/PageHeader";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
 import ChangeNamePrompt from "./actions/ChangeName";
@@ -75,9 +77,15 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
   return (
     <Box className={classes.root}>
-      <ComponentHeader
-        title={t("navigation.profile")}
-        onDrawerToggle={props.onDrawerToggle} />
+      <Hidden smDown>
+        <PageHeader
+          title={t("navigation.profile")}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader
+          title={t("navigation.profile")}
+          onDrawerToggle={props.onDrawerToggle} />
+      </Hidden>
       <input ref={fileInput} type="file" accept="image/*" hidden />
 
       {status === AuthStatus.FETCHED

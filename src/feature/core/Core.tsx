@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Router, Route, Switch } from 'react-router-dom';
-import { CssBaseline } from '@material-ui/core'
+import { CssBaseline, Theme } from '@material-ui/core'
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import AuthComponent from '../auth/AuthComponent'
@@ -9,14 +9,19 @@ import history from "../navigation/History";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { PreferenceContext } from "../settings/Preference";
 
+const white = '#ffffff';
 const teal300 = '#5eead4';
 const teal400 = '#2dd4bf';
 const teal500 = '#14b8a6';
 const teal600 = '#0d9488';
 const teal700 = '#0f766e';
 const teal800 = '#115e59';
-const gray800 = '#1f2937';
+const gray50 = '#f9fafb';
+const gray100 = '#f3f4f6';
+const gray300 = '#d1d5db';
+const gray500 = '#6b7280';
 const gray700 = '#374151';
+const gray800 = '#1f2937';
  
 const errorColors = {
   main: '#ff5555',
@@ -95,17 +100,15 @@ const lightTheme = createTheme({
       dark: teal800
     },
     error: errorColors,
-    info: {
-      main: '#6272a4'
-    },
     background: {
-      default: '#f9fafb',
-      paper: '#ffffff'
+      default: gray50,
+      paper: white,
     },
     text: {
-      primary: '#374151',
-      secondary: '#6b7280'
-    }
+      primary: gray700,
+      secondary: gray500,
+    },
+    divider: gray300,
   },
 })
 const darkTheme = createTheme({
@@ -123,17 +126,14 @@ const darkTheme = createTheme({
       dark: teal700
     },
     error: errorColors,
-    info: {
-      main: '#8be9fd'
-    },
     background: {
       default: gray800,
       paper: gray700
     },
     text: {
-      primary: '#f8f8f2'
+      primary: gray100
     },
-    divider: '#6f7287'
+    divider: gray700
   }
 })
 
@@ -165,4 +165,18 @@ export const CoreComponent = () => {
       </ThemeProvider>
     </>
   )
+}
+
+export const getDataGridTheme = (theme: Theme) => {
+  return {
+    '& .MuiDataGrid-root': {
+      borderColor: theme.palette.divider
+    },
+    '& .MuiDataGrid-columnsContainer': {
+      borderBottomColor: theme.palette.divider
+    },
+    '& .MuiDataGrid-columnSeparator': {
+      color: theme.palette.divider
+    }
+  }
 }

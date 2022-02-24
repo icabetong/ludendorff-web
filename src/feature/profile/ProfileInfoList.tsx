@@ -18,9 +18,8 @@ import { User } from "../user/User";
 
 const useStyles = makeStyles((theme) => ({
   icon: { 
-    width: '2em', 
-    height: '2em',
-    color: theme.palette.text.secondary
+    width: '1.2em', 
+    height: '1.2em',
   },
   container: {
     minWidth: '100%',

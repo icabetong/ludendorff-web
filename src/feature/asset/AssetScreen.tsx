@@ -40,7 +40,7 @@ import ReportScreen from "../report/ReportScreen";
 import DuplicationDialog from "../shared/DuplicationDialog";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
-
+import { getDataGridTheme } from "../core/Core";
 import { usePagination } from "use-pagination-firestore";
 import { formatDate, newId } from "../../shared/utils";
 
@@ -65,14 +65,15 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
     width: '100%',
   },
   wrapper: {
     height: '80%',
-    padding: '1.4em'
+    padding: '1.4em',
+    ...getDataGridTheme(theme)
   },
   editorContainer: {
     width: '100%',

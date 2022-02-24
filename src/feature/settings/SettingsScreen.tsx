@@ -1,10 +1,13 @@
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Switch from "@material-ui/core/Switch";
+import {
+  Box,
+  Hidden,
+  IconButton,
+  Menu,
+  MenuItem,
+  Switch
+} from "@material-ui/core";
 import {
   PaletteOutlined,
   TableChartOutlined,
@@ -12,7 +15,7 @@ import {
 } from "@material-ui/icons";
 
 import ComponentHeader from "../../components/ComponentHeader";
-
+import PageHeader from "../../components/PageHeader";
 import { PreferenceContext } from "./Preference";
 import { Setting } from "../settings/Settings";
 import SettingsList from "../settings/SettingsList";
@@ -91,7 +94,15 @@ const SettingsScreen = (props: SettingsScreenProps) => {
 
   return (
     <Box>
-      <ComponentHeader title={t("navigation.settings")} onDrawerToggle={props.onDrawerToggle} />
+      <Hidden smDown>
+        <PageHeader
+          title={t("navigation.settings")}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader 
+          title={t("navigation.settings")} 
+          onDrawerToggle={props.onDrawerToggle} />
+      </Hidden>
       <SettingsList preferences={preferences} />
     </Box>
   )
