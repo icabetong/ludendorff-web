@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
+  Icon,
   List,
   ListItem,
   ListItemIcon,
@@ -19,14 +21,21 @@ import {
   alpha
 } from "@material-ui/core";
 import {
-  HomeIcon,
-  DesktopComputerIcon,
-  UserGroupIcon,
-  IdentificationIcon,
+  AssignmentRounded,
+  DesktopWindowsRounded,
+  HomeRounded,
+  PeopleOutlineRounded,
+} from "@material-ui/icons";
+import {
+  // HomeIcon,
+  // DesktopComputerIcon,
+  // UserGroupIcon,
+  // IdentificationIcon,
   CogIcon,
   UserIcon,
   LogoutIcon
 } from "@heroicons/react/outline";
+import clsx from "clsx";
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
 import { auth } from "../../index";
@@ -49,6 +58,19 @@ type NavigationItemType = {
 type NavigationComponentPropsType = {
   onNavigate: (destination: Destination) => void,
   currentDestination: Destination
+}
+
+type NavigationListPropsType = {
+  items: NavigationItemType[],
+  destination: Destination,
+  onNavigate: (destination: Destination) => void
+}
+
+type NavigationItemPropsType = {
+  itemKey: any,
+  navigation: NavigationItemType,
+  action: () => void,
+  isActive: boolean
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -100,10 +122,10 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
   const { t } = useTranslation();
 
   const destinations: NavigationItemType[] = [
-    { icon: HomeIcon, title: "navigation.home", destination: Destination.HOME },
-    { icon: DesktopComputerIcon, title: "navigation.assets", destination: Destination.ASSETS },
-    { icon: UserGroupIcon, title: "navigation.users", destination: Destination.USERS },
-    { icon: IdentificationIcon, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
+    { icon: HomeRounded, title: "navigation.home", destination: Destination.HOME },
+    { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
+    { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
+    { icon: AssignmentRounded, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
   ]
 
   const minorDestinations: NavigationItemType[] = [
@@ -167,14 +189,8 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
   )
 }
 
-type NavigationListItemPropsType = {
-  itemKey: any,
-  navigation: NavigationItemType,
-  action: () => void,
-  isActive: boolean
-}
 
-const NavigationListItem = (props: NavigationListItemPropsType) => {
+const NavigationListItem = (props: NavigationItemPropsType) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -192,12 +208,6 @@ const NavigationListItem = (props: NavigationListItemPropsType) => {
       <ListItemText primary={<Typography variant="body2">{t(props.navigation.title)}</Typography>} />
     </ListItem>
   )
-}
-
-type NavigationListPropsType = {
-  items: NavigationItemType[],
-  destination: Destination,
-  onNavigate: (destination: Destination) => void
 }
 
 const NavigationList = (props: NavigationListPropsType) => {
@@ -222,5 +232,73 @@ const NavigationList = (props: NavigationListPropsType) => {
 
       })
     }</React.Fragment>
+  );
+}
+
+
+
+export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
+  const destinations: NavigationItemType[] = [
+    { icon: HomeRounded, title: "navigation.home", destination: Destination.HOME },
+    { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
+    { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
+    { icon: AssignmentRounded, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
+  ]
+
+  return <TopNavigationList destination={props.currentDestination} onNavigate={props.onNavigate} items={destinations}/>
+}
+
+export const TopNavigationList = (props: NavigationListPropsType) => {
+  const { canRead, canManageUsers, isAdmin } = usePermissions();
+
+  return (
+    <Grid container direction="row" justifyContent="space-between">
+    { props.items.map((nav: NavigationItemType) => {
+        if (!canRead && nav.destination === Destination.ASSETS)
+        return <></>;
+        if (!canManageUsers && nav.destination === Destination.USERS)
+          return <></>;
+        if (!isAdmin && nav.destination === Destination.ASSIGNMENTS)
+          return <></>;
+
+        return (
+          <TopNavigationItem
+            key={nav.destination}
+            itemKey={nav.destination}
+            navigation={nav}
+            action={() => props.onNavigate(nav.destination!!)}
+            isActive={props.destination === nav.destination}/>
+        )
+    })
+    }
+    </Grid>
+  )
+}
+
+const useCustomButtonStyles = makeStyles((theme) => ({
+  item: {
+    padding: '0.4em 1.8em',
+    textTransform: 'none',
+  },
+  active: {
+    backgroundColor: alpha(theme.palette.primary.main, 0.2),
+    color: theme.palette.primary.main,
+  }
+}));
+
+export const TopNavigationItem = (props: NavigationItemPropsType) => {
+  const classes = useCustomButtonStyles();
+  const { t } = useTranslation();
+
+  const classNames = clsx(classes.item, props.isActive ? classes.active : undefined)
+
+  return (
+    <Button
+      className={classNames}
+      key={props.itemKey}
+      startIcon={React.createElement(props.navigation.icon)}
+      onClick={props.action}>
+      {t(props.navigation.title)}
+    </Button>
   );
 }

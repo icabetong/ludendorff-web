@@ -273,7 +273,7 @@ const AssetScreen = (props: AssetScreenProps) => {
             }
           </Hidden>
           <PaginationController
-            hasPrevious={isStart || items.length === 0}
+            hasPrevious={isStart || items.length !== 0}
             hasNext={isEnd}
             getPrevious={getPrev}
             getNext={getNext} />

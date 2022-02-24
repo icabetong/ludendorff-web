@@ -1,18 +1,34 @@
-import { useState, Suspense, lazy } from "react";
+import React, { useState, useRef, Suspense, lazy } from "react";
+import { useTranslation } from "react-i18next";
 import { Redirect } from "react-router";
-import { withRouter } from "react-router-dom";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { withRouter, } from "react-router-dom";
+import {
+  AppBar, 
+  Box, 
+  Button, 
+  ClickAwayListener, 
+  Drawer,
+  Grow, 
+  IconButton, 
+  Hidden, 
+  MenuList, 
+  MenuItem, 
+  Popper, 
+  Paper, 
+  Toolbar, 
+  useMediaQuery,
+  useTheme, 
+  makeStyles, 
+  Typography,
+  lighten
+} from "@material-ui/core"; 
 import { SnackbarProvider } from "notistack";
+import { MenuRounded } from "@material-ui/icons";
 
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
-
-import { Destination, NavigationComponent } from "../navigation/NavigationComponent";
+import { Destination, NavigationComponent, TopNavigationComponent } from "../navigation/NavigationComponent";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
-
 const HomeScreen = lazy(() => import('../home/HomeScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
@@ -49,11 +65,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     width: '100vw',
-    height: '100vh'
-  },
-  drawer: {
+    height: '100vh',
     [theme.breakpoints.up('md')]: {
-      width: drawerWidth,
+      flexDirection: 'column'
+    }
+  },
+  nav: {
+    [theme.breakpoints.up('md')]: {
+      height: 64,
       flexShrink: 0,
     }
   },
@@ -79,6 +98,12 @@ const useStyles = makeStyles((theme) => ({
   header: {
     display: 'block',
     textAlign: 'center'
+  },
+  profile: {
+    textTransform: 'none'
+  },
+  profileMenu: {
+    backgroundColor: lighten(theme.palette.background.paper, 0.2)
   }
 }));
 
@@ -90,8 +115,23 @@ type RootContainerComponentPropsType = {
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   const classes = useStyles();
   const theme = useTheme();
-
+  const { user } = useAuthState();
+  const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const anchorRef = useRef<HTMLButtonElement>(null);
+
+  const onTriggerMenu = () => {
+    setMenuOpen((prevOpen) => !prevOpen);
+  }
+
+  const onMenuDispose = (event: React.MouseEvent<Document, MouseEvent>) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+      return;
+    }
+
+    setMenuOpen(false);
+  }
 
   const onToggleDrawerState = () => {
     setDrawerOpen(!drawerOpen);
@@ -110,7 +150,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 
   return (
     <div className={classes.root}>
-      <nav className={classes.drawer}>
+      <nav className={classes.nav}>
         <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
@@ -126,15 +166,57 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             {drawerItems}
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation="css">
-          <Drawer
-            className={classes.drawer}
-            variant="permanent"
-            classes={{
-              paper: classes.drawerPaper,
-            }}>
-            {drawerItems}
-          </Drawer>
+        <Hidden smDown>
+          <AppBar color='inherit' elevation={2}>
+            <Toolbar>
+              <IconButton edge="start" color="inherit">
+                <MenuRounded/>
+              </IconButton>
+
+              <Box flexGrow={1} marginX={4}>
+                <TopNavigationComponent 
+                  onNavigate={onNavigateThenDismiss}
+                  currentDestination={props.currentDestination}/>
+              </Box>
+              <Box flexGrow={8}/>
+              <Button
+                ref={anchorRef}
+                aria-haspopup="true"
+                onClick={onTriggerMenu}
+                className={classes.profile}>
+                <Box flexDirection="column" textAlign="start">
+                  <Typography variant="body2">{user && user.firstName}</Typography>
+                  <Typography variant="caption">{user && user.email}</Typography>
+                </Box>
+              </Button>
+              <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
+                    }}
+                  >
+                    <Paper className={classes.profileMenu}>
+                      <ClickAwayListener onClickAway={onMenuDispose}>
+                        <MenuList id="split-button-menu">
+                          <MenuItem key="profile">
+                            {t("navigation.profile")}
+                          </MenuItem>
+                          <MenuItem key="settings">
+                            {t('navigation.settings')}
+                          </MenuItem>
+                          <MenuItem key="signout">
+                            {t('button.signout')}
+                          </MenuItem>
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </Toolbar>
+          </AppBar>
         </Hidden>
       </nav>
       <div className={classes.content}>
