@@ -8,8 +8,7 @@ import {
   Button, 
   ClickAwayListener, 
   Drawer,
-  Grow, 
-  IconButton, 
+  Grow,
   Hidden, 
   MenuList, 
   MenuItem, 
@@ -23,7 +22,8 @@ import {
   lighten
 } from "@material-ui/core"; 
 import { SnackbarProvider } from "notistack";
-import { MenuRounded } from "@material-ui/icons";
+import { ArrowDropDown } from "@material-ui/icons";
+import { ReactComponent as Logo } from "../../shared/icon.svg";
 
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 import { Destination, NavigationComponent, TopNavigationComponent } from "../navigation/NavigationComponent";
@@ -84,8 +84,8 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100%',
   },
   icon: {
-    maxWidth: '2em',
-    maxHeight: '2em',
+    maxWidth: '3em',
+    maxHeight: '3em',
   },
   content: {
     flexGrow: 1,
@@ -169,21 +169,19 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         <Hidden smDown>
           <AppBar color='inherit' elevation={2}>
             <Toolbar>
-              <IconButton edge="start" color="inherit">
-                <MenuRounded/>
-              </IconButton>
+              <Box component={Logo} className={classes.icon}/>
 
               <Box flexGrow={1} marginX={4}>
                 <TopNavigationComponent 
                   onNavigate={onNavigateThenDismiss}
                   currentDestination={props.currentDestination}/>
               </Box>
-              <Box flexGrow={8}/>
               <Button
                 ref={anchorRef}
                 aria-haspopup="true"
                 onClick={onTriggerMenu}
-                className={classes.profile}>
+                className={classes.profile}
+                endIcon={<ArrowDropDown/>}>
                 <Box flexDirection="column" textAlign="start">
                   <Typography variant="body2">{user && user.firstName}</Typography>
                   <Typography variant="caption">{user && user.email}</Typography>
@@ -195,8 +193,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                     {...TransitionProps}
                     style={{
                       transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
-                    }}
-                  >
+                    }}>
                     <Paper className={classes.profileMenu}>
                       <ClickAwayListener onClickAway={onMenuDispose}>
                         <MenuList id="split-button-menu">

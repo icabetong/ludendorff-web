@@ -9,7 +9,6 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  Icon,
   List,
   ListItem,
   ListItemIcon,
@@ -252,7 +251,7 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
   const { canRead, canManageUsers, isAdmin } = usePermissions();
 
   return (
-    <Grid container direction="row" justifyContent="space-between">
+    <Grid container direction="row">
     { props.items.map((nav: NavigationItemType) => {
         if (!canRead && nav.destination === Destination.ASSETS)
         return <></>;
@@ -277,6 +276,7 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
 
 const useCustomButtonStyles = makeStyles((theme) => ({
   item: {
+    margin: '0 0.2em',
     padding: '0.4em 1.8em',
     textTransform: 'none',
   },

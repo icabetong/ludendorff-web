@@ -5,7 +5,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100vw',
     height: '100vh'
@@ -20,8 +20,10 @@ const useStyles = makeStyles(() => ({
   },
   icon: {
     display: 'block',
-    margin: 'auto',
-    fontSize: '8em'
+    margin: '2em auto',
+    width: '8em',
+    height: '8em',
+    color: theme.palette.primary.main
   },
   progress: {
     margin: 'auto'
@@ -33,9 +35,9 @@ export const MainLoadingStateComponent = () => {
   const theme = useTheme();
 
   return (
-    <Grid container direction="column" alignItems="center" justifyContent="center" className={classes.root}>
+    <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.root}>
       <Grid item className={classes.wrapper}>
-        <Logo fill={theme.palette.primary.main} stroke={theme.palette.primary.main} className={classes.icon} />
+        <Logo stroke={theme.palette.primary.main} className={classes.icon}/>
         <LinearProgress className={classes.progress} />
       </Grid>
     </Grid>
