@@ -6,10 +6,17 @@ import {
   AppBar, 
   Box, 
   Button, 
-  ClickAwayListener, 
+  ClickAwayListener,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Drawer,
   Grow,
   Hidden, 
+  ListItemIcon,
+  ListItemText,
   MenuList, 
   MenuItem, 
   Popper, 
@@ -22,13 +29,21 @@ import {
   lighten
 } from "@material-ui/core"; 
 import { SnackbarProvider } from "notistack";
-import { ArrowDropDown } from "@material-ui/icons";
+import { 
+  ArrowDropDown,   
+  SettingsOutlined,
+  AccountCircleOutlined,
+  ExitToAppRounded
+} from "@material-ui/icons";
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 
+import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 import { Destination, NavigationComponent, TopNavigationComponent } from "../navigation/NavigationComponent";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
+import { auth } from "../../index";
+
 const HomeScreen = lazy(() => import('../home/HomeScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
@@ -88,7 +103,12 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '3em',
   },
   content: {
+    width: '100%',
+    margin: '0 auto',
     flexGrow: 1,
+    [theme.breakpoints.up('xl')]: {
+      maxWidth: '1600px'
+    }
   },
   headerIcon: {
     fontSize: '1em',
@@ -117,9 +137,15 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   const theme = useTheme();
   const { user } = useAuthState();
   const { t } = useTranslation();
+  const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
+
+  const onTriggerSignOut = async () => {
+    await signOut(auth);
+    setTriggerConfirmSignOut(false);
+  }
 
   const onTriggerMenu = () => {
     setMenuOpen((prevOpen) => !prevOpen);
@@ -129,7 +155,6 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
-
     setMenuOpen(false);
   }
 
@@ -138,9 +163,31 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   }
 
   const onNavigateThenDismiss = (destination: Destination) => {
-    setDrawerOpen(false)
+    if (drawerOpen) 
+      setDrawerOpen(false);
+
+    if (menuOpen)
+      setMenuOpen(false);
+
     props.onNavigate(destination)
   }
+
+  const signOutDialog = (
+    <Dialog
+      open={triggerConfirmSignOut}
+      fullWidth={true}
+      maxWidth="xs"
+      onClose={() => setTriggerConfirmSignOut(false)}>
+      <DialogTitle>{t("dialog.signout")}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{t("dialog.signout_message")}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{t("button.cancel")}</Button>
+        <Button color="primary" onClick={onTriggerSignOut}>{t("button.continue")}</Button>
+      </DialogActions>
+    </Dialog>
+  )
 
   const drawerItems = (
     <NavigationComponent
@@ -196,15 +243,24 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                     }}>
                     <Paper className={classes.profileMenu}>
                       <ClickAwayListener onClickAway={onMenuDispose}>
-                        <MenuList id="split-button-menu">
-                          <MenuItem key="profile">
-                            {t("navigation.profile")}
+                        <MenuList id="navigation-menu">
+                          <MenuItem 
+                            key="profile"
+                            onClick={() => onNavigateThenDismiss(Destination.PROFILE)}>
+                            <ListItemIcon><AccountCircleOutlined/></ListItemIcon>
+                            <ListItemText>{t("navigation.profile")}</ListItemText>
                           </MenuItem>
-                          <MenuItem key="settings">
-                            {t('navigation.settings')}
+                          <MenuItem 
+                            key="settings"
+                            onClick={() => onNavigateThenDismiss(Destination.SETTINGS)}>
+                            <ListItemIcon><SettingsOutlined/></ListItemIcon>
+                            <ListItemText>{t('navigation.settings')}</ListItemText>
                           </MenuItem>
-                          <MenuItem key="signout">
-                            {t('button.signout')}
+                          <MenuItem 
+                            key="signout"
+                            onClick={() => setTriggerConfirmSignOut(true)}>
+                            <ListItemIcon><ExitToAppRounded/></ListItemIcon>
+                            <ListItemText>{t('button.signout')}</ListItemText>
                           </MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -216,11 +272,12 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
           </AppBar>
         </Hidden>
       </nav>
-      <div className={classes.content}>
+      <Box className={classes.content}>
         <Suspense fallback={<ContentLoadingStateComponent />}>
           <InnerComponent destination={props.currentDestination} onDrawerToggle={onToggleDrawerState} />
         </Suspense>
-      </div>
+      </Box>
+      {signOutDialog}
     </div>
   );
 }

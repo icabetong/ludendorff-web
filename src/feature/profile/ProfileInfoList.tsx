@@ -10,9 +10,9 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import {
-  IdentificationIcon,
-  OfficeBuildingIcon,
-} from "@heroicons/react/outline";
+  WorkOutlineRounded,
+  DomainOutlined,
+} from "@material-ui/icons";
 
 import { User } from "../user/User";
 
@@ -45,8 +45,8 @@ const ProfileInfoList = (props: ProfileInfoListProps) => {
   const classes = useStyles();
 
   const info = [
-    { icon: IdentificationIcon, name: 'field.position', info: props.user?.position },
-    { icon: OfficeBuildingIcon, name: 'field.department', info: props.user?.department?.name }
+    { icon: WorkOutlineRounded, name: 'field.position', info: props.user?.position },
+    { icon: DomainOutlined, name: 'field.department', info: props.user?.department?.name }
   ]
 
   return (

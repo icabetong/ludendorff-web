@@ -8,9 +8,11 @@ import {
   Tooltip,
   makeStyles
 } from "@material-ui/core";
+import {
+  DeleteOutlineRounded,
+  DomainOutlined
+} from "@material-ui/icons";
 import { useSnackbar } from "notistack";
-
-import { OfficeBuildingIcon, TrashIcon } from "@heroicons/react/outline";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
@@ -80,7 +82,7 @@ const DepartmentList = (props: DepartmentListProps) => {
             getNext={props.onNext} />
         </>
         : <EmptyStateComponent
-          icon={OfficeBuildingIcon}
+          icon={DomainOutlined}
           title={t("empty_department")}
           subtitle={t("empty_department_summary")} />
       }
@@ -108,7 +110,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
 
   const deleteButton = (
     <HeroIconButton
-      icon={TrashIcon}
+      icon={DeleteOutlineRounded}
       edge="end"
       disabled={props.department.count > 0}
       aria-label={t("delete")}

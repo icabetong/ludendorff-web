@@ -101,7 +101,11 @@ const resources = {
         show_drawer: "Show drawer",
         signin: "Sign in",
         signout: "Sign-out",
-        go_to_home: "Go to Home"
+        go_to_home: "Go to Home",
+        request_asset: "Request Asset",
+        create_asset: "Create Asset",
+        create_user: "Create User",
+        create_assignment: "Create Assignment",
       },
       feedback: {
         error_generic: "An internal error occured",

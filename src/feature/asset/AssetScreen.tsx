@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Hidden,
+  IconButton,
   LinearProgress,
   MenuItem,
   Tooltip,
@@ -16,18 +17,17 @@ import {
   GridCellParams
 } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
-
 import {
-  DesktopComputerIcon,
-  DuplicateIcon,
-  PlusIcon,
-  TrashIcon
-} from "@heroicons/react/outline";
+  DesktopWindowsRounded,
+  AddRounded,
+  DeleteOutlineRounded,
+  FileCopyOutlined
+} from "@material-ui/icons";
+
 import { query, collection, orderBy, Timestamp } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import HeroIconButton from "../../components/HeroIconButton";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -62,6 +62,7 @@ import {
 import AssetEditor from "./AssetEditor";
 import CategoryScreen from "../category/CategoryScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -146,10 +147,11 @@ const AssetScreen = (props: AssetScreenProps) => {
       renderCell: (params: GridCellParams) => {
         const asset = params.row as Asset;
         return (
-          <HeroIconButton
-            icon={DuplicateIcon}
+          <IconButton
             aria-label={t("button.copy")}
-            onClick={() => onCopyInvoke(asset)} />
+            onClick={() => onCopyInvoke(asset)}>
+            <FileCopyOutlined/>
+          </IconButton>
         )
       }
     },
@@ -162,11 +164,12 @@ const AssetScreen = (props: AssetScreenProps) => {
       renderCell: (params: GridCellParams) => {
         const asset = params.row as Asset;
         const deleteButton = (
-          <HeroIconButton
-            icon={TrashIcon}
+          <IconButton
             aria-label={t("button.delete")}
             disabled={asset.status === Status.OPERATIONAL}
-            onClick={() => onRemoveInvoke(asset)} />
+            onClick={() => onRemoveInvoke(asset)}>
+            <DeleteOutlineRounded/>
+          </IconButton>
         );
         return (
           <>
@@ -224,22 +227,38 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCategoryListView = () => setCategoryOpen(true)
   const onCategoryListDismiss = () => setCategoryOpen(false)
 
+  const menuItems = [
+    <MenuItem key={0} onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
+  ];
+
   return (
     <Box className={classes.root}>
-      <ComponentHeader
-        title={t("navigation.assets")}
-        onDrawerToggle={props.onDrawerToggle}
-        buttonText={
-          canWrite
-            ? t("button.add")
-            : undefined
-        }
-        buttonIcon={PlusIcon}
-        buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-        onSearch={onSearchInvoke}
-        menuItems={[
-          <MenuItem key={0} onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
-        ]} />
+      <Hidden smDown>
+        <PageHeader
+          title={t("navigation.assets")}
+          buttonText={
+            canWrite
+              ? t("button.create_asset")
+              : undefined
+          }
+          buttonIcon={AddRounded}
+          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
+          menuItems={menuItems}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader
+          title={t("navigation.assets")}
+          onDrawerToggle={props.onDrawerToggle}
+          buttonText={
+            canWrite
+              ? t("button.create_asset")
+              : undefined
+          }
+          buttonIcon={AddRounded}
+          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
+          onSearch={onSearchInvoke}
+          menuItems={menuItems} />
+      </Hidden>
       {canRead
         ? <>
           <Hidden xsDown>
@@ -332,7 +351,7 @@ const AssetEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={DesktopComputerIcon}
+      icon={DesktopWindowsRounded}
       title={t("empty_asset")}
       subtitle={t("empty_asset_summary")} />
   )

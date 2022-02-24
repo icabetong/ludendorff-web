@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  IconButton,
   List,
   ListItem,
   ListItemSecondaryAction,
@@ -9,14 +10,13 @@ import {
   makeStyles
 } from "@material-ui/core";
 import {
-  TagIcon,
-  TrashIcon
-} from "@heroicons/react/outline";
+  LocalOfferOutlined,
+  DeleteOutlineRounded,
+} from "@material-ui/icons";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
-import HeroIconButton from "../../components/HeroIconButton";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
@@ -77,7 +77,7 @@ const CategoryList = (props: CategoryListProps) => {
             getNext={props.onNext} />
         </>
         : <EmptyStateComponent
-          icon={TagIcon}
+          icon={LocalOfferOutlined}
           title={t("empty_category")}
           subtitle={t("empty_category_summary")} />
       }
@@ -104,12 +104,13 @@ const CategoryItem = (props: CategoryItemProps) => {
   const { canDelete } = usePermissions();
 
   const deleteButton = (
-    <HeroIconButton
-      icon={TrashIcon}
+    <IconButton
       edge="end"
       disabled={props.category.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.category)} />
+      onClick={() => props.onItemRemove(props.category)}>
+      <DeleteOutlineRounded/>
+    </IconButton>
   );
 
   return (

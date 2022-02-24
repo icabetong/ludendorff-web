@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(4)
   },
   icon: {
-    width: '4em',
-    height: '4em'
+    width: '2em',
+    height: '2em'
   },
   text: {
     textAlign: 'center'

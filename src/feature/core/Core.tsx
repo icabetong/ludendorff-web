@@ -15,13 +15,8 @@ const teal500 = '#14b8a6';
 const teal600 = '#0d9488';
 const teal700 = '#0f766e';
 const teal800 = '#115e59';
-const gray900 = '#111827';
 const gray800 = '#1f2937';
 const gray700 = '#374151';
-const gray600 = '#4b5563';
-const gray500 = '#6b7280';
-const gray400 = '#9ca3af';
-const gray300 = '#d1d5db';
  
 const errorColors = {
   main: '#ff5555',
@@ -104,7 +99,7 @@ const lightTheme = createTheme({
       main: '#6272a4'
     },
     background: {
-      default: '#ffffff',
+      default: '#f9fafb',
       paper: '#ffffff'
     },
     text: {

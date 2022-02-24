@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Hidden,
+  IconButton,
   LinearProgress,
   MenuItem,
   makeStyles
@@ -16,20 +17,20 @@ import {
 } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 import {
-  PlusIcon,
-  DocumentDownloadIcon,
-  IdentificationIcon,
-  TrashIcon
-} from "@heroicons/react/outline";
+  DeleteOutlined,
+  AddRounded,
+  AssignmentRounded,
+  SaveAltOutlined,
+} from "@material-ui/icons";
 import { jsPDF } from "jspdf";
 import { query, collection, orderBy } from "firebase/firestore";
 
+import PageHeader from "../../components/PageHeader";
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
-import HeroIconButton from "../../components/HeroIconButton";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 
 import { usePermissions } from "../auth/AuthProvider";
@@ -124,10 +125,11 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
       sortable: false,
       renderCell: (params: GridCellParams) => {
         return (
-          <HeroIconButton
-            icon={DocumentDownloadIcon}
+          <IconButton
             aria-label={t("button.export")}
-            onClick={() => onExport(params.row as Assignment)} />
+            onClick={() => onExport(params.row as Assignment)}>
+            <SaveAltOutlined/>
+          </IconButton>
         )
       }
     },
@@ -139,10 +141,11 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
       sortable: false,
       renderCell: (params: GridCellParams) => {
         return (
-          <HeroIconButton
-            icon={TrashIcon}
+          <IconButton
             aria-label={t("button.delete")}
-            onClick={() => onRemoveInvoke(params.row as Assignment)} />
+            onClick={() => onRemoveInvoke(params.row as Assignment)}>
+            <DeleteOutlined/>
+          </IconButton>
         )
       }
     }
@@ -228,20 +231,32 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
   const [isRequestListOpen, setRequestListOpen] = useState(false);
   const onRequestListView = () => setRequestListOpen(true)
   const onRequestListDismiss = () => setRequestListOpen(false)
+  
+  const menuItems = [
+    <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>
+  ];
 
   return (
     <Box className={classes.root}>
-      <ComponentHeader
-        title={t("navigation.assignments")}
-        buttonText={isAdmin ? t("add") : undefined}
-        buttonIcon={PlusIcon}
-        buttonOnClick={onAssignmentEditorView}
-        onSearch={onSearchInvoke}
-        onDrawerToggle={props.onDrawerToggle}
-        menuItems={[
-          <MenuItem key={0} onClick={onRequestListView}>{t("navigation.requests")}</MenuItem>
-        ]}
-      />
+      <Hidden smDown>
+        <PageHeader
+          title={t("navigation.assignments")}
+          buttonText={isAdmin ? t("button.create_assignment") : undefined}
+          buttonIcon={AddRounded}
+          buttonOnClick={onAssignmentEditorView}
+          menuItems={menuItems}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader
+          title={t("navigation.assignments")}
+          buttonText={isAdmin ? t("button.create_assignment") : undefined}
+          buttonIcon={AddRounded}
+          buttonOnClick={onAssignmentEditorView}
+          onSearch={onSearchInvoke}
+          onDrawerToggle={props.onDrawerToggle}
+          menuItems={menuItems}
+        />
+      </Hidden>
       {isAdmin
         ? <>
           <Hidden xsDown>
@@ -320,7 +335,7 @@ const AssignmentEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={IdentificationIcon}
+      icon={AssignmentRounded}
       title={t("empty_assignment")}
       subtitle={t("empty_assignment_summary")} />
   );

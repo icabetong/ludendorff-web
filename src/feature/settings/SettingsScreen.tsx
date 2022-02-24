@@ -1,22 +1,17 @@
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Switch from "@material-ui/core/Switch";
-
 import {
-  ChevronRightIcon,
-  ColorSwatchIcon,
-  TableIcon,
-  ViewListIcon,
-  MenuIcon,
-  MenuAlt4Icon
-} from "@heroicons/react/outline";
+  PaletteOutlined,
+  TableChartOutlined,
+  ChevronRightRounded,
+} from "@material-ui/icons";
 
 import ComponentHeader from "../../components/ComponentHeader";
-import HeroIconButton from "../../components/HeroIconButton";
-import HeroListItemIcon from "../../components/HeroListItemIcon";
 
 import { PreferenceContext } from "./Preference";
 import { Setting } from "../settings/Settings";
@@ -54,19 +49,20 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       key: 'preference:theme',
       title: t("settings.dark_theme"),
       summary: t("settings.dark_theme_summary"),
-      icon: ColorSwatchIcon,
+      icon: PaletteOutlined,
       action: <Switch edge="end" checked={userPreferences.preferences.theme === 'dark'} onChange={onTriggerThemeChanged} />
     }, {
       key: 'preference:density',
       title: t("settings.table_row_density"),
       summary: t(`settings.table_row_density_${userPreferences.preferences.density}`),
-      icon: TableIcon,
+      icon: TableChartOutlined,
       action: <>
-        <HeroIconButton
-          icon={ChevronRightIcon}
+        <IconButton
           aria-controls="density-menu"
           aria-haspopup="true"
-          onClick={onDensityMenuView} />
+          onClick={onDensityMenuView}>
+          <ChevronRightRounded/>
+        </IconButton>
         <Menu
           keepMounted
           id="density-menu"
@@ -76,19 +72,16 @@ const SettingsScreen = (props: SettingsScreenProps) => {
           <MenuItem
             key="compact"
             onClick={() => onDensityMenuItemClick("compact")}>
-            <HeroListItemIcon icon={ViewListIcon} />
             {t(`settings.table_row_density_compact`)}
           </MenuItem>
           <MenuItem
             key="standard"
             onClick={() => onDensityMenuItemClick("standard")}>
-            <HeroListItemIcon icon={MenuIcon} />
             {t(`settings.table_row_density_standard`)}
           </MenuItem>
           <MenuItem
             key="comfortable"
             onClick={() => onDensityMenuItemClick("comfortable")}>
-            <HeroListItemIcon icon={MenuAlt4Icon} />
             {t(`settings.table_row_density_comfortable`)}
           </MenuItem>
         </Menu>

@@ -8,13 +8,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Divider,
   Typography,
   makeStyles,
   alpha
@@ -24,16 +24,10 @@ import {
   DesktopWindowsRounded,
   HomeRounded,
   PeopleOutlineRounded,
+  SettingsOutlined,
+  AccountCircleOutlined,
+  ExitToAppRounded
 } from "@material-ui/icons";
-import {
-  // HomeIcon,
-  // DesktopComputerIcon,
-  // UserGroupIcon,
-  // IdentificationIcon,
-  CogIcon,
-  UserIcon,
-  LogoutIcon
-} from "@heroicons/react/outline";
 import clsx from "clsx";
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
@@ -56,7 +50,7 @@ type NavigationItemType = {
 
 type NavigationComponentPropsType = {
   onNavigate: (destination: Destination) => void,
-  currentDestination: Destination
+  currentDestination: Destination,
 }
 
 type NavigationListPropsType = {
@@ -129,13 +123,13 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 
   const minorDestinations: NavigationItemType[] = [
     {
-      icon: UserIcon,
+      icon: AccountCircleOutlined,
       title: status === AuthStatus.FETCHED && user?.firstName !== undefined
         ? user!.firstName
         : t("profile"),
       destination: Destination.PROFILE
     },
-    { icon: CogIcon, title: "navigation.settings", destination: Destination.SETTINGS },
+    { icon: SettingsOutlined, title: "navigation.settings", destination: Destination.SETTINGS },
   ]
 
   const confirmSignOut = () => {
@@ -166,7 +160,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
           onNavigate={props.onNavigate} />
         <NavigationListItem
           itemKey={1}
-          navigation={{ icon: LogoutIcon, title: t("button.signout") }}
+          navigation={{ icon: ExitToAppRounded, title: t("button.signout") }}
           isActive={false}
           action={() => confirmSignOut()} />
       </List>

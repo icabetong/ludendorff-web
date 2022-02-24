@@ -23,8 +23,8 @@ import {
   useTheme,
   makeStyles
 } from "@material-ui/core";
+import { AddRounded } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
-import { PlusIcon } from "@heroicons/react/outline";
 import { query, collection, orderBy, Timestamp } from "firebase/firestore";
 
 import { Asset, Status, AssetRepository } from "./Asset";
@@ -255,7 +255,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                       onItemSelected={onEditorUpdate} />
                     <Button
                       fullWidth
-                      startIcon={<PlusIcon className={classes.icon} />}
+                      startIcon={<AddRounded/>}
                       onClick={onEditorCreate}>
                       {t("add")}
                     </Button>

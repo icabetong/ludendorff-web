@@ -10,11 +10,12 @@ import {
   useTheme,
   useMediaQuery
 } from "@material-ui/core";
-
 import {
-  PencilIcon, KeyIcon, PaperAirplaneIcon, PhotographIcon
-} from "@heroicons/react/outline";
-
+  EditOutlined,
+  ImageOutlined,
+  LockOutlined,
+  SendOutlined,
+} from "@material-ui/icons";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
 import ChangeNamePrompt from "./actions/ChangeName";
@@ -66,10 +67,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const onResetPasswordDismiss = () => setRequestReset(false);
 
   const actions = [
-    { key: 'action:avatar', icon: PhotographIcon, title: "action.update_avatar", action: () => fileInput?.current?.click() },
-    { key: 'action:name', icon: PencilIcon, title: "action.change_name", action: onChangeNameInvoke },
-    { key: 'action:password', icon: KeyIcon, title: "action.change_password", action: onChangePasswordInvoke },
-    { key: 'action:request', icon: PaperAirplaneIcon, title: "action.request_reset", action: onResetPasswordInvoke }
+    { key: 'action:avatar', icon: ImageOutlined, title: "action.update_avatar", action: () => fileInput?.current?.click() },
+    { key: 'action:name', icon: EditOutlined, title: "action.change_name", action: onChangeNameInvoke },
+    { key: 'action:password', icon: LockOutlined, title: "action.change_password", action: onChangePasswordInvoke },
+    { key: 'action:request', icon: SendOutlined, title: "action.request_reset", action: onResetPasswordInvoke }
   ];
 
   return (

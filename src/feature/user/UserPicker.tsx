@@ -7,10 +7,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
-
-import {
-  UserIcon
-} from "@heroicons/react/outline";
+import { PeopleOutlineRounded } from "@material-ui/icons";
 
 import { User } from "./User";
 import UserList from "./UserList";
@@ -80,7 +77,7 @@ const UserPicker = (props: UserPickerProps) => {
                 }
               </>
               : <EmptyStateComponent
-                icon={UserIcon}
+                icon={PeopleOutlineRounded}
                 title={t("empty_user")}
                 subtitle={t("empty_user_summary")} />
             : <LinearProgress />

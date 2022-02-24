@@ -1,26 +1,34 @@
 import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import Hidden from "@material-ui/core/Hidden";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import MenuItem from "@material-ui/core/MenuItem";
-import Tooltip from "@material-ui/core/Tooltip";
-import { makeStyles } from "@material-ui/core/styles";
-import { DataGrid, GridOverlay, GridRowParams, GridValueGetterParams, GridCellParams } from "@material-ui/data-grid";
-import { useSnackbar } from "notistack";
-import { query, collection, orderBy } from "firebase/firestore";
 import {
-  BanIcon,
-  CheckIcon,
-  PlusIcon,
-  UserIcon,
-  TrashIcon,
-} from "@heroicons/react/outline";
+  Box,
+  Hidden,
+  IconButton,
+  LinearProgress,
+  MenuItem,
+  Tooltip,
+  makeStyles,
+} from "@material-ui/core";
+import { 
+  DataGrid, 
+  GridOverlay, 
+  GridRowParams, 
+  GridValueGetterParams, 
+  GridCellParams 
+} from "@material-ui/data-grid";
+import { useSnackbar } from "notistack";
+import {
+  VisibilityOffOutlined,
+  VisibilityOutlined,
+  AddRounded,
+  DeleteOutline,
+  PeopleOutlineRounded,
+} from "@material-ui/icons";
+import { query, collection, orderBy } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import HeroIconButton from "../../components/HeroIconButton";
 import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 
@@ -52,6 +60,7 @@ import UserEditor from "./UserEditor";
 import UserSearchScreen from "./UserSearchScreen";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
 const useStyles = makeStyles(() => ({
@@ -109,10 +118,11 @@ const UserScreen = (props: UserScreenProps) => {
         return (
           <Tooltip title={<>{t(user.disabled ? "button.enable" : "button.disable")}</>} placement="bottom">
             <span>
-              <HeroIconButton
-                icon={params.row.disabled ? CheckIcon : BanIcon}
+              <IconButton
                 aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                onClick={() => onModificationInvoke(user)} />
+                onClick={() => onModificationInvoke(user)}>
+                { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
+              </IconButton>
             </span>
           </Tooltip>
         )
@@ -126,10 +136,11 @@ const UserScreen = (props: UserScreenProps) => {
       sortable: false,
       renderCell: (params: GridCellParams) => {
         return (
-          <HeroIconButton
-            icon={TrashIcon}
-            aria-label={t("delete")}
-            onClick={() => onRemoveInvoke(params.row as User)} />
+          <IconButton
+            aria-label={t("button.delete")}
+            onClick={() => onRemoveInvoke(params.row as User)}>
+            <DeleteOutline/>
+          </IconButton>
         )
       }
     }
@@ -195,23 +206,35 @@ const UserScreen = (props: UserScreenProps) => {
   const onDepartmentView = () => { setDepartmentOpen(true) }
   const onDepartmentDismiss = () => { setDepartmentOpen(false) }
 
+  const menuItems = [
+    <MenuItem key={0} onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
+  ]
+
   return (
     <Box className={classes.root}>
-      <ComponentHeader
-        title={t("navigation.users")}
-        onDrawerToggle={props.onDrawerToggle}
-        buttonText={
-          canManageUsers
-            ? t("button.add")
-            : undefined
-        }
-        buttonIcon={PlusIcon}
-        buttonOnClick={onUserEditorView}
-        onSearch={onSearchInvoke}
-        menuItems={[
-          <MenuItem key={0} onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
-        ]}
-      />
+      <Hidden smDown>
+        <PageHeader
+          title={t("navigation.users")}
+          buttonText={t("button.create_user")}
+          buttonIcon={AddRounded}
+          buttonOnClick={onUserEditorView}
+          menuItems={menuItems}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader
+          title={t("navigation.users")}
+          onDrawerToggle={props.onDrawerToggle}
+          buttonText={
+            canManageUsers
+              ? t("button.create_user")
+              : undefined
+          }
+          buttonIcon={AddRounded}
+          buttonOnClick={onUserEditorView}
+          onSearch={onSearchInvoke}
+          menuItems={menuItems}
+        />
+      </Hidden>
       {canRead || canManageUsers
         ? <>
           <Hidden xsDown>
@@ -299,7 +322,7 @@ const UserEmptyStateComponent = () => {
 
   return (
     <EmptyStateComponent
-      icon={UserIcon}
+      icon={PeopleOutlineRounded}
       title={t("empty_user")}
       subtitle={t("empty_user_summary")} />
   );

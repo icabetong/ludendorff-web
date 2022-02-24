@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
+  IconButton,
   Typography,
   createStyles,
   Theme,
@@ -8,8 +9,7 @@ import {
   WithStyles
 } from "@material-ui/core";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import { SearchIcon } from "@heroicons/react/outline";
-import HeroIconButton from "./HeroIconButton";
+import { SearchOutlined } from "@material-ui/icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,11 +36,12 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
       {onSearch ? (
-        <HeroIconButton
+        <IconButton
           aria-label={t("button.search")}
-          icon={SearchIcon}
           className={classes.actionButton}
-          onClick={onSearch} />
+          onClick={onSearch}>
+          <SearchOutlined/>
+        </IconButton>
       ) : null}
     </MuiDialogTitle>
   )

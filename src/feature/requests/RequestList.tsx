@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  IconButton,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import {
+  EmailOutlined,
+  DeleteOutlineRounded,
+} from "@material-ui/icons";
 import { useSnackbar } from "notistack";
-
-import { MailOpenIcon, TrashIcon } from "@heroicons/react/outline";
 
 import EmptyStateComponent from "../state/EmptyStates";
 import PaginationController from "../../components/PaginationController";
-import HeroIconButton from "../../components/HeroIconButton";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 import { usePermissions } from "../auth/AuthProvider";
@@ -75,7 +77,7 @@ const RequestList = (props: RequestListProps) => {
             getNext={props.onNext} />
         </>
         : <EmptyStateComponent
-          icon={MailOpenIcon}
+          icon={EmailOutlined}
           title={t("empty_request")}
           subtitle={t("empty_request_summary")} />
       }
@@ -111,12 +113,12 @@ const RequestItem = (props: RequestItemProps) => {
         secondary={props.request.petitioner?.name} />
       {isAdmin &&
         <ListItemSecondaryAction>
-          <HeroIconButton
-            icon={TrashIcon}
+          <IconButton
             edge="end"
             aria-label={t("delete")}
-            onClick={() => props.onItemRemove(props.request)}
-          />
+            onClick={() => props.onItemRemove(props.request)}>
+            <DeleteOutlineRounded/>
+          </IconButton>
         </ListItemSecondaryAction>
       }
     </ListItem>

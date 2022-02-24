@@ -11,7 +11,7 @@ import {
   useTheme,
   makeStyles
 } from "@material-ui/core";
-import { DesktopComputerIcon } from "@heroicons/react/outline";
+import { DesktopWindowsRounded } from "@material-ui/icons";
 
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
@@ -80,7 +80,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                     getNext={props.onNext} />}
               </>
               : <EmptyStateComponent
-                icon={DesktopComputerIcon}
+                icon={DesktopWindowsRounded}
                 title={t("empty_asset")}
                 subtitle={t("empty_asset_summary")} />
             : <LinearProgress />

@@ -12,11 +12,15 @@ import {
   GridOverlay,
   GridValueGetterParams
 } from "@material-ui/data-grid";
-import { PlusIcon, PrinterIcon } from "@heroicons/react/outline";
+import {
+  AddRounded,
+  DevicesRounded,
+} from "@material-ui/icons";
 import { query, collection, orderBy, where } from "firebase/firestore";
 import RequestScreen from "./RequestScreen";
 import { Assignment } from "../assignment/Assignment";
 import AssignmentList from "../assignment/AssignmentList";
+import PageHeader from "../../components/PageHeader";
 import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -112,17 +116,29 @@ const HomeScreen = (props: HomeScreenProps) => {
   const onRequestsView = () => setRequestsOpen(true);
   const onRequestsDismiss = () => setRequestsOpen(false);
 
+  const menuItems = [
+    <MenuItem key={0} onClick={onRequestsView}>{t("navigation.sent_requests")}</MenuItem>
+  ]
+
   return (
     <Box className={classes.root}>
-      <ComponentHeader
-        title={t("navigation.home")}
-        buttonText={t("button.add")}
-        buttonIcon={PlusIcon}
-        buttonOnClick={onEditorCreate}
-        onDrawerToggle={props.onDrawerToggle}
-        menuItems={[
-          <MenuItem key={0} onClick={onRequestsView}>{t("navigation.sent_requests")}</MenuItem>
-        ]} />
+      <Hidden smDown>
+        <PageHeader 
+          title={t("navigation.home")}
+          buttonText={t("button.request_asset")}
+          buttonIcon={AddRounded}
+          buttonOnClick={onEditorCreate}
+          menuItems={menuItems}/>
+      </Hidden>
+      <Hidden mdUp>
+        <ComponentHeader
+          title={t("navigation.home")}
+          buttonText={t("button.request_asset")}
+          buttonIcon={AddRounded}
+          buttonOnClick={onEditorCreate}
+          onDrawerToggle={props.onDrawerToggle}
+          menuItems={menuItems}/>
+      </Hidden>
       <Hidden xsDown>
         <div className={classes.wrapper}>
           <DataGrid
@@ -181,7 +197,7 @@ const HomeEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={PrinterIcon}
+      icon={DevicesRounded}
       title={t("empty_home")}
       subtitle={t("empty_home_summary")} />
   )

@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 import {
   FormControl,
+  IconButton,
   InputAdornment,
   InputLabel,
   OutlinedInput,
   makeStyles
 } from "@material-ui/core";
-import { SearchIcon } from "@heroicons/react/outline";
+import { SearchOutlined } from "@material-ui/icons";
 import algoliasearch from "algoliasearch/lite";
 import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
-import HeroIconButton from "./HeroIconButton";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
 
@@ -54,10 +54,11 @@ const CustomSearchBox = (props: SearchBoxProvided) => {
         label={t("field.search")}
         endAdornment={
           <InputAdornment position="end">
-            <HeroIconButton
+            <IconButton
               aria-label={t("button.search")}
-              icon={SearchIcon}
-              edge="end" />
+              edge="end">
+              <SearchOutlined/>
+            </IconButton>
           </InputAdornment>
         }
         onChange={e => props.refine(e.target.value)} />
@@ -73,7 +74,7 @@ const EmptySearchState = (props: EmptySearchStateProps) => {
 
   return (
     <EmptyStateComponent
-      icon={SearchIcon}
+      icon={SearchOutlined}
       title={t("empty_search")}
       subtitle={t("empty_search_summary", { query: props.query })} />
   );

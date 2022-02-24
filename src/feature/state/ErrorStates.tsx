@@ -4,8 +4,10 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-
-import { ArrowRightIcon, ExclamationIcon } from "@heroicons/react/outline";
+import {
+  ChevronRightRounded,
+  ErrorOutlineRounded,
+} from "@material-ui/icons";
 
 import history from "../navigation/History";
 import EmptyStateComponent from "./EmptyStates";
@@ -34,10 +36,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(6)
   },
-  cta_icon: {
-    width: '1em', height: '1em',
-    color: theme.palette.primary.main
-  }
 }));
 
 export const ErrorNoPermissionState = () => {
@@ -45,7 +43,7 @@ export const ErrorNoPermissionState = () => {
 
   return (
     <EmptyStateComponent
-      icon={ExclamationIcon}
+      icon={ErrorOutlineRounded}
       title={t("error.no_permissions_header")}
       subtitle={t("error.no_permissions_summary_read")} />
   );
@@ -71,7 +69,7 @@ export const ErrorNotFoundState = () => {
             <Button
               variant="outlined"
               color="primary"
-              endIcon={<ArrowRightIcon className={classes.cta_icon} />}
+              endIcon={<ChevronRightRounded/>}
               className={classes.cta}
               onClick={() => history.push('/')} >
               {t("button.go_to_home")}
