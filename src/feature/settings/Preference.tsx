@@ -7,7 +7,7 @@ type Preferences = {
 }
 
 const defaultPreferences: Preferences = {
-  theme: 'dark',
+  theme: 'light',
   density: 'standard'
 }
 

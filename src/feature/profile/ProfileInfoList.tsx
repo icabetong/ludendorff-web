@@ -17,7 +17,11 @@ import {
 import { User } from "../user/User";
 
 const useStyles = makeStyles((theme) => ({
-  icon: { width: '2em', height: '2em' },
+  icon: { 
+    width: '2em', 
+    height: '2em',
+    color: theme.palette.text.secondary
+  },
   container: {
     minWidth: '100%',
     '& .MuiListItem-root': {

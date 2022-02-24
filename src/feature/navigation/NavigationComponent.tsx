@@ -15,7 +15,8 @@ import {
   ListSubheader,
   Divider,
   Typography,
-  makeStyles
+  makeStyles,
+  alpha
 } from "@material-ui/core";
 import {
   HomeIcon,
@@ -68,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.text.primary
     },
     '&$selected': {
-      backgroundColor: theme.palette.type === 'dark' ? 'rgba(189, 147, 249, 0.16)' : 'rgba(98, 114, 164, 0.16)',
+      backgroundColor: theme.palette.type === 'dark' ? alpha(theme.palette.primary.main, 0.3) : alpha(theme.palette.primary.main, 0.2),
       '& .MuiListItemIcon-root': {
         color: theme.palette.primary.main
       },
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
       },
     },
     '&:hover': {
-      backgroundColor: theme.palette.type === 'dark' ? 'rgba(189, 147, 249, 0.12)' : 'rgba(98, 114, 164, 0.12)',
+      backgroundColor: alpha(theme.palette.primary.main, 0.1),
     }
   },
   navigation: {

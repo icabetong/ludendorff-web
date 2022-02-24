@@ -11,7 +11,11 @@ import {
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  icon: { width: '2em', height: '2em' },
+  icon: { 
+    width: '2em', 
+    height: '2em',
+    color: theme.palette.text.secondary
+  },
   container: {
     width: '100%',
     '& .MuiListItem-root': {
@@ -67,7 +71,7 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
       </ListItemIcon>
       <ListItemText
         primary={
-          <Typography variant="subtitle2">{t(props.action.title)}</Typography>
+          <Typography variant="body2">{t(props.action.title)}</Typography>
         } />
     </ListItem>
   )

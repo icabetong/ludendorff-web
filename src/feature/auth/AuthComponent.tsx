@@ -62,7 +62,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
       <Container className={classes.rootWrapper}>
         <Box display="flex" justifyContent="center" alignItems="center" className={classes.rootWrapper}>
           <Container component="form" onSubmit={handleSubmit(onSubmit)} maxWidth="xs">
-            <Paper className={classes.containerPaper}>
+            <Paper className={classes.containerPaper} elevation={8}>
               <div className={classes.container}>
                 <Typography variant="h5">{t("auth.hello")}</Typography>
                 <Typography variant="h5">{t("auth.welcome_back")}</Typography>

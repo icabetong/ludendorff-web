@@ -99,7 +99,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 }
               </Grid>
               <Grid container item alignItems="center" justifyContent="center">
-                <Typography align="center" variant="h4">
+                <Typography align="center" variant="h5">
                   {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
                 </Typography>
               </Grid>

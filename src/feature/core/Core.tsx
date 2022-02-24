@@ -9,11 +9,20 @@ import history from "../navigation/History";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { PreferenceContext } from "../settings/Preference";
 
-const secondaryColors = {
-  main: '#ff79c6',
-  dark: '#c94695',
-  light: '#ffacf9'
-}
+const teal300 = '#5eead4';
+const teal400 = '#2dd4bf';
+const teal500 = '#14b8a6';
+const teal600 = '#0d9488';
+const teal700 = '#0f766e';
+const teal800 = '#115e59';
+const gray900 = '#111827';
+const gray800 = '#1f2937';
+const gray700 = '#374151';
+const gray600 = '#4b5563';
+const gray500 = '#6b7280';
+const gray400 = '#9ca3af';
+const gray300 = '#d1d5db';
+ 
 const errorColors = {
   main: '#ff5555',
   dark: '#c5162c',
@@ -72,7 +81,7 @@ const baseTheme = createTheme({
       root: {
         margin: '0.6em 0'
       }
-    }
+    },
   }
 })
 
@@ -81,10 +90,15 @@ const lightTheme = createTheme({
   palette: {
     type: 'light',
     primary: {
-      main: '#6272a4',
-      dark: '#344775'
+      light: teal400,
+      main: teal600,
+      dark: teal800
     },
-    secondary: secondaryColors,
+    secondary: {
+      light: teal400,
+      main: teal600,
+      dark: teal800
+    },
     error: errorColors,
     info: {
       main: '#6272a4'
@@ -94,8 +108,8 @@ const lightTheme = createTheme({
       paper: '#ffffff'
     },
     text: {
-      primary: '#282a36',
-      secondary: '#44475a'
+      primary: '#374151',
+      secondary: '#6b7280'
     }
   },
 })
@@ -104,17 +118,22 @@ const darkTheme = createTheme({
   palette: {
     type: 'dark',
     primary: {
-      main: '#bd93f9',
-      dark: '#8b65c6'
+      main: teal500,
+      light: teal300,
+      dark: teal700
     },
-    secondary: secondaryColors,
+    secondary: {
+      main: teal500,
+      light: teal300,
+      dark: teal700
+    },
     error: errorColors,
     info: {
       main: '#8be9fd'
     },
     background: {
-      default: '#1e1f29',
-      paper: '#44475a'
+      default: gray800,
+      paper: gray700
     },
     text: {
       primary: '#f8f8f2'
