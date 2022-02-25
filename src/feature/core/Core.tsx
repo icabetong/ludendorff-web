@@ -175,12 +175,15 @@ export const CoreComponent = () => {
 export const getDataGridTheme = (theme: Theme) => {
   return {
     '& .MuiDataGrid-toolbarContainer': {
-      backgroundColor: theme.palette.type === 'dark' ? gray700: gray200,
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      backgroundColor: theme.palette.type === 'dark' ? gray700: gray100,
       borderBottom: '1px',
       borderBottomStyle: 'solid',
       borderBottomColor: theme.palette.divider
     },
     '& .MuiDataGrid-root': {
+      backgroundColor: 'transparent',
       borderColor: theme.palette.divider
     },
     '& .MuiDataGrid-columnsContainer': {
