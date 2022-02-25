@@ -18,7 +18,6 @@ const teal700 = '#0f766e';
 const teal800 = '#115e59';
 const gray50 = '#f9fafb';
 const gray100 = '#f3f4f6';
-const gray200 = '#e5e7eb';
 const gray300 = '#d1d5db';
 const gray500 = '#6b7280';
 const gray600 = '#4b5563';

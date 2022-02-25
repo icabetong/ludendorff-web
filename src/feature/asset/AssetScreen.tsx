@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
   },
   wrapper: {
-    height: '80%',
+    height: '90%',
     padding: '1.4em',
     ...getDataGridTheme(theme)
   },
@@ -276,7 +276,7 @@ const AssetScreen = (props: AssetScreenProps) => {
       {canRead
         ? <>
           <Hidden xsDown>
-            <div className={classes.wrapper}>
+            <Box className={classes.wrapper}>
               <DataGrid
                 components={{
                   LoadingOverlay: GridLinearProgress,
@@ -300,12 +300,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                 rows={assets}
                 columns={columns}
                 density={userPreference.density}
-                pageSize={15}
+                pageSize={20}
                 loading={isLoading}
                 paginationMode="client"
                 getRowId={(r) => r.assetId}
                 onRowDoubleClick={onDataGridRowDoubleClicked}/>
-            </div>
+            </Box>
           </Hidden>
           <Hidden smUp>
             {!isLoading

@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   wrapper: {
-    height: '80%',
+    height: '90%',
     padding: '1.4em',
     ...getDataGridTheme(theme)
   }
@@ -269,7 +269,7 @@ const UserScreen = (props: UserScreenProps) => {
                 rows={users}
                 columns={columns}
                 density={preferences.density}
-                pageSize={15}
+                pageSize={20}
                 loading={isLoading}
                 paginationMode="client"
                 getRowId={(r) => r.userId}

@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%', height: '100%'
   },
   wrapper: {
-    height: '80%',
+    height: '90%',
     padding: '1.4em',
     ...getDataGridTheme(theme)
   }
@@ -291,7 +291,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 rows={assignments}
                 columns={columns}
                 density={preferences.density}
-                pageSize={15}
+                pageSize={20}
                 loading={isLoading}
                 paginationMode="client"
                 getRowId={(r) => r.assignmentId}

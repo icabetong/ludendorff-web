@@ -16,7 +16,6 @@ const GridToolbar = () => {
 
   return (
     <GridToolbarContainer>
-      {/* <Box flexGrow={4}/> */}
       <Box>
         <GridToolbarColumnsButton/>
         <GridToolbarDensitySelector/>
