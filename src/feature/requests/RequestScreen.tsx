@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -17,7 +17,7 @@ import {
 import { useSnackbar } from "notistack";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 import { Request, RequestRepository } from "./Request";
 import RequestList from "./RequestList";
@@ -26,7 +26,6 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { minimize } from "../user/User";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
-import { usePagination } from "use-pagination-firestore";
 import {
   requestCollection,
   requestedAssetName,
@@ -67,8 +66,25 @@ const RequestScreen = (props: RequestScreenProps) => {
   const { user } = useAuthState();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setLoading] = useState(true);
+  const [requests, setRequests] = useState<Request[]>([]);
 
-  const onSearchInvoked = () => setSearch(!search)
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, requestCollection), orderBy(endorserName, "asc")), (snapshot) => {
+      if (mounted) {
+        setRequests(snapshot.docs.map((doc) => doc.data() as Request));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
+
+  const onSearchInvoked = () => setSearch(!search);
 
   const onEndorsementDismiss = () => setRequest(undefined);
   const onEndorsementConfirmed = () => {
@@ -81,10 +97,6 @@ const RequestScreen = (props: RequestScreenProps) => {
         .finally(onEndorsementDismiss)
     } else enqueueSnackbar(t("feedback.error_generic."))
   }
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
-    query(collection(firestore, requestCollection), orderBy(endorserName, "asc")), { limit: 15 }
-  )
 
   return (
     <>
@@ -110,12 +122,8 @@ const RequestScreen = (props: RequestScreenProps) => {
             : isAdmin
               ? !isLoading
                 ? <RequestList
-                  requests={items}
-                  hasPrevious={isStart}
-                  hasNext={isEnd}
-                  onPrevious={getPrev}
-                  onNext={getNext}
-                  onItemSelect={setRequest} />
+                    requests={requests}
+                    onItemSelect={setRequest} />
                 : <LinearProgress />
               : <ErrorNoPermissionState />
           }

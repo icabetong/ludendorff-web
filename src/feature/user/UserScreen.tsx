@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -26,12 +26,11 @@ import {
   DeleteOutline,
   PeopleOutlineRounded,
 } from "@material-ui/icons";
-import { query, collection, orderBy } from "firebase/firestore";
+import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 import { getDataGridTheme } from "../core/Core";
 
@@ -40,8 +39,6 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
-
-import { usePagination } from "use-pagination-firestore";
 
 import {
   ActionType,
@@ -88,6 +85,23 @@ const UserScreen = (props: UserScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canManageUsers } = usePermissions();
   const preferences = usePreferences();
+  const [isLoading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
+      if (mounted) {
+        setUsers(snapshot.docs.map((doc) => doc.data() as User));
+        setLoading(false);
+      }
+    })
+    
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   const columns = [
     { field: userId, headerName: t("field.id"), hide: true },
@@ -149,17 +163,6 @@ const UserScreen = (props: UserScreenProps) => {
       }
     }
   ]
-
-  const {
-    items: users,
-    isLoading: isUsersLoading,
-    isStart: atUserStart,
-    isEnd: atUserEnd,
-    getPrev: getPreviousUsers,
-    getNext: getNextUsers
-  } = usePagination<User>(
-    query(collection(firestore, userCollection), orderBy(lastName, "asc")), { limit: 15 }
-  )
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [userModify, setUserModify] = useState<User | undefined>(undefined);
@@ -267,27 +270,21 @@ const UserScreen = (props: UserScreenProps) => {
                 columns={columns}
                 density={preferences.density}
                 pageSize={15}
-                loading={isUsersLoading}
-                paginationMode="server"
+                loading={isLoading}
+                paginationMode="client"
                 getRowId={(r) => r.userId}
-                onRowDoubleClick={onDataGridRowDoubleClick}
-                hideFooter />
-
+                onRowDoubleClick={onDataGridRowDoubleClick}/>
             </div>
           </Hidden>
           <Hidden smUp>
-            {!isUsersLoading
+            {!isLoading
               ? users.length < 1
                 ? <UserEmptyStateComponent />
                 : <UserList users={users} onItemSelect={onUserSelected} />
               : <LinearProgress />
             }
           </Hidden>
-          <PaginationController
-            hasPrevious={atUserStart && users.length !== 0}
-            hasNext={atUserEnd}
-            getPrevious={getPreviousUsers}
-            getNext={getNextUsers} />
+
         </>
         : <ErrorNoPermissionState />
       }

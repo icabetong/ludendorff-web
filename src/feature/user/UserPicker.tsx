@@ -12,7 +12,6 @@ import { PeopleOutlineRounded } from "@material-ui/icons";
 import { User } from "./User";
 import UserList from "./UserList";
 
-import PaginationController from "../../components/PaginationController";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
@@ -32,10 +31,6 @@ type UserPickerProps = {
   isOpen: boolean,
   users: User[],
   isLoading: boolean,
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onDismiss: () => void,
   onSelectItem: (user: User) => void,
 }
@@ -64,18 +59,9 @@ const UserPicker = (props: UserPickerProps) => {
         {canRead ?
           !props.isLoading
             ? props.users.length > 0
-              ? <>
-                <UserList
+              ?<UserList
                   users={props.users}
                   onItemSelect={onSelect} />
-                {!props.hasNext &&
-                  <PaginationController
-                    hasPrevious={props.hasPrevious}
-                    hasNext={props.hasNext}
-                    getPrevious={props.onPrevious}
-                    getNext={props.onNext} />
-                }
-              </>
               : <EmptyStateComponent
                 icon={PeopleOutlineRounded}
                 title={t("empty_user")}

@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -18,12 +18,11 @@ import {
   AddRounded,
   DevicesRounded,
 } from "@material-ui/icons";
-import { query, collection, orderBy, where } from "firebase/firestore";
+import { query, collection, orderBy, where, onSnapshot } from "firebase/firestore";
 import RequestScreen from "./RequestScreen";
 import { Assignment } from "../assignment/Assignment";
 import AssignmentList from "../assignment/AssignmentList";
 import PageHeader from "../../components/PageHeader";
-import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -42,7 +41,6 @@ import {
   location,
 } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
-import { usePagination } from "use-pagination-firestore";
 import { firestore } from "../../index";
 import { getDataGridTheme } from "../core/Core";
 
@@ -66,6 +64,25 @@ const HomeScreen = (props: HomeScreenProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { user } = useAuthState();
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, assignmentCollection),
+      where(assignmentUserId, '==', user?.userId),
+      orderBy(assignmentAssetName, "asc")), (snapshot) => {
+        if (mounted) {
+          setAssignments(snapshot.docs.map((doc) => doc.data() as Assignment));
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, [user?.userId]);
 
   const columns = [
     { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -102,12 +119,6 @@ const HomeScreen = (props: HomeScreenProps) => {
       flex: 1
     }
   ]
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Assignment>(
-    query(collection(firestore, assignmentCollection),
-      where(assignmentUserId, '==', user?.userId),
-      orderBy(assignmentAssetName, "asc")), { limit: 15 }
-  );
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -164,28 +175,22 @@ const HomeScreen = (props: HomeScreenProps) => {
                 ]
               }
             }}
-            rows={items}
+            rows={assignments}
             columns={columns}
             pageSize={15}
             loading={isLoading}
-            paginationMode="server"
-            getRowId={(r) => r.assignmentId}
-            hideFooter />
+            paginationMode="client"
+            getRowId={(r) => r.assignmentId}/>
         </div>
       </Hidden>
       <Hidden smUp>
         {!isLoading
-          ? items.length < 1
+          ? assignments.length < 1
             ? <HomeEmptyState />
-            : <AssignmentList assignments={items} onItemSelect={onAssignmentSelected} />
+            : <AssignmentList assignments={assignments} onItemSelect={onAssignmentSelected} />
           : <LinearProgress />
         }
       </Hidden>
-      <PaginationController
-        hasPrevious={isStart || items.length === 0}
-        hasNext={isEnd}
-        getPrevious={getPrev}
-        getNext={getNext} />
       {state.isOpen &&
         <RequestEditor
           isOpen={state.isOpen}

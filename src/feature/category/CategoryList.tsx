@@ -16,7 +16,6 @@ import {
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
-import PaginationController from "../../components/PaginationController";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
@@ -30,10 +29,6 @@ const useStyles = makeStyles(() => ({
 
 type CategoryListProps = {
   categories: Category[],
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onItemSelect: (category: Category) => void
 }
 
@@ -58,24 +53,19 @@ const CategoryList = (props: CategoryListProps) => {
   return (
     <>
       {props.categories.length > 0
-        ? <>
-          <List className={classes.root}>{
-            props.categories.map((category: Category) => {
-              return (
-                <CategoryItem
-                  key={category.categoryId}
-                  category={category}
-                  onItemSelect={props.onItemSelect}
-                  onItemRemove={onRemoveInvoke} />
-              );
-            })
-          }</List>
-          <PaginationController
-            hasPrevious={props.hasPrevious}
-            hasNext={props.hasNext}
-            getPrevious={props.onPrevious}
-            getNext={props.onNext} />
-        </>
+        ? <List className={classes.root}>
+            {
+              props.categories.map((category: Category) => {
+                return (
+                  <CategoryItem
+                    key={category.categoryId}
+                    category={category}
+                    onItemSelect={props.onItemSelect}
+                    onItemRemove={onRemoveInvoke} />
+                );
+              })
+            }
+          </List>
         : <EmptyStateComponent
           icon={LocalOfferOutlined}
           title={t("empty_category")}

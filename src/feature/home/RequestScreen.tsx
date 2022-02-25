@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -13,12 +13,11 @@ import {
   useTheme,
   makeStyles
 } from "@material-ui/core";
-import { query, collection, orderBy, where } from "firebase/firestore";
+import { query, collection, orderBy, where, onSnapshot } from "firebase/firestore";
 import { Request } from "../requests/Request";
 import RequestList from "../requests/RequestList";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { usePagination } from "use-pagination-firestore";
 import {
   requestCollection,
   requestedAssetName,
@@ -58,14 +57,27 @@ const RequestScreen = (props: RequestScreenProps) => {
   const { isAdmin } = usePermissions();
   const { user } = useAuthState();
   const classes = useStyles();
+  const [isLoading, setLoading] = useState(true);
+  const [requests, setRequests] = useState<Request[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, requestCollection),
+    where(petitionerId, '==', user?.userId),
+    orderBy(requestedAssetName, "asc")), (snapshot) => {
+      if (mounted) {
+        setRequests(snapshot.docs.map((doc) => doc.data() as Request))
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  })
 
   const onRequestDismiss = () => setRequest(undefined);
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Request>(
-    query(collection(firestore, requestCollection),
-      where(petitionerId, '==', user?.userId),
-      orderBy(requestedAssetName, "asc")), { limit: 15 }
-  )
 
   return (
     <>
@@ -80,13 +92,9 @@ const RequestScreen = (props: RequestScreenProps) => {
           {isAdmin
             ? !isLoading
               ? <RequestList
-                isHome={true}
-                requests={items}
-                hasPrevious={isStart}
-                hasNext={isEnd}
-                onPrevious={getPrev}
-                onNext={getNext}
-                onItemSelect={setRequest} />
+                  isHome={true}
+                  requests={requests}
+                  onItemSelect={setRequest} />
               : <LinearProgress />
             : <ErrorNoPermissionState />
           }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -15,11 +15,10 @@ import {
   Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy } from "firebase/firestore"; 
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore"; 
 import { Department, DepartmentRepository } from "./Department";
 import { User, UserCore, minimize } from "../user/User";
 import UserPicker from "../user/UserPicker";
-import { usePagination } from "use-pagination-firestore";
 import {
   userCollection,
   lastName
@@ -45,6 +44,23 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [manager, setManager] = useState<UserCore | undefined>(props.department?.manager);
+  const [isLoading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
+      if (mounted) {
+        setUsers(snapshot.docs.map((doc) => doc.data() as User));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, [])
 
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
@@ -80,17 +96,6 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
   const onUserSelected = (user: User) => {
     setManager(minimize(user))
   }
-
-  const {
-    items: users,
-    isLoading: isUsersLoading,
-    isStart: atUserStart,
-    isEnd: atUserEnd,
-    getPrev: getPreviousUsers,
-    getNext: getNextUsers
-  } = usePagination<User>(
-    query(collection(firestore, userCollection), orderBy(lastName, "desc")), { limit: 15 }
-  )
 
   return (
     <>
@@ -145,11 +150,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
         <UserPicker
           isOpen={isPickerOpen}
           users={users}
-          isLoading={isUsersLoading}
-          hasPrevious={atUserStart}
-          hasNext={atUserEnd}
-          onPrevious={getPreviousUsers}
-          onNext={getNextUsers}
+          isLoading={isLoading}
           onDismiss={onPickerDismiss}
           onSelectItem={onUserSelected} />
       }

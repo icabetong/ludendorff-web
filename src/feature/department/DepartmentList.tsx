@@ -15,7 +15,6 @@ import {
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
-import PaginationController from "../../components/PaginationController";
 import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
@@ -35,10 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
 type DepartmentListProps = {
   departments: Department[],
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onItemSelect: (department: Department) => void
 }
 
@@ -63,8 +58,8 @@ const DepartmentList = (props: DepartmentListProps) => {
   return (
     <>
       {props.departments.length > 0
-        ? <>
-          <List className={classes.root}>{
+        ? <List className={classes.root}>
+          {
             props.departments.map((department: Department) => {
               return (
                 <DepartmentItem
@@ -74,13 +69,8 @@ const DepartmentList = (props: DepartmentListProps) => {
                   onItemRemove={onRemoveInvoke} />
               )
             })
-          }</List>
-          <PaginationController
-            hasPrevious={props.hasPrevious}
-            hasNext={props.hasNext}
-            getPrevious={props.onPrevious}
-            getNext={props.onNext} />
-        </>
+          }
+          </List>
         : <EmptyStateComponent
           icon={DomainOutlined}
           title={t("empty_department")}

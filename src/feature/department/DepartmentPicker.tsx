@@ -32,10 +32,6 @@ type DepartmentPickerProps = {
   isOpen: boolean,
   departments: Department[],
   isLoading: boolean,
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onDismiss: () => void
   onSelectItem: (department: Department) => void
 }
@@ -59,12 +55,8 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
         {canRead
           ? !props.isLoading
             ? <DepartmentList
-              departments={props.departments}
-              hasPrevious={props.hasPrevious}
-              hasNext={props.hasNext}
-              onPrevious={props.onPrevious}
-              onNext={props.onNext}
-              onItemSelect={props.onSelectItem} />
+                departments={props.departments}
+                onItemSelect={props.onSelectItem} />
             : <LinearProgress />
           : <ErrorNoPermissionState />
         }

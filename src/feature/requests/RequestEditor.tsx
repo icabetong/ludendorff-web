@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -13,13 +13,12 @@ import {
   Typography
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { query, collection, orderBy, where, Timestamp } from "firebase/firestore";
+import { query, collection, orderBy, where, onSnapshot, Timestamp } from "firebase/firestore";
 import { Request, RequestRepository } from "./Request";
 import { useAuthState } from "../auth/AuthProvider";
 import { Asset } from "../asset/Asset";
 import AssetPicker from "../asset/AssetPicker";
 import { minimize } from "../user/User";
-import { usePagination } from "use-pagination-firestore";
 import { assetCollection, assetName, assetStatus } from "../../shared/const";
 import { newId } from "../../shared/utils";
 import { firestore } from "../../index";
@@ -37,6 +36,8 @@ const RequestEditor = (props: RequestEditorProps) => {
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isPickerOpen, setPickerOpen] = useState<boolean>(false);
   const [isWritePending, setWritePending] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState(true);
+  const [assets, setAssets] = useState<Asset[]>([]);
   const { user } = useAuthState();
 
   const onSubmit = () => {
@@ -72,12 +73,23 @@ const RequestEditor = (props: RequestEditorProps) => {
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), 
-      where(assetStatus, '!=', "OPERATIONAL"),
-      orderBy(assetStatus, "asc"),
-      orderBy(assetName, "asc")), { limit: 15 }
-  )
+  useEffect(() => {
+    let mounted = false;
+    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), 
+    where(assetStatus, '!=', "OPERATIONAL"),
+    orderBy(assetStatus, "asc"),
+    orderBy(assetName, "asc")), (snapshot) => {
+      if (mounted) {
+        setAssets(snapshot.docs.map((doc) => doc.data() as Asset));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   return (
     <>
@@ -116,12 +128,8 @@ const RequestEditor = (props: RequestEditorProps) => {
       </Dialog>
       <AssetPicker
         isOpen={isPickerOpen}
-        assets={items}
+        assets={assets}
         isLoading={isLoading}
-        hasPrevious={isStart}
-        hasNext={isEnd}
-        onPrevious={getPrev}
-        onNext={getNext}
         onDismiss={onPickerDismiss}
         onSelectItem={setAsset} />
     </>

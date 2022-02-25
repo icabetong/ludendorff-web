@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useReducer, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -15,8 +15,7 @@ import {
 } from "@material-ui/core";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { query, collection, orderBy } from "firebase/firestore";
-import { usePagination } from "use-pagination-firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 import { Category } from "./Category";
 import CategoryEditorComponent from "./CategoryEditor";
@@ -57,15 +56,28 @@ const CategoryScreen = (props: CategoryScreenProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const [search, setSearch] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
   const classes = useStyles();
 
-  const onSearchInvoked = () => setSearch(!search)
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), (snapshot) => {
+      if (mounted) {
+        setCategories(snapshot.docs.map((doc) => doc.data() as Category));
+        setLoading(false);
+      }
+    });
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), { limit: 15 }
-  )
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
+
+  const onSearchInvoked = () => setSearch(!search);
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -95,12 +107,8 @@ const CategoryScreen = (props: CategoryScreenProps) => {
             : canRead
               ? !isLoading
                 ? <CategoryList
-                  categories={items}
-                  hasPrevious={isStart}
-                  hasNext={isEnd}
-                  onPrevious={getPrev}
-                  onNext={getNext}
-                  onItemSelect={onEditorUpdate} />
+                    categories={categories}
+                    onItemSelect={onEditorUpdate} />
                 : <LinearProgress />
               : <ErrorNoPermissionState />
           }

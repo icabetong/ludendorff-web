@@ -28,10 +28,6 @@ type CategoryPickerProps = {
   isOpen: boolean,
   categories: Category[],
   isLoading: boolean,
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPreviousBatch: () => void,
-  onNextBatch: () => void,
   onDismiss: () => void,
   onSelectItem: (category: Category) => void
 }
@@ -55,12 +51,8 @@ const CategoryPicker = (props: CategoryPickerProps) => {
         {canRead
           ? !props.isLoading
             ? <CategoryList
-              hasPrevious={props.hasPrevious}
-              hasNext={props.hasNext}
-              onPrevious={props.onPreviousBatch}
-              onNext={props.onNextBatch}
-              categories={props.categories}
-              onItemSelect={props.onSelectItem} />
+                categories={props.categories}
+                onItemSelect={props.onSelectItem} />
             : <LinearProgress />
           : <ErrorNoPermissionState />
         }

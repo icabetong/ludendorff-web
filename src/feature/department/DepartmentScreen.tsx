@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -15,8 +15,7 @@ import {
 } from "@material-ui/core";
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { collection, query, orderBy } from "firebase/firestore";
-import { usePagination } from "use-pagination-firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 import { Department } from "./Department";
 import DepartmentEditor from "./DepartmentEditor";
@@ -60,12 +59,25 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [search, setSearch] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState<Department[]>([]);
 
-  const onSearchInvoked = () => setSearch(!search)
+  useEffect(() => {
+    let mounted = false;
+    const unsubscribe = onSnapshot(query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), (snapshot) => {
+      if (mounted) {
+        setDepartments(snapshot.docs.map((doc) => doc.data() as Department));
+        setLoading(false);
+      }
+    })
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), { limit: 15 }
-  );
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
+
+  const onSearchInvoked = () => setSearch(!search);
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -101,12 +113,8 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             : canRead
               ? !isLoading
                 ? <DepartmentList
-                  departments={items}
-                  hasPrevious={isStart}
-                  hasNext={isEnd}
-                  onPrevious={getPrev}
-                  onNext={getNext}
-                  onItemSelect={onEditorUpdate} />
+                    departments={departments}
+                    onItemSelect={onEditorUpdate} />
                 : <LinearProgress />
               : <ErrorNoPermissionState />
           }

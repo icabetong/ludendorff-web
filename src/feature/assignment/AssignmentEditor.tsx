@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -22,7 +22,7 @@ import { useSnackbar } from "notistack";
 import { MuiPickersUtilsProvider, KeyboardDateTimePicker } from "@material-ui/pickers";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import DateFnsUtils from "@date-io/date-fns";
-import { query, collection, orderBy, Timestamp } from "firebase/firestore";
+import { query, collection, orderBy, Timestamp, onSnapshot } from "firebase/firestore";
 
 import { useAuthState } from "../auth/AuthProvider";
 import { Assignment, AssignmentRepository } from "./Assignment";
@@ -31,7 +31,6 @@ import AssetPicker from "../asset/AssetPicker";
 import { User, UserCore, minimize as minimizeUser } from "../user/User";
 import UserPicker from "../user/UserPicker";
 import { newId } from "../../shared/utils";
-import { usePagination } from "use-pagination-firestore";
 import {
   assetCollection,
   userCollection,
@@ -76,6 +75,40 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
   const [dateReturned, setDateReturned] = useState<Date | undefined>(returned ? new Date(returned.seconds * 1000) : undefined);
   const [isAssetPickerOpen, setAssetPickerOpen] = useState<boolean>(false);
   const [isUserPickerOpen, setUserPickerOpen] = useState<boolean>(false);
+  const [isAssetsLoading, setAssetsLoading] = useState(true);
+  const [isUsersLoading, setUsersLoading] = useState(true);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), orderBy(assetName, "asc")), (snapshot) => {
+      if (mounted) {
+        setAssets(snapshot.docs.map((doc) => doc.data() as Asset))
+        setAssetsLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
+
+  useEffect(() => {
+    let mounted = false;
+    const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
+      if (mounted) {
+        setUsers(snapshot.docs.map((doc) => doc.data() as User));
+        setUsersLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   const onAssetPickerView = () => setAssetPickerOpen(true);
   const onAssetPickerDismiss = () => setAssetPickerOpen(false);
@@ -106,29 +139,29 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
     setUser(minimizeUser(u));
   }
 
-  const {
-    items: assets,
-    isLoading: isAssetsLoading,
-    isStart: atAssetStart,
-    isEnd: atAssetEnd,
-    getPrev: getPreviousAssets,
-    getNext: getNextAssets
-  } = usePagination<Asset>(
-    query(collection(firestore, assetCollection),
-      orderBy(assetName, "asc")), { limit: 15 }
-  );
+  // const {
+  //   items: assets,
+  //   isLoading: isAssetsLoading,
+  //   isStart: atAssetStart,
+  //   isEnd: atAssetEnd,
+  //   getPrev: getPreviousAssets,
+  //   getNext: getNextAssets
+  // } = usePagination<Asset>(
+  //   query(collection(firestore, assetCollection),
+  //     orderBy(assetName, "asc")), { limit: 15 }
+  // );
 
-  const {
-    items: users,
-    isLoading: isUsersLoading,
-    isStart: atUserStart,
-    isEnd: atUserEnd,
-    getPrev: getPreviousUsers,
-    getNext: getNextUsers,
-  } = usePagination<User>(
-    query(collection(firestore, userCollection),
-      orderBy(lastName, "asc")), { limit: 15 }
-  );
+  // const {
+  //   items: users,
+  //   isLoading: isUsersLoading,
+  //   isStart: atUserStart,
+  //   isEnd: atUserEnd,
+  //   getPrev: getPreviousUsers,
+  //   getNext: getNextUsers,
+  // } = usePagination<User>(
+  //   query(collection(firestore, userCollection),
+  //     orderBy(lastName, "asc")), { limit: 15 }
+  // );
 
   let previousAssetId: string | undefined;
   let previousUserId: string | undefined;
@@ -274,20 +307,12 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
         isOpen={isAssetPickerOpen}
         assets={assets}
         isLoading={isAssetsLoading}
-        hasPrevious={atAssetStart}
-        hasNext={atAssetEnd}
-        onPrevious={getPreviousAssets}
-        onNext={getNextAssets}
         onDismiss={onAssetPickerDismiss}
         onSelectItem={onAssetChange} />
       <UserPicker
         isOpen={isUserPickerOpen}
         users={users}
         isLoading={isUsersLoading}
-        hasPrevious={atUserStart}
-        hasNext={atUserEnd}
-        onPrevious={getPreviousUsers}
-        onNext={getNextUsers}
         onDismiss={onUserPickerDismiss}
         onSelectItem={onUserChange} />
     </>

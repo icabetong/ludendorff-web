@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -26,11 +26,10 @@ import {
   FileCopyOutlined
 } from "@material-ui/icons";
 
-import { query, collection, orderBy, Timestamp } from "firebase/firestore";
+import { query, collection, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import PaginationController from "../../components/PaginationController";
 import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
@@ -43,7 +42,6 @@ import DuplicationDialog from "../shared/DuplicationDialog";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
-import { usePagination } from "use-pagination-firestore";
 import { formatDate, newId } from "../../shared/utils";
 
 import {
@@ -102,6 +100,23 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const userPreference = usePreferences();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), orderBy(assetName, "asc")), (snapshot) => {
+      if (mounted) {
+        setAssets(snapshot.docs.map((doc) => doc.data() as Asset));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   const onRemoveInvoke = (asset: Asset) => setAsset(asset);
   const onRemoveDismiss = () => setAsset(undefined);
@@ -187,10 +202,6 @@ const AssetScreen = (props: AssetScreenProps) => {
       }
     }
   ];
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetName, "asc")), { limit: 15 }
-  )
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -286,33 +297,27 @@ const AssetScreen = (props: AssetScreenProps) => {
                     ]
                   }
                 }}
-                rows={items}
+                rows={assets}
                 columns={columns}
                 density={userPreference.density}
                 pageSize={15}
                 loading={isLoading}
-                paginationMode="server"
+                paginationMode="client"
                 getRowId={(r) => r.assetId}
-                onRowDoubleClick={onDataGridRowDoubleClicked}
-                hideFooter />
+                onRowDoubleClick={onDataGridRowDoubleClicked}/>
             </div>
           </Hidden>
           <Hidden smUp>
             {!isLoading
-              ? items.length < 1
+              ? assets.length < 1
                 ? <AssetEmptyState />
                 : <AssetList
-                  assets={items}
-                  onItemSelect={onAssetSelected}
-                  onItemRemove={onRemoveInvoke} />
+                    assets={assets}
+                    onItemSelect={onAssetSelected}
+                    onItemRemove={onRemoveInvoke} />
               : <LinearProgress />
             }
           </Hidden>
-          <PaginationController
-            hasPrevious={isStart || items.length !== 0}
-            hasNext={isEnd}
-            getPrevious={getPrev}
-            getNext={getNext} />
         </>
         : <ErrorNoPermissionState />
       }

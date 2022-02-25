@@ -1,4 +1,3 @@
-
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -16,7 +15,6 @@ import { DesktopWindowsRounded } from "@material-ui/icons";
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
 
-import PaginationController from "../../components/PaginationController";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
@@ -36,10 +34,6 @@ type AssetPickerProps = {
   isOpen: boolean,
   assets: Asset[],
   isLoading: boolean,
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onDismiss: () => void,
   onSelectItem: (asset: Asset) => void
 }
@@ -68,17 +62,9 @@ const AssetPicker = (props: AssetPickerProps) => {
         {canRead ?
           !props.isLoading
             ? props.assets.length > 0
-              ? <>
-                <AssetList
+              ? <AssetList
                   assets={props.assets}
                   onItemSelect={onSelect} />
-                {!props.hasNext &&
-                  <PaginationController
-                    hasPrevious={props.hasPrevious}
-                    hasNext={props.hasNext}
-                    getPrevious={props.onPrevious}
-                    getNext={props.onNext} />}
-              </>
               : <EmptyStateComponent
                 icon={DesktopWindowsRounded}
                 title={t("empty_asset")}

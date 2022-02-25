@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -23,15 +23,11 @@ import {
   makeStyles
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { query, collection, orderBy } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { User, Permission, UserRepository } from "./User";
 import { Department, DepartmentCore, minimize } from "../department/Department";
 import DepartmentPicker from "../department/DepartmentPicker";
-import { usePagination } from "use-pagination-firestore";
-import {
-  departmentCollection,
-  departmentName
-} from "../../shared/const";
+import { departmentCollection, departmentName } from "../../shared/const";
 import { newId } from "../../shared/utils";
 import { firestore } from "../..";
 
@@ -77,7 +73,24 @@ const UserEditor = (props: UserEditorProps) => {
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department)
+
+  useEffect(() => {
+    let mounted = false;
+    const unsubscribe = onSnapshot(query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), (snapshot) => {
+      if (mounted) {
+        setDepartments(snapshot.docs.map((doc) => doc.data() as Department));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   const onSubmit = (data: FormValues) => {
     setWritePending(true);
@@ -106,7 +119,6 @@ const UserEditor = (props: UserEditorProps) => {
       permissions: permissions
     }
 
-    console.log(props.isCreate);
     if (props.isCreate) {
       UserRepository.create(user)
         .then(() => enqueueSnackbar(t("feedback.user_created")))
@@ -134,10 +146,6 @@ const UserEditor = (props: UserEditorProps) => {
     setDepartment(minimize(department))
     onPickerDismiss()
   }
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), { limit: 15 }
-  );
 
   const hasPermission = (permission: Permission) => {
     return props.user?.permissions.includes(permission);
@@ -306,12 +314,8 @@ const UserEditor = (props: UserEditorProps) => {
       </Dialog>
       <DepartmentPicker
         isOpen={isPickerOpen}
-        departments={items}
+        departments={departments}
         isLoading={isLoading}
-        hasPrevious={isStart}
-        hasNext={isEnd}
-        onPrevious={getPrev}
-        onNext={getNext}
         onDismiss={onPickerDismiss}
         onSelectItem={onDepartmentSelected} />
     </>

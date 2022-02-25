@@ -15,7 +15,6 @@ import {
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
-import PaginationController from "../../components/PaginationController";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 import { usePermissions } from "../auth/AuthProvider";
@@ -30,10 +29,6 @@ const useStyles = makeStyles(() => ({
 type RequestListProps = {
   isHome?: boolean | undefined
   requests: Request[],
-  hasPrevious: boolean,
-  hasNext: boolean,
-  onPrevious: () => void,
-  onNext: () => void,
   onItemSelect: (request: Request) => void,
 }
 
@@ -58,8 +53,7 @@ const RequestList = (props: RequestListProps) => {
   return (
     <>
       {props.requests.length > 0
-        ? <>
-          <List className={classes.root}>{
+        ? <List className={classes.root}>{
             props.requests.map((request: Request) => {
               return (
                 <RequestItem
@@ -69,13 +63,8 @@ const RequestList = (props: RequestListProps) => {
                   onItemRemove={onRemoveInvoke} />
               );
             })
-          }</List>
-          <PaginationController
-            hasPrevious={props.hasPrevious}
-            hasNext={props.hasNext}
-            getPrevious={props.onPrevious}
-            getNext={props.onNext} />
-        </>
+          }
+          </List>
         : <EmptyStateComponent
           icon={EmailOutlined}
           title={t("empty_request")}

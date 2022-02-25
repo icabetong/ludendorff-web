@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -25,13 +25,12 @@ import {
   SaveAltOutlined,
 } from "@material-ui/icons";
 import { jsPDF } from "jspdf";
-import { query, collection, orderBy } from "firebase/firestore";
+import { onSnapshot, query, collection, orderBy } from "firebase/firestore";
 
 import PageHeader from "../../components/PageHeader";
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import PaginationController from "../../components/PaginationController";
 import EmptyStateComponent from "../state/EmptyStates";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { getDataGridTheme } from "../core/Core";
@@ -41,8 +40,6 @@ import { Assignment, AssignmentRepository } from "./Assignment";
 import AssignmentList from "./AssignmentList";
 import RequestScreen from "../requests/RequestScreen";
 import { usePreferences } from "../settings/Preference";
-
-import { usePagination } from "use-pagination-firestore";
 import { formatDate } from "../../shared/utils";
 
 import {
@@ -84,6 +81,23 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
   const { isAdmin } = usePermissions();
   const preferences = usePreferences();
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setLoading] = useState(true);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const unsubscribe = onSnapshot(query(collection(firestore, assignmentCollection), orderBy(assignmentAssetName, "asc")), (snapshot) => {
+      if (mounted) {
+        setAssignments(snapshot.docs.map((doc) => doc.data() as Assignment));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, []);
 
   const columns = [
     { field: assignmentId, headerName: t("field.id"), hide: true },
@@ -190,17 +204,6 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
     doc.save("b5.pdf");
   }
 
-  const {
-    items: assignments,
-    isLoading: isAssignmentsLoading,
-    isStart: atAssignmentStart,
-    isEnd: atAssignmentEnd,
-    getPrev: getPreviousAssignments,
-    getNext: getNextAssignments
-  } = usePagination<Assignment>(
-    query(collection(firestore, assignmentCollection), orderBy(assignmentAssetName, "asc")), { limit: 15 }
-  );
-
   const [editorState, editorDispatch] = useReducer(reducer, initialState);
   const [assignment, setAssignment] = useState<Assignment | undefined>(undefined);
 
@@ -289,26 +292,20 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 columns={columns}
                 density={preferences.density}
                 pageSize={15}
-                loading={isAssignmentsLoading}
-                paginationMode="server"
+                loading={isLoading}
+                paginationMode="client"
                 getRowId={(r) => r.assignmentId}
-                onRowDoubleClick={onDataGridRowDoubleClicked}
-                hideFooter />
+                onRowDoubleClick={onDataGridRowDoubleClicked}/>
             </div>
           </Hidden>
           <Hidden smUp>
-            {!isAssignmentsLoading
+            {!isLoading
               ? assignments.length < 1
                 ? <AssignmentEmptyState />
                 : <AssignmentList assignments={assignments} onItemSelect={onAssignmentSelected} />
               : <LinearProgress />
             }
           </Hidden>
-          <PaginationController
-            hasPrevious={atAssignmentStart || assignments.length === 0}
-            hasNext={atAssignmentEnd}
-            getPrevious={getPreviousAssignments}
-            getNext={getNextAssignments} />
         </>
         : <ErrorNoPermissionState />
       }

@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -25,7 +25,7 @@ import {
 } from "@material-ui/core";
 import { AddRounded } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
-import { query, collection, orderBy, Timestamp } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 
 import { Asset, Status, AssetRepository } from "./Asset";
 import { Category, CategoryCore, minimize } from "../category/Category";
@@ -34,7 +34,6 @@ import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
 import { ActionType, initialState, reducer } from "../specs/SpecificationEditorReducer";
 import SpecificationList from "../specs/SpecificationList";
-import { usePagination } from "use-pagination-firestore";
 import { newId } from "../../shared/utils";
 import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
@@ -69,6 +68,8 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
+  const [isLoading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
   const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -88,16 +89,21 @@ const AssetEditor = (props: AssetEditorProps) => {
     payload: specification
   })
 
-  const {
-    items: categories,
-    isLoading: isCategoriesLoading,
-    isStart: atCategoryStart,
-    isEnd: atCategoryEnd,
-    getPrev: getPreviousCategories,
-    getNext: getNextCategories
-  } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), { limit: 15 }
-  );
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    const unsubscribe = onSnapshot(query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), (snapshots) => {
+      if (mounted) {
+        setCategories(snapshots.docs.map((doc) => doc.data() as Category));
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    }
+  }, [])
 
   let previousCategoryId: string | undefined = undefined;
   const onSubmit = (data: FormValues) => {
@@ -293,11 +299,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         <CategoryPicker
           isOpen={isPickerOpen}
           categories={categories}
-          isLoading={isCategoriesLoading}
-          hasPrevious={atCategoryStart}
-          hasNext={atCategoryEnd}
-          onPreviousBatch={getPreviousCategories}
-          onNextBatch={getNextCategories}
+          isLoading={isLoading}
           onDismiss={onPickerDismiss}
           onSelectItem={onCategoryChanged} />
       }

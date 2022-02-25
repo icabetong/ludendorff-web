@@ -25,7 +25,7 @@ type SpecificationEditorProps = {
 
 export const SpecificationEditor = (props: SpecificationEditorProps) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const specification = props.specification === undefined ? ['', ''] : props.specification;
 
   return (
@@ -45,7 +45,7 @@ export const SpecificationEditor = (props: SpecificationEditorProps) => {
               label={t("field.specification_key")}
               defaultValue={specification[0]}
               error={errors.key !== undefined}
-              helperText={errors.key && t(errors.key.message)}
+              helperText={errors.key?.message && t(errors.key?.message)}
               {...register("key", { required: "feedback.empty_specification_key" })} />
             <TextField
               id="value"
@@ -53,7 +53,7 @@ export const SpecificationEditor = (props: SpecificationEditorProps) => {
               label={t("field.specification_value")}
               defaultValue={specification[1]}
               error={errors.value !== undefined}
-              helperText={errors.value && t(errors.value.message)}
+              helperText={errors.value?.message && t(errors.value.message)}
               {...register("value", { required: "feedback.empty_specification_value" })} />
           </Container>
         </DialogContent>
