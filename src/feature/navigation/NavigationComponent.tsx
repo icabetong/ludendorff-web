@@ -271,7 +271,7 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
 const useCustomButtonStyles = makeStyles((theme) => ({
   item: {
     margin: '0 0.2em',
-    padding: '0.4em 1.8em',
+    padding: '0.8em 1.8em',
     textTransform: 'none',
   },
   active: {
@@ -292,7 +292,7 @@ export const TopNavigationItem = (props: NavigationItemPropsType) => {
       key={props.itemKey}
       startIcon={React.createElement(props.navigation.icon)}
       onClick={props.action}>
-      {t(props.navigation.title)}
+      <Typography variant="body2">{t(props.navigation.title)}</Typography>
     </Button>
   );
 }

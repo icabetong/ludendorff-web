@@ -2,6 +2,7 @@ import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
+  Button,
   Hidden,
   IconButton,
   LinearProgress,
@@ -18,6 +19,7 @@ import {
 } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 import {
+  DomainRounded,
   VisibilityOffOutlined,
   VisibilityOutlined,
   AddRounded,
@@ -220,7 +222,7 @@ const UserScreen = (props: UserScreenProps) => {
           buttonText={t("button.create_user")}
           buttonIcon={AddRounded}
           buttonOnClick={onUserEditorView}
-          menuItems={menuItems}/>
+          onSearch={onSearchInvoke}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -246,6 +248,20 @@ const UserScreen = (props: UserScreenProps) => {
                   LoadingOverlay: GridLinearProgress,
                   NoRowsOverlay: EmptyStateOverlay,
                   Toolbar: GridToolbar
+                }}
+                componentsProps={{
+                  toolbar: {
+                    destinations: [
+                      <Button
+                        key="departments"
+                        color="primary"
+                        size="small"
+                        startIcon={<DomainRounded fontSize="small"/>}
+                        onClick={onDepartmentView}>
+                        {t("navigation.departments")}
+                      </Button>
+                    ]
+                  }
                 }}
                 rows={users}
                 columns={columns}

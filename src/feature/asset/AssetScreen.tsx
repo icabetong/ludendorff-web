@@ -2,6 +2,7 @@ import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
+  Button,
   Hidden,
   IconButton,
   LinearProgress,
@@ -18,6 +19,7 @@ import {
 } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 import {
+  LocalOfferRounded,
   DesktopWindowsRounded,
   AddRounded,
   DeleteOutlineRounded,
@@ -244,7 +246,7 @@ const AssetScreen = (props: AssetScreenProps) => {
           }
           buttonIcon={AddRounded}
           buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-          menuItems={menuItems}/>
+          onSearch={onSearchInvoke}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -269,6 +271,20 @@ const AssetScreen = (props: AssetScreenProps) => {
                   LoadingOverlay: GridLinearProgress,
                   NoRowsOverlay: EmptyStateOverlay,
                   Toolbar: GridToolbar
+                }}
+                componentsProps={{
+                  toolbar: { 
+                    destinations: [
+                      <Button
+                        key="categories"
+                        color="primary"
+                        size="small"
+                        startIcon={<LocalOfferRounded fontSize="small"/>}
+                        onClick={onCategoryListView}>
+                        {t("navigation.categories")}
+                      </Button>
+                    ]
+                  }
                 }}
                 rows={items}
                 columns={columns}

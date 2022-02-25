@@ -61,6 +61,9 @@ const baseTheme = createTheme({
         fontWeight: 700,
         fontSize: '2em'
       },
+      h4: {
+        fontWeight: 700,
+      },
       body2: {
         fontWeight: 600
       },

@@ -2,6 +2,7 @@ import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
+  Button,
   Hidden,
   LinearProgress,
   MenuItem,
@@ -13,6 +14,7 @@ import {
   GridValueGetterParams
 } from "@material-ui/data-grid";
 import {
+  EmailRounded,
   AddRounded,
   DevicesRounded,
 } from "@material-ui/icons";
@@ -129,8 +131,7 @@ const HomeScreen = (props: HomeScreenProps) => {
           title={t("navigation.home")}
           buttonText={t("button.request_asset")}
           buttonIcon={AddRounded}
-          buttonOnClick={onEditorCreate}
-          menuItems={menuItems}/>
+          buttonOnClick={onEditorCreate}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -148,6 +149,20 @@ const HomeScreen = (props: HomeScreenProps) => {
               LoadingOverlay: GridLinearProgress,
               NoRowsOverlay: EmptyStateOverlay,
               Toolbar: GridToolbar
+            }}
+            componentsProps={{
+              toolbar: {
+                destinations: [
+                  <Button
+                    key="requests"
+                    color="primary"
+                    size="small"
+                    startIcon={<EmailRounded fontSize="small"/>}
+                    onClick={onRequestsView}>
+                    {t("navigation.sent_requests")}
+                  </Button>
+                ]
+              }
             }}
             rows={items}
             columns={columns}

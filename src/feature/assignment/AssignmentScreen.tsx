@@ -6,7 +6,8 @@ import {
   IconButton,
   LinearProgress,
   MenuItem,
-  makeStyles
+  makeStyles,
+  Button
 } from "@material-ui/core";
 import {
   DataGrid,
@@ -17,6 +18,7 @@ import {
 } from "@material-ui/data-grid";
 import { useSnackbar } from "notistack";
 import {
+  EmailRounded,
   DeleteOutlined,
   AddRounded,
   AssignmentRounded,
@@ -246,7 +248,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
           buttonText={isAdmin ? t("button.create_assignment") : undefined}
           buttonIcon={AddRounded}
           buttonOnClick={onAssignmentEditorView}
-          menuItems={menuItems}/>
+          onSearch={onSearchInvoke}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -268,6 +270,20 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                   LoadingOverlay: GridLinearProgress,
                   NoRowsOverlay: EmptyStateOverlay,
                   Toolbar: GridToolbar
+                }}
+                componentsProps={{
+                  toolbar: {
+                    destinations: [
+                      <Button
+                        key="requests"
+                        color="primary"
+                        size="small"
+                        startIcon={<EmailRounded fontSize="small"/>}
+                        onClick={onRequestListView}>
+                        {t("navigation.requests")}
+                      </Button>
+                    ]
+                  }
                 }}
                 rows={assignments}
                 columns={columns}
