@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   Drawer,
   Grow,
   Hidden, 
@@ -98,6 +99,9 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '100%',
     minHeight: '100%',
   },
+  divider: {
+    margin: '0.8em 0'
+  },
   icon: {
     maxWidth: '3em',
     maxHeight: '3em',
@@ -120,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center'
   },
   profile: {
+    marginLeft: theme.spacing(2),
     textTransform: 'none'
   },
   profileMenu: {
@@ -216,13 +221,14 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         <Hidden smDown>
           <AppBar color='inherit' elevation={2}>
             <Toolbar>
-              <Box component={Logo} className={classes.icon}/>
-
-              <Box flexGrow={1} marginX={4}>
+              <Box component={Logo} className={classes.icon} marginRight={3}/>
+              <Divider variant="middle" orientation="vertical" flexItem className={classes.divider}/>
+              <Box flexGrow={1} marginX={1}>
                 <TopNavigationComponent 
                   onNavigate={onNavigateThenDismiss}
                   currentDestination={props.currentDestination}/>
               </Box>
+              <Divider variant="middle" orientation="vertical" flexItem className={classes.divider}/>
               <Button
                 ref={anchorRef}
                 aria-haspopup="true"
