@@ -25,6 +25,7 @@ import {
   AddRounded,
   DeleteOutline,
   PeopleOutlineRounded,
+  SearchOutlined,
 } from "@material-ui/icons";
 import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
 
@@ -224,8 +225,7 @@ const UserScreen = (props: UserScreenProps) => {
           title={t("navigation.users")}
           buttonText={t("button.create_user")}
           buttonIcon={AddRounded}
-          buttonOnClick={onUserEditorView}
-          onSearch={onSearchInvoke}/>
+          buttonOnClick={onUserEditorView}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -254,6 +254,7 @@ const UserScreen = (props: UserScreenProps) => {
                 }}
                 componentsProps={{
                   toolbar: {
+                    endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
                     destinations: [
                       <Button
                         key="departments"

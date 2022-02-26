@@ -23,6 +23,7 @@ import {
   AddRounded,
   AssignmentRounded,
   SaveAltOutlined,
+  SearchOutlined
 } from "@material-ui/icons";
 import { jsPDF } from "jspdf";
 import { onSnapshot, query, collection, orderBy } from "firebase/firestore";
@@ -250,8 +251,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
           title={t("navigation.assignments")}
           buttonText={isAdmin ? t("button.create_assignment") : undefined}
           buttonIcon={AddRounded}
-          buttonOnClick={onAssignmentEditorView}
-          onSearch={onSearchInvoke}/>
+          buttonOnClick={onAssignmentEditorView}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -276,6 +276,7 @@ const AssignmentScreen = (props: AssignmentScreenProps) => {
                 }}
                 componentsProps={{
                   toolbar: {
+                    endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
                     destinations: [
                       <Button
                         key="requests"

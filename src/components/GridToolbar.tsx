@@ -7,7 +7,8 @@ import {
 } from "@material-ui/data-grid";
 
 type GridComponentProps = {
-  destinations?: JSX.Element[]
+  destinations?: JSX.Element[],
+  endAction: JSX.Element,
 }
 
 const GridToolbar = () => {
@@ -16,12 +17,18 @@ const GridToolbar = () => {
 
   return (
     <GridToolbarContainer>
-      <Box>
+      <Box flexGrow={8}>
         <GridToolbarColumnsButton/>
         <GridToolbarDensitySelector/>
         { componentProps && componentProps.toolbar &&
           (componentProps.toolbar as GridComponentProps).destinations &&
           (componentProps.toolbar as GridComponentProps).destinations
+        }
+      </Box>
+      <Box>
+        { componentProps && componentProps.toolbar &&
+          (componentProps.toolbar as GridComponentProps).endAction &&
+          (componentProps.toolbar as GridComponentProps).endAction
         }
       </Box>
     </GridToolbarContainer>

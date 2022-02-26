@@ -23,7 +23,8 @@ import {
   DesktopWindowsRounded,
   AddRounded,
   DeleteOutlineRounded,
-  FileCopyOutlined
+  FileCopyOutlined,
+  SearchOutlined
 } from "@material-ui/icons";
 
 import { query, collection, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
@@ -256,8 +257,7 @@ const AssetScreen = (props: AssetScreenProps) => {
               : undefined
           }
           buttonIcon={AddRounded}
-          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-          onSearch={onSearchInvoke}/>
+          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
@@ -284,7 +284,8 @@ const AssetScreen = (props: AssetScreenProps) => {
                   Toolbar: GridToolbar
                 }}
                 componentsProps={{
-                  toolbar: { 
+                  toolbar: {
+                    endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
                     destinations: [
                       <Button
                         key="categories"

@@ -14,8 +14,7 @@ type PageHeaderPropsType = {
   title: String,
   buttonText?: String,
   buttonIcon?: string | FunctionComponent<any> | ComponentClass<any, any>,
-  buttonOnClick?: React.MouseEventHandler, 
-  onSearch?: React.MouseEventHandler,
+  buttonOnClick?: React.MouseEventHandler
 }
 
 const PageHeader = (props: PageHeaderPropsType) => {
@@ -36,11 +35,6 @@ const PageHeader = (props: PageHeaderPropsType) => {
               onClick={event}>
               {label}
             </Button>
-            { props.onSearch &&
-              <IconButton onClick={props.onSearch}>
-                <SearchOutlined/>
-              </IconButton>
-            }
           </Grid>
         }
       </Grid>
