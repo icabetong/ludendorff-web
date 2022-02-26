@@ -96,7 +96,7 @@ const AssignmentEditor = (props: AssignmentEditorProps) => {
   }, []);
 
   useEffect(() => {
-    let mounted = false;
+    let mounted = true;
     const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
       if (mounted) {
         setUsers(snapshot.docs.map((doc) => doc.data() as User));

@@ -37,8 +37,8 @@ export class DepartmentRepository {
       department.departmentId), department);
 
     if (department.manager !== undefined)
-      batch.update(doc(firestore, departmentCollection, 
-        department.departmentId), departmentField,
+      batch.update(doc(firestore, userCollection, 
+        department.manager?.userId), departmentField,
         minimizeDepartment(department))
 
     return await batch.commit();

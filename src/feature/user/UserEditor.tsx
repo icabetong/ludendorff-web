@@ -78,7 +78,7 @@ const UserEditor = (props: UserEditorProps) => {
   const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department)
 
   useEffect(() => {
-    let mounted = false;
+    let mounted = true;
     const unsubscribe = onSnapshot(query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), (snapshot) => {
       if (mounted) {
         setDepartments(snapshot.docs.map((doc) => doc.data() as Department));

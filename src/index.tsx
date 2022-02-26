@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore } from 'firebase/firestore';
 
 import { AuthProvider } from './feature/auth/AuthProvider';
 import { CoreComponent } from './feature/core/Core';
@@ -34,9 +34,8 @@ const config = {
 
 const firebaseApp = initializeApp(!process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? configDev : config);
 const auth = getAuth(firebaseApp);
-const firestore = getFirestore(firebaseApp);
+const firestore = initializeFirestore(firebaseApp, { ignoreUndefinedProperties: true });
 export { firebaseApp, auth, firestore };
-//firebaseApp.settings({ ignoreUndefinedProperties: true, merge: true })
 
 ReactDOM.render(
   <React.StrictMode>
