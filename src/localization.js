@@ -239,7 +239,7 @@ const resources = {
       view_qr_code: "View QR-Code",
       view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
       empty_home: "No Assets Assigned",
-      empty_home_summary: "There are no assets assigned to you.",
+      empty_home_summary: "There are no assets assigned to you, however, you can request some by clicking the \"Request Asset\" button.",
       empty_asset: "No Assets Added",
       empty_asset_summary: "There are no assets available.",
       empty_category: "No Categories Added",

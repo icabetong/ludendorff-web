@@ -3,12 +3,8 @@ import {
   Box,
   Button,
   Grid,
-  IconButton,
   Typography,
 } from "@material-ui/core";
-import {
-  SearchOutlined,
-} from "@material-ui/icons";
 
 type PageHeaderPropsType = {
   title: String,
