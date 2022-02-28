@@ -80,7 +80,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    width: '100vw',
+    width: '100%', // if turned into viewport width; it will cause horizontal scrollbar!
     height: '100vh',
     [theme.breakpoints.up('md')]: {
       flexDirection: 'column'
