@@ -74,7 +74,7 @@ const RequestEditor = (props: RequestEditorProps) => {
   const onPickerDismiss = () => setPickerOpen(false);
 
   useEffect(() => {
-    let mounted = false;
+    let mounted = true;
     const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), 
     where(assetStatus, '!=', "OPERATIONAL"),
     orderBy(assetStatus, "asc"),
