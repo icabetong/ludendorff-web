@@ -36,7 +36,7 @@ import {
   AccountCircleOutlined,
   ExitToAppRounded
 } from "@material-ui/icons";
-import { ReactComponent as Logo } from "../../shared/icon.svg";
+import { ReactComponent as Logo } from "../../shared/brand.svg";
 
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
