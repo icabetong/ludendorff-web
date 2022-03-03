@@ -47,10 +47,10 @@ export class DepartmentRepository {
   static async update(department: Department): Promise<void> {
     let batch = writeBatch(firestore);
 
-    if (department.manager !== undefined)
-      batch.update(doc(firestore, userCollection, 
-        department.departmentId), departmentField,
+    if (department.manager !== undefined) {
+      batch.update(doc(firestore, userCollection, department.manager?.userId), departmentField,
         minimizeDepartment(department))
+    }
 
     batch.set(doc(firestore, departmentCollection, department.departmentId), 
       department);
