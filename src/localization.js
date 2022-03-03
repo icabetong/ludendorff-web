@@ -152,7 +152,7 @@ const resources = {
         department_remove_error: "Error removing department",
         assignment_create_error: "Error creating assignment",
         assignment_update_error: "Error updating assignment",
-        assignment_remove_error: "Error removing department",
+        assignment_remove_error: "Error removing assignment",
         request_remove_error: "Error canceling request",
         reset_link_sent: "Password reset link sent",
         empty_copies: "Number of copies cannot be empty",

@@ -95,7 +95,7 @@ export class AssignmentRepository {
     batch.delete(doc(firestore, assignmentCollection, assignment.assignmentId));
 
     if (assignment.asset?.assetId)
-      batch.update(doc(firestore, assignmentCollection, 
+      batch.update(doc(firestore, assetCollection, 
         assignment.asset?.assetId), assetStatus, Status.IDLE);
 
     await batch.commit();
