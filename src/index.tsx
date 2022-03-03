@@ -31,8 +31,8 @@ const config = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 }
-//const firebaseApp = initializeApp(config);
-const firebaseApp = initializeApp(!process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? configDev : config);
+const firebaseApp = initializeApp(config);
+//const firebaseApp = initializeApp(!process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? configDev : config);
 const auth = getAuth(firebaseApp);
 const firestore = initializeFirestore(firebaseApp, { ignoreUndefinedProperties: true });
 export { firebaseApp, auth, firestore };

@@ -214,7 +214,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCopyConfirmed = (copies: number) => {
     let assets: Asset[] = [];
     for (let index = 0; index <= copies; index++) {
-      assets.push({ ...assetCopy, assetId: newId(), dateCreated: Timestamp.now() });
+      assets.push({ ...assetCopy, assetId: newId(), dateCreated: Timestamp.now(), status: assetCopy?.status === Status.OPERATIONAL ? Status.IDLE : assetCopy?.status });
     }
     AssetRepository.createFromList(assets);
     onCopyDismiss();
