@@ -20,9 +20,7 @@ import {
   alpha
 } from "@material-ui/core";
 import {
-  AssignmentRounded,
   DesktopWindowsRounded,
-  HomeRounded,
   PeopleOutlineRounded,
   SettingsOutlined,
   AccountCircleOutlined,
@@ -34,10 +32,8 @@ import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
 import { auth } from "../../index";
 
 export enum Destination {
-  HOME = 1,
-  ASSETS,
+  ASSETS = 1,
   USERS,
-  ASSIGNMENTS,
   PROFILE,
   SETTINGS
 }
@@ -115,10 +111,8 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
   const { t } = useTranslation();
 
   const destinations: NavigationItemType[] = [
-    { icon: HomeRounded, title: "navigation.home", destination: Destination.HOME },
     { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
-    { icon: AssignmentRounded, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
   ]
 
   const minorDestinations: NavigationItemType[] = [
@@ -204,7 +198,7 @@ const NavigationListItem = (props: NavigationItemPropsType) => {
 }
 
 const NavigationList = (props: NavigationListPropsType) => {
-  const { canRead, canManageUsers, isAdmin } = usePermissions();
+  const { canRead, canManageUsers } = usePermissions();
 
   return (
     <React.Fragment>{
@@ -212,8 +206,6 @@ const NavigationList = (props: NavigationListPropsType) => {
         if (!canRead && navigation.destination === Destination.ASSETS)
           return <></>;
         if (!canManageUsers && navigation.destination === Destination.USERS)
-          return <></>;
-        if (!isAdmin && navigation.destination === Destination.ASSIGNMENTS)
           return <></>;
 
         return <NavigationListItem
@@ -232,10 +224,8 @@ const NavigationList = (props: NavigationListPropsType) => {
 
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
   const destinations: NavigationItemType[] = [
-    { icon: HomeRounded, title: "navigation.home", destination: Destination.HOME },
     { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
-    { icon: AssignmentRounded, title: "navigation.assignments", destination: Destination.ASSIGNMENTS },
   ]
 
   return <TopNavigationList destination={props.currentDestination} onNavigate={props.onNavigate} items={destinations}/>
@@ -250,8 +240,6 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
         if (!canRead && nav.destination === Destination.ASSETS)
         return <></>;
         if (!canManageUsers && nav.destination === Destination.USERS)
-          return <></>;
-        if (!isAdmin && nav.destination === Destination.ASSIGNMENTS)
           return <></>;
 
         return (

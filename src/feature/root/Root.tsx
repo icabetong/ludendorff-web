@@ -45,10 +45,8 @@ import { ErrorNotFoundState } from "../state/ErrorStates";
 import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
 import { auth } from "../../index";
 
-const HomeScreen = lazy(() => import('../home/HomeScreen'));
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
-const AssignmentScreen = lazy(() => import('../assignment/AssignmentScreen'));
 const ProfileScreen = lazy(() => import('../profile/ProfileScreen'));
 const SettingsScreen = lazy(() => import('../settings/SettingsScreen'));
 
@@ -59,14 +57,10 @@ type InnerComponentPropsType = {
 
 const InnerComponent = (props: InnerComponentPropsType) => {
   switch (props.destination) {
-    case Destination.HOME:
-      return <HomeScreen onDrawerToggle={props.onDrawerToggle} />
     case Destination.ASSETS:
       return <AssetScreen onDrawerToggle={props.onDrawerToggle} />
     case Destination.USERS:
       return <UserScreen onDrawerToggle={props.onDrawerToggle} />
-    case Destination.ASSIGNMENTS:
-      return <AssignmentScreen onDrawerToggle={props.onDrawerToggle} />
     case Destination.PROFILE:
       return <ProfileScreen onDrawerToggle={props.onDrawerToggle} />
     case Destination.SETTINGS:
@@ -290,7 +284,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 
 const RootComponent = () => {
   const { status, user } = useAuthState();
-  const [destination, setDestination] = useState<Destination>(Destination.HOME);
+  const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
   const theme = useTheme();
   const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('xs'));
 
