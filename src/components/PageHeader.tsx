@@ -4,7 +4,7 @@ import {
   Button,
   Grid,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 type PageHeaderPropsType = {
   title: String,

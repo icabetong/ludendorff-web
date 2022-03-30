@@ -11,8 +11,8 @@ import {
   ListItemText,
   useMediaQuery,
   useTheme,
-  makeStyles
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
@@ -54,7 +54,7 @@ type DepartmentScreenProps = {
 const DepartmentScreen = (props: DepartmentScreenProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
   const { canRead, canWrite } = usePermissions();
   const [state, dispatch] = useReducer(reducer, initialState);

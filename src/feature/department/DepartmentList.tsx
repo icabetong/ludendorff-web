@@ -1,27 +1,20 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Tooltip,
-  makeStyles
-} from "@material-ui/core";
+import {List, ListItem, ListItemText, ListItemSecondaryAction, Tooltip, IconButton, Theme} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   DeleteOutlineRounded,
   DomainOutlined
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
-import HeroIconButton from "../../components/HeroIconButton";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Department, DepartmentRepository } from "./Department";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     minHeight: '60vh'
   },
@@ -99,12 +92,13 @@ const DepartmentItem = (props: DepartmentItemProps) => {
   const { canDelete } = usePermissions();
 
   const deleteButton = (
-    <HeroIconButton
-      icon={DeleteOutlineRounded}
+    <IconButton
       edge="end"
       disabled={props.department.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.department)} />
+      onClick={() => props.onItemRemove(props.department)}>
+      <DeleteOutlineRounded/>
+    </IconButton>
   );
 
   return (

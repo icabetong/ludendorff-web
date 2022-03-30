@@ -8,9 +8,8 @@ import {
   LinearProgress,
   useMediaQuery,
   useTheme,
-  makeStyles
-} from "@material-ui/core";
-import { DesktopWindowsRounded } from "@material-ui/icons";
+} from "@mui/material";
+import { DesktopWindowsRounded } from "@mui/icons-material";
 
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
@@ -18,17 +17,6 @@ import AssetList from "./AssetList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& .MuiList-padding': {
-      padding: 0
-    }
-  }
-}))
 
 type AssetPickerProps = {
   isOpen: boolean,
@@ -41,8 +29,7 @@ type AssetPickerProps = {
 const AssetPicker = (props: AssetPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-  const classes = useStyles();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
 
   const onSelect = (asset: Asset) => {
@@ -58,7 +45,7 @@ const AssetPicker = (props: AssetPickerProps) => {
       open={props.isOpen}
       onClose={props.onDismiss}>
       <DialogTitle>{t("asset_select")}</DialogTitle>
-      <DialogContent dividers={true} className={classes.root}>
+      <DialogContent dividers={true}>
         {canRead ?
           !props.isLoading
             ? props.assets.length > 0

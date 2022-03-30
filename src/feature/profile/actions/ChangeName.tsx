@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useAuthState } from "../../auth/AuthProvider";
 import { User, UserRepository } from "../../user/User";

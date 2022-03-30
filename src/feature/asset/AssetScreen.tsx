@@ -1,21 +1,14 @@
 import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Box,
-  Button,
-  Hidden,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  makeStyles
-} from "@material-ui/core";
+import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   DataGrid,
   GridRowParams,
   GridValueGetterParams,
   GridOverlay,
   GridCellParams
-} from "@material-ui/data-grid";
+} from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
   LocalOfferRounded,
@@ -23,7 +16,7 @@ import {
   AddRounded,
   DeleteOutlineRounded,
   SearchOutlined
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
 
@@ -36,11 +29,9 @@ import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetList from "./AssetList";
 import AssetSearchScreen from "./AssetSearchScreen";
-import ReportScreen from "../report/ReportScreen";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
-import { formatDate } from "../../shared/utils";
 
 import {
   assetCollection,
@@ -51,7 +42,6 @@ import {
   assetUnitOfMeasure,
   assetUnitValue,
   assetRemarks,
-  dateCreated,
 } from "../../shared/const";
 
 import {
@@ -66,7 +56,7 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     height: '100%',
     width: '100%',
@@ -76,23 +66,11 @@ const useStyles = makeStyles((theme) => ({
     padding: '1.4em',
     ...getDataGridTheme(theme)
   },
-  editorContainer: {
-    width: '100%',
-    margin: '0.8em',
-  },
-  editor: {
-    marginTop: '0.6em',
-    marginBottom: '0.6em'
-  },
-  textField: {
-    width: '100%'
-  },
 }));
 
 type AssetScreenProps = {
   onDrawerToggle: () => void
 }
-
 
 const AssetScreen = (props: AssetScreenProps) => {
   const classes = useStyles();
@@ -132,7 +110,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   const columns = [
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
     {
       field: assetType,
       headerName: t("field.type"),
@@ -172,11 +150,12 @@ const AssetScreen = (props: AssetScreenProps) => {
         const asset = params.row as Asset;
         return (
           <IconButton
-              aria-label={t("button.delete")}
-              onClick={() => onRemoveInvoke(asset)}>
+            aria-label={t("button.delete")}
+            onClick={() => onRemoveInvoke(asset)}
+            size="large">
             <DeleteOutlineRounded/>
           </IconButton>
-        )
+        );
       }
     }
   ];
@@ -198,9 +177,6 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onSearchInvoke = () => setSearch(true);
   const onSearchDismiss = () => setSearch(false);
 
-  const [reports, setReports] = useState(false);
-  const onReportsInvoke = () => setReports(!reports);
-
   const [isCategoryOpen, setCategoryOpen] = useState(false);
   const onCategoryListView = () => setCategoryOpen(true)
   const onCategoryListDismiss = () => setCategoryOpen(false)
@@ -211,7 +187,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   return (
     <Box className={classes.root}>
-      <Hidden smDown>
+      <Hidden mdDown>
         <PageHeader
           title={t("navigation.assets")}
           buttonText={
@@ -238,7 +214,7 @@ const AssetScreen = (props: AssetScreenProps) => {
       </Hidden>
       {canRead
         ? <>
-          <Hidden xsDown>
+          <Hidden smDown>
             <Box className={classes.wrapper}>
               <DataGrid
                 components={{
@@ -309,13 +285,8 @@ const AssetScreen = (props: AssetScreenProps) => {
           onDismiss={onRemoveDismiss}
           onConfirm={onAssetRemove} />
       }
-      {reports &&
-        <ReportScreen
-          isOpen={reports}
-          onDismiss={onReportsInvoke} />
-      }
     </Box>
-  )
+  );
 }
 
 const EmptyStateOverlay = () => {
@@ -334,7 +305,7 @@ const AssetEmptyState = () => {
       icon={DesktopWindowsRounded}
       title={t("empty_asset")}
       subtitle={t("empty_asset_summary")} />
-  )
+  );
 }
 
 export default AssetScreen;

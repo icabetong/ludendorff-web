@@ -1,21 +1,22 @@
 import { useTranslation } from "react-i18next";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   ChevronRightRounded,
   ErrorOutlineRounded,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import history from "../navigation/History";
 import EmptyStateComponent from "./EmptyStates";
 import { ReactComponent as Logo } from "./404.svg";
+import {Theme, useTheme} from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: '100vw', height: '100vh',
+    width: '100%', height: '100%',
     padding: theme.spacing(6)
   },
   wrapper: {
@@ -24,16 +25,16 @@ const useStyles = makeStyles((theme) => ({
   image: {
     width: '32em',
     height: '32em',
-    [theme.breakpoints.down('xs')]: {
-      width: '24em',
-      height: '24em'
-    }
+     [theme.breakpoints.down('sm')]: {
+       width: '24em',
+       height: '24em'
+     }
   },
-  cta_wrapper: {
+  actionWrapper: {
     marginTop: theme.spacing(6),
   },
-  cta: {
-    marginTop: theme.spacing(3),
+  action: {
+    marginTop: theme.spacing(4),
     marginBottom: theme.spacing(6)
   },
 }));
@@ -51,6 +52,7 @@ export const ErrorNoPermissionState = () => {
 
 export const ErrorNotFoundState = () => {
   const classes = useStyles();
+  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
@@ -61,16 +63,15 @@ export const ErrorNotFoundState = () => {
         </Grid>
         <Grid item md={6} lg={4}>
           <Typography variant="h2">{t("error.not_found_header")}</Typography>
-          <Typography variant="h4">{t("error.not_found_summary")}</Typography>
+          <Typography variant="h6">{t("error.not_found_summary")}</Typography>
 
-          <Box className={classes.cta_wrapper}>
-            <Typography variant="h6">{t("error.not_found_info")}</Typography>
-
+          <Box className={classes.actionWrapper}>
+            <Typography variant="body1">{t("error.not_found_info")}</Typography>
             <Button
+              sx={{mt: theme.spacing(4), mb: theme.spacing(6)}}
               variant="outlined"
               color="primary"
               endIcon={<ChevronRightRounded/>}
-              className={classes.cta}
               onClick={() => history.push('/')} >
               {t("button.go_to_home")}
             </Button>

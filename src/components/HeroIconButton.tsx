@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ComponentClass } from "react";
-import { IconButton, IconButtonProps } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { IconButton, IconButtonProps } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   icon: {
@@ -21,10 +21,10 @@ const HeroIconButton = (props: HeroIconButtonProps & IconButtonProps) => {
   const { icon, ...iconButtonProps } = props;
 
   return (
-    <IconButton {...iconButtonProps}>
+    <IconButton {...iconButtonProps} size="large">
       {React.createElement(icon, { className: classes.icon })}
     </IconButton>
-  )
+  );
 }
 
 export default HeroIconButton;

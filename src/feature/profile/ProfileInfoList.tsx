@@ -1,22 +1,15 @@
 import React, { FunctionComponent, ComponentClass } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
+import {List, ListItem, ListItemIcon, ListItemText, ListSubheader, Theme, Typography} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   WorkOutlineRounded,
   DomainOutlined,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import { User } from "../user/User";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   icon: { 
     width: '1.2em', 
     height: '1.2em',

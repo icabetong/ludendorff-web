@@ -1,18 +1,12 @@
-import {
-  Container,
-  Dialog,
-  DialogContent,
-  ListItem,
-  ListItemText,
-  makeStyles
-} from "@material-ui/core";
+import { Container, Dialog, DialogContent, ListItem, ListItemText, Theme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { Asset } from "./Asset";
 import { assetDescription, assetTypeName } from "../../shared/const";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     padding: theme.spacing(2),
     minHeight: '80vh'

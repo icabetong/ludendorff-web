@@ -1,9 +1,7 @@
 import { increment, doc, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
-import { Timestamp } from "@firebase/firestore-types";
 
 import { TypeCore } from '../type/Type';
-import { Specification } from "../specs/Specification";
 import {
   assetCollection,
   typeCollection,
@@ -21,23 +19,6 @@ export type Asset = {
 }
 
 export class AssetRepository {
-
-  static async createFromList(assets: Asset[]): Promise<void> {
-    if (assets.length < 0) {
-      return;
-    }
-
-    let batch = writeBatch(firestore);
-    assets.forEach((asset) => {
-      batch.set(doc(firestore, assetCollection, asset.stockNumber), asset);
-    })
-    
-    let id = assets[0].type?.typeId;
-    if (id) {
-      batch.update(doc(firestore, typeCollection, id), typeCount, increment(assets.length))
-    }
-    return await batch.commit();
-  }
 
   static async create(asset: Asset): Promise<void> {
     let batch = writeBatch(firestore);

@@ -1,16 +1,16 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction
-} from "@material-ui/core";
+  ListItemSecondaryAction, Theme
+} from "@mui/material";
 
 import { Setting } from "./Settings";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   icon: {
     width: '1.2em',
     height: '1.2em',

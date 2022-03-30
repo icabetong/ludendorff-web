@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Tooltip,
-  makeStyles
-} from "@material-ui/core";
+import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   LocalOfferOutlined,
   DeleteOutlineRounded,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
@@ -98,7 +91,8 @@ const CategoryItem = (props: CategoryItemProps) => {
       edge="end"
       disabled={props.category.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.category)}>
+      onClick={() => props.onItemRemove(props.category)}
+      size="large">
       <DeleteOutlineRounded/>
     </IconButton>
   );

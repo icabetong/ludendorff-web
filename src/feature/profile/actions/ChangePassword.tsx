@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField
-} from "@material-ui/core";
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
 import { auth } from "../../../index";

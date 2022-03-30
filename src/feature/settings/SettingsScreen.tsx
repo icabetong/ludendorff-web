@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -7,17 +7,17 @@ import {
   Menu,
   MenuItem,
   Switch
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   PaletteOutlined,
   TableChartOutlined,
   ChevronRightRounded,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import PageHeader from "../../components/PageHeader";
 import { PreferenceContext } from "./Preference";
-import { Setting } from "../settings/Settings";
+import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
 
 type SettingsScreenProps = {
@@ -63,7 +63,8 @@ const SettingsScreen = (props: SettingsScreenProps) => {
         <IconButton
           aria-controls="density-menu"
           aria-haspopup="true"
-          onClick={onDensityMenuView}>
+          onClick={onDensityMenuView}
+          size="large">
           <ChevronRightRounded/>
         </IconButton>
         <Menu
@@ -94,7 +95,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
 
   return (
     <Box>
-      <Hidden smDown>
+      <Hidden mdDown>
         <PageHeader
           title={t("navigation.settings")}/>
       </Hidden>
@@ -105,7 +106,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       </Hidden>
       <SettingsList preferences={preferences} />
     </Box>
-  )
+  );
 }
 
 export default SettingsScreen;

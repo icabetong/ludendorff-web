@@ -16,19 +16,18 @@ import {
   ListItemText,
   ListSubheader,
   Typography,
-  makeStyles,
-  alpha
-} from "@material-ui/core";
+  alpha, Theme, useTheme,
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   DesktopWindowsRounded,
-  ArchiveRounded,
-  PublishRounded,
+  Inventory2Outlined,
+  UploadFileOutlined,
   PeopleOutlineRounded,
   SettingsOutlined,
   AccountCircleOutlined,
   ExitToAppRounded
-} from "@material-ui/icons";
-import clsx from "clsx";
+} from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
 import { auth } from "../../index";
@@ -66,7 +65,7 @@ type NavigationItemPropsType = {
   isActive: boolean
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   inset: {
     marginBottom: '1em'
   },
@@ -74,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.spacing(1),
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down('sm')]: {
       paddingLeft: '12px',
       paddingRight: '12px',
     },
@@ -84,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.text.primary
     },
     '&$selected': {
-      backgroundColor: theme.palette.type === 'dark' ? alpha(theme.palette.primary.main, 0.3) : alpha(theme.palette.primary.main, 0.2),
+      backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.3) : alpha(theme.palette.primary.main, 0.2),
       '& .MuiListItemIcon-root': {
         color: theme.palette.primary.main
       },
@@ -226,13 +225,11 @@ const NavigationList = (props: NavigationListPropsType) => {
   );
 }
 
-
-
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
   const destinations: NavigationItemType[] = [
     { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
-    { icon: ArchiveRounded, title: "navigation.inventory", destination: Destination.INVENTORY },
-    { icon: PublishRounded, title: "navigation.issued", destination: Destination.ASSETS },
+    { icon: Inventory2Outlined, title: "navigation.inventory", destination: Destination.INVENTORY },
+    { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
   ]
 
@@ -264,31 +261,27 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
   )
 }
 
-const useCustomButtonStyles = makeStyles((theme) => ({
-  item: {
-    margin: '0 0.2em',
-    padding: '0.8em 1.8em',
-    textTransform: 'none',
-  },
-  active: {
-    backgroundColor: alpha(theme.palette.primary.main, 0.2),
-    color: theme.palette.primary.main,
-  }
-}));
-
 export const TopNavigationItem = (props: NavigationItemPropsType) => {
-  const classes = useCustomButtonStyles();
   const { t } = useTranslation();
-
-  const classNames = clsx(classes.item, props.isActive ? classes.active : undefined)
+  const theme = useTheme();
 
   return (
     <Button
-      className={classNames}
+      sx={{
+        margin: '0 0.2em',
+        padding: '0.8em 1.8em',
+        textTransform: 'none',
+        backgroundColor: props.isActive ? alpha(theme.palette.primary.main, 0.2) : undefined,
+        color: props.isActive ? theme.palette.primary.main : theme.palette.text.primary
+      }}
       key={props.itemKey}
       startIcon={React.createElement(props.navigation.icon)}
       onClick={props.action}>
-      <Typography variant="body2">{t(props.navigation.title)}</Typography>
+      <Typography
+        variant="body2"
+        sx={{textTransform: 'none'}}>
+        {t(props.navigation.title)}
+      </Typography>
     </Button>
   );
 }

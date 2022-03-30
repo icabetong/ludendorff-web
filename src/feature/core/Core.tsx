@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Router, Route, Switch } from 'react-router-dom';
-import { CssBaseline, Theme } from '@material-ui/core'
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import {CssBaseline, PaletteMode, Theme} from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import AuthComponent from '../auth/AuthComponent'
 import RootComponent from '../root/Root';
@@ -23,14 +23,38 @@ const gray500 = '#6b7280';
 const gray600 = '#4b5563';
 const gray700 = '#374151';
 const gray800 = '#1f2937';
- 
+
 const errorColors = {
   main: '#ff5555',
   dark: '#c5162c',
   light: '#ff8982'
 }
 
-const baseTheme = createTheme({
+const baseTheme = (mode: PaletteMode) => createTheme({
+  palette: {
+    mode: mode,
+    primary: {
+      light: mode === 'dark' ? teal300 : teal400,
+      main: mode === 'dark' ? teal500 : teal600,
+      dark: mode === 'dark' ? teal700 :  teal800,
+      contrastText: mode === 'dark' ? white : gray800
+    },
+    secondary: {
+      light: mode === 'dark' ? teal300 : teal400,
+      main: mode === 'dark' ? teal500 : teal600,
+      dark: mode === 'dark' ? teal700 :  teal800
+    },
+    error: errorColors,
+    background: {
+      default: mode === 'dark' ? gray800 : gray50,
+      paper: mode === 'dark' ? gray700 : white,
+    },
+    text: {
+      primary: mode === 'dark' ? gray100 : gray700,
+      secondary: gray500,
+    },
+    divider: mode === 'dark' ? gray600 : gray300,
+  },
   typography: {
     fontFamily: [
       'Inter',
@@ -44,100 +68,48 @@ const baseTheme = createTheme({
       'Droid Sans',
       'Helvetica Neue',
       'sans-serif'
-    ].join(',')
-  },
-  props: {
-    MuiTextField: {
-      fullWidth: true,
-      variant: "outlined",
-      size: "small"
+    ].join(','),
+    h6: {
+      fontWeight: 600,
+    },
+    h5: {
+      fontWeight: 700,
+      fontSize: '2em'
+    },
+    h4: {
+      fontWeight: 700,
+    },
+    body2: {
+      fontWeight: 600
+    },
+    subtitle1: {
+      fontSize: '1em'
+    },
+    subtitle2: {
+      fontSize: '1em',
+      fontWeight: 500,
     }
   },
-  overrides: {
-    MuiTypography: {
-      h6: {
-        fontWeight: 600,
-      },
-      h5: {
-        fontWeight: 700,
-        fontSize: '2em'
-      },
-      h4: {
-        fontWeight: 700,
-      },
-      body2: {
-        fontWeight: 600
-      },
-      subtitle1: {
-        fontSize: '1em'
-      },
-      subtitle2: {
-        fontSize: '1em',
-        fontWeight: 500
-      },
-    },
+  components: {
     MuiDialogContent: {
-      dividers: {
-        padding: '16px 0'
+      styleOverrides: {
+        dividers: {
+          padding: '16px 0'
+        }
       }
     },
     MuiTextField: {
-      root: {
-        margin: '0.6em 0'
+      defaultProps: {
+        fullWidth: true,
+        variant: 'outlined',
+        size: 'small'
+      },
+      styleOverrides: {
+        root: {
+          margin: '0.6em 0'
+        }
       }
     },
-  }
-})
-
-const lightTheme = createTheme({
-  ...baseTheme,
-  palette: {
-    type: 'light',
-    primary: {
-      light: teal400,
-      main: teal600,
-      dark: teal800
-    },
-    secondary: {
-      light: teal400,
-      main: teal600,
-      dark: teal800
-    },
-    error: errorColors,
-    background: {
-      default: gray50,
-      paper: white,
-    },
-    text: {
-      primary: gray700,
-      secondary: gray500,
-    },
-    divider: gray300,
-  },
-})
-const darkTheme = createTheme({
-  ...baseTheme,
-  palette: {
-    type: 'dark',
-    primary: {
-      main: teal500,
-      light: teal300,
-      dark: teal700
-    },
-    secondary: {
-      main: teal500,
-      light: teal300,
-      dark: teal700
-    },
-    error: errorColors,
-    background: {
-      default: gray800,
-      paper: gray700
-    },
-    text: {
-      primary: gray100
-    },
-    divider: gray600
   }
 })
 
@@ -154,21 +126,19 @@ export const ThemeContext = React.createContext<ThemeContextType>({
 export const CoreComponent = () => {
   const userPreferences = useContext(PreferenceContext);
 
-  return (
-    <>
-      {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
-      <ThemeProvider theme={userPreferences.preferences.theme === 'dark' ? { ...darkTheme } : { ...lightTheme }}>
-        <CssBaseline />
-        <Router history={history}>
-          <Switch>
-            <Route path="/" component={RootComponent} exact />
-            <Route path="/auth" component={AuthComponent} />
-            <Route path="*" component={ErrorNotFoundState} exact />
-          </Switch>
-        </Router>
-      </ThemeProvider>
-    </>
-  )
+  return <>
+    {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
+    <ThemeProvider theme={baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
+      <CssBaseline />
+      <Router history={history}>
+        <Switch>
+          <Route path="/" component={RootComponent} exact />
+          <Route path="/auth" component={AuthComponent} />
+          <Route path="*" component={ErrorNotFoundState} exact />
+        </Switch>
+      </Router>
+    </ThemeProvider>
+  </>;
 }
 
 export const getDataGridTheme = (theme: Theme) => {
@@ -176,20 +146,34 @@ export const getDataGridTheme = (theme: Theme) => {
     '& .MuiDataGrid-toolbarContainer': {
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
-      backgroundColor: theme.palette.type === 'dark' ? gray700: gray100,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700: gray100,
       borderBottom: '1px',
       borderBottomStyle: 'solid',
       borderBottomColor: theme.palette.divider
     },
     '& .MuiDataGrid-root': {
       backgroundColor: 'transparent',
-      borderColor: theme.palette.divider
+      borderColor: theme.palette.divider,
+    },
+    '& .MuiDataGrid-columnHeaders': {
+      borderBottom: 'none'
+    },
+    '& .MuiDataGrid-columnHeader': {
+      fontWeight: 700,
+      '& .MuiDataGrid-columnSeparator': {
+        color: theme.palette.divider
+      },
+    },
+    '& .MuiDataGrid-row': {
+      borderColor: theme.palette.divider,
+      borderBottomColor: 'transparent',
+      borderBottomStyle: 'none',
+      borderTopWidth: 'thin',
+      borderTopStyle: 'solid',
+      fontWeight: 400,
     },
     '& .MuiDataGrid-columnsContainer': {
       borderBottomColor: theme.palette.divider
-    },
-    '& .MuiDataGrid-columnSeparator': {
-      color: theme.palette.divider
     },
     '& .MuiDataGrid-cell': {
       borderBottomColor: theme.palette.divider

@@ -1,20 +1,14 @@
 import { useTranslation } from "react-i18next";
-import {
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  makeStyles
-} from "@material-ui/core";
-import { SearchOutlined } from "@material-ui/icons";
+import {FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Theme} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { SearchOutlined } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
 import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   highlightResult: {
     color: theme.palette.primary.main
   }
@@ -54,16 +48,14 @@ const CustomSearchBox = (props: SearchBoxProvided) => {
         label={t("field.search")}
         endAdornment={
           <InputAdornment position="end">
-            <IconButton
-              aria-label={t("button.search")}
-              edge="end">
+            <IconButton aria-label={t("button.search")} edge="end" size="large">
               <SearchOutlined/>
             </IconButton>
           </InputAdornment>
         }
         onChange={e => props.refine(e.target.value)} />
     </FormControl>
-  )
+  );
 }
 
 type EmptySearchStateProps = {

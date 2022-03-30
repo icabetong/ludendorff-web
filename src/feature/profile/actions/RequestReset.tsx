@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle
-} from "@material-ui/core";
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useAuthState } from "../../auth/AuthProvider";

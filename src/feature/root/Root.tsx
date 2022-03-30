@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Redirect } from "react-router";
 import { withRouter, } from "react-router-dom";
 import {
-  AppBar, 
-  Box, 
-  Button, 
+  AppBar,
+  Box,
+  Button,
   ClickAwayListener,
   Dialog,
   DialogActions,
@@ -15,27 +15,27 @@ import {
   Divider,
   Drawer,
   Grow,
-  Hidden, 
+  Hidden,
   ListItemIcon,
   ListItemText,
-  MenuList, 
-  MenuItem, 
-  Popper, 
-  Paper, 
-  Toolbar, 
+  MenuList,
+  MenuItem,
+  Popper,
+  Paper,
+  Toolbar,
   useMediaQuery,
-  useTheme, 
-  makeStyles, 
+  useTheme,
   Typography,
-  lighten
-} from "@material-ui/core"; 
+  lighten, Theme,
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { SnackbarProvider } from "notistack";
 import { 
   ArrowDropDown,   
   SettingsOutlined,
   AccountCircleOutlined,
   ExitToAppRounded
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { ReactComponent as Logo } from "../../shared/brand.svg";
 
 import { signOut } from "firebase/auth";
@@ -71,20 +71,20 @@ const InnerComponent = (props: InnerComponentPropsType) => {
 }
 
 const drawerWidth = 240;
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
     width: '100%', // if turned into viewport width; it will cause horizontal scrollbar!
     height: '100vh',
-    [theme.breakpoints.up('md')]: {
-      flexDirection: 'column'
-    }
+     [theme.breakpoints.up('md')]: {
+       flexDirection: 'column'
+     }
   },
   nav: {
-    [theme.breakpoints.up('md')]: {
-      height: 64,
-      flexShrink: 0,
-    }
+     [theme.breakpoints.up('md')]: {
+       height: 64,
+       flexShrink: 0,
+     }
   },
   drawerPaper: {
     width: drawerWidth,
@@ -104,9 +104,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     margin: '0 auto',
     flexGrow: 1,
-    [theme.breakpoints.up('xl')]: {
-      maxWidth: '1600px'
-    }
+     [theme.breakpoints.up('xl')]: {
+       maxWidth: '1600px'
+     }
   },
   headerIcon: {
     fontSize: '1em',
@@ -119,7 +119,14 @@ const useStyles = makeStyles((theme) => ({
   },
   profile: {
     marginLeft: theme.spacing(2),
-    textTransform: 'none'
+  },
+  profileName: {
+    textTransform: 'none',
+    color: theme.palette.primary.contrastText,
+  },
+  profileEmail: {
+    textTransform: 'none',
+    color: theme.palette.primary.contrastText,
   },
   profileMenu: {
     backgroundColor: lighten(theme.palette.background.paper, 0.2)
@@ -150,7 +157,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     setMenuOpen((prevOpen) => !prevOpen);
   }
 
-  const onMenuDispose = (event: React.MouseEvent<Document, MouseEvent>) => {
+  const onMenuDispose = (event: MouseEvent | TouchEvent) => {
     if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
@@ -195,7 +202,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   )
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <nav className={classes.nav}>
         <Hidden mdUp implementation="css">
           <Drawer
@@ -212,7 +219,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             {drawerItems}
           </Drawer>
         </Hidden>
-        <Hidden smDown>
+        <Hidden mdDown>
           <AppBar color='inherit' elevation={2}>
             <Toolbar>
               <Box component={Logo} className={classes.icon} marginRight={3}/>
@@ -230,8 +237,8 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                 className={classes.profile}
                 endIcon={<ArrowDropDown/>}>
                 <Box flexDirection="column" textAlign="start">
-                  <Typography variant="body2">{user && user.firstName}</Typography>
-                  <Typography variant="caption">{user && user.email}</Typography>
+                  <Typography className={classes.profileName} variant="body2">{user && user.firstName}</Typography>
+                  <Typography className={classes.profileEmail} variant="caption">{user && user.email}</Typography>
                 </Box>
               </Button>
               <Popper open={menuOpen} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
@@ -278,7 +285,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         </Suspense>
       </Box>
       {signOutDialog}
-    </div>
+    </Box>
   );
 }
 
@@ -286,7 +293,7 @@ const RootComponent = () => {
   const { status, user } = useAuthState();
   const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
   const theme = useTheme();
-  const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('xs'));
+  const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('sm'));
 
   const onNavigate = (newDestination: Destination) => {
     setDestination(newDestination)

@@ -1,15 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  IconButton,
-  Typography,
-  createStyles,
-  Theme,
-  withStyles,
-  WithStyles
-} from "@material-ui/core";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import { SearchOutlined } from "@material-ui/icons";
+import { IconButton, Typography, Theme } from "@mui/material";
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
+import MuiDialogTitle from "@mui/material/DialogTitle";
+import { SearchOutlined } from "@mui/icons-material";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,18 +29,19 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
   const { t } = useTranslation();
   const { children, classes, onSearch, ...other } = props;
   return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+    <MuiDialogTitle className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
       {onSearch ? (
         <IconButton
           aria-label={t("button.search")}
           className={classes.actionButton}
-          onClick={onSearch}>
+          onClick={onSearch}
+          size="large">
           <SearchOutlined/>
         </IconButton>
       ) : null}
     </MuiDialogTitle>
-  )
+  );
 })
 
 export default CustomDialogTitle;

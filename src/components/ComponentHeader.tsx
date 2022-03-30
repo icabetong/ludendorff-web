@@ -1,20 +1,12 @@
 import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  AppBar,
-  Button,
-  Hidden,
-  IconButton,
-  Menu,
-  Toolbar,
-  Typography,
-  makeStyles
-} from "@material-ui/core";
+import {AppBar, Button, Hidden, IconButton, Menu, Theme, Toolbar, Typography} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   MoreVert,
   MenuRounded,
   SearchOutlined
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 type ComponentHeaderPropsType = {
   title: string,
@@ -26,16 +18,16 @@ type ComponentHeaderPropsType = {
   menuItems?: JSX.Element[]
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
   toolbar: theme.mixins.toolbar,
   navigationButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('md')]: {
-      display: 'none'
-    },
+     marginRight: theme.spacing(2),
+     [theme.breakpoints.up('md')]: {
+       display: 'none'
+     },
   },
   actionButton: {
     marginLeft: 'auto'
@@ -72,10 +64,11 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
           edge="start"
           onClick={props.onDrawerToggle}
           className={classes.navigationButton}
-          aria-label={t("button.show_drawer")}>
+          aria-label={t("button.show_drawer")}
+          size="large">
           <MenuRounded className={classes.toolbarButtonIcon} />
         </IconButton>
-        <Hidden xsDown>
+        <Hidden smDown>
           <Typography variant="h5" className={classes.title}>
             {props.title}
           </Typography>
@@ -102,9 +95,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
           }
         </Hidden>
         {props.onSearch &&
-          <IconButton
-            className={classes.searchButton}
-            onClick={props.onSearch}>
+          <IconButton className={classes.searchButton} onClick={props.onSearch} size="large">
             <SearchOutlined/>
           </IconButton>
         }
@@ -113,7 +104,8 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
             <IconButton
               aria-haspopup="true"
               aria-label={t("button.show_menu")}
-              onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}>
+              onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}
+              size="large">
               <MoreVert className={classes.toolbarButtonIcon} />
             </IconButton>
             <Menu
@@ -134,7 +126,7 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
         }
       </Toolbar>
     </AppBar>
-  )
+  );
 }
 
 export default ComponentHeader;

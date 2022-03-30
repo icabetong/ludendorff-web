@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ComponentClass } from "react";
-import { ListItemIcon } from "@material-ui/core/";
-import { makeStyles } from "@material-ui/core/styles";
+import { ListItemIcon } from "@mui/material/";
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   icon: { width: '1em', height: '1em' }

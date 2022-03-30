@@ -16,8 +16,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  makeStyles
-} from "@material-ui/core";
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
@@ -28,17 +27,6 @@ import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { newId } from "../../shared/utils";
 import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
-
-const useStyles = makeStyles((theme) => ({
-  icon: {
-    width: '1em',
-    height: '1em',
-    color: theme.palette.text.primary
-  },
-  gridItem: {
-    maxWidth: '100%'
-  }
-}));
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -57,10 +45,9 @@ export type FormValues = {
 
 const AssetEditor = (props: AssetEditorProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [isLoading, setLoading] = useState(true);
   const [types, setTypes] = useState<Type[]>([]);
@@ -132,7 +119,7 @@ const AssetEditor = (props: AssetEditorProps) => {
           <DialogContent dividers={true}>
             <Container>
               <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
-                <Grid item xs={6} className={classes.gridItem}>
+                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
                   <TextField
                     autoFocus
                     id="stockNumber"
@@ -172,7 +159,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     placeholder={t('placeholder.classification')}
                     {...register('classification', { required: "feedback.empty_classification" })}/>
                 </Grid>
-                <Grid item xs={6} className={classes.gridItem}>
+                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
                   <TextField
                     id="unitOfMeasure"
                     type="text"

@@ -20,8 +20,8 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  makeStyles
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useSnackbar } from "notistack";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { User, Permission, UserRepository } from "./User";
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     width: '1em',
     height: '1em',
-    color: theme.palette.text.primary
+   // color: theme.palette.text.primary
   },
   gridItem: {
     maxWidth: '100%'
@@ -69,7 +69,7 @@ const UserEditor = (props: UserEditorProps) => {
   const classes = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);

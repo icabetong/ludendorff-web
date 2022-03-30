@@ -1,10 +1,9 @@
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarDensitySelector,
-  useGridSlotComponentProps
-} from "@material-ui/data-grid";
+} from "@mui/x-data-grid";
 
 type GridComponentProps = {
   destinations?: JSX.Element[],
@@ -12,24 +11,24 @@ type GridComponentProps = {
 }
 
 const GridToolbar = () => {
-  const { apiRef } = useGridSlotComponentProps();
-  const componentProps = apiRef.current.componentsProps;
+  //const { apiRef } = useGridSlotComponentProps();
+  //const componentProps = apiRef.current.componentsProps;
 
   return (
     <GridToolbarContainer>
       <Box flexGrow={8}>
         <GridToolbarColumnsButton/>
         <GridToolbarDensitySelector/>
-        { componentProps && componentProps.toolbar &&
-          (componentProps.toolbar as GridComponentProps).destinations &&
-          (componentProps.toolbar as GridComponentProps).destinations
-        }
-      </Box>
-      <Box>
-        { componentProps && componentProps.toolbar &&
-          (componentProps.toolbar as GridComponentProps).endAction &&
-          (componentProps.toolbar as GridComponentProps).endAction
-        }
+      {/*  { componentProps && componentProps.toolbar &&*/}
+      {/*    (componentProps.toolbar as GridComponentProps).destinations &&*/}
+      {/*    (componentProps.toolbar as GridComponentProps).destinations*/}
+      {/*  }*/}
+      {/*</Box>*/}
+      {/*<Box>*/}
+      {/*  { componentProps && componentProps.toolbar &&*/}
+      {/*    (componentProps.toolbar as GridComponentProps).endAction &&*/}
+      {/*    (componentProps.toolbar as GridComponentProps).endAction*/}
+      {/*  }*/}
       </Box>
     </GridToolbarContainer>
   );

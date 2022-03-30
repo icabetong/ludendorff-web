@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { onAuthStateChanged, Unsubscribe } from 'firebase/auth';
-import { onSnapshot, doc } from "firebase/firestore";
+import React, {useContext, useEffect, useState} from 'react';
+import {onAuthStateChanged, Unsubscribe} from 'firebase/auth';
+import {doc, onSnapshot} from "firebase/firestore";
 import history from "../navigation/History";
-import { User, hasPermission, Permission } from "../user/User";
-import { userCollection } from "../../shared/const";
-import { auth, firestore } from '../../index';
+import {hasPermission, Permission, User} from "../user/User";
+import {userCollection} from "../../shared/const";
+import {auth, firestore} from '../../index';
 
 export enum AuthStatus { FETCHED, PENDING }
 export type AuthState = {
@@ -44,8 +44,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 }
 
 export function useAuthState(): AuthState {
-  const authState = useContext(AuthContext);
-  return authState;
+  return useContext(AuthContext);
 }
 
 type PermissionHook = {

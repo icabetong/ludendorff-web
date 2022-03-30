@@ -1,22 +1,14 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import {
-  Box,
-  Grid,
-  Hidden,
-  LinearProgress,
-  Typography,
-  makeStyles,
-  useTheme,
-  useMediaQuery
-} from "@material-ui/core";
+import { Box, Grid, Hidden, LinearProgress, Typography, useTheme, useMediaQuery } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   EditOutlined,
   ImageOutlined,
   LockOutlined,
   SendOutlined,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import PageHeader from "../../components/PageHeader";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
@@ -52,7 +44,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fileInput = useRef<HTMLInputElement | null>(null);
 
@@ -77,7 +69,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
   return (
     <Box className={classes.root}>
-      <Hidden smDown>
+      <Hidden mdDown>
         <PageHeader
           title={t("navigation.profile")}/>
       </Hidden>

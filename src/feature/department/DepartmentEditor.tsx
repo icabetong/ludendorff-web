@@ -13,7 +13,7 @@ import {
   ListItem,
   TextField,
   Typography
-} from "@material-ui/core";
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore"; 
 import { Department, DepartmentRepository } from "./Department";

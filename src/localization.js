@@ -13,6 +13,8 @@ const resources = {
         manage: "Manage",
         account: "Account",
         assets: "Assets",
+        inventory: "Inventory Reports",
+        issued: "Issued Reports",
         users: "Users",
         types: "Types",
         departments: "Departments",

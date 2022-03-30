@@ -8,8 +8,9 @@ import {
   LinearProgress,
   useMediaQuery,
   useTheme,
-  makeStyles
-} from "@material-ui/core";
+} from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { usePermissions } from "../auth/AuthProvider";
 import { Department } from "./Department";
@@ -39,7 +40,7 @@ type DepartmentPickerProps = {
 const DepartmentPicker = (props: DepartmentPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
   const { canRead } = usePermissions();
 

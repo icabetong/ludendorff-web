@@ -1,6 +1,4 @@
 import { Asset } from "./Asset";
-import { newId } from "../../shared/utils";
-
 export enum ActionType {
   CREATE = "create",
   UPDATE = "update",

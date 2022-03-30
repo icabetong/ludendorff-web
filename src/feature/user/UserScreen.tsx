@@ -1,22 +1,14 @@
 import { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Box,
-  Button,
-  Hidden,
-  IconButton,
-  LinearProgress,
-  MenuItem,
-  Tooltip,
-  makeStyles,
-} from "@material-ui/core";
+import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { 
   DataGrid, 
   GridOverlay, 
   GridRowParams, 
   GridValueGetterParams, 
   GridCellParams 
-} from "@material-ui/data-grid";
+} from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
   DomainRounded,
@@ -26,7 +18,7 @@ import {
   DeleteOutline,
   PeopleOutlineRounded,
   SearchOutlined,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
@@ -64,7 +56,7 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     height: '100%',
     width: '100%'
@@ -139,12 +131,13 @@ const UserScreen = (props: UserScreenProps) => {
             <span>
               <IconButton
                 aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                onClick={() => onModificationInvoke(user)}>
+                onClick={() => onModificationInvoke(user)}
+                size="large">
                 { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
               </IconButton>
             </span>
           </Tooltip>
-        )
+        );
       }
     },
     {
@@ -157,10 +150,11 @@ const UserScreen = (props: UserScreenProps) => {
         return (
           <IconButton
             aria-label={t("button.delete")}
-            onClick={() => onRemoveInvoke(params.row as User)}>
+            onClick={() => onRemoveInvoke(params.row as User)}
+            size="large">
             <DeleteOutline/>
           </IconButton>
-        )
+        );
       }
     }
   ]
@@ -220,7 +214,7 @@ const UserScreen = (props: UserScreenProps) => {
 
   return (
     <Box className={classes.root}>
-      <Hidden smDown>
+      <Hidden mdDown>
         <PageHeader
           title={t("navigation.users")}
           buttonText={t("button.create_user")}
@@ -244,7 +238,7 @@ const UserScreen = (props: UserScreenProps) => {
       </Hidden>
       {canRead || canManageUsers
         ? <>
-          <Hidden xsDown>
+          <Hidden smDown>
             <div className={classes.wrapper}>
               <DataGrid
                 components={{
@@ -322,7 +316,7 @@ const UserScreen = (props: UserScreenProps) => {
         isOpen={isDepartmentOpen}
         onDismiss={onDepartmentDismiss} />
     </Box>
-  )
+  );
 }
 
 const EmptyStateOverlay = () => {
