@@ -11,21 +11,21 @@ import {
   TextField
 } from "@material-ui/core";
 import { useSnackbar } from "notistack";
-import { Category, CategoryRepository } from "../category/Category";
+import { Type, TypesRepository } from "./Type";
 import { newId } from "../../shared/utils";
 
 type FormValues = {
   name?: string
 }
 
-type CategoryEditorProps = {
+type TypeEditorProps = {
   isOpen: boolean,
   isCreate: boolean,
-  category: Category | undefined,
+  type: Type | undefined,
   onDismiss: () => void,
 }
 
-const CategoryEditor = (props: CategoryEditorProps) => {
+const TypeEditor = (props: TypeEditorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [isWritePending, setWritePending] = React.useState(false);
@@ -34,13 +34,13 @@ const CategoryEditor = (props: CategoryEditorProps) => {
   const onSubmit = (data: FormValues) => {
     setWritePending(true)
 
-    let category: Category = {
-      categoryId: props.category ? props.category.categoryId : newId(),
-      count: props.category ? props.category.count : 0,
-      categoryName: data.name,
+    let type: Type = {
+      typeId: props.type ? props.type.typeId : newId(),
+      count: props.type ? props.type.count : 0,
+      typeName: data.name,
     }
     if (props.isCreate) {
-      CategoryRepository.create(category)
+      TypesRepository.create(type)
         .then(() =>
           enqueueSnackbar(t("feedback.category_created"))
         ).catch(() =>
@@ -50,7 +50,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
           props.onDismiss();
         })
     } else {
-      CategoryRepository.update(category)
+      TypesRepository.update(type)
         .then(() =>
           enqueueSnackbar(t("feedback.category_updated"))
         ).catch(() =>
@@ -69,7 +69,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
       open={props.isOpen}
       onClose={props.onDismiss}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>{t("category_details")}</DialogTitle>
+        <DialogTitle>{t("dialog.type_details")}</DialogTitle>
         <DialogContent>
           <Container disableGutters>
             <TextField
@@ -78,10 +78,10 @@ const CategoryEditor = (props: CategoryEditorProps) => {
               id="name"
               type="text"
               label={t("field.category_name")}
-              defaultValue={props.category ? props.category.categoryName : ""}
+              defaultValue={props.type ? props.type.typeName : ""}
               error={errors.name}
               helperText={errors.name ? t(errors.name.message) : undefined}
-              {...register("name", { required: "feedback.empty-category-name" })} />
+              {...register("name", { required: "feedback.empty_type_name" })} />
           </Container>
         </DialogContent>
         <DialogActions>
@@ -103,4 +103,4 @@ const CategoryEditor = (props: CategoryEditorProps) => {
   )
 }
 
-export default CategoryEditor;
+export default TypeEditor;

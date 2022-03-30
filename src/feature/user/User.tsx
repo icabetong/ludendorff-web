@@ -5,11 +5,8 @@ import { Department, DepartmentCore } from "../department/Department";
 import {
   userCollection,
   departmentCollection,
-  assignmentCollection,
   departmentManagerId,
   departmentManager,
-  assignmentUser,
-  assignmentUserId
 } from "../../shared/const";
 
 export enum Permission {
@@ -89,12 +86,6 @@ export class UserRepository {
           batch.update(doc.ref, departmentManager, null);
       })
     }
-
-    let docs = await getDocs(query(collection(firestore, assignmentCollection), 
-      where(assignmentUserId, '==', user.userId)));
-    docs.forEach((doc) => {
-      batch.update(doc.ref, assignmentUser, minimize(user))
-    })
 
     await batch.commit()
   }

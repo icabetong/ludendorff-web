@@ -2,20 +2,20 @@ import { increment, doc, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 import { Timestamp } from "@firebase/firestore-types";
 
-import { CategoryCore } from '../category/Category';
+import { TypeCore } from '../type/Type';
 import { Specification } from "../specs/Specification";
 import {
   assetCollection,
-  categoryCollection,
-  categoryCount
+  typeCollection,
+  typeCount
 } from "../../shared/const";
 
 export type Asset = {
-  assetId: string,
-  assetName?: string,
+  stockNumber: string,
+  description?: string,
   dateCreated?: Timestamp,
   status?: Status,
-  category?: CategoryCore,
+  type?: TypeCore,
   specifications?: Specification,
 }
 
@@ -23,15 +23,15 @@ export type AssetCore = {
   assetId: string,
   assetName?: string,
   status?: Status,
-  category?: CategoryCore
+  category?: TypeCore
 }
 
 export const minimize = (asset: Asset): AssetCore => {
   let core: AssetCore = {
-    assetId: asset.assetId,
-    assetName: asset.assetName,
+    assetId: asset.stockNumber,
+    assetName: asset.description,
     status: asset.status,
-    category: asset.category
+    category: asset.type
   };
   return core;
 }
@@ -67,12 +67,12 @@ export class AssetRepository {
 
     let batch = writeBatch(firestore);
     assets.forEach((asset) => {
-      batch.set(doc(firestore, assetCollection, asset.assetId), asset);
+      batch.set(doc(firestore, assetCollection, asset.stockNumber), asset);
     })
     
-    let id = assets[0].category?.categoryId;
+    let id = assets[0].type?.typeId;
     if (id) {
-      batch.update(doc(firestore, categoryCollection, id), categoryCount, increment(assets.length))
+      batch.update(doc(firestore, typeCollection, id), typeCount, increment(assets.length))
     }
     return await batch.commit();
   }
@@ -80,12 +80,12 @@ export class AssetRepository {
   static async create(asset: Asset): Promise<void> {
     let batch = writeBatch(firestore);
 
-    batch.set(doc(firestore, assetCollection, asset.assetId), asset);
+    batch.set(doc(firestore, assetCollection, asset.stockNumber), asset);
     
-    let id = asset.category?.categoryId;
+    let id = asset.type?.typeId;
     if (id) {
-      batch.update(doc(firestore, categoryCollection, id), 
-        categoryCollection, increment(1));
+      batch.update(doc(firestore, typeCollection, id), 
+        typeCollection, increment(1));
     }
 
     return await batch.commit()
@@ -93,14 +93,14 @@ export class AssetRepository {
 
   static async update(asset: Asset, previousCategoryId?: string): Promise<void> {
     let batch = writeBatch(firestore);
-    batch.set(doc(firestore, assetCollection, asset.assetId), asset)
+    batch.set(doc(firestore, assetCollection, asset.stockNumber), asset)
 
-    let currentCategoryId = asset.category?.categoryId;
+    let currentCategoryId = asset.type?.typeId;
     if (previousCategoryId && currentCategoryId && currentCategoryId !== previousCategoryId) {
-      batch.update(doc(firestore, categoryCollection, currentCategoryId), categoryCount,
+      batch.update(doc(firestore, typeCollection, currentCategoryId), typeCount,
         increment(1))
 
-      batch.update(doc(firestore, categoryCollection, previousCategoryId), categoryCount,
+      batch.update(doc(firestore, typeCollection, previousCategoryId), typeCount,
         increment(-1))
     }
 
@@ -110,11 +110,11 @@ export class AssetRepository {
   static async remove(asset: Asset): Promise<void> {
     let batch = writeBatch(firestore);
 
-    batch.delete(doc(firestore, assetCollection, asset.assetId));
+    batch.delete(doc(firestore, assetCollection, asset.stockNumber));
 
-    let categoryId = asset.category?.categoryId;
+    let categoryId = asset.type?.typeId;
     if (categoryId) {
-      batch.update(doc(firestore, categoryCollection, categoryId), categoryCount, increment(-1));
+      batch.update(doc(firestore, typeCollection, categoryId), typeCount, increment(-1));
     }
 
     return await batch.commit();

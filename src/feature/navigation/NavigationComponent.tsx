@@ -208,12 +208,14 @@ const NavigationList = (props: NavigationListPropsType) => {
         if (!canManageUsers && navigation.destination === Destination.USERS)
           return <></>;
 
-        return <NavigationListItem
-          key={navigation.destination}
-          itemKey={navigation.destination}
-          navigation={navigation}
-          action={() => props.onNavigate(navigation.destination!!)}
-          isActive={props.destination === navigation.destination} />
+        return (
+            <NavigationListItem
+                key={navigation.destination}
+                itemKey={navigation.destination}
+                navigation={navigation}
+                action={() => props.onNavigate(navigation.destination!!)}
+                isActive={props.destination === navigation.destination} />
+        )
 
       })
     }</React.Fragment>
@@ -232,7 +234,7 @@ export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
 }
 
 export const TopNavigationList = (props: NavigationListPropsType) => {
-  const { canRead, canManageUsers, isAdmin } = usePermissions();
+  const { canRead, canManageUsers } = usePermissions();
 
   return (
     <Grid container direction="row">

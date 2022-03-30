@@ -10,8 +10,8 @@ import { useTheme, makeStyles } from "@material-ui/core/styles";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { Category } from "./Category";
-import CategoryList from "./CategoryList";
+import { Type } from "./Type";
+import TypeList from "./TypeList";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,15 +24,15 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-type CategoryPickerProps = {
+type TypePickerProps = {
   isOpen: boolean,
-  categories: Category[],
+  types: Type[],
   isLoading: boolean,
   onDismiss: () => void,
-  onSelectItem: (category: Category) => void
+  onSelectItem: (type: Type) => void
 }
 
-const CategoryPicker = (props: CategoryPickerProps) => {
+const TypePicker = (props: TypePickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
@@ -50,8 +50,8 @@ const CategoryPicker = (props: CategoryPickerProps) => {
       <DialogContent dividers={true} className={classes.root}>
         {canRead
           ? !props.isLoading
-            ? <CategoryList
-                categories={props.categories}
+            ? <TypeList
+                categories={props.types}
                 onItemSelect={props.onSelectItem} />
             : <LinearProgress />
           : <ErrorNoPermissionState />
@@ -64,4 +64,4 @@ const CategoryPicker = (props: CategoryPickerProps) => {
   )
 }
 
-export default CategoryPicker;
+export default TypePicker;

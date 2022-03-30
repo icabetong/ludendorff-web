@@ -10,7 +10,7 @@ import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
 import { Asset } from "./Asset";
-import { assetName, assetCategoryName } from "../../shared/const";
+import { assetDescription, assetTypeName } from "../../shared/const";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -72,11 +72,11 @@ const AssetListItem = (props: AssetListItemProps) => {
   return (
     <ListItem
       button
-      key={props.asset.assetId}
+      key={props.asset.stockNumber}
       onClick={() => props.onItemSelect(props.asset)}>
       <ListItemText
-        primary={<Highlight attribute={assetName} hit={props.asset} />}
-        secondary={<Highlight attribute={assetCategoryName} hit={props.asset} />} />
+        primary={<Highlight attribute={assetDescription} hit={props.asset} />}
+        secondary={<Highlight attribute={assetTypeName} hit={props.asset} />} />
     </ListItem>
   )
 }

@@ -28,14 +28,14 @@ import { useSnackbar } from "notistack";
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 
 import { Asset, Status, AssetRepository } from "./Asset";
-import { Category, CategoryCore, minimize } from "../category/Category";
-import CategoryPicker from "../category/CategoryPicker";
+import { Type, TypeCore, minimize } from "../type/Type";
+import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
 import { ActionType, initialState, reducer } from "../specs/SpecificationEditorReducer";
 import SpecificationList from "../specs/SpecificationList";
 import { newId } from "../../shared/utils";
-import { categoryCollection, categoryName } from "../../shared/const";
+import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 
 const useStyles = makeStyles((theme) => ({
@@ -69,8 +69,8 @@ const AssetEditor = (props: AssetEditorProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
   const [isLoading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
+  const [categories, setCategories] = useState<Type[]>([]);
+  const [category, setCategory] = useState<TypeCore | undefined>(props.asset?.type);
   const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
@@ -92,9 +92,9 @@ const AssetEditor = (props: AssetEditorProps) => {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    const unsubscribe = onSnapshot(query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), (snapshots) => {
+    const unsubscribe = onSnapshot(query(collection(firestore, typeCollection), orderBy(typeName, "asc")), (snapshots) => {
       if (mounted) {
-        setCategories(snapshots.docs.map((doc) => doc.data() as Category));
+        setCategories(snapshots.docs.map((doc) => doc.data() as Type));
         setLoading(false);
       }
     });
@@ -109,8 +109,8 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onSubmit = (data: FormValues) => {
     const asset: Asset = {
       ...data,
-      assetId: props.asset === undefined ? newId() : props.asset?.assetId,
-      category: category !== undefined ? category : undefined,
+      stockNumber: props.asset === undefined ? newId() : props.asset?.stockNumber,
+      type: category !== undefined ? category : undefined,
       specifications: Object.fromEntries(specifications),
       dateCreated: Timestamp.now()
     }
@@ -128,9 +128,9 @@ const AssetEditor = (props: AssetEditorProps) => {
     }
   }
 
-  const onCategoryChanged = (newCategory: Category) => {
-    if (props.asset?.category !== undefined && props.asset?.category?.categoryId !== newCategory.categoryId)
-      previousCategoryId = props.asset?.category?.categoryId;
+  const onCategoryChanged = (newCategory: Type) => {
+    if (props.asset?.type !== undefined && props.asset?.type?.typeId !== newCategory.typeId)
+      previousCategoryId = props.asset?.type?.typeId;
 
     setCategory(minimize(newCategory));
     onPickerDismiss();
@@ -194,7 +194,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     label={t("field.asset_name")}
                     error={errors.assetName !== undefined}
                     helperText={errors.assetName?.message !== undefined ? t(errors.assetName.message) : undefined}
-                    defaultValue={props.asset !== undefined ? props.asset.assetName : ""}
+                    defaultValue={props.asset !== undefined ? props.asset.description : ""}
                     {...register("assetName", { required: "feedback.empty_asset_name" })} />
 
                   <FormControl component="fieldset" fullWidth>
@@ -245,7 +245,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     </FormLabel>
                     <ListItem button onClick={onPickerView}>
                       <Typography variant="body2">
-                        {category?.categoryName !== undefined ? category?.categoryName : t("not_set")}
+                        {category?.typeName !== undefined ? category?.typeName : t("not_set")}
                       </Typography>
                     </ListItem>
                   </FormControl>
@@ -272,7 +272,7 @@ const AssetEditor = (props: AssetEditorProps) => {
           </DialogContent>
 
           <DialogActions>
-            <Button color="primary" onClick={onQRCodeView} disabled={props.asset?.assetId === undefined}>{t("view_qr_code")}</Button>
+            <Button color="primary" onClick={onQRCodeView} disabled={props.asset?.stockNumber === undefined}>{t("view_qr_code")}</Button>
             <div style={{ flex: '1 0 0' }}></div>
             <Button
               color="primary"
@@ -296,9 +296,9 @@ const AssetEditor = (props: AssetEditorProps) => {
           onCancel={onEditorDismiss} />
       }
       {isPickerOpen &&
-        <CategoryPicker
+        <TypePicker
           isOpen={isPickerOpen}
-          categories={categories}
+          types={categories}
           isLoading={isLoading}
           onDismiss={onPickerDismiss}
           onSelectItem={onCategoryChanged} />
@@ -306,7 +306,7 @@ const AssetEditor = (props: AssetEditorProps) => {
       {isQRCodeOpen && props.asset !== undefined &&
         <QrCodeViewComponent
           isOpened={isQRCodeOpen}
-          assetId={props.asset.assetId}
+          assetId={props.asset.stockNumber}
           onClose={onQRCodeDismiss} />
       }
     </>

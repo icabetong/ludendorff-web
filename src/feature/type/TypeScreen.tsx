@@ -17,15 +17,15 @@ import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
-import { Category } from "./Category";
-import CategoryEditorComponent from "./CategoryEditor";
-import { ActionType, initialState, reducer } from "./CategoryEditorReducer";
-import CategoryList from "./CategoryList";
+import { Type } from "./Type";
+import CategoryEditorComponent from "./TypeEditor";
+import { ActionType, initialState, reducer } from "./TypeEditorReducer";
+import TypeList from "./TypeList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
 import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
-import { categoryCollection, categoryName } from "../../shared/const";
+import { typeCollection, typeName } from "../../shared/const";
 
 import { firestore } from "../../index";
 
@@ -46,27 +46,27 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-type CategoryScreenProps = {
+type TypeScreenProps = {
   isOpen: boolean,
   onDismiss: () => void,
 }
 
-const CategoryScreen = (props: CategoryScreenProps) => {
+const TypeScreen = (props: TypeScreenProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
   const [search, setSearch] = useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Type[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
   const classes = useStyles();
 
   useEffect(() => {
     let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), (snapshot) => {
+    const unsubscribe = onSnapshot(query(collection(firestore, typeCollection), orderBy(typeName, "asc")), (snapshot) => {
       if (mounted) {
-        setCategories(snapshot.docs.map((doc) => doc.data() as Category));
+        setCategories(snapshot.docs.map((doc) => doc.data() as Type));
         setLoading(false);
       }
     });
@@ -81,7 +81,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-  const onEditorUpdate = (category: Category) => dispatch({ type: ActionType.UPDATE, payload: category })
+  const onEditorUpdate = (category: Type) => dispatch({ type: ActionType.UPDATE, payload: category })
 
   return (
     <>
@@ -91,22 +91,22 @@ const CategoryScreen = (props: CategoryScreenProps) => {
         maxWidth="xs"
         open={props.isOpen}
         onClose={props.onDismiss}>
-        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.categories")}</CustomDialogTitle>
+        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.types")}</CustomDialogTitle>
         <DialogContent dividers={true} className={classes.root}>
           {search
-            ? <InstantSearch searchClient={Provider} indexName="categories">
+            ? <InstantSearch searchClient={Provider} indexName="types">
               <Box className={classes.searchBox}>
                 <SearchBox />
               </Box>
               <Box className={classes.search}>
                 <Results>
-                  <CategoryHits onItemSelect={onEditorUpdate} />
+                  <TypeHits onItemSelect={onEditorUpdate} />
                 </Results>
               </Box>
             </InstantSearch>
             : canRead
               ? !isLoading
-                ? <CategoryList
+                ? <TypeList
                     categories={categories}
                     onItemSelect={onEditorUpdate} />
                 : <LinearProgress />
@@ -123,44 +123,44 @@ const CategoryScreen = (props: CategoryScreenProps) => {
         <CategoryEditorComponent
           isOpen={state.isOpen}
           isCreate={state.isCreate}
-          category={state.category}
+          type={state.category}
           onDismiss={onEditorDismiss} />
       }
     </>
   )
 }
-export default CategoryScreen;
+export default TypeScreen;
 
-type CategoryHitsListProps = HitsProvided<Category> & {
-  onItemSelect: (category: Category) => void
+type TypeHitsListProps = HitsProvided<Type> & {
+  onItemSelect: (category: Type) => void
 }
-const CategoryHitsList = (props: CategoryHitsListProps) => {
+const CategoryHitsList = (props: TypeHitsListProps) => {
   return (
     <>
-      {props.hits.map((c: Category) => (
-        <CategoryListItem category={c} onItemSelect={props.onItemSelect} />
+      {props.hits.map((c: Type) => (
+        <TypeListItem type={c} onItemSelect={props.onItemSelect} />
       ))
       }
     </>
   )
 }
-const CategoryHits = connectHits<CategoryHitsListProps, Category>(CategoryHitsList);
+const TypeHits = connectHits<TypeHitsListProps, Type>(CategoryHitsList);
 
-type CategoryListItemProps = {
-  category: Category,
-  onItemSelect: (category: Category) => void
+type TypeListItemProps = {
+  type: Type,
+  onItemSelect: (category: Type) => void
 }
-const CategoryListItem = (props: CategoryListItemProps) => {
+const TypeListItem = (props: TypeListItemProps) => {
   const { t } = useTranslation();
 
   return (
     <ListItem
       button
-      key={props.category.categoryId}
-      onClick={() => props.onItemSelect(props.category)}>
+      key={props.type.typeId}
+      onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
-        primary={<Highlight attribute={categoryName} hit={props.category} />}
-        secondary={t("template.count", { count: props.category.count })} />
+        primary={<Highlight attribute={typeName} hit={props.type} />}
+        secondary={t("template.count", { count: props.type.count })} />
     </ListItem>
   )
 }

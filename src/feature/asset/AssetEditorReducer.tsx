@@ -16,7 +16,7 @@ type State = {
   isOpen: boolean
 }
 export const initialState: State = {
-  asset: { assetId: newId(), status: Status.IDLE },
+  asset: { stockNumber: newId(), status: Status.IDLE },
   isCreate: true,
   isOpen: false,
 }

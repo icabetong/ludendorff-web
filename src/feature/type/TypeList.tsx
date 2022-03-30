@@ -17,7 +17,7 @@ import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
 
-import { Category, CategoryRepository } from "./Category";
+import { Type, TypesRepository } from "./Type";
 import { usePermissions } from "../auth/AuthProvider";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
@@ -27,25 +27,25 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type CategoryListProps = {
-  categories: Category[],
-  onItemSelect: (category: Category) => void
+type TypeListProps = {
+  categories: Type[],
+  onItemSelect: (category: Type) => void
 }
 
-const CategoryList = (props: CategoryListProps) => {
+const TypeList = (props: TypeListProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [category, setCategory] = useState<Category | undefined>(undefined);
+  const [type, setType] = useState<Type | undefined>(undefined);
 
-  const onRemoveInvoke = (category: Category) => setCategory(category);
-  const onRemoveDismiss = () => setCategory(undefined);
+  const onRemoveInvoke = (category: Type) => setType(category);
+  const onRemoveDismiss = () => setType(undefined);
 
   const onCategoryRemove = () => {
-    if (category !== undefined) {
-      CategoryRepository.remove(category)
-        .then(() => enqueueSnackbar(t("feedback.category_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.category_remove_error")))
+    if (type !== undefined) {
+      TypesRepository.remove(type)
+        .then(() => enqueueSnackbar(t("feedback.type_removed")))
+        .catch(() => enqueueSnackbar(t("feedback.type_remove_error")))
         .finally(onRemoveDismiss)
     }
   }
@@ -55,10 +55,10 @@ const CategoryList = (props: CategoryListProps) => {
       {props.categories.length > 0
         ? <List className={classes.root}>
             {
-              props.categories.map((category: Category) => {
+              props.categories.map((category: Type) => {
                 return (
                   <CategoryItem
-                    key={category.categoryId}
+                    key={category.typeId}
                     category={category}
                     onItemSelect={props.onItemSelect}
                     onItemRemove={onRemoveInvoke} />
@@ -68,12 +68,12 @@ const CategoryList = (props: CategoryListProps) => {
           </List>
         : <EmptyStateComponent
           icon={LocalOfferOutlined}
-          title={t("empty_category")}
-          subtitle={t("empty_category_summary")} />
+          title={t("empty_type")}
+          subtitle={t("empty_type_summary")} />
       }
-      {category &&
+      {type &&
         <ConfirmationDialog
-          isOpen={category !== undefined}
+          isOpen={type !== undefined}
           title="dialog.category_remove"
           summary="dialog.category_remove_summary"
           onDismiss={onRemoveDismiss}
@@ -84,9 +84,9 @@ const CategoryList = (props: CategoryListProps) => {
 }
 
 type CategoryItemProps = {
-  category: Category,
-  onItemSelect: (category: Category) => void,
-  onItemRemove: (category: Category) => void,
+  category: Type,
+  onItemSelect: (category: Type) => void,
+  onItemRemove: (category: Type) => void,
 }
 
 const CategoryItem = (props: CategoryItemProps) => {
@@ -106,10 +106,10 @@ const CategoryItem = (props: CategoryItemProps) => {
   return (
     <ListItem
       button
-      key={props.category.categoryId}
+      key={props.category.typeId}
       onClick={() => props.onItemSelect(props.category)}>
       <ListItemText
-        primary={props.category.categoryName}
+        primary={props.category.typeName}
         secondary={t("template.count", { count: props.category.count })} />
       {canDelete &&
         <ListItemSecondaryAction>
@@ -125,4 +125,4 @@ const CategoryItem = (props: CategoryItemProps) => {
   )
 }
 
-export default CategoryList;
+export default TypeList;

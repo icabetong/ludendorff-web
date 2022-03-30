@@ -1,49 +1,48 @@
-import { Assignment } from "./Assignment";
+import { Type } from "./Type";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
+  CHANGED = "changed",
   CREATE = "create",
   UPDATE = "update",
   DISMISS = "dismiss"
 }
-
 type Action = {
   type: ActionType,
-  payload?: Assignment
+  payload?: Type,
 }
 type State = {
-  assignment?: Assignment,
+  category?: Type,
   isCreate: boolean,
   isOpen: boolean
 }
-
 export const initialState: State = {
-  assignment: { assignmentId: newId() },
+  category: { typeId: newId(), count: 0 },
   isCreate: true,
-  isOpen: false
+  isOpen: false,
 }
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
 
   switch (type) {
     case ActionType.CREATE:
       return {
-        assignment: undefined,
+        category: undefined,
         isCreate: true,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.UPDATE:
       return {
-        assignment: payload,
+        category: payload,
         isCreate: false,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.DISMISS:
       return {
         ...state,
         isOpen: false,
-        assignment: undefined
+        category: undefined
       }
     default: return state;
   }

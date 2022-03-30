@@ -47,9 +47,9 @@ import { formatDate, newId } from "../../shared/utils";
 
 import {
   assetCollection,
-  assetId,
-  assetName,
-  assetCategory,
+  assetStockNumber,
+  assetDescription,
+  assetType,
   dateCreated,
   assetStatus,
 } from "../../shared/const";
@@ -61,7 +61,7 @@ import {
 } from "./AssetEditorReducer";
 
 import AssetEditor from "./AssetEditor";
-import CategoryScreen from "../category/CategoryScreen";
+import TypeScreen from "../type/TypeScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
@@ -106,7 +106,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   useEffect(() => {
     let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), orderBy(assetName, "asc")), (snapshot) => {
+    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), (snapshot) => {
       if (mounted) {
         setAssets(snapshot.docs.map((doc) => doc.data() as Asset));
         setLoading(false);
@@ -131,15 +131,15 @@ const AssetScreen = (props: AssetScreenProps) => {
   }
 
   const columns = [
-    { field: assetId, headerName: t("field.id"), hide: true },
-    { field: assetName, headerName: t("field.asset_name"), flex: 1 },
+    { field: assetStockNumber, headerName: t("field.id"), hide: true },
+    { field: assetDescription, headerName: t("field.asset_name"), flex: 1 },
     {
-      field: assetCategory,
+      field: assetType,
       headerName: t("field.category"),
       flex: 0.5,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
-        return asset.category?.categoryName === undefined ? t("unknown") : asset.category?.categoryName;
+        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
       }
     },
     {
@@ -214,7 +214,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCopyConfirmed = (copies: number) => {
     let assets: Asset[] = [];
     for (let index = 0; index <= copies - 1; index++) {
-      assets.push({ ...assetCopy, assetId: newId(), dateCreated: Timestamp.now(), status: assetCopy?.status === Status.OPERATIONAL ? Status.IDLE : assetCopy?.status });
+      assets.push({ ...assetCopy, stockNumber: newId(), dateCreated: Timestamp.now(), status: assetCopy?.status === Status.OPERATIONAL ? Status.IDLE : assetCopy?.status });
     }
     AssetRepository.createFromList(assets);
     onCopyDismiss();
@@ -335,7 +335,7 @@ const AssetScreen = (props: AssetScreenProps) => {
           onDismiss={onSearchDismiss}
           onEditorInvoke={onAssetSelected} />
       }
-      <CategoryScreen
+      <TypeScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss} />
       {asset &&
