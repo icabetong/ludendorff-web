@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 type TypeListProps = {
-  categories: Type[],
+  types: Type[],
   onItemSelect: (category: Type) => void
 }
 
@@ -52,10 +52,10 @@ const TypeList = (props: TypeListProps) => {
 
   return (
     <>
-      {props.categories.length > 0
+      {props.types.length > 0
         ? <List className={classes.root}>
             {
-              props.categories.map((category: Type) => {
+              props.types.map((category: Type) => {
                 return (
                   <CategoryItem
                     key={category.typeId}

@@ -1,6 +1,6 @@
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Button,
   Container,
@@ -9,31 +9,22 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormControlLabel,
   FormLabel,
   Grid,
-  List,
   ListItem,
-  Radio,
-  RadioGroup,
   TextField,
-  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
   makeStyles
 } from "@material-ui/core";
-import { AddRounded } from "@material-ui/icons";
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
-import { Asset, Status, AssetRepository } from "./Asset";
+import { Asset, AssetRepository } from "./Asset";
 import { Type, TypeCore, minimize } from "../type/Type";
 import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { SpecificationEditor, FormValues as SpecFormValues } from "../specs/SpecificationEditor";
-import { ActionType, initialState, reducer } from "../specs/SpecificationEditorReducer";
-import SpecificationList from "../specs/SpecificationList";
 import { newId } from "../../shared/utils";
 import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
@@ -57,8 +48,11 @@ type AssetEditorProps = {
 }
 
 export type FormValues = {
-  assetName: string,
-  status: Status,
+  stockNumber: string,
+  description: string,
+  classification: string,
+  unitOfMeasure: string,
+  unitValue: number,
 }
 
 const AssetEditor = (props: AssetEditorProps) => {
@@ -67,14 +61,12 @@ const AssetEditor = (props: AssetEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-  const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [isLoading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<Type[]>([]);
-  const [category, setCategory] = useState<TypeCore | undefined>(props.asset?.type);
-  const [specifications, setSpecifications] = useState<Map<string, string>>(props.asset?.specifications !== undefined ? new Map(Object.entries(props.asset?.specifications)) : new Map());
+  const [types, setTypes] = useState<Type[]>([]);
+  const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
-  const [state, dispatch] = useReducer(reducer, initialState)
 
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
@@ -82,19 +74,12 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-  const onEditorUpdate = (specification: [string, string]) => dispatch({
-    type: ActionType.UPDATE,
-    payload: specification
-  })
-
   useEffect(() => {
     let mounted = true;
     setLoading(true);
     const unsubscribe = onSnapshot(query(collection(firestore, typeCollection), orderBy(typeName, "asc")), (snapshots) => {
       if (mounted) {
-        setCategories(snapshots.docs.map((doc) => doc.data() as Type));
+        setTypes(snapshots.docs.map((doc) => doc.data() as Type));
         setLoading(false);
       }
     });
@@ -105,14 +90,12 @@ const AssetEditor = (props: AssetEditorProps) => {
     }
   }, [])
 
-  let previousCategoryId: string | undefined = undefined;
+  let previousTypeId: string | undefined = undefined;
   const onSubmit = (data: FormValues) => {
     const asset: Asset = {
       ...data,
       stockNumber: props.asset === undefined ? newId() : props.asset?.stockNumber,
-      type: category !== undefined ? category : undefined,
-      specifications: Object.fromEntries(specifications),
-      dateCreated: Timestamp.now()
+      type: type !== undefined ? type : undefined,
     }
 
     if (props.isCreate) {
@@ -121,57 +104,20 @@ const AssetEditor = (props: AssetEditorProps) => {
         .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
         .finally(props.onDismiss)
     } else {
-      AssetRepository.update(asset, previousCategoryId)
+      AssetRepository.update(asset, previousTypeId)
         .then(() => enqueueSnackbar(t("feedback.asset_updated")))
         .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
         .finally(props.onDismiss)
     }
   }
 
-  const onCategoryChanged = (newCategory: Type) => {
-    if (props.asset?.type !== undefined && props.asset?.type?.typeId !== newCategory.typeId)
-      previousCategoryId = props.asset?.type?.typeId;
+  const onTypeChanged = (newType: Type) => {
+    if (props.asset?.type !== undefined && props.asset?.type?.typeId !== newType.typeId)
+      previousTypeId = props.asset?.type?.typeId;
 
-    setCategory(minimize(newCategory));
+    setType(minimize(newType));
     onPickerDismiss();
   }
-
-  const onSpecificationCommit = (specification: SpecFormValues) => {
-    const specs = specifications;
-    specs.set(specification.key, specification.value);
-    setSpecifications(specs);
-
-    onEditorDismiss();
-  }
-
-  const radioOperational = (
-    <FormControlLabel
-      control={<Radio />}
-      value={Status.OPERATIONAL}
-      label={t("status.operational")}
-      disabled={props.asset?.status !== Status.OPERATIONAL} />
-  );
-  const radioIdle = (
-    <FormControlLabel
-      control={<Radio />}
-      value={Status.IDLE}
-      label={t("status.idle")}
-      disabled={props.asset?.status === Status.OPERATIONAL} />
-  );
-  const radioUnderMaintainance = (
-    <FormControlLabel
-      control={<Radio />}
-      value={Status.UNDER_MAINTENANCE}
-      label={t("status.under_maintenance")}
-      disabled={props.asset?.status === Status.OPERATIONAL} />
-  );
-  const radioRetired = (
-    <FormControlLabel
-      control={<Radio />}
-      value={Status.RETIRED}
-      label={t("status.retired")}
-      disabled={props.asset?.status === Status.OPERATIONAL} />
-  );
 
   return (
     <>
@@ -189,83 +135,69 @@ const AssetEditor = (props: AssetEditorProps) => {
                 <Grid item xs={6} className={classes.gridItem}>
                   <TextField
                     autoFocus
-                    id="assetName"
+                    id="stockNumber"
                     type="text"
-                    label={t("field.asset_name")}
-                    error={errors.assetName !== undefined}
-                    helperText={errors.assetName?.message !== undefined ? t(errors.assetName.message) : undefined}
+                    label={t("field.stock_number")}
+                    error={errors.stockNumber !== undefined}
+                    helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
+                    defaultValue={props.asset && props.asset.stockNumber}
+                    placeholder={t('placeholder.stock_number')}
+                      {...register("stockNumber",{ required: "feedback.empty_asset_stock_number"}) }/>
+                  <TextField
+                    id="description"
+                    type="text"
+                    label={t("field.asset_description")}
+                    error={errors.description !== undefined}
+                    helperText={errors.description?.message !== undefined ? t(errors.description.message) : undefined}
                     defaultValue={props.asset !== undefined ? props.asset.description : ""}
-                    {...register("assetName", { required: "feedback.empty_asset_name" })} />
-
+                    placeholder={t('placeholder.asset_description')}
+                      {...register("description", { required: "feedback.empty_asset_name" })} />
                   <FormControl component="fieldset" fullWidth>
                     <FormLabel component="legend">
-                      <Typography variant="body2">{t("field.status")}</Typography>
-                    </FormLabel>
-                    <Controller
-                      name="status"
-                      control={control}
-                      defaultValue={props.asset !== undefined ? props.asset.status : Status.IDLE}
-                      render={({ field: { onChange, value } }) => (
-                        <RadioGroup
-                          aria-label={t("field.status")}
-                          id="status"
-                          value={value}
-                          onChange={onChange}>
-                          {props.asset?.status !== Status.OPERATIONAL
-                            ? <Tooltip title={<>{t("info.asset_should_have_assignment")}</>} placement="bottom-start">
-                              <span>{radioOperational}</span>
-                            </Tooltip>
-                            : <>{radioOperational}</>
-                          }
-                          {props.asset?.status === Status.OPERATIONAL
-                            ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
-                              <span>{radioIdle}</span>
-                            </Tooltip>
-                            : <>{radioIdle}</>
-                          }
-                          {props.asset?.status === Status.OPERATIONAL
-                            ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
-                              <span>{radioUnderMaintainance}</span>
-                            </Tooltip>
-                            : <>{radioUnderMaintainance}</>
-                          }
-                          {props.asset?.status === Status.OPERATIONAL
-                            ? <Tooltip title={<>{t("info.asset_has_assignment")}</>} placement="bottom-start">
-                              <span>{radioRetired}</span>
-                            </Tooltip>
-                            : <>{radioRetired}</>
-                          }
-                        </RadioGroup>
-                      )} />
-                  </FormControl>
-
-                  <FormControl component="fieldset" fullWidth>
-                    <FormLabel component="legend">
-                      <Typography variant="body2">{t("field.category")}</Typography>
+                      <Typography variant="body2">{t("field.type")}</Typography>
                     </FormLabel>
                     <ListItem button onClick={onPickerView}>
                       <Typography variant="body2">
-                        {category?.typeName !== undefined ? category?.typeName : t("not_set")}
+                        {type?.typeName !== undefined ? type?.typeName : t("not_set")}
                       </Typography>
                     </ListItem>
                   </FormControl>
-
+                  <TextField
+                    id="classification"
+                    type="text"
+                    label={t("field.classification")}
+                    error={errors.classification !== undefined}
+                    helperText={errors.classification?.message !== undefined ? t(errors.classification.message) : undefined}
+                    defaultValue={props.asset && props.asset.classification}
+                    placeholder={t('placeholder.classification')}
+                    {...register('classification', { required: "feedback.empty_classification" })}/>
                 </Grid>
                 <Grid item xs={6} className={classes.gridItem}>
-                  <FormLabel component="legend">
-                    <Typography variant="body2">{t("field.specification")}</Typography>
-                  </FormLabel>
-                  <List>
-                    <SpecificationList
-                      specifications={specifications}
-                      onItemSelected={onEditorUpdate} />
-                    <Button
-                      fullWidth
-                      startIcon={<AddRounded/>}
-                      onClick={onEditorCreate}>
-                      {t("add")}
-                    </Button>
-                  </List>
+                  <TextField
+                    id="unitOfMeasure"
+                    type="text"
+                    label={t("field.unit_of_measure")}
+                    error={errors.unitOfMeasure !== undefined}
+                    helperText={errors.unitOfMeasure?.message !== undefined ? t(errors.unitOfMeasure.message) : undefined}
+                    defaultValue={props.asset && props.asset.unitOfMeasure}
+                    placeholder={t('placeholder.unit_of_measure')}
+                    {...register('unitOfMeasure', { required: 'feedback.empty_unit_of_measure'})}/>
+                  <TextField
+                    id="unitValue"
+                    type="number"
+                    label={t("field.unit_value")}
+                    error={errors.unitValue !== undefined}
+                    helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
+                    defaultValue={props.asset && props.asset.unitValue}
+                    placeholder={t('placeholder.unit_value')}
+                    {...register('unitValue', { required: 'feedback.empty_unit_value'})}/>
+                  <TextField
+                    id='remarks'
+                    type="text"
+                    multiline
+                    rows={4}
+                    label={t('field.remarks')}
+                    defaultValue={props.asset && props.asset.remarks}/>
                 </Grid>
               </Grid>
             </Container>
@@ -287,21 +219,13 @@ const AssetEditor = (props: AssetEditorProps) => {
           </DialogActions>
         </form>
       </Dialog>
-      {state.isOpen &&
-        <SpecificationEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          specification={state.specification}
-          onSubmit={onSpecificationCommit}
-          onCancel={onEditorDismiss} />
-      }
       {isPickerOpen &&
         <TypePicker
           isOpen={isPickerOpen}
-          types={categories}
+          types={types}
           isLoading={isLoading}
           onDismiss={onPickerDismiss}
-          onSelectItem={onCategoryChanged} />
+          onSelectItem={onTypeChanged} />
       }
       {isQRCodeOpen && props.asset !== undefined &&
         <QrCodeViewComponent

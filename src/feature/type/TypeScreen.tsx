@@ -107,7 +107,7 @@ const TypeScreen = (props: TypeScreenProps) => {
             : canRead
               ? !isLoading
                 ? <TypeList
-                    categories={categories}
+                    types={categories}
                     onItemSelect={onEditorUpdate} />
                 : <LinearProgress />
               : <ErrorNoPermissionState />
@@ -123,7 +123,7 @@ const TypeScreen = (props: TypeScreenProps) => {
         <CategoryEditorComponent
           isOpen={state.isOpen}
           isCreate={state.isCreate}
-          type={state.category}
+          type={state.type}
           onDismiss={onEditorDismiss} />
       }
     </>

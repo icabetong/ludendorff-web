@@ -1,4 +1,4 @@
-import { Asset, Status } from "./Asset";
+import { Asset } from "./Asset";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
@@ -16,7 +16,7 @@ type State = {
   isOpen: boolean
 }
 export const initialState: State = {
-  asset: { stockNumber: newId(), status: Status.IDLE },
+  asset: { stockNumber: "" },
   isCreate: true,
   isOpen: false,
 }

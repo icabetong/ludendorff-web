@@ -12,12 +12,12 @@ type Action = {
   payload?: Type,
 }
 type State = {
-  category?: Type,
+  type?: Type,
   isCreate: boolean,
   isOpen: boolean
 }
 export const initialState: State = {
-  category: { typeId: newId(), count: 0 },
+  type: { typeId: newId(), count: 0 },
   isCreate: true,
   isOpen: false,
 }
@@ -28,13 +28,13 @@ export const reducer = (state: State, action: Action) => {
   switch (type) {
     case ActionType.CREATE:
       return {
-        category: undefined,
+        type: undefined,
         isCreate: true,
         isOpen: true,
       }
     case ActionType.UPDATE:
       return {
-        category: payload,
+        type: payload,
         isCreate: false,
         isOpen: true,
       }
@@ -42,7 +42,7 @@ export const reducer = (state: State, action: Action) => {
       return {
         ...state,
         isOpen: false,
-        category: undefined
+        type: undefined
       }
     default: return state;
   }

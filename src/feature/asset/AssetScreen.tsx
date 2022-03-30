@@ -7,7 +7,6 @@ import {
   IconButton,
   LinearProgress,
   MenuItem,
-  Tooltip,
   makeStyles
 } from "@material-ui/core";
 import {
@@ -23,11 +22,10 @@ import {
   DesktopWindowsRounded,
   AddRounded,
   DeleteOutlineRounded,
-  FileCopyOutlined,
   SearchOutlined
 } from "@material-ui/icons";
 
-import { query, collection, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -35,23 +33,25 @@ import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { usePermissions } from "../auth/AuthProvider";
-import { Asset, AssetRepository, getStatusLoc, Status } from "./Asset";
+import { Asset, AssetRepository } from "./Asset";
 import AssetList from "./AssetList";
 import AssetSearchScreen from "./AssetSearchScreen";
 import ReportScreen from "../report/ReportScreen";
-import DuplicationDialog from "../shared/DuplicationDialog";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
-import { formatDate, newId } from "../../shared/utils";
+import { formatDate } from "../../shared/utils";
 
 import {
   assetCollection,
   assetStockNumber,
   assetDescription,
   assetType,
+  assetClassification,
+  assetUnitOfMeasure,
+  assetUnitValue,
+  assetRemarks,
   dateCreated,
-  assetStatus,
 } from "../../shared/const";
 
 import {
@@ -131,74 +131,51 @@ const AssetScreen = (props: AssetScreenProps) => {
   }
 
   const columns = [
-    { field: assetStockNumber, headerName: t("field.id"), hide: true },
-    { field: assetDescription, headerName: t("field.asset_name"), flex: 1 },
+    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
     {
       field: assetType,
-      headerName: t("field.category"),
-      flex: 0.5,
+      headerName: t("field.type"),
+      flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
         return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
       }
     },
     {
-      field: dateCreated,
-      headerName: t("field.date_created"),
+      field: assetClassification,
+      headerName: t("field.classification"),
       flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        const formatted = formatDate(params.row.dateCreated);
-        return formatted === 'unknown' ? t("unknown") : formatted;
-      }
     },
     {
-      field: assetStatus,
-      headerName: t("field.status"),
-      flex: 0.5,
-      valueGetter: (params: GridValueGetterParams) => t(getStatusLoc(params.row.status))
+      field: assetUnitOfMeasure,
+      headerName: t("field.unit_of_measure"),
+      flex: 1
     },
     {
-      field: "copy",
-      headerName: t("button.copy"),
-      flex: 0.2,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const asset = params.row as Asset;
-        return (
-          <IconButton
-            aria-label={t("button.copy")}
-            onClick={() => onCopyInvoke(asset)}>
-            <FileCopyOutlined/>
-          </IconButton>
-        )
-      }
+      field: assetUnitValue,
+      headerName: t("field.unit_value"),
+      flex: 1
+    },
+    {
+      field: assetRemarks,
+      headerName: t("field.remarks"),
+      flex: 1
     },
     {
       field: "delete",
       headerName: t("button.delete"),
-      flex: 0.2,
+      flex: 0.5,
       disableColumnMenu: true,
       sortable: false,
       renderCell: (params: GridCellParams) => {
         const asset = params.row as Asset;
-        const deleteButton = (
+        return (
           <IconButton
-            aria-label={t("button.delete")}
-            disabled={asset.status === Status.OPERATIONAL}
-            onClick={() => onRemoveInvoke(asset)}>
+              aria-label={t("button.delete")}
+              onClick={() => onRemoveInvoke(asset)}>
             <DeleteOutlineRounded/>
           </IconButton>
-        );
-        return (
-          <>
-            {asset.status === Status.OPERATIONAL
-              ? <Tooltip title={<>{t("info.asset_has_assignment_delete")}</>} placement="bottom">
-                <span>{deleteButton}</span>
-              </Tooltip>
-              : <>{deleteButton}</>
-            }
-          </>
         )
       }
     }
@@ -206,20 +183,6 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-
-  const [assetCopy, setAssetCopy] = useState<Asset | undefined>(undefined);
-  const onCopyInvoke = (asset: Asset) => setAssetCopy(asset);
-  const onCopyDismiss = () => setAssetCopy(undefined);
-
-  const onCopyConfirmed = (copies: number) => {
-    let assets: Asset[] = [];
-    for (let index = 0; index <= copies - 1; index++) {
-      assets.push({ ...assetCopy, stockNumber: newId(), dateCreated: Timestamp.now(), status: assetCopy?.status === Status.OPERATIONAL ? Status.IDLE : assetCopy?.status });
-    }
-    AssetRepository.createFromList(assets);
-    onCopyDismiss();
-  }
-
   const onDataGridRowDoubleClicked = (params: GridRowParams) => {
     onAssetSelected(params.row as Asset);
   }
@@ -288,12 +251,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                     endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
                     destinations: [
                       <Button
-                        key="categories"
+                        key="types"
                         color="primary"
                         size="small"
                         startIcon={<LocalOfferRounded fontSize="small"/>}
                         onClick={onCategoryListView}>
-                        {t("navigation.categories")}
+                        {t("navigation.types")}
                       </Button>
                     ]
                   }
@@ -304,7 +267,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 pageSize={20}
                 loading={isLoading}
                 paginationMode="client"
-                getRowId={(r) => r.assetId}
+                getRowId={(r) => r.stockNumber}
                 onRowDoubleClick={onDataGridRowDoubleClicked}/>
             </Box>
           </Hidden>
@@ -345,12 +308,6 @@ const AssetScreen = (props: AssetScreenProps) => {
           summary="dialog.asset_remove_summary"
           onDismiss={onRemoveDismiss}
           onConfirm={onAssetRemove} />
-      }
-      {assetCopy &&
-        <DuplicationDialog
-          isOpen={assetCopy !== undefined}
-          onConfirm={onCopyConfirmed}
-          onDismiss={onCopyDismiss} />
       }
       {reports &&
         <ReportScreen

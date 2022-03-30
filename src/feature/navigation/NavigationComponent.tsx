@@ -21,6 +21,8 @@ import {
 } from "@material-ui/core";
 import {
   DesktopWindowsRounded,
+  ArchiveRounded,
+  PublishRounded,
   PeopleOutlineRounded,
   SettingsOutlined,
   AccountCircleOutlined,
@@ -33,6 +35,8 @@ import { auth } from "../../index";
 
 export enum Destination {
   ASSETS = 1,
+  INVENTORY,
+  ISSUED,
   USERS,
   PROFILE,
   SETTINGS
@@ -227,6 +231,8 @@ const NavigationList = (props: NavigationListPropsType) => {
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
   const destinations: NavigationItemType[] = [
     { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
+    { icon: ArchiveRounded, title: "navigation.inventory", destination: Destination.INVENTORY },
+    { icon: PublishRounded, title: "navigation.issued", destination: Destination.ASSETS },
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
   ]
 

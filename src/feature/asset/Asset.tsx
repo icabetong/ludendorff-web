@@ -13,49 +13,11 @@ import {
 export type Asset = {
   stockNumber: string,
   description?: string,
-  dateCreated?: Timestamp,
-  status?: Status,
   type?: TypeCore,
-  specifications?: Specification,
-}
-
-export type AssetCore = {
-  assetId: string,
-  assetName?: string,
-  status?: Status,
-  category?: TypeCore
-}
-
-export const minimize = (asset: Asset): AssetCore => {
-  let core: AssetCore = {
-    assetId: asset.stockNumber,
-    assetName: asset.description,
-    status: asset.status,
-    category: asset.type
-  };
-  return core;
-}
-
-export enum Status {
-  OPERATIONAL = "OPERATIONAL",
-  IDLE = "IDLE",
-  UNDER_MAINTENANCE = "UNDER_MAINTENANCE",
-  RETIRED = "RETIRED"
-}
-
-export const getStatusLoc = (status: Status | undefined): string => {
-  switch (status) {
-    case Status.OPERATIONAL:
-      return "status.operational"
-    case Status.IDLE:
-      return "status.idle";
-    case Status.UNDER_MAINTENANCE:
-      return "status.under_maintenance"
-    case Status.RETIRED:
-      return "status.retired"
-    default:
-      return "unknown"
-  }
+  classification?: string,
+  unitOfMeasure?: string,
+  unitValue?: number,
+  remarks?: string,
 }
 
 export class AssetRepository {

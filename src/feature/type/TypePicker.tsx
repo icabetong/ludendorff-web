@@ -46,12 +46,12 @@ const TypePicker = (props: TypePickerProps) => {
       maxWidth="xs"
       open={props.isOpen}
       onClose={props.onDismiss}>
-      <DialogTitle>{t("category_select")}</DialogTitle>
+      <DialogTitle>{t("dialog.details_type")}</DialogTitle>
       <DialogContent dividers={true} className={classes.root}>
         {canRead
           ? !props.isLoading
             ? <TypeList
-                categories={props.types}
+                types={props.types}
                 onItemSelect={props.onSelectItem} />
             : <LinearProgress />
           : <ErrorNoPermissionState />
