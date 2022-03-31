@@ -60,6 +60,7 @@ const resources = {
         unit_of_measure: 'example: "ream"',
         unit_value: 'example: "99.99"',
         remarks: 'example: "Common Supplies"',
+        search: 'Type anything'
       },
       permission: {
         read: "Read",

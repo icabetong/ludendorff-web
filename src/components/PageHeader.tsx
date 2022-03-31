@@ -2,15 +2,13 @@ import React, {FunctionComponent, ComponentClass, ChangeEvent} from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
-  Button, ClickAwayListener,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
+  Button,
+  ClickAwayListener,
+  TextField,
   Typography,
 } from "@mui/material";
 import {connectSearchBox} from "react-instantsearch-dom";
 import {SearchBoxProvided} from "react-instantsearch-core";
-import {ClearRounded} from "@mui/icons-material";
 
 type SearchBoxType = SearchBoxProvided & {
   onFocusChanged?: (hasFocus: boolean) => void,
@@ -31,10 +29,11 @@ const SearchBoxCore = (props: SearchBoxType) => {
   }
 
   return (
-    <OutlinedInput
+    <TextField
+      id="search"
       size="small"
       value={props.currentRefinement}
-      placeholder={t("field.search")}
+      label={t("field.search")}
       onFocus={onFocusGained}
       onChange={onQueryChanged}/>
   )
@@ -69,15 +68,17 @@ const PageHeader = (props: PageHeaderPropsType) => {
           </ClickAwayListener>
         </Box>
       }
-      <Box>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={icon && React.createElement(icon)}
-          onClick={event}>
-          {label}
-        </Button>
-      </Box>
+      { label && event &&
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={icon && React.createElement(icon)}
+            onClick={event}>
+            {label}
+          </Button>
+        </Box>
+      }
     </Box>
   )
 }

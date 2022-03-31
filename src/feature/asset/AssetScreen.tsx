@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme} from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
@@ -7,7 +7,7 @@ import {
   GridRowParams,
   GridValueGetterParams,
   GridOverlay,
-  GridCellParams, GridRowId,
+  GridCellParams, GridDensity,
 } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
@@ -15,10 +15,9 @@ import {
   DesktopWindowsRounded,
   AddRounded,
   DeleteOutlineRounded,
-  SearchOutlined, ChevronLeftRounded, ChevronRightRounded
 } from "@mui/icons-material";
 
-import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
+import { query, collection, orderBy } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -404,5 +403,6 @@ const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
   )
 }
 const AssetDataGrid = connectHits<AssetDataGridCoreProps, Asset>(AssetDataGridCore)
+const densityKey = 'dataGrid:density';
 
 export default AssetScreen;

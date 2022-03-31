@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react";
+import React, { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip} from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
@@ -17,9 +17,9 @@ import {
   AddRounded,
   DeleteOutline,
   PeopleOutlineRounded,
-  SearchOutlined,
+  SearchOutlined, LocalOfferRounded,
 } from "@mui/icons-material";
-import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
+import { query, collection, orderBy } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -57,6 +57,9 @@ import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 import {usePagination} from "use-pagination-firestore";
 import PaginationController from "../../components/PaginationController";
+import {HitsProvided} from "react-instantsearch-core";
+import {connectHits, InstantSearch} from "react-instantsearch-dom";
+import {Provider} from "../../components/Search";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -81,6 +84,7 @@ const UserScreen = (props: UserScreenProps) => {
   const { canRead, canManageUsers } = usePermissions();
   const preferences = usePreferences();
   const [size, setSize] = useState(15);
+  const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
     query(collection(firestore, userCollection), orderBy(lastName, "asc")), { limit: 15 }
@@ -202,7 +206,7 @@ const UserScreen = (props: UserScreenProps) => {
     <MenuItem key={0} onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
-  const Pagination = () => {
+  const pagination = () => {
     return (
       <PaginationController
         size={size}
@@ -214,77 +218,90 @@ const UserScreen = (props: UserScreenProps) => {
     )
   }
 
+  const dataGrid = (
+    <DataGrid
+      components={{
+        LoadingOverlay: GridLinearProgress,
+        NoRowsOverlay: EmptyStateOverlay,
+        Toolbar: GridToolbar,
+        Pagination: pagination
+      }}
+      componentsProps={{
+        toolbar: {
+          endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
+          destinations: [
+            <Button
+              key="departments"
+              color="primary"
+              size="small"
+              startIcon={<DomainRounded fontSize="small"/>}
+              onClick={onDepartmentView}>
+              {t("navigation.departments")}
+            </Button>
+          ]
+        }
+      }}
+      rows={items}
+      columns={columns}
+      density={preferences.density}
+      loading={isLoading}
+      paginationMode="client"
+      getRowId={(r) => r.userId}
+      onRowDoubleClick={onDataGridRowDoubleClick}/>
+  )
+
   return (
     <Box className={classes.root}>
-      <Hidden mdDown>
-        <PageHeader
-          title={t("navigation.users")}
-          buttonText={t("button.create_user")}
-          buttonIcon={AddRounded}
-          buttonOnClick={onUserEditorView}/>
-      </Hidden>
-      <Hidden mdUp>
-        <ComponentHeader
-          title={t("navigation.users")}
-          onDrawerToggle={props.onDrawerToggle}
-          buttonText={
-            canManageUsers
-              ? t("button.create_user")
-              : undefined
-          }
-          buttonIcon={AddRounded}
-          buttonOnClick={onUserEditorView}
-          onSearch={onSearchInvoke}
-          menuItems={menuItems}
-        />
-      </Hidden>
-      {canRead || canManageUsers
-        ? <>
-          <Hidden smDown>
-            <div className={classes.wrapper}>
-              <DataGrid
-                components={{
-                  LoadingOverlay: GridLinearProgress,
-                  NoRowsOverlay: EmptyStateOverlay,
-                  Toolbar: GridToolbar,
-                  Pagination: Pagination
-                }}
-                componentsProps={{
-                  toolbar: {
-                    endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
-                    destinations: [
-                      <Button
-                        key="departments"
-                        color="primary"
-                        size="small"
-                        startIcon={<DomainRounded fontSize="small"/>}
-                        onClick={onDepartmentView}>
-                        {t("navigation.departments")}
-                      </Button>
-                    ]
-                  }
-                }}
-                rows={items}
-                columns={columns}
-                density={preferences.density}
-                loading={isLoading}
-                paginationMode="client"
-                getRowId={(r) => r.userId}
-                onRowDoubleClick={onDataGridRowDoubleClick}/>
-            </div>
-          </Hidden>
-          <Hidden smUp>
-            {!isLoading
-              ? items.length < 1
-                ? <UserEmptyStateComponent />
-                : <UserList users={items} onItemSelect={onUserSelected} />
-              : <LinearProgress />
+      <InstantSearch searchClient={Provider} indexName="users">
+        <Hidden mdDown>
+          <PageHeader
+            title={t("navigation.users")}
+            buttonText={t("button.create_user")}
+            buttonIcon={AddRounded}
+            buttonOnClick={onUserEditorView}
+            onSearchFocusChanged={setSearchMode}/>
+        </Hidden>
+        <Hidden mdUp>
+          <ComponentHeader
+            title={t("navigation.users")}
+            onDrawerToggle={props.onDrawerToggle}
+            buttonText={
+              canManageUsers
+                ? t("button.create_user")
+                : undefined
             }
-          </Hidden>
+            buttonIcon={AddRounded}
+            buttonOnClick={onUserEditorView}
+            menuItems={menuItems}
+          />
+        </Hidden>
+        {canRead || canManageUsers
+          ? <>
+            <Hidden smDown>
+              <Box className={classes.wrapper}>
+                { searchMode
+                  ? <UserDataGrid
+                    onItemSelect={onDataGridRowDoubleClick}
+                    onModificationInvoke={onModificationInvoke}
+                    onRemoveInvoke={onRemoveInvoke}
+                    onDepartmentInvoke={onDepartmentView}/>
+                  : dataGrid
+                }
+              </Box>
+            </Hidden>
+            <Hidden smUp>
+              {!isLoading
+                ? items.length < 1
+                  ? <UserEmptyStateComponent />
+                  : <UserList users={items} onItemSelect={onUserSelected} />
+                : <LinearProgress />
+              }
+            </Hidden>
 
-        </>
-        : <ErrorNoPermissionState />
-      }
+          </>
+          : <ErrorNoPermissionState />
+        }
+      </InstantSearch>
       {state.isOpen &&
         <UserEditor
           isOpen={state.isOpen}
@@ -339,5 +356,110 @@ const UserEmptyStateComponent = () => {
       subtitle={t("empty_user_summary")} />
   );
 }
+
+type UserDataGridCoreProps = HitsProvided<User> & {
+  onItemSelect: (params: GridRowParams) => void,
+  onModificationInvoke: (user: User) => void,
+  onRemoveInvoke: (user: User) => void,
+  onDepartmentInvoke: () => void,
+}
+const UserDataGridCore = (props: UserDataGridCoreProps) => {
+  const { t } = useTranslation();
+  const userPreference = usePreferences();
+
+  const columns = [
+    { field: userId, headerName: t("field.id"), hide: true },
+    { field: lastName, headerName: t("field.last_name"), flex: 1 },
+    { field: firstName, headerName: t("field.first_name"), flex: 1 },
+    { field: email, headerName: t("field.email"), flex: 1 },
+    {
+      field: position,
+      headerName: t("field.position"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let user = params.row as User;
+        return user.position === undefined ? t("unknown") : user.position;
+      }
+    },
+    {
+      field: department,
+      headerName: t("field.department"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let user = params.row as User;
+        return user.department?.name === undefined ? t("unknown") : user.department?.name;
+      }
+    }, {
+      field: "manage",
+      headerName: t("navigation.manage"),
+      flex: 0.4,
+      disableColumnMenu: true,
+      sortable: false,
+      renderCell: (params: GridCellParams) => {
+        const user = params.row as User;
+        return (
+          <Tooltip title={<>{t(user.disabled ? "button.enable" : "button.disable")}</>} placement="bottom">
+            <span>
+              <IconButton
+                aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
+                onClick={() => props.onModificationInvoke(user)}
+                size="large">
+                { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
+              </IconButton>
+            </span>
+          </Tooltip>
+        );
+      }
+    },
+    {
+      field: "delete",
+      headerName: t("button.delete"),
+      flex: 0.4,
+      disableColumnMenu: true,
+      sortable: false,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <IconButton
+            aria-label={t("button.delete")}
+            onClick={() => props.onRemoveInvoke(params.row as User)}
+            size="large">
+            <DeleteOutline/>
+          </IconButton>
+        );
+      }
+    }
+  ]
+
+  return (
+    <DataGrid
+      hideFooterPagination
+      components={{
+        LoadingOverlay: GridLinearProgress,
+        NoRowsOverlay: EmptyStateOverlay,
+        Toolbar: GridToolbar
+      }}
+      componentsProps={{
+        toolbar: {
+          destinations: [
+            <Button
+              key="types"
+              color="primary"
+              size="small"
+              startIcon={<LocalOfferRounded fontSize="small"/>}
+              onClick={props.onDepartmentInvoke}>
+              {t("navigation.types")}
+            </Button>
+          ]
+        }
+      }}
+      columns={columns}
+      rows={props.hits}
+      density={userPreference.density}
+      getRowId={(r) => r.userId}
+      onRowDoubleClick={props.onItemSelect}/>
+  )
+}
+
+const UserDataGrid = connectHits<UserDataGridCoreProps, User>(UserDataGridCore)
 
 export default UserScreen;

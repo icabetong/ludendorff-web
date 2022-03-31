@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {
   FormControl,
-  IconButton, IconButtonProps,
+  IconButton,
   InputAdornment,
   InputLabel,
   OutlinedInput,
@@ -10,7 +10,7 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import { SearchOutlined } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
-import {connectSearchBox, connectStateResults, connectHighlight, ClearRefinements} from "react-instantsearch-dom";
+import {connectSearchBox, connectStateResults, connectHighlight} from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";

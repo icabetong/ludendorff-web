@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import makeStyles from '@mui/styles/makeStyles';
 import {
@@ -17,17 +16,23 @@ import {Theme, useTheme} from "@mui/material";
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     width: '100%', height: '100%',
-    padding: theme.spacing(6)
+    padding: theme.spacing(2)
   },
   wrapper: {
     height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
   },
   image: {
-    width: '32em',
-    height: '32em',
+    width: '24em',
      [theme.breakpoints.down('sm')]: {
-       width: '24em',
-       height: '24em'
+       width: '12em',
+       marginBottom: '1em'
      }
   },
   actionWrapper: {
@@ -57,11 +62,11 @@ export const ErrorNotFoundState = () => {
 
   return (
     <Box className={classes.root}>
-      <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.wrapper}>
-        <Grid item md={6} lg={4}>
+      <Box className={classes.wrapper}>
+        <Box>
           <Logo className={classes.image} />
-        </Grid>
-        <Grid item md={6} lg={4}>
+        </Box>
+        <Box sx={{mx: 4}}>
           <Typography variant="h2">{t("error.not_found_header")}</Typography>
           <Typography variant="h6">{t("error.not_found_summary")}</Typography>
 
@@ -76,8 +81,8 @@ export const ErrorNotFoundState = () => {
               {t("button.go_to_home")}
             </Button>
           </Box>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   )
 }

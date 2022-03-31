@@ -1,19 +1,12 @@
 import {
   Box,
   Chip,
-  FormControl,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography
 } from "@mui/material";
 import {CheckRounded, ChevronLeftRounded, ChevronRightRounded} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
-import {useState} from "react";
-
 
 type PaginationControllerType = {
   size: number,

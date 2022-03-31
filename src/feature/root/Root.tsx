@@ -1,7 +1,7 @@
-import React, { useState, useRef, Suspense, lazy } from "react";
-import { useTranslation } from "react-i18next";
-import { Redirect } from "react-router";
-import { withRouter, } from "react-router-dom";
+import React, {lazy, Suspense, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Redirect} from "react-router";
+import {withRouter,} from "react-router-dom";
 import {
   AppBar,
   Box,
@@ -16,34 +16,30 @@ import {
   Drawer,
   Grow,
   Hidden,
+  lighten,
   ListItemIcon,
   ListItemText,
-  MenuList,
   MenuItem,
-  Popper,
+  MenuList,
   Paper,
+  Popper,
+  Theme,
   Toolbar,
+  Typography,
   useMediaQuery,
   useTheme,
-  Typography,
-  lighten, Theme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { SnackbarProvider } from "notistack";
-import { 
-  ArrowDropDown,   
-  SettingsOutlined,
-  AccountCircleOutlined,
-  ExitToAppRounded
-} from "@mui/icons-material";
-import { ReactComponent as Logo } from "../../shared/brand.svg";
+import {SnackbarProvider} from "notistack";
+import {AccountCircleOutlined, ArrowDropDown, ExitToAppRounded, SettingsOutlined} from "@mui/icons-material";
+import {ReactComponent as Logo} from "../../shared/brand.svg";
 
-import { signOut } from "firebase/auth";
-import { AuthStatus, useAuthState } from "../auth/AuthProvider";
-import { Destination, NavigationComponent, TopNavigationComponent } from "../navigation/NavigationComponent";
-import { ErrorNotFoundState } from "../state/ErrorStates";
-import { MainLoadingStateComponent, ContentLoadingStateComponent } from "../state/LoadingStates";
-import { auth } from "../../index";
+import {signOut} from "firebase/auth";
+import {AuthStatus, useAuthState} from "../auth/AuthProvider";
+import {Destination, NavigationComponent, TopNavigationComponent} from "../navigation/NavigationComponent";
+import {ErrorNotFoundState} from "../state/ErrorStates";
+import {ContentLoadingStateComponent, MainLoadingStateComponent} from "../state/LoadingStates";
+import {auth} from "../../index";
 
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
 const UserScreen = lazy(() => import('../user/UserScreen'));
@@ -176,6 +172,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
       setMenuOpen(false);
 
     props.onNavigate(destination)
+    localStorage.setItem('tab', destination.toString())
   }
 
   const signOutDialog = (
@@ -292,9 +289,12 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 
 const RootComponent = () => {
   const { status, user } = useAuthState();
-  const [destination, setDestination] = useState<Destination>(Destination.ASSETS);
   const theme = useTheme();
   const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('sm'));
+  const [destination, setDestination] = useState<Destination>(() => {
+    const previousDestination = localStorage.getItem('tab');
+    return previousDestination ? parseInt(previousDestination) : Destination.ASSETS;
+  });
 
   const onNavigate = (newDestination: Destination) => {
     setDestination(newDestination)
