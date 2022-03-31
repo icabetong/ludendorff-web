@@ -9,6 +9,7 @@ import {
 type GridComponentProps = {
   destinations?: JSX.Element[],
   endAction: JSX.Element,
+  isSearchEnabled?: boolean,
   onSearchFocusChanged: (focus: boolean) => void,
 }
 

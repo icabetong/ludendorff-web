@@ -24,7 +24,6 @@ import { Asset, AssetRepository } from "./Asset";
 import { Type, TypeCore, minimize } from "../type/Type";
 import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { newId } from "../../shared/utils";
 import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 
@@ -41,6 +40,7 @@ export type FormValues = {
   classification: string,
   unitOfMeasure: string,
   unitValue: number,
+  remarks?: string,
 }
 
 const AssetEditor = (props: AssetEditorProps) => {
@@ -92,12 +92,12 @@ const AssetEditor = (props: AssetEditorProps) => {
     if (props.isCreate) {
       AssetRepository.create(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_created")))
-        .catch(() => enqueueSnackbar(t("feedback.asset_create_error")))
+        .catch((e) => enqueueSnackbar(t("feedback.asset_create_error")))
         .finally(props.onDismiss)
     } else {
       AssetRepository.update(asset, previousTypeId)
         .then(() => enqueueSnackbar(t("feedback.asset_updated")))
-        .catch(() => enqueueSnackbar(t("feedback.asset_update_error")))
+        .catch((e) => enqueueSnackbar(t("feedback.asset_update_error")))
         .finally(props.onDismiss)
     }
   }
@@ -188,7 +188,8 @@ const AssetEditor = (props: AssetEditorProps) => {
                     multiline
                     rows={4}
                     label={t('field.remarks')}
-                    defaultValue={props.asset && props.asset.remarks}/>
+                    defaultValue={props.asset && props.asset.remarks}
+                    {...register('remarks', { required: 'feedback.empty_asset_remarks'})}/>
                 </Grid>
               </Grid>
             </Container>

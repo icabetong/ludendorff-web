@@ -1,39 +1,83 @@
-import React, { FunctionComponent, ComponentClass } from "react";
+import React, {FunctionComponent, ComponentClass, ChangeEvent} from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
-  Button,
-  Grid,
+  Button, ClickAwayListener,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
   Typography,
 } from "@mui/material";
+import {connectSearchBox} from "react-instantsearch-dom";
+import {SearchBoxProvided} from "react-instantsearch-core";
+import {ClearRounded} from "@mui/icons-material";
+
+type SearchBoxType = SearchBoxProvided & {
+  onFocusChanged?: (hasFocus: boolean) => void,
+}
+
+const SearchBoxCore = (props: SearchBoxType) => {
+  const { t } = useTranslation();
+
+  const onFocusGained = () => {
+    props.onFocusChanged?.(true)
+  }
+
+  const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    props.refine(event.target.value)
+    if (event.target.value === "") {
+      props.onFocusChanged?.(false)
+    }
+  }
+
+  return (
+    <OutlinedInput
+      size="small"
+      value={props.currentRefinement}
+      placeholder={t("field.search")}
+      onFocus={onFocusGained}
+      onChange={onQueryChanged}/>
+  )
+}
+const SearchBox = connectSearchBox<SearchBoxType>(SearchBoxCore)
 
 type PageHeaderPropsType = {
   title: String,
   buttonText?: String,
   buttonIcon?: string | FunctionComponent<any> | ComponentClass<any, any>,
-  buttonOnClick?: React.MouseEventHandler
+  buttonOnClick?: React.MouseEventHandler,
+  onSearchFocusChanged?: (hasFocus: boolean) => void,
 }
+
 
 const PageHeader = (props: PageHeaderPropsType) => {
   const { title, buttonText: label, buttonIcon: icon, buttonOnClick: event } = props;
 
+  const onClickAway = () => {
+    props.onSearchFocusChanged?.(false)
+  }
+
   return (
-    <Box mx={3} pt={4}>
-      <Grid container direction="row" justifyContent="space-between">
-        <Grid item>
-          <Typography variant="h4">{title}</Typography>
-        </Grid>
-        { label &&
-          <Grid item>
-            <Button 
-              variant="contained" 
-              color="primary"
-              startIcon={icon && React.createElement(icon)}
-              onClick={event}>
-              {label}
-            </Button>
-          </Grid>
-        }
-      </Grid>
+    <Box mx={3} pt={4} sx={{w:"100%", display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+      <Box flexGrow={3}>
+        <Typography variant="h4">{title}</Typography>
+      </Box>
+      { props.onSearchFocusChanged &&
+        <Box sx={{mx: 2}}>
+          <ClickAwayListener onClickAway={onClickAway}>
+            <SearchBox onFocusChanged={props.onSearchFocusChanged}/>
+          </ClickAwayListener>
+        </Box>
+      }
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={icon && React.createElement(icon)}
+          onClick={event}>
+          {label}
+        </Button>
+      </Box>
     </Box>
   )
 }

@@ -28,7 +28,6 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetList from "./AssetList";
-import AssetSearchScreen from "./AssetSearchScreen";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
@@ -57,6 +56,9 @@ import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 import {usePagination} from "use-pagination-firestore";
 import PaginationController from "../../components/PaginationController";
+import {connectHits, InstantSearch} from "react-instantsearch-dom";
+import {Provider} from "../../components/Search";
+import {HitsProvided} from "react-instantsearch-core";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -82,6 +84,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const userPreference = usePreferences();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [size, setSize] = useState(15);
+  const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
     query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), { limit: 15 }
@@ -93,7 +96,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     if (asset !== undefined) {
       AssetRepository.remove(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.asset_remove_error")))
+        .catch((e) => enqueueSnackbar(t("feedback.asset_remove_error")))
         .finally(onRemoveDismiss)
     }
   }
@@ -163,10 +166,6 @@ const AssetScreen = (props: AssetScreenProps) => {
     })
   }
 
-  const [search, setSearch] = useState<boolean>(false);
-  const onSearchInvoke = () => setSearch(true);
-  const onSearchDismiss = () => setSearch(false);
-
   const [isCategoryOpen, setCategoryOpen] = useState(false);
   const onCategoryListView = () => setCategoryOpen(true);
   const onCategoryListDismiss = () => setCategoryOpen(false);
@@ -175,7 +174,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     <MenuItem key={0} onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
   ];
 
-  const Pagination = () => {
+  const pagination = () => {
     return (
       <PaginationController
         size={size}
@@ -187,93 +186,98 @@ const AssetScreen = (props: AssetScreenProps) => {
     )
   }
 
+  const dataGrid = (
+    <DataGrid
+      components={{
+        LoadingOverlay: GridLinearProgress,
+        NoRowsOverlay: EmptyStateOverlay,
+        Toolbar: GridToolbar,
+        Pagination: pagination
+      }}
+      componentsProps={{
+        toolbar: {
+          destinations: [
+            <Button
+              key="types"
+              color="primary"
+              size="small"
+              startIcon={<LocalOfferRounded fontSize="small"/>}
+              onClick={onCategoryListView}>
+              {t("navigation.types")}
+            </Button>
+          ]
+        }
+      }}
+      rows={items}
+      columns={columns}
+      density={userPreference.density}
+      loading={isLoading}
+      getRowId={(r) => r.stockNumber}
+      onRowDoubleClick={onDataGridRowDoubleClicked}/>
+  );
+
   return (
     <Box className={classes.root}>
-      <Hidden mdDown>
-        <PageHeader
-          title={t("navigation.assets")}
-          buttonText={
-            canWrite
-              ? t("button.create_asset")
-              : undefined
-          }
-          buttonIcon={AddRounded}
-          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}/>
-      </Hidden>
-      <Hidden mdUp>
-        <ComponentHeader
-          title={t("navigation.assets")}
-          onDrawerToggle={props.onDrawerToggle}
-          buttonText={
-            canWrite
-              ? t("button.create_asset")
-              : undefined
-          }
-          buttonIcon={AddRounded}
-          buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-          onSearch={onSearchInvoke}
-          menuItems={menuItems} />
-      </Hidden>
-      {canRead
-        ? <>
-          <Hidden smDown>
-            <Box className={classes.wrapper}>
-              <DataGrid
-                components={{
-                  LoadingOverlay: GridLinearProgress,
-                  NoRowsOverlay: EmptyStateOverlay,
-                  Toolbar: GridToolbar,
-                  Pagination: Pagination
-                }}
-                componentsProps={{
-                  toolbar: {
-                    endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
-                    destinations: [
-                      <Button
-                        key="types"
-                        color="primary"
-                        size="small"
-                        startIcon={<LocalOfferRounded fontSize="small"/>}
-                        onClick={onCategoryListView}>
-                        {t("navigation.types")}
-                      </Button>
-                    ]
-                  }
-                }}
-                rows={items}
-                columns={columns}
-                density={userPreference.density}
-                loading={isLoading}
-                getRowId={(r) => r.stockNumber}
-                onRowDoubleClick={onDataGridRowDoubleClicked}/>
-            </Box>
-          </Hidden>
-          <Hidden smUp>
-            {!isLoading
-              ? items.length < 1
-                ? <AssetEmptyState />
-                : <AssetList
-                    assets={items}
-                    onItemSelect={onAssetSelected}
-                    onItemRemove={onRemoveInvoke} />
-              : <LinearProgress />
+      <InstantSearch searchClient={Provider} indexName="assets">
+        <Hidden mdDown>
+          <PageHeader
+            title={t("navigation.assets")}
+            buttonText={
+              canWrite
+                ? t("button.create_asset")
+                : undefined
             }
-          </Hidden>
-        </>
-        : <ErrorNoPermissionState />
-      }
+            buttonIcon={AddRounded}
+            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
+            onSearchFocusChanged={setSearchMode}/>
+        </Hidden>
+        <Hidden mdUp>
+          <ComponentHeader
+            title={t("navigation.assets")}
+            onDrawerToggle={props.onDrawerToggle}
+            buttonText={
+              canWrite
+                ? t("button.create_asset")
+                : undefined
+            }
+            buttonIcon={AddRounded}
+            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
+            menuItems={menuItems} />
+        </Hidden>
+        {canRead
+          ? <>
+            <Hidden smDown>
+              <Box className={classes.wrapper}>
+                { searchMode
+                  ? <AssetDataGrid
+                      onItemSelect={onDataGridRowDoubleClicked}
+                      onRemoveInvoke={onRemoveInvoke}
+                      onCategoryInvoke={onCategoryListView}/>
+                  : dataGrid
+                }
+              </Box>
+            </Hidden>
+            <Hidden smUp>
+              {!isLoading
+                ? items.length < 1
+                  ? <AssetEmptyState />
+                  : <AssetList
+                      assets={items}
+                      onItemSelect={onAssetSelected}
+                      onItemRemove={onRemoveInvoke} />
+                : <LinearProgress />
+              }
+            </Hidden>
+          </>
+          : <ErrorNoPermissionState />
+        }
+      </InstantSearch>
       {state.isOpen &&
         <AssetEditor
           isOpen={state.isOpen}
           isCreate={state.isCreate}
           asset={state.asset}
           onDismiss={onAssetEditorDismiss} />
-      }
-      {search &&
-        <AssetSearchScreen
-          isOpen={search}
-          onDismiss={onSearchDismiss}
-          onEditorInvoke={onAssetSelected} />
       }
       <TypeScreen
         isOpen={isCategoryOpen}
@@ -308,5 +312,97 @@ const AssetEmptyState = () => {
       subtitle={t("empty_asset_summary")} />
   );
 }
+
+type AssetDataGridCoreProps = HitsProvided<Asset> & {
+  onItemSelect: (params: GridRowParams) => void,
+  onRemoveInvoke: (asset: Asset) => void,
+  onCategoryInvoke: () => void,
+}
+const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
+  const { t } = useTranslation();
+  const userPreference = usePreferences();
+
+  const columns = [
+    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
+    {
+      field: assetType,
+      headerName: t("field.type"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let asset = params.row as Asset;
+        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
+      }
+    },
+    {
+      field: assetClassification,
+      headerName: t("field.classification"),
+      flex: 1,
+    },
+    {
+      field: assetUnitOfMeasure,
+      headerName: t("field.unit_of_measure"),
+      flex: 1
+    },
+    {
+      field: assetUnitValue,
+      headerName: t("field.unit_value"),
+      flex: 1
+    },
+    {
+      field: assetRemarks,
+      headerName: t("field.remarks"),
+      flex: 1
+    },
+    {
+      field: "delete",
+      headerName: t("button.delete"),
+      flex: 0.5,
+      disableColumnMenu: true,
+      sortable: false,
+      renderCell: (params: GridCellParams) => {
+        const asset = params.row as Asset;
+        return (
+          <IconButton
+            aria-label={t("button.delete")}
+            onClick={() => props.onRemoveInvoke(asset)}
+            size="large">
+            <DeleteOutlineRounded/>
+          </IconButton>
+        );
+      }
+    }
+  ];
+
+  return (
+    <DataGrid
+      hideFooterPagination
+      components={{
+        LoadingOverlay: GridLinearProgress,
+        NoRowsOverlay: EmptyStateOverlay,
+        Toolbar: GridToolbar,
+      }}
+      componentsProps={{
+        toolbar: {
+          destinations: [
+            <Button
+              key="types"
+              color="primary"
+              size="small"
+              startIcon={<LocalOfferRounded fontSize="small"/>}
+              onClick={props.onCategoryInvoke}>
+              {t("navigation.types")}
+            </Button>
+          ]
+        }
+      }}
+      columns={columns}
+      rows={props.hits}
+      density={userPreference.density}
+      getRowId={(r) => r.stockNumber}
+      onRowDoubleClick={props.onItemSelect}/>
+  )
+}
+const AssetDataGrid = connectHits<AssetDataGridCoreProps, Asset>(AssetDataGridCore)
 
 export default AssetScreen;
