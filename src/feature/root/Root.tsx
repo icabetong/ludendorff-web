@@ -122,11 +122,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   profileName: {
     textTransform: 'none',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.primary,
   },
   profileEmail: {
     textTransform: 'none',
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.text.secondary,
   },
   profileMenu: {
     backgroundColor: lighten(theme.palette.background.paper, 0.2)
@@ -231,6 +231,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
               </Box>
               <Divider variant="middle" orientation="vertical" flexItem className={classes.divider}/>
               <Button
+                color="inherit"
                 ref={anchorRef}
                 aria-haspopup="true"
                 onClick={onTriggerMenu}

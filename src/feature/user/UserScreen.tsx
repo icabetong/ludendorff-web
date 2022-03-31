@@ -55,6 +55,8 @@ import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
+import {usePagination} from "use-pagination-firestore";
+import PaginationController from "../../components/PaginationController";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -78,23 +80,11 @@ const UserScreen = (props: UserScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canManageUsers } = usePermissions();
   const preferences = usePreferences();
-  const [isLoading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
+  const [size, setSize] = useState(15);
 
-  useEffect(() => {
-    let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
-      if (mounted) {
-        setUsers(snapshot.docs.map((doc) => doc.data() as User));
-        setLoading(false);
-      }
-    })
-    
-    return () => {
-      mounted = false;
-      unsubscribe();
-    }
-  }, []);
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
+    query(collection(firestore, userCollection), orderBy(lastName, "asc")), { limit: 15 }
+  );
 
   const columns = [
     { field: userId, headerName: t("field.id"), hide: true },
@@ -212,6 +202,18 @@ const UserScreen = (props: UserScreenProps) => {
     <MenuItem key={0} onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
+  const Pagination = () => {
+    return (
+      <PaginationController
+        size={size}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        onPageSizeChanged={setSize}/>
+    )
+  }
+
   return (
     <Box className={classes.root}>
       <Hidden mdDown>
@@ -244,7 +246,8 @@ const UserScreen = (props: UserScreenProps) => {
                 components={{
                   LoadingOverlay: GridLinearProgress,
                   NoRowsOverlay: EmptyStateOverlay,
-                  Toolbar: GridToolbar
+                  Toolbar: GridToolbar,
+                  Pagination: Pagination
                 }}
                 componentsProps={{
                   toolbar: {
@@ -261,10 +264,9 @@ const UserScreen = (props: UserScreenProps) => {
                     ]
                   }
                 }}
-                rows={users}
+                rows={items}
                 columns={columns}
                 density={preferences.density}
-                pageSize={20}
                 loading={isLoading}
                 paginationMode="client"
                 getRowId={(r) => r.userId}
@@ -273,9 +275,9 @@ const UserScreen = (props: UserScreenProps) => {
           </Hidden>
           <Hidden smUp>
             {!isLoading
-              ? users.length < 1
+              ? items.length < 1
                 ? <UserEmptyStateComponent />
-                : <UserList users={users} onItemSelect={onUserSelected} />
+                : <UserList users={items} onItemSelect={onUserSelected} />
               : <LinearProgress />
             }
           </Hidden>

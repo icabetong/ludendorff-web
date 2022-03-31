@@ -37,7 +37,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
       light: mode === 'dark' ? teal300 : teal400,
       main: mode === 'dark' ? teal500 : teal600,
       dark: mode === 'dark' ? teal700 :  teal800,
-      contrastText: mode === 'dark' ? white : gray800
+      contrastText: mode === 'dark' ? gray800 : white
     },
     secondary: {
       light: mode === 'dark' ? teal300 : teal400,
@@ -51,7 +51,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     },
     text: {
       primary: mode === 'dark' ? gray100 : gray700,
-      secondary: gray500,
+      secondary: mode === 'dark' ? gray300: gray500,
     },
     divider: mode === 'dark' ? gray600 : gray300,
   },

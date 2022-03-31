@@ -79,9 +79,13 @@ const AssetEditor = (props: AssetEditorProps) => {
 
   let previousTypeId: string | undefined = undefined;
   const onSubmit = (data: FormValues) => {
+    if (!data.stockNumber) {
+      return;
+    }
+
     const asset: Asset = {
       ...data,
-      stockNumber: props.asset === undefined ? newId() : props.asset?.stockNumber,
+      stockNumber: props.asset === undefined ? data.stockNumber : props.asset?.stockNumber,
       type: type !== undefined ? type : undefined,
     }
 

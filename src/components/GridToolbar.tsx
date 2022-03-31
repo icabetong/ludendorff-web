@@ -3,6 +3,7 @@ import {
   GridToolbarContainer,
   GridToolbarColumnsButton,
   GridToolbarDensitySelector,
+  useGridApiContext
 } from "@mui/x-data-grid";
 
 type GridComponentProps = {
@@ -11,8 +12,7 @@ type GridComponentProps = {
 }
 
 const GridToolbar = () => {
-  //const { apiRef } = useGridSlotComponentProps();
-  //const componentProps = apiRef.current.componentsProps;
+  const apiRef = useGridApiContext();
 
   return (
     <GridToolbarContainer>

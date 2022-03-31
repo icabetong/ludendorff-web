@@ -2,6 +2,7 @@ export const assetCollection = "assets";
 export const typeCollection = "types";
 export const userCollection = "users";
 export const departmentCollection = "departments";
+export const inventoryCollection = "inventories"
 
 export const typeId = "typeId";
 export const typeName = "typeName";
@@ -36,3 +37,12 @@ export const position = "position";
 export const department = "department";
 export const userDepartmentId = `${department}.${departmentId}`;
 export const userDepartmentName = `${department}.${departmentName}`;
+
+export const inventoryReportId = "inventoryReportId"
+export const fundCluster = "fundCluster"
+export const entityName = "entityName"
+export const entityPosition = "entityPosition"
+export const yearMonth = "yearMonth"
+export const accountabilityDate = "accountabilityDate"
+export const items = "items"
+

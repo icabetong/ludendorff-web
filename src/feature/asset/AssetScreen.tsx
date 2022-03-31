@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme} from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
@@ -7,7 +7,7 @@ import {
   GridRowParams,
   GridValueGetterParams,
   GridOverlay,
-  GridCellParams
+  GridCellParams, GridRowId,
 } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
@@ -15,7 +15,7 @@ import {
   DesktopWindowsRounded,
   AddRounded,
   DeleteOutlineRounded,
-  SearchOutlined
+  SearchOutlined, ChevronLeftRounded, ChevronRightRounded
 } from "@mui/icons-material";
 
 import { query, collection, orderBy, onSnapshot } from "firebase/firestore";
@@ -55,6 +55,8 @@ import TypeScreen from "../type/TypeScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
+import {usePagination} from "use-pagination-firestore";
+import PaginationController from "../../components/PaginationController";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -79,23 +81,11 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const userPreference = usePreferences();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [isLoading, setLoading] = useState(true);
+  const [size, setSize] = useState(15);
 
-  useEffect(() => {
-    let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), (snapshot) => {
-      if (mounted) {
-        setAssets(snapshot.docs.map((doc) => doc.data() as Asset));
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
-    }
-  }, []);
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
+    query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), { limit: 15 }
+  );
 
   const onRemoveInvoke = (asset: Asset) => setAsset(asset);
   const onRemoveDismiss = () => setAsset(undefined);
@@ -178,12 +168,24 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onSearchDismiss = () => setSearch(false);
 
   const [isCategoryOpen, setCategoryOpen] = useState(false);
-  const onCategoryListView = () => setCategoryOpen(true)
-  const onCategoryListDismiss = () => setCategoryOpen(false)
+  const onCategoryListView = () => setCategoryOpen(true);
+  const onCategoryListDismiss = () => setCategoryOpen(false);
 
   const menuItems = [
     <MenuItem key={0} onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
   ];
+
+  const Pagination = () => {
+    return (
+      <PaginationController
+        size={size}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        onPageSizeChanged={setSize}/>
+    )
+  }
 
   return (
     <Box className={classes.root}>
@@ -220,7 +222,8 @@ const AssetScreen = (props: AssetScreenProps) => {
                 components={{
                   LoadingOverlay: GridLinearProgress,
                   NoRowsOverlay: EmptyStateOverlay,
-                  Toolbar: GridToolbar
+                  Toolbar: GridToolbar,
+                  Pagination: Pagination
                 }}
                 componentsProps={{
                   toolbar: {
@@ -237,22 +240,20 @@ const AssetScreen = (props: AssetScreenProps) => {
                     ]
                   }
                 }}
-                rows={assets}
+                rows={items}
                 columns={columns}
                 density={userPreference.density}
-                pageSize={20}
                 loading={isLoading}
-                paginationMode="client"
                 getRowId={(r) => r.stockNumber}
                 onRowDoubleClick={onDataGridRowDoubleClicked}/>
             </Box>
           </Hidden>
           <Hidden smUp>
             {!isLoading
-              ? assets.length < 1
+              ? items.length < 1
                 ? <AssetEmptyState />
                 : <AssetList
-                    assets={assets}
+                    assets={items}
                     onItemSelect={onAssetSelected}
                     onItemRemove={onRemoveInvoke} />
               : <LinearProgress />

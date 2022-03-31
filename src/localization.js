@@ -49,6 +49,7 @@ const resources = {
         confirmation_password: "Confirm Password",
         submitted_date: "Submitted Date",
         search: "Search",
+        rows_per_page: "Rows per page:"
       },
       placeholder: {
         none: "None",
