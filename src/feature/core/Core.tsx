@@ -171,12 +171,13 @@ export const getDataGridTheme = (theme: Theme) => {
       borderTopWidth: 'thin',
       borderTopStyle: 'solid',
       fontWeight: 400,
+
+      '& .MuiDataGrid-cell': {
+        borderBottomColor: theme.palette.divider
+      }
     },
     '& .MuiDataGrid-columnsContainer': {
       borderBottomColor: theme.palette.divider
     },
-    '& .MuiDataGrid-cell': {
-      borderBottomColor: theme.palette.divider
-    }
   }
 }

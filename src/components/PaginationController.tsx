@@ -36,6 +36,7 @@ const PaginationController = (props: PaginationControllerType) => {
         {sizes.map((s) => {
           return (
             <Chip
+              key={s}
               variant="outlined"
               label={s}
               color={size === s ? "primary" : undefined}
