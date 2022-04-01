@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Router, Route, Switch } from 'react-router-dom';
-import {CssBaseline, PaletteMode, Theme} from '@mui/material';
+import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import AuthComponent from '../auth/AuthComponent'
@@ -36,13 +36,13 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     primary: {
       light: mode === 'dark' ? teal300 : teal400,
       main: mode === 'dark' ? teal500 : teal600,
-      dark: mode === 'dark' ? teal700 :  teal800,
+      dark: mode === 'dark' ? teal700 : teal800,
       contrastText: mode === 'dark' ? gray800 : white
     },
     secondary: {
       light: mode === 'dark' ? teal300 : teal400,
       main: mode === 'dark' ? teal500 : teal600,
-      dark: mode === 'dark' ? teal700 :  teal800
+      dark: mode === 'dark' ? teal700 : teal800
     },
     error: errorColors,
     background: {
@@ -51,7 +51,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     },
     text: {
       primary: mode === 'dark' ? gray100 : gray700,
-      secondary: mode === 'dark' ? gray300: gray500,
+      secondary: mode === 'dark' ? gray300 : gray500,
     },
     divider: mode === 'dark' ? gray600 : gray300,
   },
@@ -120,21 +120,22 @@ type ThemeContextType = {
 
 export const ThemeContext = React.createContext<ThemeContextType>({
   theme: 'dark',
-  setTheme: () => { }
+  setTheme: () => {
+  }
 });
 
 export const CoreComponent = () => {
   const userPreferences = useContext(PreferenceContext);
 
   return <>
-    {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
-    <ThemeProvider theme={baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
-      <CssBaseline />
-      <Router history={history}>
+    {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */ }
+    <ThemeProvider theme={ baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light') }>
+      <CssBaseline/>
+      <Router history={ history }>
         <Switch>
-          <Route path="/" component={RootComponent} exact />
-          <Route path="/auth" component={AuthComponent} />
-          <Route path="*" component={ErrorNotFoundState} exact />
+          <Route path="/" component={ RootComponent } exact/>
+          <Route path="/auth" component={ AuthComponent }/>
+          <Route path="*" component={ ErrorNotFoundState } exact/>
         </Switch>
       </Router>
     </ThemeProvider>
@@ -146,7 +147,7 @@ export const getDataGridTheme = (theme: Theme) => {
     '& .MuiDataGrid-toolbarContainer': {
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
-      backgroundColor: theme.palette.mode === 'dark' ? gray700: gray100,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
       borderBottom: '1px',
       borderBottomStyle: 'solid',
       borderBottomColor: theme.palette.divider

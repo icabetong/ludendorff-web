@@ -17,15 +17,15 @@ export const assetRemarks = "remarks";
 export const dateCreated = "dateCreated";
 export const assetStatus = "status";
 export const assetType = "category";
-export const assetTypeId = `${assetType}.${typeId}`
-export const assetTypeName = `${assetType}.${typeName}`
+export const assetTypeId = `${ assetType }.${ typeId }`
+export const assetTypeName = `${ assetType }.${ typeName }`
 
 export const userId = "userId";
 export const departmentId = "departmentId";
 export const departmentName = "name";
 export const departmentManager = "manager";
-export const departmentManagerId = `${departmentManager}.${userId}`;
-export const departmentManagerName = `${departmentManager}.name`;
+export const departmentManagerId = `${ departmentManager }.${ userId }`;
+export const departmentManagerName = `${ departmentManager }.name`;
 export const departmentCount = "count";
 
 export const firstName = "firstName";
@@ -35,8 +35,8 @@ export const imageUrl = "imageUrl";
 export const permissions = "permissions";
 export const position = "position";
 export const department = "department";
-export const userDepartmentId = `${department}.${departmentId}`;
-export const userDepartmentName = `${department}.${departmentName}`;
+export const userDepartmentId = `${ department }.${ departmentId }`;
+export const userDepartmentName = `${ department }.${ departmentName }`;
 
 export const inventoryReportId = "inventoryReportId"
 export const fundCluster = "fundCluster"
@@ -46,3 +46,16 @@ export const yearMonth = "yearMonth"
 export const accountabilityDate = "accountabilityDate"
 export const items = "items"
 
+export const issuedReportId = "issuedReportId";
+export const serialNumber = "serialNumber";
+export const date = "date";
+
+export const quantityIssued = "quantityIssued";
+export const unitCost = "unitCost";
+export const reponsibilityCenter = "responsibilityCenter";
+
+export const article = "article";
+export const unitValue = "unitValue";
+export const balancePerCard = "balancePerCard";
+export const onHandCount = "onHandCount";
+export const remarks = "remarks";

@@ -18,7 +18,8 @@ type PreferencesContext = {
 
 export const PreferenceContext = React.createContext<PreferencesContext>({
   preferences: defaultPreferences,
-  setPreferences: () => { }
+  setPreferences: () => {
+  }
 });
 
 export const PreferenceProvider: React.FC = ({ children }) => {
@@ -26,8 +27,10 @@ export const PreferenceProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     onPreferenceFetch()
-      .then(() => {})
-      .catch((e) => {});
+      .then(() => {
+      })
+      .catch((e) => {
+      });
   }, [])
 
   const onPreferenceFetch = async () => {
@@ -41,8 +44,8 @@ export const PreferenceProvider: React.FC = ({ children }) => {
   }
 
   return (
-    <PreferenceContext.Provider value={{ preferences: preferences, setPreferences: onPreferenceChanged }}>
-      {children}
+    <PreferenceContext.Provider value={ { preferences: preferences, setPreferences: onPreferenceChanged } }>
+      { children }
     </PreferenceContext.Provider>
   );
 }

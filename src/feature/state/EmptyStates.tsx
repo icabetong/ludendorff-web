@@ -2,7 +2,7 @@ import React, { FunctionComponent, ComponentClass } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import makeStyles from '@mui/styles/makeStyles';
-import {Theme} from "@mui/material";
+import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -34,15 +34,15 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      className={classes.root}>
+      className={ classes.root }>
       <Grid item>
-        {React.createElement(props.icon, { className: classes.icon })}
+        { React.createElement(props.icon, { className: classes.icon }) }
       </Grid>
       <Grid item>
-        <Typography variant="h6" className={classes.text}>{props.title}</Typography>
+        <Typography variant="h6" className={ classes.text }>{ props.title }</Typography>
       </Grid>
       <Grid item>
-        <Typography variant="subtitle1" className={classes.text}>{props.subtitle}</Typography>
+        <Typography variant="subtitle1" className={ classes.text }>{ props.subtitle }</Typography>
       </Grid>
     </Grid>
   )

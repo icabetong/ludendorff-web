@@ -29,17 +29,17 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
   const { t } = useTranslation();
   const { children, classes, onSearch, ...other } = props;
   return (
-    <MuiDialogTitle className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onSearch ? (
+    <MuiDialogTitle className={ classes.root } { ...other }>
+      <Typography variant="h6">{ children }</Typography>
+      { onSearch ? (
         <IconButton
-          aria-label={t("button.search")}
-          className={classes.actionButton}
-          onClick={onSearch}
+          aria-label={ t("button.search") }
+          className={ classes.actionButton }
+          onClick={ onSearch }
           size="large">
           <SearchOutlined/>
         </IconButton>
-      ) : null}
+      ) : null }
     </MuiDialogTitle>
   );
 })

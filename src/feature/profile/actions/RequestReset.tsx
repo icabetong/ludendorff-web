@@ -33,17 +33,17 @@ const RequestResetPrompt = (props: RequestResetPromptProps) => {
 
   return (
     <Dialog
-      open={props.isOpen}
-      fullWidth={true}
+      open={ props.isOpen }
+      fullWidth={ true }
       maxWidth="xs"
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("dialog.send_reset_link_title")}</DialogTitle>
+      onClose={ props.onDismiss }>
+      <DialogTitle>{ t("dialog.send_reset_link_title") }</DialogTitle>
       <DialogContent>
-        <DialogContentText>{t("dialog.send_reset_link_message")}</DialogContentText>
+        <DialogContentText>{ t("dialog.send_reset_link_message") }</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={props.onDismiss}>{t("button.cancel")}</Button>
-        <Button color="primary" onClick={onSubmit}>{t("button.continue")}</Button>
+        <Button color="primary" onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
+        <Button color="primary" onClick={ onSubmit }>{ t("button.continue") }</Button>
       </DialogActions>
     </Dialog>
   );

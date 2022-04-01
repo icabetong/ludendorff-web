@@ -13,7 +13,7 @@ const resources = {
         manage: "Manage",
         account: "Account",
         assets: "Assets",
-        inventory: "Inventory Reports",
+        inventories: "Inventory Reports",
         issued: "Issued Reports",
         users: "Users",
         types: "Types",
@@ -49,7 +49,15 @@ const resources = {
         confirmation_password: "Confirm Password",
         submitted_date: "Submitted Date",
         search: "Search",
-        rows_per_page: "Rows per page:"
+        rows_per_page: "Rows per page:",
+        fund_cluster: "Fund Cluster",
+        entity_name: "Entity Name",
+        entity_position: "Entity Position",
+        year_month: "Year Month",
+        accountability_date: "Accountability Date",
+        items: "Items",
+        balance_per_card: "Balance Per Card",
+        on_hand_count: "On Hand Count",
       },
       placeholder: {
         none: "None",
@@ -99,7 +107,8 @@ const resources = {
         request_asset: "Request Asset",
         create_asset: "Create Asset",
         create_user: "Create User",
-        create_assignment: "Create Assignment",
+        create_report: "Create Report",
+        not_set: "Not Set",
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -200,14 +209,20 @@ const resources = {
         details_asset: "Asset Details",
         details_user: "User Details",
         details_department: "Department Details",
+        details_inventory: "Inventory Report Details",
+        details_inventory_item: "Inventory Report Item Details",
         select_type: "Select Type",
         select_asset: "Select Asset",
         select_user: "Select User",
-        select_department: "Select Department"
+        select_department: "Select Department",
       },
       template: {
         full_name: "{{first}} {{last}}",
         count: "Count: {{count}}",
+      },
+      empty: {
+        inventory_header: "No Inventory Reports Available",
+        inventory_summary: "There are no Physical Count of Inventories Reports that are available on the database."
       },
       not_yet_returned: "Not Yet Returned",
       no_remarks: "No Remarks",

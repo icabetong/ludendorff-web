@@ -33,12 +33,12 @@ export class DepartmentRepository {
   static async create(department: Department): Promise<void> {
     let batch = writeBatch(firestore);
 
-    batch.set(doc(firestore, departmentCollection, 
+    batch.set(doc(firestore, departmentCollection,
       department.departmentId), department);
 
     if (department.manager !== undefined)
-      batch.update(doc(firestore, userCollection, 
-        department.manager?.userId), departmentField,
+      batch.update(doc(firestore, userCollection,
+          department.manager?.userId), departmentField,
         minimizeDepartment(department))
 
     return await batch.commit();
@@ -52,14 +52,14 @@ export class DepartmentRepository {
         minimizeDepartment(department))
     }
 
-    batch.set(doc(firestore, departmentCollection, department.departmentId), 
+    batch.set(doc(firestore, departmentCollection, department.departmentId),
       department);
 
     return await batch.commit();
   }
 
   static async remove(department: Department): Promise<void> {
-    return await deleteDoc(doc(firestore, departmentCollection, 
+    return await deleteDoc(doc(firestore, departmentCollection,
       department.departmentId))
   }
 }

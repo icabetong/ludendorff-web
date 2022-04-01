@@ -15,9 +15,9 @@ const UserList = (props: UserListProps) => {
       props.users.map((user: User) => {
         return (
           <UserItem
-            key={user.userId}
-            user={user}
-            onItemSelect={props.onItemSelect} />
+            key={ user.userId }
+            user={ user }
+            onItemSelect={ props.onItemSelect }/>
         );
       })
     }</List>
@@ -33,11 +33,11 @@ const UserItem = (props: UserItemProps) => {
   return (
     <ListItem
       button
-      key={props.user.userId}
-      onClick={() => props.onItemSelect(props.user)}>
+      key={ props.user.userId }
+      onClick={ () => props.onItemSelect(props.user) }>
       <ListItemText
-        primary={`${props.user.firstName} ${props.user.lastName}`}
-        secondary={props.user.email} />
+        primary={ `${ props.user.firstName } ${ props.user.lastName }` }
+        secondary={ props.user.email }/>
     </ListItem>
   )
 }

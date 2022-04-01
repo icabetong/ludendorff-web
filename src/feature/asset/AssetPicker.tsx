@@ -17,8 +17,9 @@ import AssetList from "./AssetList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
+import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 
-type AssetPickerProps = {
+type AssetPickerProps = PaginationControllerProps & {
   isOpen: boolean,
   assets: Asset[],
   isLoading: boolean,
@@ -39,29 +40,36 @@ const AssetPicker = (props: AssetPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
+      fullScreen={ isMobile }
+      fullWidth={ true }
       maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("asset_select")}</DialogTitle>
-      <DialogContent dividers={true}>
-        {canRead ?
+      open={ props.isOpen }
+      onClose={ props.onDismiss }>
+      <DialogTitle>{ t("asset_select") }</DialogTitle>
+      <DialogContent dividers={ true }>
+        { canRead ?
           !props.isLoading
             ? props.assets.length > 0
-              ? <AssetList
-                  assets={props.assets}
-                  onItemSelect={onSelect} />
+              ? <>
+                  <AssetList
+                    assets={ props.assets }
+                    onItemSelect={ onSelect }/>
+                  <PaginationController
+                    canBack={props.canBack}
+                    canForward={props.canForward}
+                    onBackward={props.onBackward}
+                    onForward={props.onForward}/>
+                </>
               : <EmptyStateComponent
-                icon={DesktopWindowsRounded}
-                title={t("empty_asset")}
-                subtitle={t("empty_asset_summary")} />
-            : <LinearProgress />
-          : <ErrorNoPermissionState />
+                icon={ DesktopWindowsRounded }
+                title={ t("empty_asset") }
+                subtitle={ t("empty_asset_summary") }/>
+            : <LinearProgress/>
+          : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={props.onDismiss}>{t("close")}</Button>
+        <Button color="primary" onClick={ props.onDismiss }>{ t("close") }</Button>
       </DialogActions>
     </Dialog>
   );

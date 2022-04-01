@@ -43,24 +43,24 @@ const TypePicker = (props: TypePickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
+      fullScreen={ isMobile }
+      fullWidth={ true }
       maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("dialog.details_type")}</DialogTitle>
-      <DialogContent dividers={true} className={classes.root}>
-        {canRead
+      open={ props.isOpen }
+      onClose={ props.onDismiss }>
+      <DialogTitle>{ t("dialog.details_type") }</DialogTitle>
+      <DialogContent dividers={ true } className={ classes.root }>
+        { canRead
           ? !props.isLoading
             ? <TypeList
-                types={props.types}
-                onItemSelect={props.onSelectItem} />
-            : <LinearProgress />
-          : <ErrorNoPermissionState />
+              types={ props.types }
+              onItemSelect={ props.onSelectItem }/>
+            : <LinearProgress/>
+          : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={props.onDismiss}>{t("button.close")}</Button>
+        <Button color="primary" onClick={ props.onDismiss }>{ t("button.close") }</Button>
       </DialogActions>
     </Dialog>
   )

@@ -46,24 +46,24 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
+      fullScreen={ isMobile }
+      fullWidth={ true }
       maxWidth="xs"
-      open={props.isOpen}
-      onClose={() => props.onDismiss()}>
-      <DialogTitle>{t("department_select")}</DialogTitle>
-      <DialogContent dividers={true} className={classes.container}>
-        {canRead
+      open={ props.isOpen }
+      onClose={ () => props.onDismiss() }>
+      <DialogTitle>{ t("department_select") }</DialogTitle>
+      <DialogContent dividers={ true } className={ classes.container }>
+        { canRead
           ? !props.isLoading
             ? <DepartmentList
-                departments={props.departments}
-                onItemSelect={props.onSelectItem} />
-            : <LinearProgress />
-          : <ErrorNoPermissionState />
+              departments={ props.departments }
+              onItemSelect={ props.onSelectItem }/>
+            : <LinearProgress/>
+          : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => props.onDismiss()}>{t("button.close")}</Button>
+        <Button color="primary" onClick={ () => props.onDismiss() }>{ t("button.close") }</Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,4 +1,4 @@
-import { Department } from "./Department";
+import { User } from "./User";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
@@ -6,18 +6,19 @@ export enum ActionType {
   UPDATE = "update",
   DISMISS = "dismiss"
 }
+
 type Action = {
   type: ActionType,
-  payload?: Department
+  payload?: User
 }
 type State = {
-  department?: Department,
+  user?: User,
   isCreate: boolean,
   isOpen: boolean
 }
 
 export const initialState: State = {
-  department: { departmentId: newId(), count: 0 },
+  user: { userId: newId(), permissions: [], disabled: false },
   isCreate: true,
   isOpen: false
 }
@@ -28,13 +29,13 @@ export const reducer = (state: State, action: Action): State => {
   switch (type) {
     case ActionType.CREATE:
       return {
-        department: undefined,
+        user: undefined,
         isCreate: true,
         isOpen: true
       }
     case ActionType.UPDATE:
       return {
-        department: payload,
+        user: payload,
         isCreate: false,
         isOpen: true
       }
@@ -42,8 +43,9 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         isOpen: false,
-        department: payload
+        user: undefined
       }
-    default: return state;
+    default:
+      return state;
   }
 }

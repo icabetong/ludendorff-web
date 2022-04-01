@@ -140,39 +140,39 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 
   return (
     <Box>
-      <Box className="inset" />
-      <ListSubheader>{t("navigation.manage")}</ListSubheader>
-      <List className={classes.navigation}>
+      <Box className="inset"/>
+      <ListSubheader>{ t("navigation.manage") }</ListSubheader>
+      <List className={ classes.navigation }>
         <NavigationList
-          items={destinations}
-          destination={props.currentDestination}
-          onNavigate={props.onNavigate} />
+          items={ destinations }
+          destination={ props.currentDestination }
+          onNavigate={ props.onNavigate }/>
       </List>
-      <Divider />
-      <ListSubheader>{t("navigation.account")}</ListSubheader>
-      <List className={classes.navigation}>
+      <Divider/>
+      <ListSubheader>{ t("navigation.account") }</ListSubheader>
+      <List className={ classes.navigation }>
         <NavigationList
-          items={minorDestinations}
-          destination={props.currentDestination}
-          onNavigate={props.onNavigate} />
+          items={ minorDestinations }
+          destination={ props.currentDestination }
+          onNavigate={ props.onNavigate }/>
         <NavigationListItem
-          itemKey={1}
-          navigation={{ icon: ExitToAppRounded, title: t("button.signout") }}
-          isActive={false}
-          action={() => confirmSignOut()} />
+          itemKey={ 1 }
+          navigation={ { icon: ExitToAppRounded, title: t("button.signout") } }
+          isActive={ false }
+          action={ () => confirmSignOut() }/>
       </List>
       <Dialog
-        open={triggerConfirmSignOut}
-        fullWidth={true}
+        open={ triggerConfirmSignOut }
+        fullWidth={ true }
         maxWidth="xs"
-        onClose={() => setTriggerConfirmSignOut(false)}>
-        <DialogTitle>{t("dialog.signout")}</DialogTitle>
+        onClose={ () => setTriggerConfirmSignOut(false) }>
+        <DialogTitle>{ t("dialog.signout") }</DialogTitle>
         <DialogContent>
-          <DialogContentText>{t("dialog.signout_message")}</DialogContentText>
+          <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={() => setTriggerConfirmSignOut(false)}>{t("button.cancel")}</Button>
-          <Button color="primary" onClick={triggerSignOut}>{t("button.continue")}</Button>
+          <Button color="primary" onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
+          <Button color="primary" onClick={ triggerSignOut }>{ t("button.continue") }</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -187,15 +187,15 @@ const NavigationListItem = (props: NavigationItemPropsType) => {
   return (
     <ListItem
       button
-      classes={{ root: classes.container, selected: classes.selected }}
-      key={props.itemKey}
-      selected={props.isActive}
-      onClick={props.action}>
+      classes={ { root: classes.container, selected: classes.selected } }
+      key={ props.itemKey }
+      selected={ props.isActive }
+      onClick={ props.action }>
       <ListItemIcon>{
         React.createElement(props.navigation.icon)
       }
       </ListItemIcon>
-      <ListItemText primary={<Typography variant="body2">{t(props.navigation.title)}</Typography>} />
+      <ListItemText primary={ <Typography variant="body2">{ t(props.navigation.title) }</Typography> }/>
     </ListItem>
   )
 }
@@ -212,12 +212,12 @@ const NavigationList = (props: NavigationListPropsType) => {
           return <></>;
 
         return (
-            <NavigationListItem
-                key={navigation.destination}
-                itemKey={navigation.destination}
-                navigation={navigation}
-                action={() => props.onNavigate(navigation.destination!!)}
-                isActive={props.destination === navigation.destination} />
+          <NavigationListItem
+            key={ navigation.destination }
+            itemKey={ navigation.destination }
+            navigation={ navigation }
+            action={ () => props.onNavigate(navigation.destination!!) }
+            isActive={ props.destination === navigation.destination }/>
         )
 
       })
@@ -228,12 +228,13 @@ const NavigationList = (props: NavigationListPropsType) => {
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
   const destinations: NavigationItemType[] = [
     { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
-    { icon: Inventory2Outlined, title: "navigation.inventory", destination: Destination.INVENTORY },
+    { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
     { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
   ]
 
-  return <TopNavigationList destination={props.currentDestination} onNavigate={props.onNavigate} items={destinations}/>
+  return <TopNavigationList destination={ props.currentDestination } onNavigate={ props.onNavigate }
+                            items={ destinations }/>
 }
 
 export const TopNavigationList = (props: NavigationListPropsType) => {
@@ -241,22 +242,22 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
 
   return (
     <Grid container direction="row">
-    { props.items.map((nav: NavigationItemType) => {
+      { props.items.map((nav: NavigationItemType) => {
         if (!canRead && nav.destination === Destination.ASSETS)
-        return <></>;
+          return <></>;
         if (!canManageUsers && nav.destination === Destination.USERS)
           return <></>;
 
         return (
           <TopNavigationItem
-            key={nav.destination}
-            itemKey={nav.destination}
-            navigation={nav}
-            action={() => props.onNavigate(nav.destination!!)}
-            isActive={props.destination === nav.destination}/>
+            key={ nav.destination }
+            itemKey={ nav.destination }
+            navigation={ nav }
+            action={ () => props.onNavigate(nav.destination!!) }
+            isActive={ props.destination === nav.destination }/>
         )
-    })
-    }
+      })
+      }
     </Grid>
   )
 }
@@ -267,20 +268,20 @@ export const TopNavigationItem = (props: NavigationItemPropsType) => {
 
   return (
     <Button
-      sx={{
+      sx={ {
         margin: '0 0.2em',
         padding: '0.8em 1.8em',
         textTransform: 'none',
         backgroundColor: props.isActive ? alpha(theme.palette.primary.main, 0.2) : undefined,
         color: props.isActive ? theme.palette.primary.main : theme.palette.text.primary
-      }}
-      key={props.itemKey}
-      startIcon={React.createElement(props.navigation.icon)}
-      onClick={props.action}>
+      } }
+      key={ props.itemKey }
+      startIcon={ React.createElement(props.navigation.icon) }
+      onClick={ props.action }>
       <Typography
         variant="body2"
-        sx={{textTransform: 'none'}}>
-        {t(props.navigation.title)}
+        sx={ { textTransform: 'none' } }>
+        { t(props.navigation.title) }
       </Typography>
     </Button>
   );

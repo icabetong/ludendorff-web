@@ -14,7 +14,7 @@ const HeroListItemIcon = (props: HeroListItemIconProps) => {
   const classes = useStyles();
 
   return (
-    <ListItemIcon>{React.createElement(props.icon, { className: classes.icon })}</ListItemIcon>
+    <ListItemIcon>{ React.createElement(props.icon, { className: classes.icon }) }</ListItemIcon>
   )
 }
 

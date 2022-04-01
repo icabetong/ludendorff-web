@@ -1,13 +1,13 @@
-import React, { useState, useReducer } from "react";
+import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip} from "@mui/material";
+import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { 
-  DataGrid, 
-  GridOverlay, 
-  GridRowParams, 
-  GridValueGetterParams, 
-  GridCellParams 
+import {
+  DataGrid,
+  GridOverlay,
+  GridRowParams,
+  GridValueGetterParams,
+  GridCellParams
 } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
@@ -17,7 +17,7 @@ import {
   AddRounded,
   DeleteOutline,
   PeopleOutlineRounded,
-  SearchOutlined, LocalOfferRounded,
+  LocalOfferRounded,
 } from "@mui/icons-material";
 import { query, collection, orderBy } from "firebase/firestore";
 
@@ -50,16 +50,15 @@ import {
 } from "../../shared/const";
 
 import UserEditor from "./UserEditor";
-import UserSearchScreen from "./UserSearchScreen";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
-import {usePagination} from "use-pagination-firestore";
-import PaginationController from "../../components/PaginationController";
-import {HitsProvided} from "react-instantsearch-core";
-import {connectHits, InstantSearch} from "react-instantsearch-dom";
-import {Provider} from "../../components/Search";
+import { usePagination } from "use-pagination-firestore";
+import { DataGridPaginationController } from "../../components/PaginationController";
+import { HitsProvided } from "react-instantsearch-core";
+import { connectHits, InstantSearch } from "react-instantsearch-dom";
+import { Provider } from "../../components/Search";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -121,11 +120,11 @@ const UserScreen = (props: UserScreenProps) => {
       renderCell: (params: GridCellParams) => {
         const user = params.row as User;
         return (
-          <Tooltip title={<>{t(user.disabled ? "button.enable" : "button.disable")}</>} placement="bottom">
+          <Tooltip title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> } placement="bottom">
             <span>
               <IconButton
-                aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                onClick={() => onModificationInvoke(user)}
+                aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }
+                onClick={ () => onModificationInvoke(user) }
                 size="large">
                 { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
               </IconButton>
@@ -143,8 +142,8 @@ const UserScreen = (props: UserScreenProps) => {
       renderCell: (params: GridCellParams) => {
         return (
           <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => onRemoveInvoke(params.row as User)}
+            aria-label={ t("button.delete") }
+            onClick={ () => onRemoveInvoke(params.row as User) }
             size="large">
             <DeleteOutline/>
           </IconButton>
@@ -192,148 +191,140 @@ const UserScreen = (props: UserScreenProps) => {
       payload: user
     })
   }
-
-  const [search, setSearch] = useState<boolean>(false);
-  const onSearchInvoke = () => setSearch(true);
-  const onSearchDismiss = () => setSearch(false);
-
   const [isDepartmentOpen, setDepartmentOpen] = useState(false);
 
-  const onDepartmentView = () => { setDepartmentOpen(true) }
-  const onDepartmentDismiss = () => { setDepartmentOpen(false) }
+  const onDepartmentView = () => {
+    setDepartmentOpen(true)
+  }
+  const onDepartmentDismiss = () => {
+    setDepartmentOpen(false)
+  }
 
   const menuItems = [
-    <MenuItem key={0} onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
+    <MenuItem key={ 0 } onClick={ onDepartmentView }>{ t("navigation.departments") }</MenuItem>
   ]
 
   const pagination = () => {
     return (
-      <PaginationController
-        size={size}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        onPageSizeChanged={setSize}/>
+      <DataGridPaginationController
+        size={ size }
+        canBack={ isStart }
+        canForward={ isEnd }
+        onBackward={ getPrev }
+        onForward={ getNext }
+        onPageSizeChanged={ setSize }/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={{
+      components={ {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: EmptyStateOverlay,
         Toolbar: GridToolbar,
         Pagination: pagination
-      }}
-      componentsProps={{
+      } }
+      componentsProps={ {
         toolbar: {
-          endAction: <IconButton size="small" onClick={onSearchInvoke}><SearchOutlined/></IconButton>,
           destinations: [
             <Button
               key="departments"
               color="primary"
               size="small"
-              startIcon={<DomainRounded fontSize="small"/>}
-              onClick={onDepartmentView}>
-              {t("navigation.departments")}
+              startIcon={ <DomainRounded fontSize="small"/> }
+              onClick={ onDepartmentView }>
+              { t("navigation.departments") }
             </Button>
           ]
         }
-      }}
-      rows={items}
-      columns={columns}
-      density={preferences.density}
-      loading={isLoading}
+      } }
+      rows={ items }
+      columns={ columns }
+      density={ preferences.density }
+      loading={ isLoading }
       paginationMode="client"
-      getRowId={(r) => r.userId}
-      onRowDoubleClick={onDataGridRowDoubleClick}/>
+      getRowId={ (r) => r.userId }
+      onRowDoubleClick={ onDataGridRowDoubleClick }/>
   )
 
   return (
-    <Box className={classes.root}>
-      <InstantSearch searchClient={Provider} indexName="users">
+    <Box className={ classes.root }>
+      <InstantSearch searchClient={ Provider } indexName="users">
         <Hidden mdDown>
           <PageHeader
-            title={t("navigation.users")}
-            buttonText={t("button.create_user")}
-            buttonIcon={AddRounded}
-            buttonOnClick={onUserEditorView}
-            onSearchFocusChanged={setSearchMode}/>
+            title={ t("navigation.users") }
+            buttonText={ t("button.create_user") }
+            buttonIcon={ AddRounded }
+            buttonOnClick={ onUserEditorView }
+            onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
         <Hidden mdUp>
           <ComponentHeader
-            title={t("navigation.users")}
-            onDrawerToggle={props.onDrawerToggle}
+            title={ t("navigation.users") }
+            onDrawerToggle={ props.onDrawerToggle }
             buttonText={
               canManageUsers
                 ? t("button.create_user")
                 : undefined
             }
-            buttonIcon={AddRounded}
-            buttonOnClick={onUserEditorView}
-            menuItems={menuItems}
+            buttonIcon={ AddRounded }
+            buttonOnClick={ onUserEditorView }
+            menuItems={ menuItems }
           />
         </Hidden>
-        {canRead || canManageUsers
+        { canRead || canManageUsers
           ? <>
             <Hidden smDown>
-              <Box className={classes.wrapper}>
+              <Box className={ classes.wrapper }>
                 { searchMode
                   ? <UserDataGrid
-                    onItemSelect={onDataGridRowDoubleClick}
-                    onModificationInvoke={onModificationInvoke}
-                    onRemoveInvoke={onRemoveInvoke}
-                    onDepartmentInvoke={onDepartmentView}/>
+                    onItemSelect={ onDataGridRowDoubleClick }
+                    onModificationInvoke={ onModificationInvoke }
+                    onRemoveInvoke={ onRemoveInvoke }
+                    onDepartmentInvoke={ onDepartmentView }/>
                   : dataGrid
                 }
               </Box>
             </Hidden>
             <Hidden smUp>
-              {!isLoading
+              { !isLoading
                 ? items.length < 1
-                  ? <UserEmptyStateComponent />
-                  : <UserList users={items} onItemSelect={onUserSelected} />
-                : <LinearProgress />
+                  ? <UserEmptyStateComponent/>
+                  : <UserList users={ items } onItemSelect={ onUserSelected }/>
+                : <LinearProgress/>
               }
             </Hidden>
 
           </>
-          : <ErrorNoPermissionState />
+          : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      {state.isOpen &&
-        <UserEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          user={state.user}
-          onDismiss={onUserEditorDismiss} />
+      { state.isOpen &&
+          <UserEditor
+              isOpen={ state.isOpen }
+              isCreate={ state.isCreate }
+              user={ state.user }
+              onDismiss={ onUserEditorDismiss }/>
       }
-      {search &&
-        <UserSearchScreen
-          isOpen={search}
-          onDismiss={onSearchDismiss}
-          onEditorInvoke={onUserSelected} />
+      { userModify &&
+          <ConfirmationDialog
+              isOpen={ userModify !== undefined }
+              title={ userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable" }
+              summary={ userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary" }
+              onDismiss={ onModificationDismiss }
+              onConfirm={ onModificationConfirmed }/>
       }
-      {userModify &&
-        <ConfirmationDialog
-          isOpen={userModify !== undefined}
-          title={userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
-          summary={userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
-          onDismiss={onModificationDismiss}
-          onConfirm={onModificationConfirmed} />
-      }
-      {userRemove &&
-        <ConfirmationDialog
-          isOpen={userRemove !== undefined}
-          title="dialog.user_remove"
-          summary="dialog.user_remove_summary"
-          onDismiss={onRemoveDismiss}
-          onConfirm={onRemoveConfirmed} />
+      { userRemove &&
+          <ConfirmationDialog
+              isOpen={ userRemove !== undefined }
+              title="dialog.user_remove"
+              summary="dialog.user_remove_summary"
+              onDismiss={ onRemoveDismiss }
+              onConfirm={ onRemoveConfirmed }/>
       }
       <DepartmentScreen
-        isOpen={isDepartmentOpen}
-        onDismiss={onDepartmentDismiss} />
+        isOpen={ isDepartmentOpen }
+        onDismiss={ onDepartmentDismiss }/>
     </Box>
   );
 }
@@ -341,7 +332,7 @@ const UserScreen = (props: UserScreenProps) => {
 const EmptyStateOverlay = () => {
   return (
     <GridOverlay>
-      <UserEmptyStateComponent />
+      <UserEmptyStateComponent/>
     </GridOverlay>
   )
 }
@@ -351,9 +342,9 @@ const UserEmptyStateComponent = () => {
 
   return (
     <EmptyStateComponent
-      icon={PeopleOutlineRounded}
-      title={t("empty_user")}
-      subtitle={t("empty_user_summary")} />
+      icon={ PeopleOutlineRounded }
+      title={ t("empty_user") }
+      subtitle={ t("empty_user_summary") }/>
   );
 }
 
@@ -398,11 +389,11 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
       renderCell: (params: GridCellParams) => {
         const user = params.row as User;
         return (
-          <Tooltip title={<>{t(user.disabled ? "button.enable" : "button.disable")}</>} placement="bottom">
+          <Tooltip title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> } placement="bottom">
             <span>
               <IconButton
-                aria-label={params.row.disabled ? t("button.enable") : t("button.disable")}
-                onClick={() => props.onModificationInvoke(user)}
+                aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }
+                onClick={ () => props.onModificationInvoke(user) }
                 size="large">
                 { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
               </IconButton>
@@ -420,8 +411,8 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
       renderCell: (params: GridCellParams) => {
         return (
           <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => props.onRemoveInvoke(params.row as User)}
+            aria-label={ t("button.delete") }
+            onClick={ () => props.onRemoveInvoke(params.row as User) }
             size="large">
             <DeleteOutline/>
           </IconButton>
@@ -433,30 +424,30 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={{
+      components={ {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: EmptyStateOverlay,
         Toolbar: GridToolbar
-      }}
-      componentsProps={{
+      } }
+      componentsProps={ {
         toolbar: {
           destinations: [
             <Button
               key="types"
               color="primary"
               size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
-              onClick={props.onDepartmentInvoke}>
-              {t("navigation.types")}
+              startIcon={ <LocalOfferRounded fontSize="small"/> }
+              onClick={ props.onDepartmentInvoke }>
+              { t("navigation.types") }
             </Button>
           ]
         }
-      }}
-      columns={columns}
-      rows={props.hits}
-      density={userPreference.density}
-      getRowId={(r) => r.userId}
-      onRowDoubleClick={props.onItemSelect}/>
+      } }
+      columns={ columns }
+      rows={ props.hits }
+      density={ userPreference.density }
+      getRowId={ (r) => r.userId }
+      onRowDoubleClick={ props.onItemSelect }/>
   )
 }
 

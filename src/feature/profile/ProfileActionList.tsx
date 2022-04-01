@@ -1,12 +1,12 @@
 import React, { FunctionComponent, ComponentClass } from "react";
 import { useTranslation } from "react-i18next";
-import {List, ListItem, ListItemIcon, ListItemText, ListSubheader, Theme, Typography} from "@mui/material";
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, Theme, Typography } from "@mui/material";
 
 import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  icon: { 
-    width: '1.2em', 
+  icon: {
+    width: '1.2em',
     height: '1.2em',
   },
   container: {
@@ -34,11 +34,11 @@ const ProfileActionList = (props: ProfileActionListProps) => {
 
   return (
     <>
-      <ListSubheader>{t("actions")}</ListSubheader>
-      <List className={classes.container}>
-        {props.actions.map((action) =>
-          <ProfileActionItem action={action} />
-        )}
+      <ListSubheader>{ t("actions") }</ListSubheader>
+      <List className={ classes.container }>
+        { props.actions.map((action) =>
+          <ProfileActionItem action={ action }/>
+        ) }
       </List>
     </>
   )
@@ -54,8 +54,8 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
   return (
     <ListItem
       button
-      key={props.action.key}
-      onClick={() => props.action.action()}>
+      key={ props.action.key }
+      onClick={ () => props.action.action() }>
       <ListItemIcon>
         {
           React.createElement(props.action.icon,
@@ -64,8 +64,8 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
       </ListItemIcon>
       <ListItemText
         primary={
-          <Typography variant="body2">{t(props.action.title)}</Typography>
-        } />
+          <Typography variant="body2">{ t(props.action.title) }</Typography>
+        }/>
     </ListItem>
   )
 }

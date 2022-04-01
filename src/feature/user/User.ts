@@ -29,7 +29,7 @@ export const hasPermission = (user: User, permission: Permission): boolean => {
 export const minimize = (user: User): UserCore => {
   return {
     userId: user.userId,
-    name: `${user.firstName} ${user.lastName}`,
+    name: `${ user.firstName } ${ user.lastName }`,
     email: user.email,
     imageUrl: user.imageUrl,
     position: user.position,
@@ -60,12 +60,13 @@ export type UserCore = {
 }
 
 const SERVER_URL = "https://deshi-production.up.railway.app";
+
 export class UserRepository {
 
   static async create(user: User): Promise<AxiosResponse<any>> {
     let idToken = await auth.currentUser?.getIdToken(false);
 
-    return await axios.post(`${SERVER_URL}/create-user`, {
+    return await axios.post(`${ SERVER_URL }/create-user`, {
       token: idToken,
       ...user
     });
@@ -77,7 +78,7 @@ export class UserRepository {
       user);
 
     if (user.department !== undefined) {
-      let docs = await getDocs(query(collection(firestore, departmentCollection), 
+      let docs = await getDocs(query(collection(firestore, departmentCollection),
         where(departmentManagerId, '==', user.userId)));
 
       docs.forEach((doc) => {
@@ -93,7 +94,7 @@ export class UserRepository {
   static async modify(userId: string, status: boolean): Promise<AxiosResponse<any>> {
     let idToken = await auth.currentUser?.getIdToken(false);
 
-    return await axios.patch(`${SERVER_URL}/modify-user`, {
+    return await axios.patch(`${ SERVER_URL }/modify-user`, {
       token: idToken,
       userId: userId,
       disabled: status
@@ -103,7 +104,7 @@ export class UserRepository {
   static async remove(user: User): Promise<AxiosResponse<any>> {
     let idToken = await auth.currentUser?.getIdToken(false);
 
-    return await axios.delete(`${SERVER_URL}/remove-user`, {
+    return await axios.delete(`${ SERVER_URL }/remove-user`, {
       data: {
         token: idToken,
         userId: user.userId

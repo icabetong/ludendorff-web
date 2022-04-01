@@ -89,23 +89,23 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={isMobile}
-        fullWidth={true}
+        fullScreen={ isMobile }
+        fullWidth={ true }
         maxWidth="xs"
-        open={props.isOpen}
-        onClose={props.onDismiss}>
-        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.departments")}</CustomDialogTitle>
-        <DialogContent dividers={true} className={classes.root}>
-          {search
+        open={ props.isOpen }
+        onClose={ props.onDismiss }>
+        <CustomDialogTitle onSearch={ onSearchInvoked }>{ t("navigation.departments") }</CustomDialogTitle>
+        <DialogContent dividers={ true } className={ classes.root }>
+          { search
             ?
             <Box>
-              <InstantSearch searchClient={Provider} indexName="departments">
-                <Box className={classes.searchBox}>
-                  <SearchBox />
+              <InstantSearch searchClient={ Provider } indexName="departments">
+                <Box className={ classes.searchBox }>
+                  <SearchBox/>
                 </Box>
-                <Box className={classes.search}>
+                <Box className={ classes.search }>
                   <Results>
-                    <DepartmentHits onItemSelect={onEditorUpdate} />
+                    <DepartmentHits onItemSelect={ onEditorUpdate }/>
                   </Results>
                 </Box>
               </InstantSearch>
@@ -113,24 +113,24 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             : canRead
               ? !isLoading
                 ? <DepartmentList
-                    departments={departments}
-                    onItemSelect={onEditorUpdate} />
-                : <LinearProgress />
-              : <ErrorNoPermissionState />
+                  departments={ departments }
+                  onItemSelect={ onEditorUpdate }/>
+                : <LinearProgress/>
+              : <ErrorNoPermissionState/>
           }
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={onEditorCreate} disabled={!canWrite}>{t("button.add")}</Button>
-          <div style={{ flex: '1 0 0' }}></div>
-          <Button color="primary" onClick={props.onDismiss}>{t("button.close")}</Button>
+          <Button color="primary" onClick={ onEditorCreate } disabled={ !canWrite }>{ t("button.add") }</Button>
+          <div style={ { flex: '1 0 0' } }></div>
+          <Button color="primary" onClick={ props.onDismiss }>{ t("button.close") }</Button>
         </DialogActions>
       </Dialog>
-      {state.isOpen &&
-        <DepartmentEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          department={state.department}
-          onDismiss={onEditorDismiss} />
+      { state.isOpen &&
+          <DepartmentEditor
+              isOpen={ state.isOpen }
+              isCreate={ state.isCreate }
+              department={ state.department }
+              onDismiss={ onEditorDismiss }/>
       }
     </>
   )
@@ -144,8 +144,8 @@ type DepartmentHitsListProps = HitsProvided<Department> & {
 const DepartmentHitsList = (props: DepartmentHitsListProps) => {
   return (
     <>
-      {props.hits.map((d: Department) => (
-        <DepartmentListItem department={d} onItemSelect={props.onItemSelect} />
+      { props.hits.map((d: Department) => (
+        <DepartmentListItem department={ d } onItemSelect={ props.onItemSelect }/>
       ))
       }
     </>
@@ -161,11 +161,11 @@ const DepartmentListItem = (props: DepartmentListItemProps) => {
   return (
     <ListItem
       button
-      key={props.department.departmentId}
-      onClick={() => props.onItemSelect(props.department)}>
+      key={ props.department.departmentId }
+      onClick={ () => props.onItemSelect(props.department) }>
       <ListItemText
-        primary={<Highlight attribute={departmentName} hit={props.department} />}
-        secondary={<Highlight attribute={departmentManagerName} hit={props.department} />} />
+        primary={ <Highlight attribute={ departmentName } hit={ props.department }/> }
+        secondary={ <Highlight attribute={ departmentManagerName } hit={ props.department }/> }/>
     </ListItem>
   )
 }

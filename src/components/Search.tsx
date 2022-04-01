@@ -10,7 +10,7 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import { SearchOutlined } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
-import {connectSearchBox, connectStateResults, connectHighlight} from "react-instantsearch-dom";
+import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React from "react";
@@ -31,11 +31,11 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
 
   return (
     <span>
-      {parsedHit.map((part, index) =>
+      { parsedHit.map((part, index) =>
         part.isHighlighted ? (
-          <span className={classes.highlightResult} key={index}>{part.value}</span>
+          <span className={ classes.highlightResult } key={ index }>{ part.value }</span>
         ) : (
-          <span key={index}>{part.value}</span>
+          <span key={ index }>{ part.value }</span>
         ))
       }
     </span>
@@ -48,19 +48,19 @@ const CustomSearchBox = (props: SearchBoxProvided) => {
 
   return (
     <FormControl fullWidth variant="outlined">
-      <InputLabel htmlFor="search">{t("field.search")}</InputLabel>
+      <InputLabel htmlFor="search">{ t("field.search") }</InputLabel>
       <OutlinedInput
         id="search"
-        value={props.currentRefinement}
-        label={t("field.search")}
+        value={ props.currentRefinement }
+        label={ t("field.search") }
         endAdornment={
           <InputAdornment position="end">
-            <IconButton aria-label={t("button.search")} edge="end" size="large">
+            <IconButton aria-label={ t("button.search") } edge="end" size="large">
               <SearchOutlined/>
             </IconButton>
           </InputAdornment>
         }
-        onChange={e => props.refine(e.target.value)} />
+        onChange={ e => props.refine(e.target.value) }/>
     </FormControl>
   );
 }
@@ -73,21 +73,22 @@ const EmptySearchState = (props: EmptySearchStateProps) => {
 
   return (
     <EmptyStateComponent
-      icon={SearchOutlined}
-      title={t("empty_search")}
-      subtitle={t("empty_search_summary", { query: props.query })} />
+      icon={ SearchOutlined }
+      title={ t("empty_search") }
+      subtitle={ t("empty_search_summary", { query: props.query }) }/>
   );
 }
 
 interface ResultsProps extends StateResultsProvided {
   children?: React.ReactNode | React.ReactNode[]
 }
+
 const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => {
   return (
     <>
-      {searchResults && searchResults.nbHits !== 0
+      { searchResults && searchResults.nbHits !== 0
         ? children
-        : <EmptySearchState query={searchState.query} />
+        : <EmptySearchState query={ searchState.query }/>
       }
     </>
   )

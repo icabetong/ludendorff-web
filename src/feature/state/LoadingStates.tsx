@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from '@mui/styles/makeStyles';
 
 import { ReactComponent as Logo } from "../../shared/icon.svg";
-import {Theme} from "@mui/material";
+import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -38,10 +38,10 @@ export const MainLoadingStateComponent = () => {
   const theme = useTheme();
 
   return (
-    <Grid container direction="row" alignItems="center" justifyContent="center" className={classes.root}>
-      <Grid item className={classes.wrapper}>
-        <Logo stroke={theme.palette.primary.main} className={classes.icon}/>
-        <LinearProgress className={classes.progress} />
+    <Grid container direction="row" alignItems="center" justifyContent="center" className={ classes.root }>
+      <Grid item className={ classes.wrapper }>
+        <Logo stroke={ theme.palette.primary.main } className={ classes.icon }/>
+        <LinearProgress className={ classes.progress }/>
       </Grid>
     </Grid>
   )
@@ -51,9 +51,9 @@ export const ContentLoadingStateComponent = () => {
   const classes = useStyles();
 
   return (
-    <Grid container direction="column" alignItems="center" justifyContent="center" className={classes.rootContent}>
-      <Grid item className={classes.wrapper}>
-        <CircularProgress className={classes.progress} />
+    <Grid container direction="column" alignItems="center" justifyContent="center" className={ classes.rootContent }>
+      <Grid item className={ classes.wrapper }>
+        <CircularProgress className={ classes.progress }/>
       </Grid>
     </Grid>
   )

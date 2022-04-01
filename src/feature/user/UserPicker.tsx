@@ -50,29 +50,29 @@ const UserPicker = (props: UserPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
+      fullScreen={ isMobile }
+      fullWidth={ true }
       maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("user_select")}</DialogTitle>
-      <DialogContent dividers={true} className={classes.root}>
-        {canRead ?
+      open={ props.isOpen }
+      onClose={ props.onDismiss }>
+      <DialogTitle>{ t("user_select") }</DialogTitle>
+      <DialogContent dividers={ true } className={ classes.root }>
+        { canRead ?
           !props.isLoading
             ? props.users.length > 0
-              ?<UserList
-                  users={props.users}
-                  onItemSelect={onSelect} />
+              ? <UserList
+                users={ props.users }
+                onItemSelect={ onSelect }/>
               : <EmptyStateComponent
-                icon={PeopleOutlineRounded}
-                title={t("empty_user")}
-                subtitle={t("empty_user_summary")} />
-            : <LinearProgress />
-          : <ErrorNoPermissionState />
+                icon={ PeopleOutlineRounded }
+                title={ t("empty_user") }
+                subtitle={ t("empty_user_summary") }/>
+            : <LinearProgress/>
+          : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={props.onDismiss}>{t("close")}</Button>
+        <Button color="primary" onClick={ props.onDismiss }>{ t("close") }</Button>
       </DialogActions>
     </Dialog>
   );

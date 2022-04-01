@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ComponentClass, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {AppBar, Button, Hidden, IconButton, Menu, Theme, Toolbar, Typography} from "@mui/material";
+import { AppBar, Button, Hidden, IconButton, Menu, Theme, Toolbar, Typography } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import {
   MoreVert,
@@ -24,10 +24,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   toolbar: theme.mixins.toolbar,
   navigationButton: {
-     marginRight: theme.spacing(2),
-     [theme.breakpoints.up('md')]: {
-       display: 'none'
-     },
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('md')]: {
+      display: 'none'
+    },
   },
   actionButton: {
     marginLeft: 'auto'
@@ -58,71 +58,71 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
   } as const
 
   return (
-    <AppBar position="static" className={classes.appBar} color="transparent" elevation={0}>
+    <AppBar position="static" className={ classes.appBar } color="transparent" elevation={ 0 }>
       <Toolbar>
         <IconButton
           edge="start"
-          onClick={props.onDrawerToggle}
-          className={classes.navigationButton}
-          aria-label={t("button.show_drawer")}
+          onClick={ props.onDrawerToggle }
+          className={ classes.navigationButton }
+          aria-label={ t("button.show_drawer") }
           size="large">
-          <MenuRounded className={classes.toolbarButtonIcon} />
+          <MenuRounded className={ classes.toolbarButtonIcon }/>
         </IconButton>
         <Hidden smDown>
-          <Typography variant="h5" className={classes.title}>
-            {props.title}
+          <Typography variant="h5" className={ classes.title }>
+            { props.title }
           </Typography>
         </Hidden>
         <Hidden smUp>
-          <Typography variant="h6" className={classes.title}>
-            {props.title}
+          <Typography variant="h6" className={ classes.title }>
+            { props.title }
           </Typography>
         </Hidden>
         <Hidden xsUp>
-          {props.buttonText &&
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.actionButton}
-              startIcon={props.buttonIcon &&
-                React.createElement(props.buttonIcon,
-                  { className: classes.actionButtonIcon })
-              }
-              onClick={props.buttonOnClick}
-              aria-label={props.buttonText}>
-              {props.buttonText}
-            </Button>
+          { props.buttonText &&
+              <Button
+                  variant="contained"
+                  color="primary"
+                  className={ classes.actionButton }
+                  startIcon={ props.buttonIcon &&
+                    React.createElement(props.buttonIcon,
+                      { className: classes.actionButtonIcon })
+                  }
+                  onClick={ props.buttonOnClick }
+                  aria-label={ props.buttonText }>
+                { props.buttonText }
+              </Button>
           }
         </Hidden>
-        {props.onSearch &&
-          <IconButton className={classes.searchButton} onClick={props.onSearch} size="large">
-            <SearchOutlined/>
-          </IconButton>
-        }
-        {props.menuItems &&
-          <div>
-            <IconButton
-              aria-haspopup="true"
-              aria-label={t("button.show_menu")}
-              onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}
-              size="large">
-              <MoreVert className={classes.toolbarButtonIcon} />
+        { props.onSearch &&
+            <IconButton className={ classes.searchButton } onClick={ props.onSearch } size="large">
+                <SearchOutlined/>
             </IconButton>
-            <Menu
-              keepMounted
-              anchorEl={anchor}
-              anchorOrigin={anchorProperties}
-              transformOrigin={anchorProperties}
-              open={menuOpen}
-              onClose={() => setAnchor(null)}
-              onMouseLeave={() => setAnchor(null)}>
-              {props.menuItems &&
-                props.menuItems.map((menuItem) => {
-                  return menuItem
-                })
-              }
-            </Menu>
-          </div>
+        }
+        { props.menuItems &&
+            <div>
+                <IconButton
+                    aria-haspopup="true"
+                    aria-label={ t("button.show_menu") }
+                    onClick={ (e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget) }
+                    size="large">
+                    <MoreVert className={ classes.toolbarButtonIcon }/>
+                </IconButton>
+                <Menu
+                    keepMounted
+                    anchorEl={ anchor }
+                    anchorOrigin={ anchorProperties }
+                    transformOrigin={ anchorProperties }
+                    open={ menuOpen }
+                    onClose={ () => setAnchor(null) }
+                    onMouseLeave={ () => setAnchor(null) }>
+                  { props.menuItems &&
+                    props.menuItems.map((menuItem) => {
+                      return menuItem
+                    })
+                  }
+                </Menu>
+            </div>
         }
       </Toolbar>
     </AppBar>

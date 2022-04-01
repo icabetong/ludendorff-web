@@ -61,76 +61,81 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const onResetPasswordDismiss = () => setRequestReset(false);
 
   const actions = [
-    { key: 'action:avatar', icon: ImageOutlined, title: "action.update_avatar", action: () => fileInput?.current?.click() },
+    {
+      key: 'action:avatar',
+      icon: ImageOutlined,
+      title: "action.update_avatar",
+      action: () => fileInput?.current?.click()
+    },
     { key: 'action:name', icon: EditOutlined, title: "action.change_name", action: onChangeNameInvoke },
     { key: 'action:password', icon: LockOutlined, title: "action.change_password", action: onChangePasswordInvoke },
     { key: 'action:request', icon: SendOutlined, title: "action.request_reset", action: onResetPasswordInvoke }
   ];
 
   return (
-    <Box className={classes.root}>
+    <Box className={ classes.root }>
       <Hidden mdDown>
         <PageHeader
-          title={t("navigation.profile")}/>
+          title={ t("navigation.profile") }/>
       </Hidden>
       <Hidden mdUp>
         <ComponentHeader
-          title={t("navigation.profile")}
-          onDrawerToggle={props.onDrawerToggle} />
+          title={ t("navigation.profile") }
+          onDrawerToggle={ props.onDrawerToggle }/>
       </Hidden>
-      <input ref={fileInput} type="file" accept="image/*" hidden />
+      <input ref={ fileInput } type="file" accept="image/*" hidden/>
 
-      {status === AuthStatus.FETCHED
+      { status === AuthStatus.FETCHED
         ?
-        <div className={classes.wrapper}>
+        <div className={ classes.wrapper }>
           <Grid
             container
-            direction={isMobile ? "column" : "row"}
+            direction={ isMobile ? "column" : "row" }
             alignItems="center"
             justifyContent="center"
-            spacing={2}>
-            <Grid container direction="row" item sm={6} alignItems="center" justifyContent="center">
+            spacing={ 2 }>
+            <Grid container direction="row" item sm={ 6 } alignItems="center" justifyContent="center">
               <Grid container item alignItems="center" justifyContent="center">
-                {user?.imageUrl
+                { user?.imageUrl
                   ? <LazyLoadImage
-                    className={classes.avatar}
-                    alt={t("info.profile_image")}
-                    src={user?.imageUrl} />
-                  : <Avatar className={classes.avatar} />
+                    className={ classes.avatar }
+                    alt={ t("info.profile_image") }
+                    src={ user?.imageUrl }/>
+                  : <Avatar className={ classes.avatar }/>
                 }
               </Grid>
               <Grid container item alignItems="center" justifyContent="center">
                 <Typography align="center" variant="h5">
-                  {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
+                  { t("template.full_name", { first: user?.firstName, last: user?.lastName }) }
                 </Typography>
               </Grid>
               <Grid container item alignItems="center" justifyContent="center">
-                <Typography align="center" variant="body1">{user?.email}</Typography>
+                <Typography align="center" variant="body1">{ user?.email }</Typography>
               </Grid>
             </Grid>
-            <Grid container item sm={6} alignItems="center" justifyContent="flex-start">
-              <ProfileInfoList user={user} />
-              <ProfileActionList actions={actions} />
+            <Grid container item sm={ 6 } alignItems="center" justifyContent="flex-start">
+              <ProfileInfoList user={ user }/>
+              <ProfileActionList actions={ actions }/>
             </Grid>
           </Grid>
         </div>
-        : <LinearProgress />
+        : <LinearProgress/>
       }
-      {changeName &&
-        <ChangeNamePrompt
-          isOpen={changeName}
-          user={user}
-          onDismiss={onChangeNameDismiss} />
+      { changeName &&
+          <ChangeNamePrompt
+              isOpen={ changeName }
+              user={ user }
+              onDismiss={ onChangeNameDismiss }/>
       }
-      {changePassword &&
-        <ChangePasswordPrompt
-          isOpen={changePassword}
-          onDismiss={onChangePasswordDismiss} />
+      { changePassword &&
+          <ChangePasswordPrompt
+              isOpen={ changePassword }
+              onDismiss={ onChangePasswordDismiss }/>
       }
-      {requestReset &&
-        <RequestResetPrompt
-          isOpen={requestReset}
-          onDismiss={onResetPasswordDismiss} />
+      { requestReset &&
+          <RequestResetPrompt
+              isOpen={ requestReset }
+              onDismiss={ onResetPasswordDismiss }/>
       }
     </Box>
   );

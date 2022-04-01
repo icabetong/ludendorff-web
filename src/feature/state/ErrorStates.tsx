@@ -11,7 +11,7 @@ import {
 import history from "../navigation/History";
 import EmptyStateComponent from "./EmptyStates";
 import { ReactComponent as Logo } from "./404.svg";
-import {Theme, useTheme} from "@mui/material";
+import { Theme, useTheme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -30,10 +30,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   image: {
     width: '24em',
-     [theme.breakpoints.down('sm')]: {
-       width: '12em',
-       marginBottom: '1em'
-     }
+    [theme.breakpoints.down('sm')]: {
+      width: '12em',
+      marginBottom: '1em'
+    }
   },
   actionWrapper: {
     marginTop: theme.spacing(6),
@@ -49,9 +49,9 @@ export const ErrorNoPermissionState = () => {
 
   return (
     <EmptyStateComponent
-      icon={ErrorOutlineRounded}
-      title={t("error.no_permissions_header")}
-      subtitle={t("error.no_permissions_summary_read")} />
+      icon={ ErrorOutlineRounded }
+      title={ t("error.no_permissions_header") }
+      subtitle={ t("error.no_permissions_summary_read") }/>
   );
 }
 
@@ -61,24 +61,24 @@ export const ErrorNotFoundState = () => {
   const { t } = useTranslation();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.wrapper}>
+    <Box className={ classes.root }>
+      <Box className={ classes.wrapper }>
         <Box>
-          <Logo className={classes.image} />
+          <Logo className={ classes.image }/>
         </Box>
-        <Box sx={{mx: 4}}>
-          <Typography variant="h2">{t("error.not_found_header")}</Typography>
-          <Typography variant="h6">{t("error.not_found_summary")}</Typography>
+        <Box sx={ { mx: 4 } }>
+          <Typography variant="h2">{ t("error.not_found_header") }</Typography>
+          <Typography variant="h6">{ t("error.not_found_summary") }</Typography>
 
-          <Box className={classes.actionWrapper}>
-            <Typography variant="body1">{t("error.not_found_info")}</Typography>
+          <Box className={ classes.actionWrapper }>
+            <Typography variant="body1">{ t("error.not_found_info") }</Typography>
             <Button
-              sx={{mt: theme.spacing(4), mb: theme.spacing(6)}}
+              sx={ { mt: theme.spacing(4), mb: theme.spacing(6) } }
               variant="outlined"
               color="primary"
-              endIcon={<ChevronRightRounded/>}
-              onClick={() => history.push('/')} >
-              {t("button.go_to_home")}
+              endIcon={ <ChevronRightRounded/> }
+              onClick={ () => history.push('/') }>
+              { t("button.go_to_home") }
             </Button>
           </Box>
         </Box>

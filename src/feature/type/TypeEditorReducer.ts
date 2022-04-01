@@ -1,49 +1,51 @@
-import { User } from "./User";
+import { Type } from "./Type";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
+  CHANGED = "changed",
   CREATE = "create",
   UPDATE = "update",
   DISMISS = "dismiss"
 }
+
 type Action = {
   type: ActionType,
-  payload?: User
+  payload?: Type,
 }
 type State = {
-  user?: User,
+  type?: Type,
   isCreate: boolean,
   isOpen: boolean
 }
-
 export const initialState: State = {
-  user: { userId: newId(), permissions: [], disabled: false },
+  type: { typeId: newId(), count: 0 },
   isCreate: true,
-  isOpen: false
+  isOpen: false,
 }
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
 
   switch (type) {
     case ActionType.CREATE:
       return {
-        user: undefined,
+        type: undefined,
         isCreate: true,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.UPDATE:
       return {
-        user: payload,
+        type: payload,
         isCreate: false,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.DISMISS:
       return {
         ...state,
         isOpen: false,
-        user: undefined
+        type: undefined
       }
-    default: return state;
+    default:
+      return state;
   }
 }

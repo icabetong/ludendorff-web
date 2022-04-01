@@ -21,8 +21,8 @@ const HeroIconButton = (props: HeroIconButtonProps & IconButtonProps) => {
   const { icon, ...iconButtonProps } = props;
 
   return (
-    <IconButton {...iconButtonProps} size="large">
-      {React.createElement(icon, { className: classes.icon })}
+    <IconButton { ...iconButtonProps } size="large">
+      { React.createElement(icon, { className: classes.icon }) }
     </IconButton>
   );
 }

@@ -1,35 +1,41 @@
-import { Asset } from "./Asset";
+import { Department } from "./Department";
+import { newId } from "../../shared/utils";
+
 export enum ActionType {
   CREATE = "create",
   UPDATE = "update",
   DISMISS = "dismiss"
 }
+
 type Action = {
   type: ActionType,
-  payload?: Asset
+  payload?: Department
 }
 type State = {
-  asset?: Asset,
+  department?: Department,
   isCreate: boolean,
   isOpen: boolean
 }
+
 export const initialState: State = {
-  asset: { stockNumber: "" },
+  department: { departmentId: newId(), count: 0 },
   isCreate: true,
-  isOpen: false,
+  isOpen: false
 }
-export const reducer = (state: State, action: Action) => {
+
+export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action;
+
   switch (type) {
     case ActionType.CREATE:
       return {
-        ...state,
+        department: undefined,
         isCreate: true,
         isOpen: true
       }
     case ActionType.UPDATE:
       return {
-        asset: payload,
+        department: payload,
         isCreate: false,
         isOpen: true
       }
@@ -37,8 +43,9 @@ export const reducer = (state: State, action: Action) => {
       return {
         ...state,
         isOpen: false,
-        asset: undefined
+        department: payload
       }
-    default: return state;
+    default:
+      return state;
   }
 }

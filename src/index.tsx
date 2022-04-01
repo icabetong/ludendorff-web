@@ -30,7 +30,7 @@ ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
       <PreferenceProvider>
-        <CoreComponent />
+        <CoreComponent/>
       </PreferenceProvider>
     </AuthProvider>
   </React.StrictMode>,

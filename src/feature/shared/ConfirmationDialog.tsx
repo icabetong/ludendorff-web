@@ -26,23 +26,23 @@ const ConfirmationDialog = (props: ConfirmationDialogProps) => {
   return (
     <Dialog
       maxWidth="xs"
-      fullWidth={true}
-      open={props.isOpen}
-      onClose={() => props.onDismiss()}>
-      <DialogTitle>{t(props.title)}</DialogTitle>
+      fullWidth={ true }
+      open={ props.isOpen }
+      onClose={ () => props.onDismiss() }>
+      <DialogTitle>{ t(props.title) }</DialogTitle>
       <DialogContent>
-        <DialogContentText>{t(props.summary)}</DialogContentText>
+        <DialogContentText>{ t(props.summary) }</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           color="primary"
-          onClick={() => props.onDismiss()}>
-          {t(negativeButtonText)}
+          onClick={ () => props.onDismiss() }>
+          { t(negativeButtonText) }
         </Button>
         <Button
           color="primary"
-          onClick={() => props.onConfirm()}>
-          {t(positiveButtonText)}
+          onClick={ () => props.onConfirm() }>
+          { t(positiveButtonText) }
         </Button>
       </DialogActions>
     </Dialog>

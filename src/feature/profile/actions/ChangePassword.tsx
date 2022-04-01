@@ -50,40 +50,46 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
 
   return (
     <Dialog
-      open={props.isOpen}
-      fullWidth={true}
+      open={ props.isOpen }
+      fullWidth={ true }
       maxWidth="xs"
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("action.change_password")}</DialogTitle>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      onClose={ props.onDismiss }>
+      <DialogTitle>{ t("action.change_password") }</DialogTitle>
+      <form onSubmit={ handleSubmit(onSubmit) }>
         <DialogContent>
           <Container disableGutters>
             <TextField
               autoFocus
               id="old-password"
               type="password"
-              error={errors.oldPassword !== undefined}
-              label={t("field.old_password")}
-              {...register("oldPassword", { required: true })} />
+              error={ errors.oldPassword !== undefined }
+              label={ t("field.old_password") }
+              { ...register("oldPassword", { required: true }) } />
 
             <TextField
               id="new-password"
               type="password"
-              label={t("field.new_password")}
-              error={errors.newPassword !== undefined}
-              {...register("newPassword", { required: true, validate: value => value === getValues('confirmPassword') })} />
+              label={ t("field.new_password") }
+              error={ errors.newPassword !== undefined }
+              { ...register("newPassword", {
+                required: true,
+                validate: value => value === getValues('confirmPassword')
+              }) } />
 
             <TextField
               id="confirm-password"
               type="password"
-              error={errors.confirmPassword !== undefined}
-              label={t("field.confirmation_password")}
-              {...register("confirmPassword", { required: true, validate: value => value === getValues('newPassword') })} />
+              error={ errors.confirmPassword !== undefined }
+              label={ t("field.confirmation_password") }
+              { ...register("confirmPassword", {
+                required: true,
+                validate: value => value === getValues('newPassword')
+              }) } />
           </Container>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={props.onDismiss}>{t("button.cancel")}</Button>
-          <Button color="primary" type="submit">{t("button.continue")}</Button>
+          <Button color="primary" onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
+          <Button color="primary" type="submit">{ t("button.continue") }</Button>
         </DialogActions>
       </form>
     </Dialog>

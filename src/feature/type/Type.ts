@@ -1,11 +1,11 @@
-import { 
-  writeBatch, 
-  doc, setDoc, 
-  getDocs, 
-  collection, 
-  deleteDoc, 
-  query, 
-  where 
+import {
+  writeBatch,
+  doc, setDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+  query,
+  where
 } from "firebase/firestore";
 import { firestore } from "../../index";
 
@@ -39,7 +39,7 @@ export class TypesRepository {
 
   static async create(type: Type): Promise<void> {
     return await setDoc(doc(firestore, typeCollection, type.typeId),
-      {...type});
+      { ...type });
   }
 
   static async update(type: Type): Promise<void> {
@@ -48,7 +48,7 @@ export class TypesRepository {
     batch.set(doc(firestore, typeCollection, type.typeId),
       type)
 
-    let assetTask = await getDocs(query(collection(firestore, assetCollection), 
+    let assetTask = await getDocs(query(collection(firestore, assetCollection),
       where(assetTypeId, '==', type.typeId)));
     assetTask.docs.forEach(doc => {
       batch.update(doc.ref, assetType, minimize(type))

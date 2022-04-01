@@ -45,32 +45,32 @@ const TypeList = (props: TypeListProps) => {
 
   return (
     <>
-      {props.types.length > 0
-        ? <List className={classes.root}>
-            {
-              props.types.map((category: Type) => {
-                return (
-                  <CategoryItem
-                    key={category.typeId}
-                    category={category}
-                    onItemSelect={props.onItemSelect}
-                    onItemRemove={onRemoveInvoke} />
-                );
-              })
-            }
-          </List>
+      { props.types.length > 0
+        ? <List className={ classes.root }>
+          {
+            props.types.map((category: Type) => {
+              return (
+                <CategoryItem
+                  key={ category.typeId }
+                  category={ category }
+                  onItemSelect={ props.onItemSelect }
+                  onItemRemove={ onRemoveInvoke }/>
+              );
+            })
+          }
+        </List>
         : <EmptyStateComponent
-          icon={LocalOfferOutlined}
-          title={t("empty_type")}
-          subtitle={t("empty_type_summary")} />
+          icon={ LocalOfferOutlined }
+          title={ t("empty_type") }
+          subtitle={ t("empty_type_summary") }/>
       }
-      {type &&
-        <ConfirmationDialog
-          isOpen={type !== undefined}
-          title="dialog.category_remove"
-          summary="dialog.category_remove_summary"
-          onDismiss={onRemoveDismiss}
-          onConfirm={onCategoryRemove} />
+      { type &&
+          <ConfirmationDialog
+              isOpen={ type !== undefined }
+              title="dialog.category_remove"
+              summary="dialog.category_remove_summary"
+              onDismiss={ onRemoveDismiss }
+              onConfirm={ onCategoryRemove }/>
       }
     </>
   );
@@ -89,9 +89,9 @@ const CategoryItem = (props: CategoryItemProps) => {
   const deleteButton = (
     <IconButton
       edge="end"
-      disabled={props.category.count > 0}
-      aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.category)}
+      disabled={ props.category.count > 0 }
+      aria-label={ t("delete") }
+      onClick={ () => props.onItemRemove(props.category) }
       size="large">
       <DeleteOutlineRounded/>
     </IconButton>
@@ -100,20 +100,20 @@ const CategoryItem = (props: CategoryItemProps) => {
   return (
     <ListItem
       button
-      key={props.category.typeId}
-      onClick={() => props.onItemSelect(props.category)}>
+      key={ props.category.typeId }
+      onClick={ () => props.onItemSelect(props.category) }>
       <ListItemText
-        primary={props.category.typeName}
-        secondary={t("template.count", { count: props.category.count })} />
-      {canDelete &&
-        <ListItemSecondaryAction>
-          {props.category.count > 0
-            ? <Tooltip title={<>{t("info.category_count_not_zero")}</>}>
-              <span>{deleteButton}</span>
-            </Tooltip>
-            : <>{deleteButton}</>
-          }
-        </ListItemSecondaryAction>
+        primary={ props.category.typeName }
+        secondary={ t("template.count", { count: props.category.count }) }/>
+      { canDelete &&
+          <ListItemSecondaryAction>
+            { props.category.count > 0
+              ? <Tooltip title={ <>{ t("info.category_count_not_zero") }</> }>
+                <span>{ deleteButton }</span>
+              </Tooltip>
+              : <>{ deleteButton }</>
+            }
+          </ListItemSecondaryAction>
       }
     </ListItem>
   )

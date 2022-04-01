@@ -1,13 +1,13 @@
-import React, { useState, useReducer } from "react";
+import { useState, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import {Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme} from "@mui/material";
+import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import {
   DataGrid,
   GridRowParams,
   GridValueGetterParams,
   GridOverlay,
-  GridCellParams, GridDensity,
+  GridCellParams,
 } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
@@ -53,11 +53,11 @@ import TypeScreen from "../type/TypeScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
-import {usePagination} from "use-pagination-firestore";
-import PaginationController from "../../components/PaginationController";
-import {connectHits, InstantSearch} from "react-instantsearch-dom";
-import {Provider} from "../../components/Search";
-import {HitsProvided} from "react-instantsearch-core";
+import { usePagination } from "use-pagination-firestore";
+import { DataGridPaginationController } from "../../components/PaginationController";
+import { connectHits, InstantSearch } from "react-instantsearch-dom";
+import { Provider } from "../../components/Search";
+import { HitsProvided } from "react-instantsearch-core";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -142,8 +142,8 @@ const AssetScreen = (props: AssetScreenProps) => {
         const asset = params.row as Asset;
         return (
           <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => onRemoveInvoke(asset)}
+            aria-label={ t("button.delete") }
+            onClick={ () => onRemoveInvoke(asset) }
             size="large">
             <DeleteOutlineRounded/>
           </IconButton>
@@ -170,124 +170,124 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCategoryListDismiss = () => setCategoryOpen(false);
 
   const menuItems = [
-    <MenuItem key={0} onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
+    <MenuItem key={ 0 } onClick={ onCategoryListView }>{ t("navigation.categories") }</MenuItem>
   ];
 
   const pagination = () => {
     return (
-      <PaginationController
-        size={size}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        onPageSizeChanged={setSize}/>
+      <DataGridPaginationController
+        size={ size }
+        canBack={ isStart }
+        canForward={ isEnd }
+        onBackward={ getPrev }
+        onForward={ getNext }
+        onPageSizeChanged={ setSize }/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={{
+      components={ {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: EmptyStateOverlay,
         Toolbar: GridToolbar,
         Pagination: pagination
-      }}
-      componentsProps={{
+      } }
+      componentsProps={ {
         toolbar: {
           destinations: [
             <Button
               key="types"
               color="primary"
               size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
-              onClick={onCategoryListView}>
-              {t("navigation.types")}
+              startIcon={ <LocalOfferRounded fontSize="small"/> }
+              onClick={ onCategoryListView }>
+              { t("navigation.types") }
             </Button>
           ]
         }
-      }}
-      rows={items}
-      columns={columns}
-      density={userPreference.density}
-      loading={isLoading}
-      getRowId={(r) => r.stockNumber}
-      onRowDoubleClick={onDataGridRowDoubleClicked}/>
+      } }
+      rows={ items }
+      columns={ columns }
+      density={ userPreference.density }
+      loading={ isLoading }
+      getRowId={ (r) => r.stockNumber }
+      onRowDoubleClick={ onDataGridRowDoubleClicked }/>
   );
 
   return (
-    <Box className={classes.root}>
-      <InstantSearch searchClient={Provider} indexName="assets">
+    <Box className={ classes.root }>
+      <InstantSearch searchClient={ Provider } indexName="assets">
         <Hidden mdDown>
           <PageHeader
-            title={t("navigation.assets")}
+            title={ t("navigation.assets") }
             buttonText={
               canWrite
                 ? t("button.create_asset")
                 : undefined
             }
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-            onSearchFocusChanged={setSearchMode}/>
+            buttonIcon={ AddRounded }
+            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
+            onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
         <Hidden mdUp>
           <ComponentHeader
-            title={t("navigation.assets")}
-            onDrawerToggle={props.onDrawerToggle}
+            title={ t("navigation.assets") }
+            onDrawerToggle={ props.onDrawerToggle }
             buttonText={
               canWrite
                 ? t("button.create_asset")
                 : undefined
             }
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-            menuItems={menuItems} />
+            buttonIcon={ AddRounded }
+            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
+            menuItems={ menuItems }/>
         </Hidden>
-        {canRead
+        { canRead
           ? <>
             <Hidden smDown>
-              <Box className={classes.wrapper}>
+              <Box className={ classes.wrapper }>
                 { searchMode
                   ? <AssetDataGrid
-                      onItemSelect={onDataGridRowDoubleClicked}
-                      onRemoveInvoke={onRemoveInvoke}
-                      onCategoryInvoke={onCategoryListView}/>
+                    onItemSelect={ onDataGridRowDoubleClicked }
+                    onRemoveInvoke={ onRemoveInvoke }
+                    onCategoryInvoke={ onCategoryListView }/>
                   : dataGrid
                 }
               </Box>
             </Hidden>
             <Hidden smUp>
-              {!isLoading
+              { !isLoading
                 ? items.length < 1
-                  ? <AssetEmptyState />
+                  ? <AssetEmptyState/>
                   : <AssetList
-                      assets={items}
-                      onItemSelect={onAssetSelected}
-                      onItemRemove={onRemoveInvoke} />
-                : <LinearProgress />
+                    assets={ items }
+                    onItemSelect={ onAssetSelected }
+                    onItemRemove={ onRemoveInvoke }/>
+                : <LinearProgress/>
               }
             </Hidden>
           </>
-          : <ErrorNoPermissionState />
+          : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      {state.isOpen &&
-        <AssetEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          asset={state.asset}
-          onDismiss={onAssetEditorDismiss} />
+      { state.isOpen &&
+          <AssetEditor
+              isOpen={ state.isOpen }
+              isCreate={ state.isCreate }
+              asset={ state.asset }
+              onDismiss={ onAssetEditorDismiss }/>
       }
       <TypeScreen
-        isOpen={isCategoryOpen}
-        onDismiss={onCategoryListDismiss} />
-      {asset &&
-        <ConfirmationDialog
-          isOpen={asset !== undefined}
-          title="dialog.asset_remove"
-          summary="dialog.asset_remove_summary"
-          onDismiss={onRemoveDismiss}
-          onConfirm={onAssetRemove} />
+        isOpen={ isCategoryOpen }
+        onDismiss={ onCategoryListDismiss }/>
+      { asset &&
+          <ConfirmationDialog
+              isOpen={ asset !== undefined }
+              title="dialog.asset_remove"
+              summary="dialog.asset_remove_summary"
+              onDismiss={ onRemoveDismiss }
+              onConfirm={ onAssetRemove }/>
       }
     </Box>
   );
@@ -296,7 +296,7 @@ const AssetScreen = (props: AssetScreenProps) => {
 const EmptyStateOverlay = () => {
   return (
     <GridOverlay>
-      <AssetEmptyState />
+      <AssetEmptyState/>
     </GridOverlay>
   )
 }
@@ -306,9 +306,9 @@ const AssetEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={DesktopWindowsRounded}
-      title={t("empty_asset")}
-      subtitle={t("empty_asset_summary")} />
+      icon={ DesktopWindowsRounded }
+      title={ t("empty_asset") }
+      subtitle={ t("empty_asset_summary") }/>
   );
 }
 
@@ -363,8 +363,8 @@ const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
         const asset = params.row as Asset;
         return (
           <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => props.onRemoveInvoke(asset)}
+            aria-label={ t("button.delete") }
+            onClick={ () => props.onRemoveInvoke(asset) }
             size="large">
             <DeleteOutlineRounded/>
           </IconButton>
@@ -376,33 +376,32 @@ const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={{
+      components={ {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: EmptyStateOverlay,
         Toolbar: GridToolbar,
-      }}
-      componentsProps={{
+      } }
+      componentsProps={ {
         toolbar: {
           destinations: [
             <Button
               key="types"
               color="primary"
               size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
-              onClick={props.onCategoryInvoke}>
-              {t("navigation.types")}
+              startIcon={ <LocalOfferRounded fontSize="small"/> }
+              onClick={ props.onCategoryInvoke }>
+              { t("navigation.types") }
             </Button>
           ]
         }
-      }}
-      columns={columns}
-      rows={props.hits}
-      density={userPreference.density}
-      getRowId={(r) => r.stockNumber}
-      onRowDoubleClick={props.onItemSelect}/>
+      } }
+      columns={ columns }
+      rows={ props.hits }
+      density={ userPreference.density }
+      getRowId={ (r) => r.stockNumber }
+      onRowDoubleClick={ props.onItemSelect }/>
   )
 }
 const AssetDataGrid = connectHits<AssetDataGridCoreProps, Asset>(AssetDataGridCore)
-const densityKey = 'dataGrid:density';
 
 export default AssetScreen;

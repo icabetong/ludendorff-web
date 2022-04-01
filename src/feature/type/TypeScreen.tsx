@@ -86,45 +86,45 @@ const TypeScreen = (props: TypeScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={isMobile}
-        fullWidth={true}
+        fullScreen={ isMobile }
+        fullWidth={ true }
         maxWidth="xs"
-        open={props.isOpen}
-        onClose={props.onDismiss}>
-        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.types")}</CustomDialogTitle>
-        <DialogContent dividers={true} className={classes.root}>
-          {search
-            ? <InstantSearch searchClient={Provider} indexName="types">
-              <Box className={classes.searchBox}>
-                <SearchBox />
+        open={ props.isOpen }
+        onClose={ props.onDismiss }>
+        <CustomDialogTitle onSearch={ onSearchInvoked }>{ t("navigation.types") }</CustomDialogTitle>
+        <DialogContent dividers={ true } className={ classes.root }>
+          { search
+            ? <InstantSearch searchClient={ Provider } indexName="types">
+              <Box className={ classes.searchBox }>
+                <SearchBox/>
               </Box>
-              <Box className={classes.search}>
+              <Box className={ classes.search }>
                 <Results>
-                  <TypeHits onItemSelect={onEditorUpdate} />
+                  <TypeHits onItemSelect={ onEditorUpdate }/>
                 </Results>
               </Box>
             </InstantSearch>
             : canRead
               ? !isLoading
                 ? <TypeList
-                    types={categories}
-                    onItemSelect={onEditorUpdate} />
-                : <LinearProgress />
-              : <ErrorNoPermissionState />
+                  types={ categories }
+                  onItemSelect={ onEditorUpdate }/>
+                : <LinearProgress/>
+              : <ErrorNoPermissionState/>
           }
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={onEditorCreate} disabled={!canWrite}>{t("button.add")}</Button>
-          <div style={{ flex: '1 0 0' }}></div>
-          <Button color="primary" onClick={props.onDismiss}>{t("button.close")}</Button>
+          <Button color="primary" onClick={ onEditorCreate } disabled={ !canWrite }>{ t("button.add") }</Button>
+          <div style={ { flex: '1 0 0' } }></div>
+          <Button color="primary" onClick={ props.onDismiss }>{ t("button.close") }</Button>
         </DialogActions>
       </Dialog>
-      {state.isOpen &&
-        <CategoryEditorComponent
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          type={state.type}
-          onDismiss={onEditorDismiss} />
+      { state.isOpen &&
+          <CategoryEditorComponent
+              isOpen={ state.isOpen }
+              isCreate={ state.isCreate }
+              type={ state.type }
+              onDismiss={ onEditorDismiss }/>
       }
     </>
   )
@@ -137,8 +137,8 @@ type TypeHitsListProps = HitsProvided<Type> & {
 const CategoryHitsList = (props: TypeHitsListProps) => {
   return (
     <>
-      {props.hits.map((c: Type) => (
-        <TypeListItem type={c} onItemSelect={props.onItemSelect} />
+      { props.hits.map((c: Type) => (
+        <TypeListItem type={ c } onItemSelect={ props.onItemSelect }/>
       ))
       }
     </>
@@ -156,11 +156,11 @@ const TypeListItem = (props: TypeListItemProps) => {
   return (
     <ListItem
       button
-      key={props.type.typeId}
-      onClick={() => props.onItemSelect(props.type)}>
+      key={ props.type.typeId }
+      onClick={ () => props.onItemSelect(props.type) }>
       <ListItemText
-        primary={<Highlight attribute={typeName} hit={props.type} />}
-        secondary={t("template.count", { count: props.type.count })} />
+        primary={ <Highlight attribute={ typeName } hit={ props.type }/> }
+        secondary={ t("template.count", { count: props.type.count }) }/>
     </ListItem>
   )
 }

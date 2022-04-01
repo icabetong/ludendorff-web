@@ -14,7 +14,7 @@ export type Asset = {
   type?: TypeCore,
   classification?: string,
   unitOfMeasure?: string,
-  unitValue?: number,
+  unitValue: number,
   remarks?: string,
 }
 
@@ -24,10 +24,10 @@ export class AssetRepository {
     let batch = writeBatch(firestore);
 
     batch.set(doc(firestore, assetCollection, asset.stockNumber), asset);
-    
+
     let id = asset.type?.typeId;
     if (id) {
-      batch.update(doc(firestore, typeCollection, id), 
+      batch.update(doc(firestore, typeCollection, id),
         typeCollection, increment(1));
     }
 
