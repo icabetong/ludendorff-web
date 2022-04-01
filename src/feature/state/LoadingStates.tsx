@@ -38,9 +38,18 @@ export const MainLoadingStateComponent = () => {
   const theme = useTheme();
 
   return (
-    <Grid container direction="row" alignItems="center" justifyContent="center" className={ classes.root }>
-      <Grid item className={ classes.wrapper }>
-        <Logo stroke={ theme.palette.primary.main } className={ classes.icon }/>
+    <Grid
+      container
+      direction="row"
+      alignItems="center"
+      justifyContent="center"
+      className={ classes.root }>
+      <Grid
+        item
+        className={ classes.wrapper }>
+        <Logo
+          stroke={ theme.palette.primary.main }
+          className={ classes.icon }/>
         <LinearProgress className={ classes.progress }/>
       </Grid>
     </Grid>
@@ -51,8 +60,15 @@ export const ContentLoadingStateComponent = () => {
   const classes = useStyles();
 
   return (
-    <Grid container direction="column" alignItems="center" justifyContent="center" className={ classes.rootContent }>
-      <Grid item className={ classes.wrapper }>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      className={ classes.rootContent }>
+      <Grid
+        item
+        className={ classes.wrapper }>
         <CircularProgress className={ classes.progress }/>
       </Grid>
     </Grid>

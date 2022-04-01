@@ -42,8 +42,12 @@ const RequestResetPrompt = (props: RequestResetPromptProps) => {
         <DialogContentText>{ t("dialog.send_reset_link_message") }</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
-        <Button color="primary" onClick={ onSubmit }>{ t("button.continue") }</Button>
+        <Button
+          color="primary"
+          onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
+        <Button
+          color="primary"
+          onClick={ onSubmit }>{ t("button.continue") }</Button>
       </DialogActions>
     </Dialog>
   );

@@ -65,12 +65,12 @@ const TypeList = (props: TypeListProps) => {
           subtitle={ t("empty_type_summary") }/>
       }
       { type &&
-          <ConfirmationDialog
-              isOpen={ type !== undefined }
-              title="dialog.category_remove"
-              summary="dialog.category_remove_summary"
-              onDismiss={ onRemoveDismiss }
-              onConfirm={ onCategoryRemove }/>
+        <ConfirmationDialog
+          isOpen={ type !== undefined }
+          title="dialog.category_remove"
+          summary="dialog.category_remove_summary"
+          onDismiss={ onRemoveDismiss }
+          onConfirm={ onCategoryRemove }/>
       }
     </>
   );
@@ -106,7 +106,7 @@ const CategoryItem = (props: CategoryItemProps) => {
         primary={ props.category.typeName }
         secondary={ t("template.count", { count: props.category.count }) }/>
       { canDelete &&
-          <ListItemSecondaryAction>
+        <ListItemSecondaryAction>
             { props.category.count > 0
               ? <Tooltip title={ <>{ t("info.category_count_not_zero") }</> }>
                 <span>{ deleteButton }</span>

@@ -39,10 +39,14 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
         { React.createElement(props.icon, { className: classes.icon }) }
       </Grid>
       <Grid item>
-        <Typography variant="h6" className={ classes.text }>{ props.title }</Typography>
+        <Typography
+          variant="h6"
+          className={ classes.text }>{ props.title }</Typography>
       </Grid>
       <Grid item>
-        <Typography variant="subtitle1" className={ classes.text }>{ props.subtitle }</Typography>
+        <Typography
+          variant="subtitle1"
+          className={ classes.text }>{ props.subtitle }</Typography>
       </Grid>
     </Grid>
   )

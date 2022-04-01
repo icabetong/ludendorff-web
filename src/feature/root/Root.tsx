@@ -58,7 +58,7 @@ const InnerComponent = (props: InnerComponentPropsType) => {
     case Destination.ASSETS:
       return <AssetScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.INVENTORY:
-      return <InventoryReportScreen onDrawerToggle={props.onDrawerToggle}/>
+      return <InventoryReportScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.USERS:
       return <UserScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.PROFILE:
@@ -104,6 +104,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     margin: '0 auto',
     flexGrow: 1,
+    overflowY: 'hidden',
     [theme.breakpoints.up('xl')]: {
       maxWidth: '1600px'
     }
@@ -190,8 +191,12 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
-        <Button color="primary" onClick={ onTriggerSignOut }>{ t("button.continue") }</Button>
+        <Button
+          color="primary"
+          onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
+        <Button
+          color="primary"
+          onClick={ onTriggerSignOut }>{ t("button.continue") }</Button>
       </DialogActions>
     </Dialog>
   )
@@ -205,7 +210,9 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   return (
     <Box className={ classes.root }>
       <nav className={ classes.nav }>
-        <Hidden mdUp implementation="css">
+        <Hidden
+          mdUp
+          implementation="css">
           <Drawer
             variant="temporary"
             anchor={ theme.direction === "rtl" ? 'right' : 'left' }
@@ -221,16 +228,31 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
           </Drawer>
         </Hidden>
         <Hidden mdDown>
-          <AppBar color='inherit' elevation={ 2 }>
+          <AppBar
+            color='inherit'
+            elevation={ 2 }>
             <Toolbar>
-              <Box component={ Logo } className={ classes.icon } marginRight={ 3 }/>
-              <Divider variant="middle" orientation="vertical" flexItem className={ classes.divider }/>
-              <Box flexGrow={ 1 } marginX={ 1 }>
+              <Box
+                component={ Logo }
+                className={ classes.icon }
+                marginRight={ 3 }/>
+              <Divider
+                variant="middle"
+                orientation="vertical"
+                flexItem
+                className={ classes.divider }/>
+              <Box
+                flexGrow={ 1 }
+                marginX={ 1 }>
                 <TopNavigationComponent
                   onNavigate={ onNavigateThenDismiss }
                   currentDestination={ props.currentDestination }/>
               </Box>
-              <Divider variant="middle" orientation="vertical" flexItem className={ classes.divider }/>
+              <Divider
+                variant="middle"
+                orientation="vertical"
+                flexItem
+                className={ classes.divider }/>
               <Button
                 color="inherit"
                 ref={ anchorRef }
@@ -238,12 +260,23 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                 onClick={ onTriggerMenu }
                 className={ classes.profile }
                 endIcon={ <ArrowDropDown/> }>
-                <Box flexDirection="column" textAlign="start">
-                  <Typography className={ classes.profileName } variant="body2">{ user && user.firstName }</Typography>
-                  <Typography className={ classes.profileEmail } variant="caption">{ user && user.email }</Typography>
+                <Box
+                  flexDirection="column"
+                  textAlign="start">
+                  <Typography
+                    className={ classes.profileName }
+                    variant="body2">{ user && user.firstName }</Typography>
+                  <Typography
+                    className={ classes.profileEmail }
+                    variant="caption">{ user && user.email }</Typography>
                 </Box>
               </Button>
-              <Popper open={ menuOpen } anchorEl={ anchorRef.current } role={ undefined } transition disablePortal>
+              <Popper
+                open={ menuOpen }
+                anchorEl={ anchorRef.current }
+                role={ undefined }
+                transition
+                disablePortal>
                 { ({ TransitionProps, placement }) => (
                   <Grow
                     { ...TransitionProps }
@@ -266,10 +299,10 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                             <ListItemText>{ t('navigation.settings') }</ListItemText>
                           </MenuItem>
                           <MenuItem
-                            key="signout"
+                            key="signOut"
                             onClick={ () => setTriggerConfirmSignOut(true) }>
                             <ListItemIcon><ExitToAppRounded/></ListItemIcon>
-                            <ListItemText>{ t('button.signout') }</ListItemText>
+                            <ListItemText>{ t('button.sign_out') }</ListItemText>
                           </MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -283,7 +316,9 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
       </nav>
       <Box className={ classes.content }>
         <Suspense fallback={ <ContentLoadingStateComponent/> }>
-          <InnerComponent destination={ props.currentDestination } onDrawerToggle={ onToggleDrawerState }/>
+          <InnerComponent
+            destination={ props.currentDestination }
+            onDrawerToggle={ onToggleDrawerState }/>
         </Suspense>
       </Box>
       { signOutDialog }

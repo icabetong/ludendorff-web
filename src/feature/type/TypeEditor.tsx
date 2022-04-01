@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Type, TypesRepository } from "./Type";
-import { newId } from "../../shared/utils";
+import { isDev, newId } from "../../shared/utils";
 
 type FormValues = {
   name?: string
@@ -40,21 +40,23 @@ const TypeEditor = (props: TypeEditorProps) => {
       typeName: data.name,
     }
     if (props.isCreate) {
-      TypesRepository.create(type)
-        .then(() =>
-          enqueueSnackbar(t("feedback.category_created"))
-        ).catch(() =>
-        enqueueSnackbar(t("feedback.category_create_error"))
+      TypesRepository.create(type).then(() =>
+        enqueueSnackbar(t("feedback.category_created"))
+      ).catch((error) => {
+          enqueueSnackbar(t("feedback.category_create_error"))
+          if (isDev) console.log(error)
+        }
       ).finally(() => {
         setWritePending(false);
         props.onDismiss();
       })
     } else {
-      TypesRepository.update(type)
-        .then(() =>
-          enqueueSnackbar(t("feedback.category_updated"))
-        ).catch(() =>
-        enqueueSnackbar(t("feedback.category_update_error"))
+      TypesRepository.update(type).then(() =>
+        enqueueSnackbar(t("feedback.category_updated"))
+      ).catch((error) => {
+          enqueueSnackbar(t("feedback.category_update_error"))
+          if (isDev) console.log(error)
+        }
       ).finally(() => {
         setWritePending(false);
         props.onDismiss();

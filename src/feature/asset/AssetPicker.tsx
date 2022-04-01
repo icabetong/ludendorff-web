@@ -55,10 +55,10 @@ const AssetPicker = (props: AssetPickerProps) => {
                     assets={ props.assets }
                     onItemSelect={ onSelect }/>
                   <PaginationController
-                    canBack={props.canBack}
-                    canForward={props.canForward}
-                    onBackward={props.onBackward}
-                    onForward={props.onForward}/>
+                    canBack={ props.canBack }
+                    canForward={ props.canForward }
+                    onBackward={ props.onBackward }
+                    onForward={ props.onForward }/>
                 </>
               : <EmptyStateComponent
                 icon={ DesktopWindowsRounded }
@@ -69,7 +69,9 @@ const AssetPicker = (props: AssetPickerProps) => {
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ props.onDismiss }>{ t("close") }</Button>
+        <Button
+          color="primary"
+          onClick={ props.onDismiss }>{ t("close") }</Button>
       </DialogActions>
     </Dialog>
   );

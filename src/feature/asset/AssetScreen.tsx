@@ -58,6 +58,7 @@ import { DataGridPaginationController } from "../../components/PaginationControl
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import { HitsProvided } from "react-instantsearch-core";
+import { isDev } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -95,7 +96,10 @@ const AssetScreen = (props: AssetScreenProps) => {
     if (asset !== undefined) {
       AssetRepository.remove(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_removed")))
-        .catch((e) => enqueueSnackbar(t("feedback.asset_remove_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.asset_remove_error"))
+          if (isDev) console.log(error)
+        })
         .finally(onRemoveDismiss)
     }
   }
@@ -170,7 +174,9 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onCategoryListDismiss = () => setCategoryOpen(false);
 
   const menuItems = [
-    <MenuItem key={ 0 } onClick={ onCategoryListView }>{ t("navigation.categories") }</MenuItem>
+    <MenuItem
+      key={ 0 }
+      onClick={ onCategoryListView }>{ t("navigation.types") }</MenuItem>
   ];
 
   const pagination = () => {
@@ -217,7 +223,9 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   return (
     <Box className={ classes.root }>
-      <InstantSearch searchClient={ Provider } indexName="assets">
+      <InstantSearch
+        searchClient={ Provider }
+        indexName="assets">
         <Hidden mdDown>
           <PageHeader
             title={ t("navigation.assets") }
@@ -272,23 +280,21 @@ const AssetScreen = (props: AssetScreenProps) => {
         }
       </InstantSearch>
       { state.isOpen &&
-          <AssetEditor
-              isOpen={ state.isOpen }
-              isCreate={ state.isCreate }
-              asset={ state.asset }
-              onDismiss={ onAssetEditorDismiss }/>
+        <AssetEditor
+          isOpen={ state.isOpen }
+          isCreate={ state.isCreate }
+          asset={ state.asset }
+          onDismiss={ onAssetEditorDismiss }/>
       }
       <TypeScreen
         isOpen={ isCategoryOpen }
         onDismiss={ onCategoryListDismiss }/>
-      { asset &&
-          <ConfirmationDialog
-              isOpen={ asset !== undefined }
-              title="dialog.asset_remove"
-              summary="dialog.asset_remove_summary"
-              onDismiss={ onRemoveDismiss }
-              onConfirm={ onAssetRemove }/>
-      }
+      <ConfirmationDialog
+        isOpen={ asset !== undefined }
+        title="dialog.asset_remove"
+        summary="dialog.asset_remove_summary"
+        onDismiss={ onRemoveDismiss }
+        onConfirm={ onAssetRemove }/>
     </Box>
   );
 }

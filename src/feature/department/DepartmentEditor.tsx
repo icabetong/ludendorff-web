@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -15,7 +15,7 @@ import {
   Typography
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import { Department, DepartmentRepository } from "./Department";
 import { User, UserCore, minimize } from "../user/User";
 import UserPicker from "../user/UserPicker";
@@ -23,8 +23,9 @@ import {
   userCollection,
   lastName
 } from "../../shared/const";
-import { newId } from "../../shared/utils";
+import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../..";
+import { usePagination } from "use-pagination-firestore";
 
 type DepartmentEditorProps = {
   isOpen: boolean,
@@ -44,23 +45,12 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [manager, setManager] = useState<UserCore | undefined>(props.department?.manager);
-  const [isLoading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
 
-  useEffect(() => {
-    let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, userCollection), orderBy(lastName, "asc")), (snapshot) => {
-      if (mounted) {
-        setUsers(snapshot.docs.map((doc) => doc.data() as User));
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
+    query(collection(firestore, userCollection), orderBy(lastName, "asc")), {
+      limit: 15
     }
-  }, [])
+  )
 
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
@@ -77,7 +67,10 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
     if (props.isCreate) {
       DepartmentRepository.create(department)
         .then(() => enqueueSnackbar(t("feedback.department_created")))
-        .catch(() => enqueueSnackbar(t("feedback.department_create_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.department_create_error"));
+          if (isDev) console.log(error)
+        })
         .finally(() => {
           setWritePending(false);
           props.onDismiss();
@@ -85,7 +78,10 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
     } else {
       DepartmentRepository.update(department)
         .then(() => enqueueSnackbar(t("feedback.department_updated")))
-        .catch(() => enqueueSnackbar(t("feedback.department_update_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.department_update_error"));
+          if (isDev) console.log(error);
+        })
         .finally(() => {
           setWritePending(false);
           props.onDismiss();
@@ -105,7 +101,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
         open={ props.isOpen }
         onClose={ props.onDismiss }>
         <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("department_details") }</DialogTitle>
+          <DialogTitle>{ t("dialog.details_department") }</DialogTitle>
           <DialogContent>
             <Container disableGutters>
               <TextField
@@ -118,11 +114,16 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                 error={ errors.name !== undefined }
                 helperText={ errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined }
                 { ...register("name", { required: "feedback.empty_department_name" }) } />
-              <FormControl component="fieldset" fullWidth>
+              <FormControl
+                component="fieldset"
+                fullWidth>
                 <FormLabel component="legend">
                   <Typography variant="body2">{ t("field.manager") }</Typography>
                 </FormLabel>
-                <ListItem button onClick={ onPickerView } disabled={ isWritePending }>
+                <ListItem
+                  button
+                  onClick={ onPickerView }
+                  disabled={ isWritePending }>
                   <Typography variant="body2">
                     { manager !== undefined ? manager?.name : t("not_set") }
                   </Typography>
@@ -146,14 +147,16 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
           </DialogActions>
         </form>
       </Dialog>
-      { isPickerOpen &&
-          <UserPicker
-              isOpen={ isPickerOpen }
-              users={ users }
-              isLoading={ isLoading }
-              onDismiss={ onPickerDismiss }
-              onSelectItem={ onUserSelected }/>
-      }
+      <UserPicker
+        isOpen={ isPickerOpen }
+        users={ items }
+        isLoading={ isLoading }
+        onDismiss={ onPickerDismiss }
+        onSelectItem={ onUserSelected }
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}/>
     </>
   )
 }

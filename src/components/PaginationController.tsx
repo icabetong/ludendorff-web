@@ -1,6 +1,6 @@
 import {
   Box,
-  Chip,
+  Chip, Grow,
   IconButton,
   Stack,
   Typography
@@ -46,13 +46,22 @@ export const DataGridPaginationController = (props: DataGridPaginationController
       <Stack direction="row" spacing={ 1 }>
         { sizes.map((s) => {
           return (
-            <Chip
-              key={ s }
-              variant="outlined"
-              label={ s }
-              color={ size === s ? "primary" : undefined }
-              icon={ size === s ? <CheckRounded/> : undefined }
-              onClick={ () => onPageSizeChanged(s) }/>
+            s === size
+              ? <Grow key={s} in={s === size}>
+                  <Chip
+                    variant="outlined"
+                    label={ s }
+                    color={ size === s ? "primary" : undefined }
+                    icon={ size === s ? <CheckRounded/> : undefined }
+                    onClick={ () => onPageSizeChanged(s) }/>
+                </Grow>
+              : <Chip
+                  key={ s }
+                  variant="outlined"
+                  label={ s }
+                  color={ size === s ? "primary" : undefined }
+                  icon={ size === s ? <CheckRounded/> : undefined }
+                  onClick={ () => onPageSizeChanged(s) }/>
           )
         }) }
       </Stack>

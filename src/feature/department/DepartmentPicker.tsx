@@ -17,6 +17,7 @@ import { Department } from "./Department";
 import DepartmentList from "./DepartmentList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-type DepartmentPickerProps = {
+type DepartmentPickerProps = PaginationControllerProps & {
   isOpen: boolean,
   departments: Department[],
   isLoading: boolean,
@@ -51,19 +52,30 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
       maxWidth="xs"
       open={ props.isOpen }
       onClose={ () => props.onDismiss() }>
-      <DialogTitle>{ t("department_select") }</DialogTitle>
-      <DialogContent dividers={ true } className={ classes.container }>
+      <DialogTitle>{ t("dialog.select_department") }</DialogTitle>
+      <DialogContent
+        dividers={ true }
+        className={ classes.container }>
         { canRead
           ? !props.isLoading
-            ? <DepartmentList
-              departments={ props.departments }
-              onItemSelect={ props.onSelectItem }/>
+            ? <>
+                <DepartmentList
+                  departments={ props.departments }
+                  onItemSelect={ props.onSelectItem }/>
+                <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              </>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ () => props.onDismiss() }>{ t("button.close") }</Button>
+        <Button
+          color="primary"
+          onClick={ () => props.onDismiss() }>{ t("button.close") }</Button>
       </DialogActions>
     </Dialog>
   );

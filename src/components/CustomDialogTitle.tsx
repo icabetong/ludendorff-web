@@ -10,13 +10,17 @@ import { SearchOutlined } from "@mui/icons-material";
 const styles = (theme: Theme) =>
   createStyles({
     root: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
       margin: 0,
       padding: theme.spacing(2),
     },
+    header: {
+      flex: 2
+    },
     actionButton: {
-      position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1),
       color: theme.palette.grey[500],
     },
   });
@@ -30,7 +34,7 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
   const { children, classes, onSearch, ...other } = props;
   return (
     <MuiDialogTitle className={ classes.root } { ...other }>
-      <Typography variant="h6">{ children }</Typography>
+      <Typography className={classes.header} variant="h6">{ children }</Typography>
       { onSearch ? (
         <IconButton
           aria-label={ t("button.search") }

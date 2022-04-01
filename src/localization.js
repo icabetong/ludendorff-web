@@ -101,8 +101,8 @@ const resources = {
         duplicate: "Duplicate",
         show_menu: "Show menu",
         show_drawer: "Show drawer",
-        signin: "Sign in",
-        signout: "Sign-out",
+        sign_in: "Sign in",
+        sign_out: "Sign-out",
         go_to_home: "Go to Home",
         request_asset: "Request Asset",
         create_asset: "Create Asset",
@@ -187,8 +187,8 @@ const resources = {
         table_row_density_comfortable: "Comfortable"
       },
       dialog: {
-        signout: "Sign out?",
-        signout_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+        sign_out: "Sign out?",
+        sign_out_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
         asset_remove: "Remove asset?",
         asset_remove_summary: "Do you want to remove this asset? Once finished, this action cannot be undone.",
         type_remove: "Remove type?",
@@ -215,12 +215,24 @@ const resources = {
         select_asset: "Select Asset",
         select_user: "Select User",
         select_department: "Select Department",
+        view_qr_code: "View QR-Code",
+        view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
       },
       template: {
         full_name: "{{first}} {{last}}",
         count: "Count: {{count}}",
       },
       empty: {
+        asset: "No Assets Added",
+        asset_summary: "There are no assets available.",
+        type: "No Types Added",
+        type_summary: "There are no types available that can be used to organize the assets.",
+        user: "No Users Added",
+        user_summary: "There are no users available.",
+        department: "No Departments Added",
+        department_summary: "There are no departments available that can be used to assign the users from.",
+        search: "No Results",
+        search_summary: "There are no items matched on your query \"{{query}}\"",
         inventory_header: "No Inventory Reports Available",
         inventory_summary: "There are no Physical Count of Inventories Reports that are available on the database."
       },
@@ -230,32 +242,6 @@ const resources = {
       unknown: "Unknown",
       information: "Information",
       actions: "Actions",
-      not_set: "Not Set",
-      asset_details: "Asset Details",
-      category_details: "Category Details",
-      specification_details: "Specification Details",
-      user_details: "User Details",
-      department_details: "Department Details",
-      assignment_details: "Assignment Details",
-      request_details: "Request Details",
-      asset_select: "Select Asset",
-      type_select: "Select Type",
-      user_select: "Select User",
-      department_select: "Select Department",
-      view_qr_code: "View QR-Code",
-      view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
-      empty_asset: "No Assets Added",
-      empty_asset_summary: "There are no assets available.",
-      empty_type: "No Types Added",
-      empty_type_summary: "There are no types available that can be used to organize the assets.",
-      empty_user: "No Users Added",
-      empty_user_summary: "There are no users available.",
-      empty_department: "No Departments Added",
-      empty_department_summary: "There are no departments available that can be used to assign the users from.",
-      empty_scanned_code: "Scan a QR-Code",
-      empty_scanned_code_summary: "You'll need to scan a valid QR-Code first to view its embedded data.",
-      empty_search: "No Results",
-      empty_search_summary: "There are no items matched on your query \"{{query}}\""
     }
   }
 }
@@ -267,6 +253,6 @@ i18n.use(initReactI18next)
     interpolation: {
       escapeValue: false
     }
-  });
+  }).then(() => {});
 
 export default i18n;

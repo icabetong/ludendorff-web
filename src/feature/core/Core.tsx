@@ -133,9 +133,17 @@ export const CoreComponent = () => {
       <CssBaseline/>
       <Router history={ history }>
         <Switch>
-          <Route path="/" component={ RootComponent } exact/>
-          <Route path="/auth" component={ AuthComponent }/>
-          <Route path="*" component={ ErrorNotFoundState } exact/>
+          <Route
+            path="/"
+            component={ RootComponent }
+            exact/>
+          <Route
+            path="/auth"
+            component={ AuthComponent }/>
+          <Route
+            path="*"
+            component={ ErrorNotFoundState }
+            exact/>
         </Switch>
       </Router>
     </ThemeProvider>

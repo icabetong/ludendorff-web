@@ -88,8 +88,12 @@ const ChangePasswordPrompt = (props: ChangePasswordPromptProps) => {
           </Container>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
-          <Button color="primary" type="submit">{ t("button.continue") }</Button>
+          <Button
+            color="primary"
+            onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
+          <Button
+            color="primary"
+            type="submit">{ t("button.continue") }</Button>
         </DialogActions>
       </form>
     </Dialog>

@@ -1,4 +1,4 @@
-import { Box, Button, Hidden, IconButton, Theme } from "@mui/material";
+import { Box, Hidden, IconButton, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useState, useReducer } from "react";
 import { getDataGridTheme } from "../core/Core";
@@ -6,14 +6,14 @@ import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
-import { AddRounded, DeleteOutlineRounded, Inventory2Outlined, LocalOfferRounded } from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
 
 import {
   ActionType,
   initialState,
   reducer,
 } from "./InventoryReportEditorReducer";
-import { DataGrid, GridCellParams, GridOverlay, GridRow, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridOverlay, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import ComponentHeader from "../../components/ComponentHeader";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
@@ -39,7 +39,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { HitsProvided } from "react-instantsearch-core";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
-import { formatDate } from "../../shared/utils";
+import { formatDate, isDev } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -77,8 +77,11 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const onReportRemove = () => {
     if (report) {
       InventoryReportRepository.remove(report)
-        .then(() => console.log("removed"))
-        .catch((e) => console.log(e))
+        .then(() => enqueueSnackbar(t("feedback.inventory_removed")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.inventory_remove_error"))
+          if (isDev) console.log(error)
+        })
         .finally(onRemoveDismiss)
     }
   }
@@ -88,7 +91,8 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: entityPosition, headerName: t("field.entity_position"), flex: 1 },
     { field: yearMonth, headerName: t("field.year_month"), flex: 1 },
-    { field: accountabilityDate,
+    {
+      field: accountabilityDate,
       headerName: t("field.accountability_date"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
@@ -106,8 +110,8 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         const report = params.row as InventoryReport;
         return (
           <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => onRemoveInvoke(report)}
+            aria-label={ t("button.delete") }
+            onClick={ () => onRemoveInvoke(report) }
             size="large">
             <DeleteOutlineRounded/>
           </IconButton>
@@ -132,12 +136,12 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const pagination = () => {
     return (
       <DataGridPaginationController
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        size={size}
-        onPageSizeChanged={setSize}/>
+        canBack={ isStart }
+        canForward={ isEnd }
+        onBackward={ getPrev }
+        onForward={ getNext }
+        size={ size }
+        onPageSizeChanged={ setSize }/>
     )
   }
 
@@ -159,34 +163,36 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
 
   return (
     <Box className={ classes.root }>
-      <InstantSearch searchClient={Provider} indexName="inventories">
+      <InstantSearch
+        searchClient={ Provider }
+        indexName="inventories">
         <Hidden mdDown>
           <PageHeader
-            title={t('navigation.inventories')}
-            buttonText={t("button.create_report")}
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-            onSearchFocusChanged={setSearchMode}/>
+            title={ t('navigation.inventories') }
+            buttonText={ canWrite ? t("button.create_report") : undefined }
+            buttonIcon={ AddRounded }
+            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
+            onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
         <Hidden mdUp>
           <ComponentHeader
-            title={t("navigation.inventories")}
-            onDrawerToggle={props.onDrawerToggle}
+            title={ t("navigation.inventories") }
+            onDrawerToggle={ props.onDrawerToggle }
             buttonText={
-              t("button.create_report")
+              canWrite ? t("button.create_report") : undefined
             }
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-            />
+            buttonIcon={ AddRounded }
+            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
+          />
         </Hidden>
         { canRead
           ? <>
               <Hidden smDown>
-                <Box className={classes.wrapper}>
+                <Box className={ classes.wrapper }>
                   { searchMode
                     ? <InventoryReportDataGrid
-                        onItemSelect={onDataGridRowDoubleClicked}
-                        onRemoveInvoke={onRemoveInvoke}/>
+                      onItemSelect={ onDataGridRowDoubleClicked }
+                      onRemoveInvoke={ onRemoveInvoke }/>
                     : dataGrid
                   }
                 </Box>
@@ -197,17 +203,17 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       </InstantSearch>
       { state.isOpen &&
         <InventoryReportEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          report={state.report}
-          onDismiss={onInventoryEditorDismiss}/>
+          isOpen={ state.isOpen }
+          isCreate={ state.isCreate }
+          report={ state.report }
+          onDismiss={ onInventoryEditorDismiss }/>
       }
       <ConfirmationDialog
-        isOpen={report !== undefined}
+        isOpen={ report !== undefined }
         title="dialog.inventory_remove"
         summary="dialog.inventory_remove_summary"
-        onConfirm={onReportRemove}
-        onDismiss={onRemoveDismiss}/>
+        onConfirm={ onReportRemove }
+        onDismiss={ onRemoveDismiss }/>
     </Box>
   )
 }
@@ -225,9 +231,9 @@ const InventoryReportEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={Inventory2Outlined}
-      title={t("empty.inventory_header")}
-      subtitle={t("empty.inventory_summary")}/>
+      icon={ Inventory2Outlined }
+      title={ t("empty.inventory_header") }
+      subtitle={ t("empty.inventory_summary") }/>
   )
 }
 
@@ -242,7 +248,35 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridCoreProps) =>
   const columns = [
     { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
-    { field: entityPosition, headerName: t("field.entity_position"), flex: 1 }
+    { field: entityPosition, headerName: t("field.entity_position"), flex: 1 },
+    { field: yearMonth, headerName: t("field.year_month"), flex: 1 },
+    {
+      field: accountabilityDate,
+      headerName: t("field.accountability_date"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        const formatted = formatDate(params.row.accountabilityDate);
+        return t(formatted)
+      }
+    },
+    {
+      field: "delete",
+      headerName: t("button.delete"),
+      flex: 0.5,
+      disableColumnMenu: true,
+      sortable: false,
+      renderCell: (params: GridCellParams) => {
+        const report = params.row as InventoryReport;
+        return (
+          <IconButton
+            aria-label={ t("button.delete") }
+            onClick={ () => props.onRemoveInvoke(report) }
+            size="large">
+            <DeleteOutlineRounded/>
+          </IconButton>
+        )
+      }
+    }
   ]
 
   return (

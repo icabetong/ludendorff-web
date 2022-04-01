@@ -1,4 +1,4 @@
-import { useReducer, useState, useEffect } from "react";
+import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -15,7 +15,7 @@ import {
 import makeStyles from '@mui/styles/makeStyles';
 import { InstantSearch, connectHits } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 
 import { Type } from "./Type";
 import CategoryEditorComponent from "./TypeEditor";
@@ -28,6 +28,8 @@ import { SearchBox, Highlight, Provider, Results } from "../../components/Search
 import { typeCollection, typeName } from "../../shared/const";
 
 import { firestore } from "../../index";
+import { usePagination } from "use-pagination-firestore";
+import { PaginationController } from "../../components/PaginationController";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -56,26 +58,14 @@ const TypeScreen = (props: TypeScreenProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [search, setSearch] = useState(false);
-  const [isLoading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<Type[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
   const classes = useStyles();
 
-  useEffect(() => {
-    let mounted = true;
-    const unsubscribe = onSnapshot(query(collection(firestore, typeCollection), orderBy(typeName, "asc")), (snapshot) => {
-      if (mounted) {
-        setCategories(snapshot.docs.map((doc) => doc.data() as Type));
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
-    }
-  }, []);
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Type>(
+    query(collection(firestore, typeCollection), orderBy(typeName, "asc")),
+    { limit: 15 }
+  );
 
   const onSearchInvoked = () => setSearch(!search);
 
@@ -92,9 +82,13 @@ const TypeScreen = (props: TypeScreenProps) => {
         open={ props.isOpen }
         onClose={ props.onDismiss }>
         <CustomDialogTitle onSearch={ onSearchInvoked }>{ t("navigation.types") }</CustomDialogTitle>
-        <DialogContent dividers={ true } className={ classes.root }>
+        <DialogContent
+          dividers={ true }
+          className={ classes.root }>
           { search
-            ? <InstantSearch searchClient={ Provider } indexName="types">
+            ? <InstantSearch
+              searchClient={ Provider }
+              indexName="types">
               <Box className={ classes.searchBox }>
                 <SearchBox/>
               </Box>
@@ -106,26 +100,36 @@ const TypeScreen = (props: TypeScreenProps) => {
             </InstantSearch>
             : canRead
               ? !isLoading
-                ? <TypeList
-                  types={ categories }
-                  onItemSelect={ onEditorUpdate }/>
+                ? <>
+                    <TypeList
+                      types={ items }
+                      onItemSelect={ onEditorUpdate }/>
+                    <PaginationController
+                      canBack={ isStart }
+                      canForward={ isEnd }
+                      onBackward={ getPrev }
+                      onForward={ getNext }/>
+                  </>
                 : <LinearProgress/>
               : <ErrorNoPermissionState/>
           }
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={ onEditorCreate } disabled={ !canWrite }>{ t("button.add") }</Button>
-          <div style={ { flex: '1 0 0' } }></div>
-          <Button color="primary" onClick={ props.onDismiss }>{ t("button.close") }</Button>
+          <Button
+            color="primary"
+            onClick={ onEditorCreate }
+            disabled={ !canWrite }>{ t("button.add") }</Button>
+          <div style={ { flex: '1 0 0' } }/>
+          <Button
+            color="primary"
+            onClick={ props.onDismiss }>{ t("button.close") }</Button>
         </DialogActions>
       </Dialog>
-      { state.isOpen &&
-          <CategoryEditorComponent
-              isOpen={ state.isOpen }
-              isCreate={ state.isCreate }
-              type={ state.type }
-              onDismiss={ onEditorDismiss }/>
-      }
+      <CategoryEditorComponent
+        isOpen={ state.isOpen }
+        isCreate={ state.isCreate }
+        type={ state.type }
+        onDismiss={ onEditorDismiss }/>
     </>
   )
 }
@@ -138,7 +142,9 @@ const CategoryHitsList = (props: TypeHitsListProps) => {
   return (
     <>
       { props.hits.map((c: Type) => (
-        <TypeListItem type={ c } onItemSelect={ props.onItemSelect }/>
+        <TypeListItem
+          type={ c }
+          onItemSelect={ props.onItemSelect }/>
       ))
       }
     </>
@@ -159,7 +165,9 @@ const TypeListItem = (props: TypeListItemProps) => {
       key={ props.type.typeId }
       onClick={ () => props.onItemSelect(props.type) }>
       <ListItemText
-        primary={ <Highlight attribute={ typeName } hit={ props.type }/> }
+        primary={ <Highlight
+          attribute={ typeName }
+          hit={ props.type }/> }
         secondary={ t("template.count", { count: props.type.count }) }/>
     </ListItem>
   )

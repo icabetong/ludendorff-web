@@ -32,13 +32,19 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
         <DialogContentText>
           <Typography>{ t("view_qr_code_summary") }</Typography>
         </DialogContentText>
-        <Grid container direction="row" alignItems="center" justifyContent="center">
+        <Grid
+          container
+          direction="row"
+          alignItems="center"
+          justifyContent="center">
           <QRCode value={ `clsu://ludendorff/${ props.assetId }` }/>
         </Grid>
       </DialogContent>
 
       <DialogActions>
-        <Button color="primary" onClick={ props.onClose }>{ t("close") }</Button>
+        <Button
+          color="primary"
+          onClick={ props.onClose }>{ t("close") }</Button>
       </DialogActions>
     </Dialog>
   );

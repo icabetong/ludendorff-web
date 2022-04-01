@@ -57,8 +57,10 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       title: t("settings.dark_theme"),
       summary: t("settings.dark_theme_summary"),
       icon: PaletteOutlined,
-      action: <Switch edge="end" checked={ userPreferences.preferences.theme === 'dark' }
-                      onChange={ onTriggerThemeChanged }/>
+      action: <Switch
+        edge="end"
+        checked={ userPreferences.preferences.theme === 'dark' }
+        onChange={ onTriggerThemeChanged }/>
     }, {
       key: 'preference:density',
       title: t("settings.table_row_density"),

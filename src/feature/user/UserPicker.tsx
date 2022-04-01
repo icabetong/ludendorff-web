@@ -16,6 +16,7 @@ import UserList from "./UserList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
+import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-type UserPickerProps = {
+type UserPickerProps = PaginationControllerProps & {
   isOpen: boolean,
   users: User[],
   isLoading: boolean,
@@ -56,13 +57,22 @@ const UserPicker = (props: UserPickerProps) => {
       open={ props.isOpen }
       onClose={ props.onDismiss }>
       <DialogTitle>{ t("user_select") }</DialogTitle>
-      <DialogContent dividers={ true } className={ classes.root }>
+      <DialogContent
+        dividers={ true }
+        className={ classes.root }>
         { canRead ?
           !props.isLoading
             ? props.users.length > 0
-              ? <UserList
-                users={ props.users }
-                onItemSelect={ onSelect }/>
+              ? <>
+                  <UserList
+                    users={ props.users }
+                    onItemSelect={ onSelect }/>
+                  <PaginationController
+                    canBack={props.canBack}
+                    canForward={props.canForward}
+                    onBackward={props.onBackward}
+                    onForward={props.onForward}/>
+                </>
               : <EmptyStateComponent
                 icon={ PeopleOutlineRounded }
                 title={ t("empty_user") }
@@ -72,7 +82,9 @@ const UserPicker = (props: UserPickerProps) => {
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ props.onDismiss }>{ t("close") }</Button>
+        <Button
+          color="primary"
+          onClick={ props.onDismiss }>{ t("close") }</Button>
       </DialogActions>
     </Dialog>
   );

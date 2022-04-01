@@ -120,7 +120,9 @@ const UserScreen = (props: UserScreenProps) => {
       renderCell: (params: GridCellParams) => {
         const user = params.row as User;
         return (
-          <Tooltip title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> } placement="bottom">
+          <Tooltip
+            title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> }
+            placement="bottom">
             <span>
               <IconButton
                 aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }
@@ -201,7 +203,9 @@ const UserScreen = (props: UserScreenProps) => {
   }
 
   const menuItems = [
-    <MenuItem key={ 0 } onClick={ onDepartmentView }>{ t("navigation.departments") }</MenuItem>
+    <MenuItem
+      key={ 0 }
+      onClick={ onDepartmentView }>{ t("navigation.departments") }</MenuItem>
   ]
 
   const pagination = () => {
@@ -249,7 +253,9 @@ const UserScreen = (props: UserScreenProps) => {
 
   return (
     <Box className={ classes.root }>
-      <InstantSearch searchClient={ Provider } indexName="users">
+      <InstantSearch
+        searchClient={ Provider }
+        indexName="users">
         <Hidden mdDown>
           <PageHeader
             title={ t("navigation.users") }
@@ -290,7 +296,9 @@ const UserScreen = (props: UserScreenProps) => {
               { !isLoading
                 ? items.length < 1
                   ? <UserEmptyStateComponent/>
-                  : <UserList users={ items } onItemSelect={ onUserSelected }/>
+                  : <UserList
+                    users={ items }
+                    onItemSelect={ onUserSelected }/>
                 : <LinearProgress/>
               }
             </Hidden>
@@ -299,29 +307,23 @@ const UserScreen = (props: UserScreenProps) => {
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      { state.isOpen &&
-          <UserEditor
-              isOpen={ state.isOpen }
-              isCreate={ state.isCreate }
-              user={ state.user }
-              onDismiss={ onUserEditorDismiss }/>
-      }
-      { userModify &&
-          <ConfirmationDialog
-              isOpen={ userModify !== undefined }
-              title={ userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable" }
-              summary={ userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary" }
-              onDismiss={ onModificationDismiss }
-              onConfirm={ onModificationConfirmed }/>
-      }
-      { userRemove &&
-          <ConfirmationDialog
-              isOpen={ userRemove !== undefined }
-              title="dialog.user_remove"
-              summary="dialog.user_remove_summary"
-              onDismiss={ onRemoveDismiss }
-              onConfirm={ onRemoveConfirmed }/>
-      }
+      <UserEditor
+        isOpen={ state.isOpen }
+        isCreate={ state.isCreate }
+        user={ state.user }
+        onDismiss={ onUserEditorDismiss }/>
+      <ConfirmationDialog
+        isOpen={ userModify !== undefined }
+        title={ userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable" }
+        summary={ userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary" }
+        onDismiss={ onModificationDismiss }
+        onConfirm={ onModificationConfirmed }/>
+      <ConfirmationDialog
+        isOpen={ userRemove !== undefined }
+        title="dialog.user_remove"
+        summary="dialog.user_remove_summary"
+        onDismiss={ onRemoveDismiss }
+        onConfirm={ onRemoveConfirmed }/>
       <DepartmentScreen
         isOpen={ isDepartmentOpen }
         onDismiss={ onDepartmentDismiss }/>
@@ -389,7 +391,9 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
       renderCell: (params: GridCellParams) => {
         const user = params.row as User;
         return (
-          <Tooltip title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> } placement="bottom">
+          <Tooltip
+            title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> }
+            placement="bottom">
             <span>
               <IconButton
                 aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }

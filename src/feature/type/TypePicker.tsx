@@ -14,6 +14,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Type } from "./Type";
 import TypeList from "./TypeList";
+import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-type TypePickerProps = {
+type TypePickerProps = PaginationControllerProps & {
   isOpen: boolean,
   types: Type[],
   isLoading: boolean,
@@ -48,19 +49,30 @@ const TypePicker = (props: TypePickerProps) => {
       maxWidth="xs"
       open={ props.isOpen }
       onClose={ props.onDismiss }>
-      <DialogTitle>{ t("dialog.details_type") }</DialogTitle>
-      <DialogContent dividers={ true } className={ classes.root }>
+      <DialogTitle>{ t("dialog.select_type") }</DialogTitle>
+      <DialogContent
+        dividers={ true }
+        className={ classes.root }>
         { canRead
           ? !props.isLoading
-            ? <TypeList
-              types={ props.types }
-              onItemSelect={ props.onSelectItem }/>
+            ? <>
+                <TypeList
+                  types={ props.types }
+                  onItemSelect={ props.onSelectItem }/>
+                <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              </>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={ props.onDismiss }>{ t("button.close") }</Button>
+        <Button
+          color="primary"
+          onClick={ props.onDismiss }>{ t("button.close") }</Button>
       </DialogActions>
     </Dialog>
   )

@@ -13,6 +13,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { Department, DepartmentRepository } from "./Department";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { isDev } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -43,7 +44,10 @@ const DepartmentList = (props: DepartmentListProps) => {
     if (department !== undefined) {
       DepartmentRepository.remove(department)
         .then(() => enqueueSnackbar(t("feedback.department_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.department_remove_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.department_remove_error"));
+          if (isDev) console.log(error)
+        })
         .finally(onRemoveDismiss)
     }
   }
@@ -52,31 +56,29 @@ const DepartmentList = (props: DepartmentListProps) => {
     <>
       { props.departments.length > 0
         ? <List className={ classes.root }>
-          {
-            props.departments.map((department: Department) => {
-              return (
-                <DepartmentItem
-                  key={ department.departmentId }
-                  department={ department }
-                  onItemSelect={ props.onItemSelect }
-                  onItemRemove={ onRemoveInvoke }/>
-              )
-            })
-          }
-        </List>
+            {
+              props.departments.map((department: Department) => {
+                return (
+                  <DepartmentItem
+                    key={ department.departmentId }
+                    department={ department }
+                    onItemSelect={ props.onItemSelect }
+                    onItemRemove={ onRemoveInvoke }/>
+                )
+              })
+            }
+          </List>
         : <EmptyStateComponent
           icon={ DomainOutlined }
           title={ t("empty_department") }
           subtitle={ t("empty_department_summary") }/>
       }
-      { department &&
-          <ConfirmationDialog
-              isOpen={ department !== undefined }
-              title="dialog.department_remove"
-              summary="dialog.department_remove_summary"
-              onDismiss={ onRemoveDismiss }
-              onConfirm={ onDepartmentRemove }/>
-      }
+      <ConfirmationDialog
+        isOpen={ department !== undefined }
+        title="dialog.department_remove"
+        summary="dialog.department_remove_summary"
+        onDismiss={ onRemoveDismiss }
+        onConfirm={ onDepartmentRemove }/>
     </>
   );
 }
@@ -110,7 +112,7 @@ const DepartmentItem = (props: DepartmentItemProps) => {
         primary={ props.department.name }
         secondary={ props.department.manager?.name }/>
       { canDelete &&
-          <ListItemSecondaryAction>
+        <ListItemSecondaryAction>
             { props.department.count > 0
               ? <Tooltip title={ <>{ t("info.department_count_not_zero") }</> }>
                 <span>{ deleteButton }</span>

@@ -26,6 +26,8 @@ import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
+import { isDev } from "../../shared/utils";
+import { usePagination } from "use-pagination-firestore";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -49,8 +51,6 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-  const [isLoading, setLoading] = useState(true);
-  const [types, setTypes] = useState<Type[]>([]);
   const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
@@ -61,21 +61,10 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    const unsubscribe = onSnapshot(query(collection(firestore, typeCollection), orderBy(typeName, "asc")), (snapshots) => {
-      if (mounted) {
-        setTypes(snapshots.docs.map((doc) => doc.data() as Type));
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe();
-    }
-  }, [])
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Type>(
+    query(collection(firestore, typeCollection), orderBy(typeName, "asc")),
+    { limit: 15 }
+  );
 
   let previousTypeId: string | undefined = undefined;
   const onSubmit = (data: FormValues) => {
@@ -92,12 +81,18 @@ const AssetEditor = (props: AssetEditorProps) => {
     if (props.isCreate) {
       AssetRepository.create(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_created")))
-        .catch((e) => enqueueSnackbar(t("feedback.asset_create_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.asset_create_error"))
+          if (isDev) console.log(error)
+        })
         .finally(props.onDismiss)
     } else {
       AssetRepository.update(asset, previousTypeId)
         .then(() => enqueueSnackbar(t("feedback.asset_updated")))
-        .catch((e) => enqueueSnackbar(t("feedback.asset_update_error")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.asset_update_error"))
+          if (isDev) console.log(error)
+        })
         .finally(props.onDismiss)
     }
   }
@@ -119,12 +114,19 @@ const AssetEditor = (props: AssetEditorProps) => {
         open={ props.isOpen }
         onClose={ props.onDismiss }>
         <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("asset_details") }</DialogTitle>
+          <DialogTitle>{ t("dialog.details_asset") }</DialogTitle>
           <DialogContent dividers={ true }>
             <Container>
-              <Grid container direction={ isMobile ? "column" : "row" } alignItems="stretch" justifyContent="center"
-                    spacing={ isMobile ? 0 : 4 }>
-                <Grid item xs={ 6 } sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
+              <Grid
+                container
+                direction={ isMobile ? "column" : "row" }
+                alignItems="stretch"
+                justifyContent="center"
+                spacing={ isMobile ? 0 : 4 }>
+                <Grid
+                  item
+                  xs={ 6 }
+                  sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
                   <TextField
                     autoFocus
                     id="stockNumber"
@@ -144,11 +146,15 @@ const AssetEditor = (props: AssetEditorProps) => {
                     defaultValue={ props.asset !== undefined ? props.asset.description : "" }
                     placeholder={ t('placeholder.asset_description') }
                     { ...register("description", { required: "feedback.empty_asset_name" }) } />
-                  <FormControl component="fieldset" fullWidth>
+                  <FormControl
+                    component="fieldset"
+                    fullWidth>
                     <FormLabel component="legend">
                       <Typography variant="body2">{ t("field.type") }</Typography>
                     </FormLabel>
-                    <ListItem button onClick={ onPickerView }>
+                    <ListItem
+                      button
+                      onClick={ onPickerView }>
                       <Typography variant="body2">
                         { type?.typeName !== undefined ? type?.typeName : t("button.not_set") }
                       </Typography>
@@ -164,7 +170,10 @@ const AssetEditor = (props: AssetEditorProps) => {
                     placeholder={ t('placeholder.classification') }
                     { ...register('classification', { required: "feedback.empty_classification" }) }/>
                 </Grid>
-                <Grid item xs={ 6 } sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
+                <Grid
+                  item
+                  xs={ 6 }
+                  sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
                   <TextField
                     id="unitOfMeasure"
                     type="text"
@@ -197,35 +206,41 @@ const AssetEditor = (props: AssetEditorProps) => {
           </DialogContent>
 
           <DialogActions>
-            <Button color="primary" onClick={ onQRCodeView }
-                    disabled={ props.asset?.stockNumber === undefined }>{ t("view_qr_code") }</Button>
-            <div style={ { flex: '1 0 0' } }></div>
+            <Button
+              color="primary"
+              onClick={ onQRCodeView }
+              disabled={ props.asset?.stockNumber === undefined }>{ t("button.view_qr_code") }</Button>
+            <div style={ { flex: '1 0 0' } }/>
             <Button
               color="primary"
               onClick={ props.onDismiss }>
-              { t("cancel") }
+              { t("button.cancel") }
             </Button>
             <Button
               color="primary"
               type="submit">
-              { t("save") }
+              { t("button.save") }
             </Button>
           </DialogActions>
         </form>
       </Dialog>
       { isPickerOpen &&
-          <TypePicker
-              isOpen={ isPickerOpen }
-              types={ types }
-              isLoading={ isLoading }
-              onDismiss={ onPickerDismiss }
-              onSelectItem={ onTypeChanged }/>
+        <TypePicker
+          isOpen={ isPickerOpen }
+          types={ items }
+          isLoading={ isLoading }
+          onDismiss={ onPickerDismiss }
+          onSelectItem={ onTypeChanged }
+          canBack={isStart}
+          canForward={isEnd}
+          onBackward={getPrev}
+          onForward={getNext}/>
       }
       { isQRCodeOpen && props.asset !== undefined &&
-          <QrCodeViewComponent
-              isOpened={ isQRCodeOpen }
-              assetId={ props.asset.stockNumber }
-              onClose={ onQRCodeDismiss }/>
+        <QrCodeViewComponent
+          isOpened={ isQRCodeOpen }
+          assetId={ props.asset.stockNumber }
+          onClose={ onQRCodeDismiss }/>
       }
     </>
   );

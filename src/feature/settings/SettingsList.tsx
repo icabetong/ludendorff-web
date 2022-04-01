@@ -43,7 +43,7 @@ const SettingsItem = (props: SettingsItemProp) => {
   return (
     <ListItem key={ props.preference.key }>
       { props.preference.icon &&
-          <ListItemIcon>
+        <ListItemIcon>
             { React.createElement(props.preference.icon,
               { className: classes.icon })
             }
@@ -53,7 +53,7 @@ const SettingsItem = (props: SettingsItemProp) => {
         primary={ props.preference.title }
         secondary={ props.preference.summary }/>
       { props.preference.action &&
-          <ListItemSecondaryAction>{ props.preference.action }</ListItemSecondaryAction>
+        <ListItemSecondaryAction>{ props.preference.action }</ListItemSecondaryAction>
       }
     </ListItem>
   )

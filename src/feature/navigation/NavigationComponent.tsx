@@ -171,8 +171,12 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
           <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
-          <Button color="primary" onClick={ triggerSignOut }>{ t("button.continue") }</Button>
+          <Button
+            color="primary"
+            onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
+          <Button
+            color="primary"
+            onClick={ triggerSignOut }>{ t("button.continue") }</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -233,15 +237,19 @@ export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
     { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
   ]
 
-  return <TopNavigationList destination={ props.currentDestination } onNavigate={ props.onNavigate }
-                            items={ destinations }/>
+  return <TopNavigationList
+    destination={ props.currentDestination }
+    onNavigate={ props.onNavigate }
+    items={ destinations }/>
 }
 
 export const TopNavigationList = (props: NavigationListPropsType) => {
   const { canRead, canManageUsers } = usePermissions();
 
   return (
-    <Grid container direction="row">
+    <Grid
+      container
+      direction="row">
       { props.items.map((nav: NavigationItemType) => {
         if (!canRead && nav.destination === Destination.ASSETS)
           return <></>;

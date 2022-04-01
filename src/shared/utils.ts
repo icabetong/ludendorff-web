@@ -2,6 +2,8 @@ import { Timestamp } from "@firebase/firestore-types";
 
 const assert = require('assert');
 
+export const isDev = process.env.NODE_ENV === 'development'
+
 export const newId = (): string => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let id = ''

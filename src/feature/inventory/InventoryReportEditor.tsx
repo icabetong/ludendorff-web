@@ -20,7 +20,7 @@ import InventoryReportItemList from "./InventoryReportItemList";
 import { AddRounded } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./InventoryReportItemEditorReducer";
 import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
-import { newId } from "../../shared/utils";
+import { isDev, newId } from "../../shared/utils";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
@@ -55,7 +55,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
     let currentItems = items;
     let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);
     if (index < 0) {
-       currentItems.push(item);
+      currentItems.push(item);
     } else {
       currentItems[index] = item;
     }
@@ -77,13 +77,19 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
 
     if (props.isCreate) {
       InventoryReportRepository.create(inventoryReport)
-        .then(() => console.log("created"))
-        .catch((e) => console.log(e))
+        .then(() => enqueueSnackbar(t("feedback.inventory_created")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.inventory_create_error"))
+          if (isDev) console.log(error)
+        })
         .finally(props.onDismiss)
     } else {
       InventoryReportRepository.update(inventoryReport)
-        .then(() => console.log("updated"))
-        .catch((e) => console.log(e))
+        .then(() => enqueueSnackbar(t("feedback.inventory_updated")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.inventory_update_error"))
+          if (isDev) console.log(error)
+        })
         .finally(props.onDismiss)
     }
   }
@@ -124,41 +130,41 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                   <TextField
                     id="entityName"
                     type="text"
-                    label={t("field.entity_name")}
-                    error={errors.entityName !== undefined}
-                    helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                    defaultValue={props.report && props.report.entityName}
-                    placeholder={t("placeholder.entityName")}
-                    {...register("entityName", { required: "feedback.empty_entity_name"})}/>
+                    label={ t("field.entity_name") }
+                    error={ errors.entityName !== undefined }
+                    helperText={ errors.entityName?.message && t(errors.entityName?.message) }
+                    defaultValue={ props.report && props.report.entityName }
+                    placeholder={ t("placeholder.entityName") }
+                    { ...register("entityName", { required: "feedback.empty_entity_name" }) }/>
                   <TextField
                     id="entityPosition"
                     type="text"
-                    label={t("field.entity_position")}
-                    error={errors.entityPosition !== undefined}
-                    helperText={errors.entityPosition?.message && t(errors.entityPosition?.message)}
-                    defaultValue={props.report && props.report.entityPosition}
-                    placeholder={t("placeholder.entity_position")}
-                    {...register("entityPosition", { required: "feedback.empty_entity_position"})}/>
-                  <LocalizationProvider dateAdapter={DateAdapter}>
+                    label={ t("field.entity_position") }
+                    error={ errors.entityPosition !== undefined }
+                    helperText={ errors.entityPosition?.message && t(errors.entityPosition?.message) }
+                    defaultValue={ props.report && props.report.entityPosition }
+                    placeholder={ t("placeholder.entity_position") }
+                    { ...register("entityPosition", { required: "feedback.empty_entity_position" }) }/>
+                  <LocalizationProvider dateAdapter={ DateAdapter }>
                     <Box>
                       <DatePicker
                         inputFormat="MMMM yyyy"
-                        views={['year', 'month']}
-                        label={t("field.year_month")}
-                        value={yearMonth}
-                        onChange={setYearMonth}
-                        renderInput={(params) => <TextField {...params} helperText={null} />}
+                        views={ ['year', 'month'] }
+                        label={ t("field.year_month") }
+                        value={ yearMonth }
+                        onChange={ setYearMonth }
+                        renderInput={ (params) => <TextField { ...params } helperText={ null }/> }
                       />
                     </Box>
                   </LocalizationProvider>
-                  <LocalizationProvider dateAdapter={DateAdapter}>
+                  <LocalizationProvider dateAdapter={ DateAdapter }>
                     <Box>
                       <DatePicker
                         inputFormat="MMMM d yyyy"
-                        label={t("field.accountability_date")}
-                        value={date}
-                        onChange={setDate}
-                        renderInput={(params) => <TextField {...params} helperText={null} />}
+                        label={ t("field.accountability_date") }
+                        value={ date }
+                        onChange={ setDate }
+                        renderInput={ (params) => <TextField { ...params } helperText={ null }/> }
                       />
                     </Box>
                   </LocalizationProvider>
@@ -168,17 +174,17 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                   xs={ 6 }
                   sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
                   <FormLabel component="legend">
-                    <Typography variant="body2">{t("field.items")}</Typography>
+                    <Typography variant="body2">{ t("field.items") }</Typography>
                   </FormLabel>
                   <List>
                     <InventoryReportItemList
-                      items={items}
-                      onItemSelected={onEditorUpdate} />
+                      items={ items }
+                      onItemSelected={ onEditorUpdate }/>
                     <Button
                       fullWidth
-                      startIcon={<AddRounded/>}
-                      onClick={onEditorCreate}>
-                        {t("add")}
+                      startIcon={ <AddRounded/> }
+                      onClick={ onEditorCreate }>
+                        { t("add") }
                     </Button>
                   </List>
                 </Grid>
@@ -201,11 +207,11 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       </Dialog>
       { state.isOpen &&
         <InventoryReportItemEditor
-            isOpen={state.isOpen}
-            isCreate={state.isCreate}
-            item={state.item}
-            onSubmit={onEditorCommit}
-            onDismiss={onEditorDismiss}/>
+          isOpen={ state.isOpen }
+          isCreate={ state.isCreate }
+          item={ state.item }
+          onSubmit={ onEditorCommit }
+          onDismiss={ onEditorDismiss }/>
       }
     </>
   )
