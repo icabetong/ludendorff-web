@@ -1,4 +1,4 @@
-import { Box, Hidden, IconButton, Theme } from "@mui/material";
+import { Box, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useState, useReducer } from "react";
 import { getDataGridTheme } from "../core/Core";
@@ -22,6 +22,7 @@ import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
+import InventoryReportList from "./InventoryReportList";
 import InventoryReportEditor from "./InventoryReportEditor";
 
 import {
@@ -166,7 +167,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="inventories">
-        <Hidden mdDown>
+        <Hidden lgDown>
           <PageHeader
             title={ t('navigation.inventories') }
             buttonText={ canWrite ? t("button.create_report") : undefined }
@@ -174,7 +175,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
             buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
             onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
-        <Hidden mdUp>
+        <Hidden lgUp>
           <ComponentHeader
             title={ t("navigation.inventories") }
             onDrawerToggle={ props.onDrawerToggle }
@@ -197,6 +198,17 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                   }
                 </Box>
               </Hidden>
+            <Hidden smUp>
+              { !isLoading
+                  ? items.length < 1
+                    ? <InventoryReportEmptyState/>
+                    : <InventoryReportList
+                        reports={items}
+                        onItemSelect={onInventoryReportSelected}
+                        onItemRemove={onRemoveInvoke}/>
+                  : <LinearProgress/>
+              }
+            </Hidden>
             </>
           : <ErrorNoPermissionState/>
         }

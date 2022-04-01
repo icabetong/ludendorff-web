@@ -256,7 +256,7 @@ const UserScreen = (props: UserScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="users">
-        <Hidden mdDown>
+        <Hidden lgDown>
           <PageHeader
             title={ t("navigation.users") }
             buttonText={ t("button.create_user") }
@@ -264,7 +264,7 @@ const UserScreen = (props: UserScreenProps) => {
             buttonOnClick={ onUserEditorView }
             onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
-        <Hidden mdUp>
+        <Hidden lgUp>
           <ComponentHeader
             title={ t("navigation.users") }
             onDrawerToggle={ props.onDrawerToggle }
@@ -345,8 +345,8 @@ const UserEmptyStateComponent = () => {
   return (
     <EmptyStateComponent
       icon={ PeopleOutlineRounded }
-      title={ t("empty_user") }
-      subtitle={ t("empty_user_summary") }/>
+      title={ t("empty.user") }
+      subtitle={ t("empty.user_summary") }/>
   );
 }
 

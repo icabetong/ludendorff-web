@@ -61,17 +61,15 @@ const TypeList = (props: TypeListProps) => {
         </List>
         : <EmptyStateComponent
           icon={ LocalOfferOutlined }
-          title={ t("empty_type") }
-          subtitle={ t("empty_type_summary") }/>
+          title={ t("empty.type") }
+          subtitle={ t("empty.type_summary") }/>
       }
-      { type &&
-        <ConfirmationDialog
-          isOpen={ type !== undefined }
-          title="dialog.category_remove"
-          summary="dialog.category_remove_summary"
-          onDismiss={ onRemoveDismiss }
-          onConfirm={ onCategoryRemove }/>
-      }
+      <ConfirmationDialog
+        isOpen={ type !== undefined }
+        title="dialog.category_remove"
+        summary="dialog.category_remove_summary"
+        onDismiss={ onRemoveDismiss }
+        onConfirm={ onCategoryRemove }/>
     </>
   );
 }

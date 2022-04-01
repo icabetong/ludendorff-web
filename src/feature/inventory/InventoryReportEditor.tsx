@@ -12,7 +12,7 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterDateFns';
@@ -43,10 +43,26 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-  const [isLoading, setLoading] = useState(true);
   const [yearMonth, setYearMonth] = useState<Date | null>(new Date());
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<InventoryReportItem[]>([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (props.report) {
+        const { inventoryReportId } = props.report;
+
+        return await InventoryReportRepository.fetch(inventoryReportId);
+      } else return [];
+    }
+
+    fetchItems()
+      .then((arr) => setItems(arr))
+      .catch((error) => {
+        if (isDev) console.log(error)
+      });
+  }, [props.report]);
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -59,7 +75,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
     } else {
       currentItems[index] = item;
     }
-    setItems(items);
+    setItems(currentItems);
   }
 
   const onSubmit = (data: FormValues) => {
@@ -93,8 +109,6 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
         .finally(props.onDismiss)
     }
   }
-
-  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
     <>
@@ -205,14 +219,12 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
           </DialogActions>
         </form>
       </Dialog>
-      { state.isOpen &&
-        <InventoryReportItemEditor
-          isOpen={ state.isOpen }
-          isCreate={ state.isCreate }
-          item={ state.item }
-          onSubmit={ onEditorCommit }
-          onDismiss={ onEditorDismiss }/>
-      }
+      <InventoryReportItemEditor
+        isOpen={ state.isOpen }
+        isCreate={ state.isCreate }
+        item={ state.item }
+        onSubmit={ onEditorCommit }
+        onDismiss={ onEditorDismiss }/>
     </>
   )
 

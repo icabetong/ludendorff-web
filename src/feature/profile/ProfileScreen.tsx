@@ -74,11 +74,11 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
   return (
     <Box className={ classes.root }>
-      <Hidden mdDown>
+      <Hidden lgDown>
         <PageHeader
           title={ t("navigation.profile") }/>
       </Hidden>
-      <Hidden mdUp>
+      <Hidden lgUp>
         <ComponentHeader
           title={ t("navigation.profile") }
           onDrawerToggle={ props.onDrawerToggle }/>

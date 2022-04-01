@@ -26,6 +26,15 @@ export type InventoryReportItem = {
 }
 
 export class InventoryReportRepository {
+  static async fetch(reportId: string): Promise<InventoryReportItem[]> {
+    let itemsRef = collection(firestore, inventoryCollection, `${reportId}/${items}`)
+    let snapshot = await getDocs(itemsRef);
+
+    return snapshot.docs.map((doc) => {
+      return doc.data() as InventoryReportItem
+    });
+  }
+
   static async create(report: InventoryReport): Promise<void> {
     const { items, ...r } = report;
     let batch = writeBatch(firestore);

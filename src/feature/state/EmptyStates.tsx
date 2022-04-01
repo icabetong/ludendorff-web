@@ -9,11 +9,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: '60vh',
     padding: theme.spacing(4)
   },
-  icon: {
-    width: '2em',
-    height: '2em',
-    color: theme.palette.text.primary
-  },
   text: {
     textAlign: 'center'
   }
@@ -36,7 +31,7 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
       justifyContent="center"
       className={ classes.root }>
       <Grid item>
-        { React.createElement(props.icon, { className: classes.icon }) }
+        { React.createElement(props.icon, { fontSize: "large" }) }
       </Grid>
       <Grid item>
         <Typography

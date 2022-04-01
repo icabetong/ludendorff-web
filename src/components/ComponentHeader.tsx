@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolbar: theme.mixins.toolbar,
   navigationButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('lg')]: {
       display: 'none'
     },
   },
@@ -68,17 +68,17 @@ const ComponentHeader = (props: ComponentHeaderPropsType) => {
           size="large">
           <MenuRounded className={ classes.toolbarButtonIcon }/>
         </IconButton>
-        <Hidden smDown>
+        <Hidden lgDown>
           <Typography variant="h5" className={ classes.title }>
             { props.title }
           </Typography>
         </Hidden>
-        <Hidden smUp>
+        <Hidden lgUp>
           <Typography variant="h6" className={ classes.title }>
             { props.title }
           </Typography>
         </Hidden>
-        <Hidden xsUp>
+        <Hidden mdUp>
           { props.buttonText &&
               <Button
                   variant="contained"

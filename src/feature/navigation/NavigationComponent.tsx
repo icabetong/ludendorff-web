@@ -26,7 +26,7 @@ import {
   PeopleOutlineRounded,
   SettingsOutlined,
   AccountCircleOutlined,
-  ExitToAppRounded
+  ExitToAppRounded, LocalAtmOutlined
 } from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
@@ -36,6 +36,7 @@ export enum Destination {
   ASSETS = 1,
   INVENTORY,
   ISSUED,
+  STOCK_CARD,
   USERS,
   PROFILE,
   SETTINGS
@@ -107,16 +108,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   selected: {},
 }));
 
+const destinations: NavigationItemType[] = [
+  { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
+  { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
+  { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
+  { icon: LocalAtmOutlined, title: "navigation.stock_cards", destination: Destination.STOCK_CARD },
+  { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
+]
+
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
   const classes = useStyles();
   const { status, user } = useAuthState();
   const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
   const { t } = useTranslation();
-
-  const destinations: NavigationItemType[] = [
-    { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
-    { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
-  ]
 
   const minorDestinations: NavigationItemType[] = [
     {
@@ -157,7 +161,7 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
           onNavigate={ props.onNavigate }/>
         <NavigationListItem
           itemKey={ 1 }
-          navigation={ { icon: ExitToAppRounded, title: t("button.signout") } }
+          navigation={ { icon: ExitToAppRounded, title: t("button.sign_out") } }
           isActive={ false }
           action={ () => confirmSignOut() }/>
       </List>
@@ -166,9 +170,9 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
         fullWidth={ true }
         maxWidth="xs"
         onClose={ () => setTriggerConfirmSignOut(false) }>
-        <DialogTitle>{ t("dialog.signout") }</DialogTitle>
+        <DialogTitle>{ t("dialog.sign_out") }</DialogTitle>
         <DialogContent>
-          <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
+          <DialogContentText>{ t("dialog.sign_out_message") }</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
@@ -230,17 +234,12 @@ const NavigationList = (props: NavigationListPropsType) => {
 }
 
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
-  const destinations: NavigationItemType[] = [
-    { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
-    { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
-    { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
-    { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
-  ]
-
-  return <TopNavigationList
-    destination={ props.currentDestination }
-    onNavigate={ props.onNavigate }
-    items={ destinations }/>
+  return (
+    <TopNavigationList
+      destination={ props.currentDestination }
+      onNavigate={ props.onNavigate }
+      items={ destinations }/>
+  )
 }
 
 export const TopNavigationList = (props: NavigationListPropsType) => {

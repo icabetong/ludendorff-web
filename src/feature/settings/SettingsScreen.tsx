@@ -102,11 +102,11 @@ const SettingsScreen = (props: SettingsScreenProps) => {
 
   return (
     <Box>
-      <Hidden mdDown>
+      <Hidden lgDown>
         <PageHeader
           title={ t("navigation.settings") }/>
       </Hidden>
-      <Hidden mdUp>
+      <Hidden lgUp>
         <ComponentHeader
           title={ t("navigation.settings") }
           onDrawerToggle={ props.onDrawerToggle }/>

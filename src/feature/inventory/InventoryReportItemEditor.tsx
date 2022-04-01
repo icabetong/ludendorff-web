@@ -21,7 +21,6 @@ import {
   assetCollection,
   assetStockNumber
 } from "../../shared/const";
-import { AddRounded } from "@mui/icons-material";
 
 export type FormValues = {
   balancePerCard: number,
@@ -117,18 +116,16 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
           </DialogActions>
         </form>
       </Dialog>
-      { isOpen &&
-        <AssetPicker
-          isOpen={ isOpen }
-          assets={ items }
-          isLoading={ isLoading }
-          canBack={ isStart }
-          canForward={ isEnd }
-          onBackward={ getPrev }
-          onForward={ getNext }
-          onDismiss={ onPickerDismiss }
-          onSelectItem={ setAsset }/>
-      }
+      <AssetPicker
+        isOpen={ isOpen }
+        assets={ items }
+        isLoading={ isLoading }
+        canBack={ isStart }
+        canForward={ isEnd }
+        onBackward={ getPrev }
+        onForward={ getNext }
+        onDismiss={ onPickerDismiss }
+        onSelectItem={ setAsset }/>
     </>
   );
 }

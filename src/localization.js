@@ -15,6 +15,7 @@ const resources = {
         assets: "Assets",
         inventories: "Inventory Reports",
         issued: "Issued Reports",
+        stock_cards: "Stock Cards",
         users: "Users",
         types: "Types",
         departments: "Departments",
@@ -58,6 +59,7 @@ const resources = {
         items: "Items",
         balance_per_card: "Balance Per Card",
         on_hand_count: "On Hand Count",
+        serial_number: "Serial Number"
       },
       placeholder: {
         none: "None",

@@ -70,8 +70,8 @@ const DepartmentList = (props: DepartmentListProps) => {
           </List>
         : <EmptyStateComponent
           icon={ DomainOutlined }
-          title={ t("empty_department") }
-          subtitle={ t("empty_department_summary") }/>
+          title={ t("empty.department") }
+          subtitle={ t("empty.department_summary") }/>
       }
       <ConfirmationDialog
         isOpen={ department !== undefined }

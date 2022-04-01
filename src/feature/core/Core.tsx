@@ -110,6 +110,13 @@ const baseTheme = (mode: PaletteMode) => createTheme({
         }
       }
     },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          background: mode === 'dark' ? gray700 : white,
+        }
+      }
+    }
   }
 })
 

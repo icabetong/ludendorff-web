@@ -226,7 +226,7 @@ const AssetScreen = (props: AssetScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="assets">
-        <Hidden mdDown>
+        <Hidden lgDown>
           <PageHeader
             title={ t("navigation.assets") }
             buttonText={
@@ -238,7 +238,7 @@ const AssetScreen = (props: AssetScreenProps) => {
             buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
             onSearchFocusChanged={ setSearchMode }/>
         </Hidden>
-        <Hidden mdUp>
+        <Hidden lgUp>
           <ComponentHeader
             title={ t("navigation.assets") }
             onDrawerToggle={ props.onDrawerToggle }
@@ -269,9 +269,9 @@ const AssetScreen = (props: AssetScreenProps) => {
                 ? items.length < 1
                   ? <AssetEmptyState/>
                   : <AssetList
-                    assets={ items }
-                    onItemSelect={ onAssetSelected }
-                    onItemRemove={ onRemoveInvoke }/>
+                      assets={ items }
+                      onItemSelect={ onAssetSelected }
+                      onItemRemove={ onRemoveInvoke }/>
                 : <LinearProgress/>
               }
             </Hidden>
@@ -313,8 +313,8 @@ const AssetEmptyState = () => {
   return (
     <EmptyStateComponent
       icon={ DesktopWindowsRounded }
-      title={ t("empty_asset") }
-      subtitle={ t("empty_asset_summary") }/>
+      title={ t("empty.asset") }
+      subtitle={ t("empty.asset_summary") }/>
   );
 }
 

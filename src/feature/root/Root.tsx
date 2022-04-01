@@ -40,6 +40,7 @@ import { Destination, NavigationComponent, TopNavigationComponent } from "../nav
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { ContentLoadingStateComponent, MainLoadingStateComponent } from "../state/LoadingStates";
 import { auth } from "../../index";
+import IssuedReportScreen from "../issue/IssuedReportScreen";
 
 
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
@@ -59,6 +60,8 @@ const InnerComponent = (props: InnerComponentPropsType) => {
       return <AssetScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.INVENTORY:
       return <InventoryReportScreen onDrawerToggle={ props.onDrawerToggle }/>
+    case Destination.ISSUED:
+      return <IssuedReportScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.USERS:
       return <UserScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.PROFILE:
@@ -76,12 +79,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     width: '100%', // if turned into viewport width; it will cause horizontal scrollbar!
     height: '100vh',
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('lg')]: {
       flexDirection: 'column'
     }
   },
   nav: {
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('lg')]: {
       height: 64,
       flexShrink: 0,
     }
@@ -186,9 +189,9 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
       fullWidth={ true }
       maxWidth="xs"
       onClose={ () => setTriggerConfirmSignOut(false) }>
-      <DialogTitle>{ t("dialog.signout") }</DialogTitle>
+      <DialogTitle>{ t("dialog.sign_out") }</DialogTitle>
       <DialogContent>
-        <DialogContentText>{ t("dialog.signout_message") }</DialogContentText>
+        <DialogContentText>{ t("dialog.sign_out_message") }</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
@@ -211,7 +214,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     <Box className={ classes.root }>
       <nav className={ classes.nav }>
         <Hidden
-          mdUp
+          lgUp
           implementation="css">
           <Drawer
             variant="temporary"
@@ -227,7 +230,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             { drawerItems }
           </Drawer>
         </Hidden>
-        <Hidden mdDown>
+        <Hidden lgDown>
           <AppBar
             color='inherit'
             elevation={ 2 }>

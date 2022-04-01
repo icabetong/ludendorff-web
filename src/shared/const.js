@@ -2,7 +2,8 @@ export const assetCollection = "assets";
 export const typeCollection = "types";
 export const userCollection = "users";
 export const departmentCollection = "departments";
-export const inventoryCollection = "inventories"
+export const inventoryCollection = "inventories";
+export const issuedCollection = "issued";
 
 export const typeId = "typeId";
 export const typeName = "typeName";
@@ -52,7 +53,7 @@ export const date = "date";
 
 export const quantityIssued = "quantityIssued";
 export const unitCost = "unitCost";
-export const reponsibilityCenter = "responsibilityCenter";
+export const responsibilityCenter = "responsibilityCenter";
 
 export const article = "article";
 export const unitValue = "unitValue";
