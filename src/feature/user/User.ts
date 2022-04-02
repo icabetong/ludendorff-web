@@ -8,6 +8,7 @@ import {
   departmentManagerId,
   departmentManager,
 } from "../../shared/const";
+import { getIdToken, onAuthStateChanged } from "firebase/auth";
 
 export enum Permission {
   READ = 1,
@@ -15,6 +16,20 @@ export enum Permission {
   DELETE = 4,
   MANAGE_USERS = 8,
   ADMINISTRATIVE = 16
+}
+
+export const getIdTokenRefreshed = async (): Promise<string> => {
+  return new Promise(async (resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubscribe();
+      if (user) {
+        const token = await getIdToken(user)
+        return resolve(token)
+      } else {
+        reject()
+      }
+    }, reject)
+  })
 }
 
 export const hasPermission = (user: User, permission: Permission): boolean => {

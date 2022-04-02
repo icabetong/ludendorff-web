@@ -71,7 +71,7 @@ const TypeEditor = (props: TypeEditorProps) => {
       open={ props.isOpen }
       onClose={ props.onDismiss }>
       <form onSubmit={ handleSubmit(onSubmit) }>
-        <DialogTitle>{ t("dialog.type_details") }</DialogTitle>
+        <DialogTitle>{ t("dialog.details_type") }</DialogTitle>
         <DialogContent>
           <Container disableGutters>
             <TextField
@@ -79,7 +79,7 @@ const TypeEditor = (props: TypeEditorProps) => {
               autoFocus
               id="name"
               type="text"
-              label={ t("field.category_name") }
+              label={ t("field.type_name") }
               defaultValue={ props.type ? props.type.typeName : "" }
               error={ errors.name }
               helperText={ errors.name ? t(errors.name.message) : undefined }

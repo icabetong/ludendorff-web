@@ -4,6 +4,7 @@ export const userCollection = "users";
 export const departmentCollection = "departments";
 export const inventoryCollection = "inventories";
 export const issuedCollection = "issued";
+export const stockCardCollection = "cards";
 
 export const typeId = "typeId";
 export const typeName = "typeName";
@@ -60,3 +61,16 @@ export const unitValue = "unitValue";
 export const balancePerCard = "balancePerCard";
 export const onHandCount = "onHandCount";
 export const remarks = "remarks";
+
+export const stockCardId = "stockCardId";
+export const unitPrice = "unitPrice";
+export const entries = "entries";
+
+export const stockCardEntryId = "stockCardEntryId";
+export const reference = "reference";
+export const receiptQuantity = "receiptQuantity";
+export const requestQuantity = "requestQuantity";
+export const issueQuantity = "issueQuantity";
+export const issueOffice = "issueOffice";
+export const balanceQuantity = "balanceQuantity";
+export const balanceTotalPrice = "balanceTotalPrice";

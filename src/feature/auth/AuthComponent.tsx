@@ -101,10 +101,10 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                   type="submit"
                   variant="contained"
                   color="primary"
-                  aria-label={ t("button.signin") }
+                  aria-label={ t("button.sign_in") }
                   fullWidth={ true }
                   disabled={ isAuthenticating }>
-                  { isAuthenticating ? t("feedback.authenticating") : t("button.signin") }
+                  { isAuthenticating ? t("feedback.authenticating") : t("button.sign_in") }
                 </Button>
               </div>
             </Paper>

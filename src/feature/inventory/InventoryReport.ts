@@ -1,7 +1,10 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
-import { firestore } from "../..";
+import { auth, firestore } from "../..";
 import { inventoryCollection, items } from "../../shared/const";
 import { TypeCore } from "../type/Type";
+import { getIdToken } from "firebase/auth";
+import { getIdTokenRefreshed } from "../user/User";
+import axios from "axios";
 
 export type InventoryReport = {
   inventoryReportId: string,
@@ -25,6 +28,8 @@ export type InventoryReportItem = {
   remarks?: string
 }
 
+const SERVER_URL = "https://deshi-production.up.railway.app";
+
 export class InventoryReportRepository {
   static async fetch(reportId: string): Promise<InventoryReportItem[]> {
     let itemsRef = collection(firestore, inventoryCollection, `${reportId}/${items}`)
@@ -44,8 +49,14 @@ export class InventoryReportRepository {
     items.forEach((item) => {
       batch.set(doc(firestore, inventoryCollection, r.inventoryReportId), item);
     });
+    await batch.commit();
 
-    return await batch.commit();
+    let token = await getIdTokenRefreshed();
+    return await axios.patch(`${SERVER_URL}/inventory-items`, {
+      token: token,
+      id: r.inventoryReportId,
+      items: items,
+    });
   }
 
   static async update(report: InventoryReport): Promise<void> {
@@ -66,7 +77,14 @@ export class InventoryReportRepository {
       batch.set(doc(firestore, inventoryCollection, r.inventoryReportId), item);
     });
 
-    return await batch.commit();
+    await batch.commit();
+
+    let token = await getIdTokenRefreshed();
+    return await axios.patch(`${SERVER_URL}/inventory-items`, {
+      token: token,
+      id: r.inventoryReportId,
+      items: items,
+    });
   }
 
   static async remove(report: InventoryReport): Promise<void> {

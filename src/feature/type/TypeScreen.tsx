@@ -105,8 +105,8 @@ const TypeScreen = (props: TypeScreenProps) => {
                       types={ items }
                       onItemSelect={ onEditorUpdate }/>
                     <PaginationController
-                      canBack={ isStart }
-                      canForward={ isEnd }
+                      canBack={isStart}
+                      canForward={isEnd}
                       onBackward={ getPrev }
                       onForward={ getNext }/>
                   </>
