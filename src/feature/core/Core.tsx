@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Router, Route, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -18,6 +18,7 @@ const teal700 = '#0f766e';
 const teal800 = '#115e59';
 const gray50 = '#f9fafb';
 const gray100 = '#f3f4f6';
+const gray200 = '#e5e7eb';
 const gray300 = '#d1d5db';
 const gray500 = '#6b7280';
 const gray600 = '#4b5563';
@@ -166,6 +167,47 @@ export const getDataGridTheme = (theme: Theme) => {
       borderBottom: '1px',
       borderBottomStyle: 'solid',
       borderBottomColor: theme.palette.divider
+    },
+    '& .MuiDataGrid-root': {
+      backgroundColor: 'transparent',
+      borderColor: theme.palette.divider,
+    },
+    '& .MuiDataGrid-columnHeaders': {
+      borderBottom: 'none'
+    },
+    '& .MuiDataGrid-columnHeader': {
+      fontWeight: 700,
+      '& .MuiDataGrid-columnSeparator': {
+        color: theme.palette.divider
+      },
+    },
+    '& .MuiDataGrid-row': {
+      borderColor: theme.palette.divider,
+      borderBottomColor: 'transparent',
+      borderBottomStyle: 'none',
+      borderTopWidth: 'thin',
+      borderTopStyle: 'solid',
+      fontWeight: 400,
+
+      '& .MuiDataGrid-cell': {
+        borderBottomColor: theme.palette.divider
+      }
+    },
+    '& .MuiDataGrid-columnsContainer': {
+      borderBottomColor: theme.palette.divider
+    },
+  }
+}
+
+export const getEditorDataGridTheme = (theme: Theme) => {
+  return {
+    '& .MuiDataGrid-toolbarContainer': {
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      backgroundColor: theme.palette.mode === 'dark' ? gray600 : gray200,
+      borderBottom: '1px',
+      borderBottomStyle: 'solid',
+      borderBottomColor: theme.palette.mode === 'dark' ? gray600 : gray300,
     },
     '& .MuiDataGrid-root': {
       backgroundColor: 'transparent',

@@ -8,19 +8,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormLabel, ListItem,
+  FormLabel,
+  ListItem,
   TextField
 } from "@mui/material";
 import { Asset } from "../asset/Asset";
 import { useState } from "react";
 import AssetPicker from "../asset/AssetPicker";
 import { usePagination } from "use-pagination-firestore";
-import { query, collection, orderBy } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
-import {
-  assetCollection,
-  assetStockNumber
-} from "../../shared/const";
+import { assetCollection, assetStockNumber } from "../../shared/const";
 
 export type FormValues = {
   balancePerCard: number,

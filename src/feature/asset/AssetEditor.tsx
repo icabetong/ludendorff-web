@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import {
@@ -18,10 +18,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 
 import { Asset, AssetRepository } from "./Asset";
-import { Type, TypeCore, minimize } from "../type/Type";
+import { minimize, Type, TypeCore } from "../type/Type";
 import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { typeCollection, typeName } from "../../shared/const";
@@ -74,7 +74,7 @@ const AssetEditor = (props: AssetEditorProps) => {
 
     const asset: Asset = {
       ...data,
-      stockNumber: props.asset === undefined ? data.stockNumber : props.asset?.stockNumber,
+      stockNumber: props.asset ? props.asset?.stockNumber : data.stockNumber,
       type: type !== undefined ? type : undefined,
     }
 

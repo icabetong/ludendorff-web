@@ -1,12 +1,6 @@
 import React from "react";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction, Theme
-} from "@mui/material";
+import { List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Theme } from "@mui/material";
 
 import { Setting } from "./Settings";
 

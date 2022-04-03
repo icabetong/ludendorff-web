@@ -1,13 +1,16 @@
 import { IssuedReport, IssuedReportItem, IssuedReportRepository } from "./IssuedReport";
 import { useTranslation } from "react-i18next";
 import {
-  Box, Button,
+  Box,
+  Button,
   Container,
-  Dialog, DialogActions,
+  Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   FormLabel,
-  Grid, List,
+  Grid,
+  List,
   TextField,
   Typography,
   useMediaQuery,
@@ -17,9 +20,7 @@ import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
 import { useEffect, useReducer, useState } from "react";
 import { isDev, newId } from "../../shared/utils";
-import {
-  ActionType, initialState, reducer
-} from "./IssuedReportItemEditorReducer";
+import { ActionType, initialState, reducer } from "./IssuedReportItemEditorReducer";
 import { Timestamp } from "firebase/firestore";
 import DateAdapter from "@mui/lab/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
@@ -86,7 +87,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
     }
 
     const issuedReport: IssuedReport = {
-      issuedReportId: newId(),
+      issuedReportId: props.report ? props.report.issuedReportId : newId(),
       ...data,
       items: items,
       date: Timestamp.fromDate(date),
@@ -153,7 +154,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                   <LocalizationProvider dateAdapter={ DateAdapter }>
                     <Box>
                       <DatePicker
-                        inputFormat="MMMM d yyyy"
+                        inputFormat="MM/dd/yyyy"
+                        mask="__/__/yyyy"
                         label={ t("field.date") }
                         value={ date }
                         onChange={ setDate }
@@ -172,7 +174,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                       fullWidth
                       startIcon={ <AddRounded/> }
                       onClick={ onEditorCreate }>
-                        { t("add") }
+                        { t("button.add") }
                     </Button>
                   </List>
                 </Grid>

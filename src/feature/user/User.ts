@@ -1,14 +1,10 @@
 import axios, { AxiosResponse } from "axios";
-import { writeBatch, doc, getDocs, collection, where, query } from "firebase/firestore";
+import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { auth, firestore } from "../../index";
 import { Department, DepartmentCore } from "../department/Department";
-import {
-  userCollection,
-  departmentCollection,
-  departmentManagerId,
-  departmentManager,
-} from "../../shared/const";
+import { departmentCollection, departmentManager, departmentManagerId, userCollection, } from "../../shared/const";
 import { getIdToken, onAuthStateChanged } from "firebase/auth";
+import { SERVER_URL } from "../../shared/utils";
 
 export enum Permission {
   READ = 1,
@@ -73,8 +69,6 @@ export type UserCore = {
   position?: string,
   deviceToken?: string
 }
-
-const SERVER_URL = "https://deshi-production.up.railway.app";
 
 export class UserRepository {
 

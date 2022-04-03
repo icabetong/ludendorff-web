@@ -45,7 +45,7 @@ const AssetPicker = (props: AssetPickerProps) => {
       maxWidth="xs"
       open={ props.isOpen }
       onClose={ props.onDismiss }>
-      <DialogTitle>{ t("asset_select") }</DialogTitle>
+      <DialogTitle>{ t("dialog.select_asset") }</DialogTitle>
       <DialogContent dividers={ true }>
         { canRead ?
           !props.isLoading
@@ -62,8 +62,8 @@ const AssetPicker = (props: AssetPickerProps) => {
                 </>
               : <EmptyStateComponent
                 icon={ DesktopWindowsRounded }
-                title={ t("empty_asset") }
-                subtitle={ t("empty_asset_summary") }/>
+                title={ t("empty.asset") }
+                subtitle={ t("empty.asset_summary") }/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
@@ -71,7 +71,7 @@ const AssetPicker = (props: AssetPickerProps) => {
       <DialogActions>
         <Button
           color="primary"
-          onClick={ props.onDismiss }>{ t("close") }</Button>
+          onClick={ props.onDismiss }>{ t("button.close") }</Button>
       </DialogActions>
     </Dialog>
   );

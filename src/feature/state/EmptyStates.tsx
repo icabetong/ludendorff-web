@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ComponentClass } from "react";
+import React, { ComponentClass, FunctionComponent } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import makeStyles from '@mui/styles/makeStyles';

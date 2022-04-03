@@ -1,11 +1,8 @@
-import React, { FunctionComponent, ComponentClass } from "react";
+import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, Theme, Typography } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  WorkOutlineRounded,
-  DomainOutlined,
-} from "@mui/icons-material";
+import { DomainOutlined, WorkOutlineRounded, } from "@mui/icons-material";
 
 import { User } from "../user/User";
 

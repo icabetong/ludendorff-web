@@ -1,12 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useAuthState } from "../../auth/AuthProvider";

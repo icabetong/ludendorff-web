@@ -1,15 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import {
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField
-} from "@mui/material";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { Type, TypesRepository } from "./Type";
 import { isDev, newId } from "../../shared/utils";

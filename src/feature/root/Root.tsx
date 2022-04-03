@@ -41,6 +41,7 @@ import { ErrorNotFoundState } from "../state/ErrorStates";
 import { ContentLoadingStateComponent, MainLoadingStateComponent } from "../state/LoadingStates";
 import { auth } from "../../index";
 import IssuedReportScreen from "../issue/IssuedReportScreen";
+import StockCardScreen from "../stockcard/StockCardScreen";
 
 
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
@@ -62,6 +63,8 @@ const InnerComponent = (props: InnerComponentPropsType) => {
       return <InventoryReportScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.ISSUED:
       return <IssuedReportScreen onDrawerToggle={props.onDrawerToggle}/>
+    case Destination.STOCK_CARD:
+      return <StockCardScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.USERS:
       return <UserScreen onDrawerToggle={ props.onDrawerToggle }/>
     case Destination.PROFILE:

@@ -13,9 +13,9 @@ import {
   useTheme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { InstantSearch, connectHits } from "react-instantsearch-dom";
+import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 
 import { Type } from "./Type";
 import CategoryEditorComponent from "./TypeEditor";
@@ -24,7 +24,7 @@ import TypeList from "./TypeList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import CustomDialogTitle from "../../components/CustomDialogTitle";
-import { SearchBox, Highlight, Provider, Results } from "../../components/Search";
+import { Highlight, Provider, Results, SearchBox } from "../../components/Search";
 import { typeCollection, typeName } from "../../shared/const";
 
 import { firestore } from "../../index";

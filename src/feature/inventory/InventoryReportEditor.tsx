@@ -4,11 +4,11 @@ import { useSnackbar } from "notistack";
 import {
   Box,
   Button,
-  Container,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle, FormLabel, Grid, List, TextField, Typography,
+  FormLabel,
+  Grid,
+  TextField,
+  Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
@@ -16,13 +16,16 @@ import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterDateFns';
-import InventoryReportItemList from "./InventoryReportItemList";
-import { AddRounded } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./InventoryReportItemEditorReducer";
 import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
 import { isDev, newId } from "../../shared/utils";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
+import InventoryReportItemList from "./InventoryReportItemList";
+import { AddRounded } from "@mui/icons-material";
+import { GridCallbackDetails, GridRowId, GridSelectionModel } from "@mui/x-data-grid";
 
 type InventoryReportEditorProps = {
   isOpen: boolean,
@@ -41,11 +44,12 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [yearMonth, setYearMonth] = useState<Date | null>(new Date());
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<InventoryReportItem[]>([]);
+  const [checked, setChecked] = useState<string[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -68,7 +72,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
   const onEditorUpdate = (item: InventoryReportItem) => dispatch({ type: ActionType.UPDATE, payload: item })
   const onEditorCommit = (item: InventoryReportItem) => {
-    let currentItems = items;
+    let currentItems: InventoryReportItem[] = [...items];
     let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);
     if (index < 0) {
       currentItems.push(item);
@@ -78,13 +82,22 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
     setItems(currentItems);
   }
 
+  const onCheckedRowsChanged = (model: GridSelectionModel) => setChecked(model.map((id: GridRowId) => `${id}`));
+  const onCheckedRowsRemove = () => {
+    let currentItems = Array.from(items);
+    checked.forEach((id: string) => {
+      currentItems = currentItems.filter((i) => i.stockNumber !== id);
+    })
+    setItems(currentItems);
+  }
+
   const onSubmit = (data: FormValues) => {
     if (!yearMonth || !date) {
       return;
     }
 
     const inventoryReport: InventoryReport = {
-      inventoryReportId: newId(),
+      inventoryReportId: props.report ? props.report.inventoryReportId : newId(),
       ...data,
       items: items,
       yearMonth: format(yearMonth, "MMMM yyyy"),
@@ -113,21 +126,20 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   return (
     <>
       <Dialog
-        fullScreen={ isMobile }
-        fullWidth={ true }
-        maxWidth={ isMobile ? "xs" : "md" }
+        fullScreen={true}
         open={ props.isOpen }
-        onClose={ props.onDismiss }>
-        <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("dialog.details_inventory") }</DialogTitle>
-          <DialogContent dividers={ true }>
-            <Container>
+        onClose={ props.onDismiss }
+        TransitionComponent={Transition}>
+        <EditorRoot onSubmit={ handleSubmit(onSubmit) }>
+          <EditorAppBar title={t("dialog.details_inventory")} onDismiss={props.onDismiss}/>
+          <EditorContent>
+            <Box>
               <Grid
                 container
-                direction={ isMobile ? "column" : "row" }
+                direction={ smBreakpoint ? "column" : "row" }
                 alignItems="stretch"
                 justifyContent="center"
-                spacing={ isMobile ? 0 : 4 }>
+                spacing={ smBreakpoint ? 0 : 4 }>
                 <Grid
                   item
                   xs={ 6 }
@@ -148,7 +160,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                     error={ errors.entityName !== undefined }
                     helperText={ errors.entityName?.message && t(errors.entityName?.message) }
                     defaultValue={ props.report && props.report.entityName }
-                    placeholder={ t("placeholder.entityName") }
+                    placeholder={ t("placeholder.entity_name") }
                     { ...register("entityName", { required: "feedback.empty_entity_name" }) }/>
                   <TextField
                     id="entityPosition"
@@ -159,10 +171,16 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                     defaultValue={ props.report && props.report.entityPosition }
                     placeholder={ t("placeholder.entity_position") }
                     { ...register("entityPosition", { required: "feedback.empty_entity_position" }) }/>
+                </Grid>
+                <Grid
+                  item
+                  xs={ 6 }
+                  sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
                   <LocalizationProvider dateAdapter={ DateAdapter }>
                     <Box>
                       <DatePicker
-                        inputFormat="MMMM yyyy"
+                        inputFormat="MM/yyyy"
+                        mask="__/____"
                         views={ ['year', 'month'] }
                         label={ t("field.year_month") }
                         value={ yearMonth }
@@ -174,7 +192,8 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                   <LocalizationProvider dateAdapter={ DateAdapter }>
                     <Box>
                       <DatePicker
-                        inputFormat="MMMM d yyyy"
+                        inputFormat="MM/dd/yyyy"
+                        mask="__/__/____"
                         label={ t("field.accountability_date") }
                         value={ date }
                         onChange={ setDate }
@@ -183,41 +202,29 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                     </Box>
                   </LocalizationProvider>
                 </Grid>
-                <Grid
-                  item
-                  xs={ 6 }
-                  sx={ { maxWidth: '100%', pt: 0, pl: 0 } }>
-                  <FormLabel component="legend">
-                    <Typography variant="body2">{ t("field.items") }</Typography>
-                  </FormLabel>
-                  <List>
-                    <InventoryReportItemList
-                      items={ items }
-                      onItemSelected={ onEditorUpdate }/>
-                    <Button
-                      fullWidth
-                      startIcon={ <AddRounded/> }
-                      onClick={ onEditorCreate }>
-                        { t("add") }
-                    </Button>
-                  </List>
-                </Grid>
               </Grid>
-            </Container>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="primary"
-              onClick={ props.onDismiss }>
-              { t("button.cancel") }
-            </Button>
-            <Button
-              color="primary"
-              type="submit">
-              { t("button.save") }
-            </Button>
-          </DialogActions>
-        </form>
+            </Box>
+            <FormLabel component="legend">
+              <Typography variant="body2">{ t("field.items") }</Typography>
+            </FormLabel>
+            { smBreakpoint
+              ? <>
+                  <InventoryReportItemList
+                    items={items}
+                    onItemSelected={onEditorUpdate}/>
+                  <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
+                    {t("button.add")}
+                  </Button>
+                </>
+              : <InventoryReportItemDataGrid
+                  items={items}
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
+            }
+          </EditorContent>
+        </EditorRoot>
       </Dialog>
       <InventoryReportItemEditor
         isOpen={ state.isOpen }

@@ -1,12 +1,8 @@
-import { increment, doc, writeBatch } from "firebase/firestore";
+import { doc, increment, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 
 import { TypeCore } from '../type/Type';
-import {
-  assetCollection,
-  typeCollection,
-  typeCount
-} from "../../shared/const";
+import { assetCollection, typeCollection, typeCount } from "../../shared/const";
 
 export type Asset = {
   stockNumber: string,

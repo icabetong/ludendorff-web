@@ -2,10 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  LocalOfferOutlined,
-  DeleteOutlineRounded,
-} from "@mui/icons-material";
+import { DeleteOutlineRounded, LocalOfferOutlined, } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";

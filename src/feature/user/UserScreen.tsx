@@ -1,25 +1,19 @@
-import { useState, useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  DataGrid,
-  GridOverlay,
-  GridRowParams,
-  GridValueGetterParams,
-  GridCellParams
-} from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
-  DomainRounded,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
   AddRounded,
   DeleteOutline,
-  PeopleOutlineRounded,
+  DomainRounded,
   LocalOfferRounded,
+  PeopleOutlineRounded,
+  VisibilityOffOutlined,
+  VisibilityOutlined,
 } from "@mui/icons-material";
-import { query, collection, orderBy } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -33,21 +27,9 @@ import { usePreferences } from "../settings/Preference";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
 
-import {
-  ActionType,
-  initialState,
-  reducer
-} from "./UserEditorReducer";
+import { ActionType, initialState, reducer } from "./UserEditorReducer";
 
-import {
-  userCollection,
-  userId,
-  firstName,
-  lastName,
-  email,
-  position,
-  department,
-} from "../../shared/const";
+import { department, email, firstName, lastName, position, userCollection, userId, } from "../../shared/const";
 
 import UserEditor from "./UserEditor";
 import DepartmentScreen from "../department/DepartmentScreen";
@@ -59,6 +41,8 @@ import { DataGridPaginationController } from "../../components/PaginationControl
 import { HitsProvided } from "react-instantsearch-core";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
+import { ScreenProps } from "../shared/ScreenProps";
+import GridEmptyRow from "../../components/GridEmptyRows";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -72,10 +56,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type UserScreenProps = {
-  onDrawerToggle: () => void
-}
-
+type UserScreenProps = ScreenProps & {}
 const UserScreen = (props: UserScreenProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -224,7 +205,7 @@ const UserScreen = (props: UserScreenProps) => {
     <DataGrid
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
       } }
@@ -331,11 +312,11 @@ const UserScreen = (props: UserScreenProps) => {
   );
 }
 
-const EmptyStateOverlay = () => {
+const UserDataGridEmptyRows = () => {
   return (
-    <GridOverlay>
+    <GridEmptyRow>
       <UserEmptyStateComponent/>
-    </GridOverlay>
+    </GridEmptyRow>
   )
 }
 
@@ -430,7 +411,7 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
       hideFooterPagination
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar
       } }
       componentsProps={ {

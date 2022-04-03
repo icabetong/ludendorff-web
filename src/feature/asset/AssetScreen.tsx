@@ -1,23 +1,12 @@
-import { useState, useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  DataGrid,
-  GridRowParams,
-  GridValueGetterParams,
-  GridOverlay,
-  GridCellParams,
-} from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams, } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
-import {
-  LocalOfferRounded,
-  DesktopWindowsRounded,
-  AddRounded,
-  DeleteOutlineRounded,
-} from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, DesktopWindowsRounded, LocalOfferRounded, } from "@mui/icons-material";
 
-import { query, collection, orderBy } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -32,21 +21,17 @@ import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
 
 import {
-  assetCollection,
-  assetStockNumber,
-  assetDescription,
-  assetType,
   assetClassification,
+  assetCollection,
+  assetDescription,
+  assetRemarks,
+  assetStockNumber,
+  assetType,
   assetUnitOfMeasure,
   assetUnitValue,
-  assetRemarks,
 } from "../../shared/const";
 
-import {
-  ActionType,
-  initialState,
-  reducer
-} from "./AssetEditorReducer";
+import { ActionType, initialState, reducer } from "./AssetEditorReducer";
 
 import AssetEditor from "./AssetEditor";
 import TypeScreen from "../type/TypeScreen";
@@ -59,6 +44,8 @@ import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import { HitsProvided } from "react-instantsearch-core";
 import { isDev } from "../../shared/utils";
+import GridEmptyRow from "../../components/GridEmptyRows";
+import { ScreenProps } from "../shared/ScreenProps";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -72,17 +59,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type AssetScreenProps = {
-  onDrawerToggle: () => void
-}
-
+type AssetScreenProps = ScreenProps & {}
 const AssetScreen = (props: AssetScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
   const userPreference = usePreferences();
-  const [asset, setAsset] = useState<Asset | undefined>(undefined);
+  const [asset, setAsset] = useState<Asset | null>(null);
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
@@ -91,9 +75,9 @@ const AssetScreen = (props: AssetScreenProps) => {
   );
 
   const onRemoveInvoke = (asset: Asset) => setAsset(asset);
-  const onRemoveDismiss = () => setAsset(undefined);
+  const onRemoveDismiss = () => setAsset(null);
   const onAssetRemove = () => {
-    if (asset !== undefined) {
+    if (asset !== null) {
       AssetRepository.remove(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_removed")))
         .catch((error) => {
@@ -195,7 +179,7 @@ const AssetScreen = (props: AssetScreenProps) => {
     <DataGrid
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
       } }
@@ -290,7 +274,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         isOpen={ isCategoryOpen }
         onDismiss={ onCategoryListDismiss }/>
       <ConfirmationDialog
-        isOpen={ asset !== undefined }
+        isOpen={Boolean(asset)}
         title="dialog.asset_remove"
         summary="dialog.asset_remove_summary"
         onDismiss={ onRemoveDismiss }
@@ -299,11 +283,11 @@ const AssetScreen = (props: AssetScreenProps) => {
   );
 }
 
-const EmptyStateOverlay = () => {
+const AssetDataGridEmptyRows = () => {
   return (
-    <GridOverlay>
+    <GridEmptyRow>
       <AssetEmptyState/>
-    </GridOverlay>
+    </GridEmptyRow>
   )
 }
 
@@ -318,12 +302,12 @@ const AssetEmptyState = () => {
   );
 }
 
-type AssetDataGridCoreProps = HitsProvided<Asset> & {
+type AssetDataGridProps = HitsProvided<Asset> & {
   onItemSelect: (params: GridRowParams) => void,
   onRemoveInvoke: (asset: Asset) => void,
   onCategoryInvoke: () => void,
 }
-const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
+const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { t } = useTranslation();
   const userPreference = usePreferences();
 
@@ -384,7 +368,7 @@ const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
       hideFooterPagination
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
       } }
       componentsProps={ {
@@ -408,6 +392,6 @@ const AssetDataGridCore = (props: AssetDataGridCoreProps) => {
       onRowDoubleClick={ props.onItemSelect }/>
   )
 }
-const AssetDataGrid = connectHits<AssetDataGridCoreProps, Asset>(AssetDataGridCore)
+const AssetDataGrid = connectHits<AssetDataGridProps, Asset>(AssetDataGridCore)
 
 export default AssetScreen;

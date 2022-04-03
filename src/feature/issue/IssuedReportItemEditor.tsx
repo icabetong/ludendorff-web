@@ -15,7 +15,8 @@ import {
   DialogContent,
   DialogTitle,
   FormLabel,
-  ListItem, TextField
+  ListItem,
+  TextField
 } from "@mui/material";
 import AssetPicker from "../asset/AssetPicker";
 

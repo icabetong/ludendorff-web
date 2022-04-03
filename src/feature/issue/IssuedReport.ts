@@ -1,6 +1,9 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 import { issuedCollection, items } from "../../shared/const";
+import { getIdTokenRefreshed } from "../user/User";
+import axios from "axios";
+import { SERVER_URL } from "../../shared/utils";
 
 export type IssuedReport = {
   issuedReportId: string,
@@ -31,37 +34,54 @@ export class IssuedReportRepository {
   }
 
   static async create(issued: IssuedReport): Promise<void> {
-    const { items, ...r } = issued;
+    const { items, ...report } = issued;
 
     let batch = writeBatch(firestore);
-    let docReference = doc(firestore, issuedCollection, r.issuedReportId);
+    let docReference = doc(firestore, issuedCollection, report.issuedReportId);
 
-    batch.set(docReference, r);
+    batch.set(docReference, report);
     items.forEach((item) => {
-      batch.set(doc(firestore, issuedCollection, r.issuedReportId), item);
+      batch.set(doc(firestore, issuedCollection,
+        `${report.issuedReportId}/${items}`), item);
     });
 
-    return await batch.commit();
+    await batch.commit();
+
+    let token = await getIdTokenRefreshed();
+    return await axios.patch(`${SERVER_URL}/issued-items`, {
+      token: token,
+      id: issued.issuedReportId,
+      items: items
+    });
   }
 
   static async update(issued: IssuedReport): Promise<void> {
-    const { items, ...r } = issued;
+    const { items, ...report } = issued;
 
-    let docReference = doc(firestore, issuedCollection, r.issuedReportId);
+    let docReference = doc(firestore, issuedCollection, report.issuedReportId);
     let batch = writeBatch(firestore);
 
-    let itemRef = collection(firestore, issuedCollection, `${r.issuedReportId}/${items}`);
+    let itemRef = collection(firestore, issuedCollection,
+      `${report.issuedReportId}/${items}`);
     let snapshot = await getDocs(itemRef);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
     });
 
-    batch.set(docReference, r);
+    batch.set(docReference, report);
     items.forEach((item) => {
-      batch.set(doc(firestore, issuedCollection, r.issuedReportId), r);
+      batch.set(doc(firestore, issuedCollection, `${report.issuedReportId}/${items}`),
+        report);
     });
 
-    return await batch.commit();
+    await batch.commit();
+
+    let token = await getIdTokenRefreshed();
+    return await axios.patch(`${SERVER_URL}/issued-items`, {
+      token: token,
+      id: issued.issuedReportId,
+      items: items
+    });
   }
 
   static async remove(issued: IssuedReport): Promise<void> {

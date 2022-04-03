@@ -1,16 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import {
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField
-} from "@mui/material";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { auth } from "../../../index";
 
 type ChangePasswordPromptProps = {

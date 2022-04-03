@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
-import { Button, Box, Container, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { signInWithEmailAndPassword, AuthError } from "firebase/auth";
+import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../index";
 
 const useStyles = makeStyles(() => ({

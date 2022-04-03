@@ -59,7 +59,11 @@ const resources = {
         items: "Items",
         balance_per_card: "Balance Per Card",
         on_hand_count: "On Hand Count",
-        serial_number: "Serial Number"
+        serial_number: "Serial Number",
+        unit_price: "Unit Price",
+        entries: "Entries",
+        article: "Article",
+
       },
       placeholder: {
         none: "None",
@@ -111,6 +115,8 @@ const resources = {
         create_user: "Create User",
         create_report: "Create Report",
         not_set: "Not Set",
+        view_qr_code: "View QR Code",
+
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -213,6 +219,8 @@ const resources = {
         details_department: "Department Details",
         details_inventory: "Inventory Report Details",
         details_inventory_item: "Inventory Report Item Details",
+        details_issued: "Issued Report Details",
+        details_issued_item: "Issued Report Item Details",
         select_type: "Select Type",
         select_asset: "Select Asset",
         select_user: "Select User",
@@ -236,7 +244,9 @@ const resources = {
         search: "No Results",
         search_summary: "There are no items matched on your query \"{{query}}\"",
         inventory_header: "No Inventory Reports Available",
-        inventory_summary: "There are no Physical Count of Inventories Reports that are available on the database."
+        inventory_summary: "There are no Physical Count of Inventories Reports that are available on the database.",
+        issued_reports_header: "No Issued Items Reports Available",
+        issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database."
       },
       not_yet_returned: "Not Yet Returned",
       no_remarks: "No Remarks",

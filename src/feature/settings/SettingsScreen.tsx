@@ -1,18 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Box,
-  Hidden,
-  IconButton,
-  Menu,
-  MenuItem,
-  Switch
-} from "@mui/material";
-import {
-  PaletteOutlined,
-  TableChartOutlined,
-  ChevronRightRounded,
-} from "@mui/icons-material";
+import { Box, Hidden, IconButton, Menu, MenuItem, Switch } from "@mui/material";
+import { ChevronRightRounded, PaletteOutlined, TableChartOutlined, } from "@mui/icons-material";
 
 import ComponentHeader from "../../components/ComponentHeader";
 import PageHeader from "../../components/PageHeader";

@@ -18,7 +18,7 @@ export const assetUnitValue = "unitValue";
 export const assetRemarks = "remarks";
 export const dateCreated = "dateCreated";
 export const assetStatus = "status";
-export const assetType = "category";
+export const assetType = "type";
 export const assetTypeId = `${ assetType }.${ typeId }`
 export const assetTypeName = `${ assetType }.${ typeName }`
 

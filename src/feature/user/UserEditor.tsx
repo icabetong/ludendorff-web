@@ -16,15 +16,16 @@ import {
   FormLabel,
   Grid,
   ListItem,
-  TextField, Theme,
+  TextField,
+  Theme,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy } from "firebase/firestore";
-import { User, Permission, UserRepository } from "./User";
+import { collection, orderBy, query } from "firebase/firestore";
+import { Permission, User, UserRepository } from "./User";
 import { Department, DepartmentCore, minimize } from "../department/Department";
 import DepartmentPicker from "../department/DepartmentPicker";
 import { departmentCollection, departmentName } from "../../shared/const";

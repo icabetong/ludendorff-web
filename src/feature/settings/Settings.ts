@@ -1,4 +1,4 @@
-import { FunctionComponent, ComponentClass } from "react"
+import { ComponentClass, FunctionComponent } from "react"
 
 export type Setting = {
   key: string,

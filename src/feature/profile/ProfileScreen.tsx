@@ -1,14 +1,9 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Box, Grid, Hidden, LinearProgress, Typography, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Grid, Hidden, LinearProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  EditOutlined,
-  ImageOutlined,
-  LockOutlined,
-  SendOutlined,
-} from "@mui/icons-material";
+import { EditOutlined, ImageOutlined, LockOutlined, SendOutlined, } from "@mui/icons-material";
 import PageHeader from "../../components/PageHeader";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";

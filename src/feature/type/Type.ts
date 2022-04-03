@@ -1,20 +1,7 @@
-import {
-  writeBatch,
-  doc, setDoc,
-  getDocs,
-  collection,
-  deleteDoc,
-  query,
-  where
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 
-import {
-  assetCollection,
-  typeCollection,
-  assetType,
-  assetTypeId,
-} from "../../shared/const";
+import { assetCollection, assetType, assetTypeId, typeCollection, } from "../../shared/const";
 
 export type Type = {
   typeId: string,

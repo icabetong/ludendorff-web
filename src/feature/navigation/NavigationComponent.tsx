@@ -1,6 +1,7 @@
-import React, { FunctionComponent, ComponentClass, useState } from "react";
+import React, { ComponentClass, FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  alpha,
   Box,
   Button,
   Dialog,
@@ -15,18 +16,20 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Theme,
   Typography,
-  alpha, Theme, useTheme,
+  useTheme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import {
+  AccountCircleOutlined,
   DesktopWindowsRounded,
+  ExitToAppRounded,
   Inventory2Outlined,
-  UploadFileOutlined,
+  LocalAtmOutlined,
   PeopleOutlineRounded,
   SettingsOutlined,
-  AccountCircleOutlined,
-  ExitToAppRounded, LocalAtmOutlined
+  UploadFileOutlined
 } from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";

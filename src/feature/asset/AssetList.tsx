@@ -1,8 +1,4 @@
-import {
-  List,
-  ListItem,
-  ListItemText
-} from "@mui/material";
+import { List, ListItem, ListItemText } from "@mui/material";
 
 import { Asset } from "./Asset";
 

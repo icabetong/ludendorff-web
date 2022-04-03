@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { List, ListItem, ListItemText, ListItemSecondaryAction, Tooltip, IconButton, Theme } from "@mui/material";
+import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Theme, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import {
-  DeleteOutlineRounded,
-  DomainOutlined
-} from "@mui/icons-material";
+import { DeleteOutlineRounded, DomainOutlined } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";

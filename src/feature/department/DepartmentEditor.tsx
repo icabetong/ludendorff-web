@@ -15,14 +15,11 @@ import {
   Typography
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { collection, query, orderBy } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { Department, DepartmentRepository } from "./Department";
-import { User, UserCore, minimize } from "../user/User";
+import { minimize, User, UserCore } from "../user/User";
 import UserPicker from "../user/UserPicker";
-import {
-  userCollection,
-  lastName
-} from "../../shared/const";
+import { lastName, userCollection } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../..";
 import { usePagination } from "use-pagination-firestore";

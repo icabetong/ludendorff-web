@@ -1,6 +1,6 @@
 import { Box, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { useState, useReducer } from "react";
+import { useReducer, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
@@ -8,12 +8,8 @@ import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
 import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
 
-import {
-  ActionType,
-  initialState,
-  reducer,
-} from "./InventoryReportEditorReducer";
-import { DataGrid, GridCellParams, GridOverlay, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
+import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import ComponentHeader from "../../components/ComponentHeader";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
@@ -26,12 +22,12 @@ import InventoryReportList from "./InventoryReportList";
 import InventoryReportEditor from "./InventoryReportEditor";
 
 import {
-  inventoryCollection,
-  fundCluster,
+  accountabilityDate,
   entityName,
   entityPosition,
+  fundCluster,
+  inventoryCollection,
   yearMonth,
-  accountabilityDate,
 } from "../../shared/const";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -41,6 +37,8 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { HitsProvided } from "react-instantsearch-core";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { formatDate, isDev } from "../../shared/utils";
+import GridEmptyRow from "../../components/GridEmptyRows";
+import { ScreenProps } from "../shared/ScreenProps";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -54,9 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type InventoryReportScreenProps = {
-  onDrawerToggle: () => void,
-}
+type InventoryReportScreenProps = ScreenProps & {}
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -150,7 +146,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     <DataGrid
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
       } }
@@ -230,11 +226,11 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   )
 }
 
-const EmptyStateOverlay = () => {
+const StockCardDataGridEmptyRows = () => {
   return (
-    <GridOverlay>
+    <GridEmptyRow>
       <InventoryReportEmptyState/>
-    </GridOverlay>
+    </GridEmptyRow>
   )
 }
 
@@ -249,11 +245,11 @@ const InventoryReportEmptyState = () => {
   )
 }
 
-type InventoryReportDataGridCoreProps = HitsProvided<InventoryReport> & {
+type InventoryReportDataGridProps = HitsProvided<InventoryReport> & {
   onItemSelect: (params: GridRowParams) => void,
   onRemoveInvoke: (report: InventoryReport) => void,
 }
-const InventoryReportDataGridCore = (props: InventoryReportDataGridCoreProps) => {
+const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { t } = useTranslation();
   const userPreference = usePreferences();
 
@@ -296,7 +292,7 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridCoreProps) =>
       hideFooterPagination
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
       } }
       rows={ props.hits }
@@ -306,6 +302,6 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridCoreProps) =>
       onRowDoubleClick={ props.onItemSelect }/>
   )
 }
-const InventoryReportDataGrid = connectHits<InventoryReportDataGridCoreProps, InventoryReport>(InventoryReportDataGridCore)
+const InventoryReportDataGrid = connectHits<InventoryReportDataGridProps, InventoryReport>(InventoryReportDataGridCore)
 
 export default InventoryReportScreen;

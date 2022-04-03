@@ -1,10 +1,10 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
-import { auth, firestore } from "../..";
+import { firestore } from "../..";
 import { inventoryCollection, items } from "../../shared/const";
 import { TypeCore } from "../type/Type";
-import { getIdToken } from "firebase/auth";
 import { getIdTokenRefreshed } from "../user/User";
 import axios from "axios";
+import { SERVER_URL } from "../../shared/utils";
 
 export type InventoryReport = {
   inventoryReportId: string,
@@ -27,8 +27,6 @@ export type InventoryReportItem = {
   onHandCount: number,
   remarks?: string
 }
-
-const SERVER_URL = "https://deshi-production.up.railway.app";
 
 export class InventoryReportRepository {
   static async fetch(reportId: string): Promise<InventoryReportItem[]> {

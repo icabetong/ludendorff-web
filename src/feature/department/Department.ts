@@ -1,14 +1,10 @@
 import { firestore } from "../..";
-import { deleteDoc, writeBatch, doc } from "firebase/firestore";
+import { deleteDoc, doc, writeBatch } from "firebase/firestore";
 
 import { UserCore } from "../user/User";
 import { minimize as minimizeDepartment } from "./Department";
 
-import {
-  departmentCollection,
-  userCollection,
-  department as departmentField
-} from "../../shared/const";
+import { department as departmentField, departmentCollection, userCollection } from "../../shared/const";
 
 export const minimize = (department: Department): DepartmentCore => {
   return {

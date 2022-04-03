@@ -7,17 +7,13 @@ import { usePermissions } from "../auth/AuthProvider";
 import { useReducer, useState } from "react";
 import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
 import { usePagination } from "use-pagination-firestore";
-import { fundCluster, issuedCollection, entityName, serialNumber, date } from "../../shared/const";
-import { query, collection, orderBy } from "firebase/firestore";
+import { date, entityName, fundCluster, issuedCollection, serialNumber } from "../../shared/const";
+import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { formatDate, isDev } from "../../shared/utils";
-import { DataGrid, GridCellParams, GridOverlay, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { AddRounded, DeleteOutlineRounded, UploadFileOutlined } from "@mui/icons-material";
-import {
-  ActionType,
-  initialState,
-  reducer
-} from "./IssuedReportEditorReducer";
+import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -32,6 +28,8 @@ import { usePreferences } from "../settings/Preference";
 import IssuedReportList from "./IssuedReportList";
 import IssuedReportEditor from "./IssuedReportEditor";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { ScreenProps } from "../shared/ScreenProps";
+import GridEmptyRow from "../../components/GridEmptyRows";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -45,9 +43,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type IssuedReportScreenProps = {
-  onDrawerToggle: () => void,
-}
+type IssuedReportScreenProps = ScreenProps & {}
 const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -140,7 +136,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     <DataGrid
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
       } }
@@ -215,11 +211,11 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   )
 }
 
-const EmptyStateOverlay = () => {
+const IssuedReportDataGridEmptyRows = () => {
   return (
-    <GridOverlay>
+    <GridEmptyRow>
       <IssuedReportEmptyState/>
-    </GridOverlay>
+    </GridEmptyRow>
   )
 }
 
@@ -281,7 +277,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
       hideFooterPagination
       components={ {
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: EmptyStateOverlay,
+        NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
       } }
       rows={ props.hits }
