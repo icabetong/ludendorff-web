@@ -196,6 +196,9 @@ export const getDataGridTheme = (theme: Theme) => {
     '& .MuiDataGrid-columnsContainer': {
       borderBottomColor: theme.palette.divider
     },
+    '& .MuiDataGrid-footerContainer': {
+      border: 'none'
+    }
   }
 }
 
@@ -237,5 +240,8 @@ export const getEditorDataGridTheme = (theme: Theme) => {
     '& .MuiDataGrid-columnsContainer': {
       borderBottomColor: theme.palette.divider
     },
+    '& .MuiDataGrid-footerContainer': {
+      border: 'none'
+    }
   }
 }

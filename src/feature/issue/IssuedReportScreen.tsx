@@ -80,7 +80,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     { field: serialNumber, headerName: t("field.serial_number"), flex: 1 },
     {
       field: date,
-      headerName: t("field.accountability_date"),
+      headerName: t("field.date"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         const formatted = formatDate(params.row.accountabilityDate);
@@ -245,7 +245,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
     { field: serialNumber, headerName: t("field.serial_number"), flex: 1 },
     {
       field: date,
-      headerName: t("field.accountability_date"),
+      headerName: t("field.date"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         const formatted = formatDate(params.row.accountabilityDate);

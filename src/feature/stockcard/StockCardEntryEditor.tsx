@@ -58,7 +58,8 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
             <LocalizationProvider dateAdapter={ DateAdapter }>
               <Box>
                 <DatePicker
-                  inputFormat="MMMM d yyyy"
+                  inputFormat="MM/dd/yyyy"
+                  mask="__/__/____"
                   label={ t("field.accountability_date") }
                   value={ date }
                   onChange={ setDate }
@@ -68,12 +69,21 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
             </LocalizationProvider>
             <TextField
               autoFocus
+              id="reference"
+              type="text"
+              label={t("field.reference")}
+              defaultValue={props.entry && props.entry.reference}
+              error={errors.reference !== undefined}
+              helperText={errors.reference?.message && t(errors.reference?.message)}
+              {...register("reference", { required: "feedback.empty_reference" })}/>
+            <TextField
               id="receiptQuantity"
               type="number"
               label={t("field.receipt_quantity")}
               defaultValue={props.entry && props.entry.receiptQuantity}
               error={errors.receiptQuantity !== undefined}
               helperText={errors.receiptQuantity?.message && t(errors.receiptQuantity?.message)}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
               {...register("receiptQuantity", { required: "feedback.empty_receipt_quantity" })}/>
             <TextField
               id="requestedQuantity"
@@ -82,6 +92,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               defaultValue={props.entry && props.entry.requestedQuantity}
               error={errors.requestedQuantity !== undefined}
               helperText={errors.requestedQuantity?.message && t(errors.requestedQuantity?.message)}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
               {...register("requestedQuantity", { required: "feedback.empty_request_quantity"})}/>
             <TextField
               id="issueQuantity"
@@ -90,6 +101,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               defaultValue={props.entry && props.entry.issueQuantity}
               error={errors.issueQuantity !== undefined}
               helperText={errors.issueQuantity?.message && t(errors.issueQuantity?.message)}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
               {...register("issueQuantity", { required: "feedback.empty_issue_quantity" })}/>
             <TextField
               id="issueOffice"
@@ -106,6 +118,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               defaultValue={props.entry && props.entry.balanceQuantity}
               error={errors.balanceQuantity !== undefined}
               helperText={errors.balanceQuantity?.message && t(errors.balanceQuantity?.message)}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
               {...register("balanceQuantity", { required: "feedback.empty_balance_quantity" })}/>
             <TextField
               id="balanceTotalPrice"
@@ -114,6 +127,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               defaultValue={props.entry && props.entry.balanceTotalPrice}
               error={errors.balanceTotalPrice !== undefined}
               helperText={errors.balanceTotalPrice?.message && t(errors.balanceTotalPrice?.message)}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
               {...register("balanceTotalPrice", { required: "feedback.empty_balance_total_price" })}/>
           </Container>
         </DialogContent>

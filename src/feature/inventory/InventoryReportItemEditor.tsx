@@ -92,6 +92,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
                 error={ errors.balancePerCard !== undefined }
                 helperText={ errors.balancePerCard?.message && t(errors.balancePerCard?.message) }
                 disabled={ !asset }
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
                 { ...register("balancePerCard", { required: "feedback.empty_balance_per_card" }) }/>
               <TextField
                 id="onHandCount"
@@ -101,6 +102,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
                 error={ errors.onHandCount !== undefined }
                 helperText={ errors.onHandCount?.message && t(errors.onHandCount?.message) }
                 disabled={ !asset }
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
                 { ...register("onHandCount", { required: "feedback.empty_on_hand_count" }) }/>
             </Container>
           </DialogContent>

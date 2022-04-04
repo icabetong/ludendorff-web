@@ -209,13 +209,11 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      { state.isOpen &&
-        <InventoryReportEditor
-          isOpen={ state.isOpen }
-          isCreate={ state.isCreate }
-          report={ state.report }
-          onDismiss={ onInventoryEditorDismiss }/>
-      }
+      <InventoryReportEditor
+        isOpen={ state.isOpen }
+        isCreate={ state.isCreate }
+        report={ state.report }
+        onDismiss={ onInventoryEditorDismiss }/>
       <ConfirmationDialog
         isOpen={ report !== undefined }
         title="dialog.inventory_remove"

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 type UserEditorProps = {
   isOpen: boolean,
   isCreate: boolean,
-  user?: User,
+  user: User | undefined,
   onDismiss: () => void,
 }
 
@@ -75,7 +75,7 @@ const UserEditor = (props: UserEditorProps) => {
   const { register, handleSubmit, formState: { errors }, control } = useForm<FormValues>();
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);
-  const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department)
+  const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
     query(collection(firestore, departmentCollection), orderBy(departmentName)), {
@@ -122,7 +122,6 @@ const UserEditor = (props: UserEditorProps) => {
           props.onDismiss();
         })
     } else {
-      console.log(user)
       UserRepository.update(user)
         .then(() => enqueueSnackbar(t("feedback.user_updated")))
         .catch((error) => {
@@ -157,7 +156,7 @@ const UserEditor = (props: UserEditorProps) => {
         open={ props.isOpen }
         onClose={ () => props.onDismiss() }>
         <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("user_details") }</DialogTitle>
+          <DialogTitle>{ t("dialog.details_user") }</DialogTitle>
           <DialogContent dividers={ true }>
             <Container>
               <Grid
@@ -222,7 +221,7 @@ const UserEditor = (props: UserEditorProps) => {
                       onClick={ onPickerView }
                       disabled={ isWritePending }>
                       <Typography variant="body2">
-                        { department !== undefined ? department?.name : t("not_set") }
+                        { department !== undefined ? department?.name : t("button.not_set") }
                       </Typography>
                     </ListItem>
                   </FormControl>
@@ -247,8 +246,7 @@ const UserEditor = (props: UserEditorProps) => {
                             render={ ({ field: { onChange, value } }) => (
                               <Checkbox
                                 disabled={ isWritePending }
-                                defaultChecked={ hasPermission(Permission.READ) }
-                                checked={ value }
+                                defaultChecked={ props.user ? hasPermission(Permission.READ) : value }
                                 onChange={ onChange }/>
                             ) }/>
                         }/>
@@ -261,8 +259,7 @@ const UserEditor = (props: UserEditorProps) => {
                             render={ ({ field: { onChange, value } }) => (
                               <Checkbox
                                 disabled={ isWritePending }
-                                defaultChecked={ hasPermission(Permission.WRITE) }
-                                checked={ value }
+                                defaultChecked={ props.user ? hasPermission(Permission.WRITE) : value }
                                 onChange={ onChange }/>
                             ) }/>
                         }/>
@@ -275,11 +272,9 @@ const UserEditor = (props: UserEditorProps) => {
                             render={ ({ field: { onChange, value } }) => (
                               <Checkbox
                                 disabled={ isWritePending }
-                                defaultChecked={ hasPermission(Permission.DELETE) }
-                                checked={ value }
+                                defaultChecked={ props.user ? hasPermission(Permission.DELETE) : value }
                                 onChange={ onChange }/>
                             ) }/>
-
                         }/>
                       <FormControlLabel
                         label={ t("permission.manage_users") }
@@ -290,8 +285,7 @@ const UserEditor = (props: UserEditorProps) => {
                             render={ ({ field: { onChange, value } }) => (
                               <Checkbox
                                 disabled={ isWritePending }
-                                defaultChecked={ hasPermission(Permission.MANAGE_USERS) }
-                                checked={ value }
+                                defaultChecked={ props.user ? hasPermission(Permission.MANAGE_USERS) : value }
                                 onChange={ onChange }/>
                             ) }/>
                         }/>
@@ -304,8 +298,7 @@ const UserEditor = (props: UserEditorProps) => {
                             render={ ({ field: { onChange, value } }) => (
                               <Checkbox
                                 disabled={ isWritePending }
-                                defaultChecked={ hasPermission(Permission.ADMINISTRATIVE) }
-                                checked={ value }
+                                defaultChecked={ props.user ? hasPermission(Permission.ADMINISTRATIVE) : value }
                                 onChange={ onChange }/>
                             ) }/>
                         }/>

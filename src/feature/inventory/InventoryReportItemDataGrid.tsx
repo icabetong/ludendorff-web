@@ -1,12 +1,14 @@
 import { InventoryReportItem } from "./InventoryReport";
-import { DataGrid, GridCallbackDetails, GridSelectionModel } from "@mui/x-data-grid";
-import { assetStockNumber, article, assetDescription, assetType, assetUnitOfMeasure, unitValue, balancePerCard, onHandCount, remarks } from "../../shared/const";
+import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { assetStockNumber, article, assetDescription, assetType, assetUnitOfMeasure, balancePerCard, onHandCount, remarks } from "../../shared/const";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
 import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../shared/EditorComponent";
 import { useState } from "react";
+import { Asset } from "../asset/Asset";
+import { usePreferences } from "../settings/Preference";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -24,6 +26,7 @@ type InventoryReportItemDataGridProps = EditorDataGridProps<InventoryReportItem>
 const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
+  const userPreferences = usePreferences();
   const [hasChecked, setHasChecked] = useState(false);
 
   const columns = [
@@ -33,7 +36,11 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     {
       field: assetType,
       headerName: t("field.type"),
-      flex: 1
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let asset = params.row as Asset;
+        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
+      }
     },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     { field: balancePerCard, headerName: t("field.balance_per_card"), flex: 1 },
@@ -60,9 +67,9 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
             onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
           }
         }}
-        className={classes.dataGrid}
         columns={columns}
         rows={props.items}
+        density={userPreferences.density}
         getRowId={(row) => row.stockNumber}
         onSelectionModelChange={onCheckedRowsChanged}/>
     </Box>

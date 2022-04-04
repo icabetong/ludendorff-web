@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { AppBar, Box, Button, IconButton, Slide, Theme, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Slide, Theme, Toolbar, Typography, useTheme } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { AddRounded, CloseRounded, DeleteOutlineRounded, SaveRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,7 @@ type EditorAppBarProps = {
 
 const EditorAppBar = (props: EditorAppBarProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <AppBar sx={{ position: 'relative' }}>
@@ -26,7 +27,9 @@ const EditorAppBar = (props: EditorAppBarProps) => {
         </Typography>
         <Button
           autoFocus
-          color="inherit"
+          variant={theme.palette.mode === 'dark' ? "contained" : "text" }
+          size="large"
+          color={theme.palette.mode === 'dark' ? "primary" : "inherit" }
           onClick={props.onConfirm}
           type="submit"
           startIcon={<SaveRounded/>}>

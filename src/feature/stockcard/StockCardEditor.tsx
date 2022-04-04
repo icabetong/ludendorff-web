@@ -8,13 +8,11 @@ import { collection, orderBy, query } from "firebase/firestore";
 import { assetCollection, assetStockNumber } from "../../shared/const";
 import { firestore } from "../../index";
 import {
+  Box,
   Button,
-  Container,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormLabel,
+  Grid,
   List,
   ListItem,
   TextField,
@@ -29,6 +27,9 @@ import { StockCardEntryEditor } from "./StockCardEntryEditor";
 import AssetPicker from "../asset/AssetPicker";
 import { isDev, newId } from "../../shared/utils";
 import { useSnackbar } from "notistack";
+import { GridSelectionModel } from "@mui/x-data-grid";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import StockCardEntryDataGrid from "./StockCardEntryDataGrid";
 
 export type FormValues = {
   entityName?: string,
@@ -44,19 +45,20 @@ type StockCardEditorProps = {
 export const StockCardEditor = (props: StockCardEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | null>(null);
   const [isOpen, setOpen] = useState(false);
   const [entries, setEntries] = useState<StockCardEntry[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [checked, setChecked] = useState<string[]>([]);
   const { enqueueSnackbar } = useSnackbar();
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
   const onEditorUpdate = (entry: StockCardEntry) => dispatch({ type: ActionType.UPDATE, payload: entry });
   const onEditorCommit = (entry: StockCardEntry) => {
-    let currentEntries = entries;
+    let currentEntries = Array.from(entries);
     let index = currentEntries.findIndex((i) => i.stockCardEntryId === entry.stockCardEntryId);
     if (index < 0) {
       currentEntries.push(entry);
@@ -74,6 +76,15 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         limit: 15
     }
   )
+
+  const onCheckedRowsChanged = (model: GridSelectionModel) => setChecked(model.map((id) => `${id}`))
+  const onCheckedRowsRemove = () => {
+    let currentEntries = Array.from(entries);
+    checked.forEach((id: string) => {
+      currentEntries = currentEntries.filter((i) => i.stockCardEntryId !== id);
+    })
+    setEntries(currentEntries);
+  }
 
   const onSubmit = (values: FormValues) => {
     if (!asset) {
@@ -112,57 +123,59 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
     <>
       <Dialog
         open={props.isOpen}
-        fullWidth={true}
-        fullScreen={isMobile}
-        maxWidth="xs"
-        onClose={props.onDismiss}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_stock_card")}</DialogTitle>
-          <DialogContent>
-            <Container disableGutters>
-              <FormLabel component="legend">{t("field.asset")}</FormLabel>
-              <ListItem button onClick={onPickerInvoke}>
-                { asset?.description ? asset?.description : t("button.not_set") }
-              </ListItem>
-              <TextField
-                autoFocus
-                id="entityName"
-                type="text"
-                label={t("field.entity_name")}
-                defaultValue={props.stockCard && props.stockCard?.entityName}
-                error={errors.entityName !== undefined}
-                helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                disabled={!asset}
-                {...register("entityName", { required: "feedback.empty_entity_name" })}/>
-              <FormLabel component="legend">
-                <Typography variant="body2">{t("field.entries")}</Typography>
-              </FormLabel>
-              <List>
+        fullScreen={true}
+        onClose={props.onDismiss}
+        TransitionComponent={Transition}>
+        <EditorRoot onSubmit={handleSubmit(onSubmit)}>
+          <EditorAppBar title={t("dialog.details_stock_card")} onDismiss={props.onDismiss}/>
+          <EditorContent>
+            <Box sx={{mb: 2}}>
+              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={smBreakpoint ? 0 : 4 }>
+                <Grid item xs={6} sx={{maxWidth: "100%", pt: 0, pl: 0 }}>
+                  <TextField
+                    autoFocus
+                    id="entityName"
+                    type="text"
+                    label={t("field.entity_name")}
+                    defaultValue={props.stockCard && props.stockCard?.entityName}
+                    error={errors.entityName !== undefined}
+                    helperText={errors.entityName?.message && t(errors.entityName?.message)}
+                    {...register("entityName", { required: "feedback.empty_entity_name" })}/>
+                </Grid>
+                <Grid item xs={6} sx={{maxWidth: "100%", pt: 0, pl: 0 }}>
+                  <FormLabel component="legend">
+                    <Typography variant="body2">{t("field.asset")}</Typography>
+                  </FormLabel>
+                  <ListItem button onClick={onPickerInvoke}>
+                    { asset?.description ? asset?.description : t("button.not_set") }
+                  </ListItem>
+                </Grid>
+              </Grid>
+            </Box>
+            <FormLabel component="legend">
+              <Typography variant="body2">{t("field.entries")}</Typography>
+            </FormLabel>
+            { smBreakpoint
+              ? <List>
                 <StockCardEntryList
                   entries={entries}
                   onItemSelected={onEditorUpdate}/>
+                <Button
+                  fullWidth
+                  startIcon={ <AddRounded/> }
+                  onClick={ onEditorCreate }>
+                  { t("add") }
+                </Button>
               </List>
-              <Button
-                fullWidth
-                startIcon={ <AddRounded/> }
-                onClick={ onEditorCreate }>
-                { t("add") }
-              </Button>
-            </Container>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="primary"
-              onClick={props.onDismiss}>
-              {t("button.cancel")}
-            </Button>
-            <Button
-              color="primary"
-              type="submit">
-              {t("button.save")}
-            </Button>
-          </DialogActions>
-        </form>
+              : <StockCardEntryDataGrid
+                onAddAction={onEditorCreate}
+                onRemoveAction={onCheckedRowsRemove}
+                onItemSelected={onEditorUpdate}
+                entries={entries}
+                onCheckedRowsChanged={onCheckedRowsChanged}/>
+            }
+          </EditorContent>
+        </EditorRoot>
       </Dialog>
       <AssetPicker
         isOpen={isOpen}

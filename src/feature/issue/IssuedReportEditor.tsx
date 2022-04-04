@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
-  Container,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormLabel,
   Grid,
   List,
@@ -27,6 +23,9 @@ import { DatePicker, LocalizationProvider } from "@mui/lab";
 import IssuedReportItemList from "./IssuedReportItemList";
 import { AddRounded } from "@mui/icons-material";
 import { IssuedReportItemEditor } from "./IssuedReportItemEditor";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import IssuedReportItemDataGrid from "./IssuedReportItemDataGrid";
+import { GridSelectionModel } from "@mui/x-data-grid";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,
@@ -45,10 +44,11 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<IssuedReportItem[]>([]);
+  const [checked, setChecked] = useState<string[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -78,6 +78,15 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
     } else {
       currentItems[index] = item;
     }
+    setItems(currentItems);
+  }
+
+  const onCheckedRowsChanged = (model: GridSelectionModel) => setChecked(model.map((id) => `${id}`))
+  const onCheckedRowsRemove = () => {
+    let currentItems = Array.from(items);
+    checked.forEach((id: string) => {
+      currentItems = currentItems.filter((i) => i.stockNumber !== id);
+    });
     setItems(currentItems);
   }
 
@@ -115,16 +124,15 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   return (
     <>
       <Dialog
-        fullScreen={isMobile}
-        fullWidth={true}
-        maxWidth={isMobile ? "xs" : "md"}
+        fullScreen={true}
         open={props.isOpen}
-        onClose={props.onDismiss}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_issued")}</DialogTitle>
-          <DialogContent dividers={true}>
-            <Container>
-              <Grid container direction={isMobile ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={isMobile ? 0 : 4}>
+        onClose={props.onDismiss}
+        TransitionComponent={Transition}>
+        <EditorRoot onSubmit={handleSubmit(onSubmit)}>
+          <EditorAppBar title={t("dialog.details_issued")} onDismiss={props.onDismiss}/>
+          <EditorContent>
+            <Box sx={{mb: 2}}>
+              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
                   <TextField
                     autoFocus
@@ -143,6 +151,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}
                     defaultValue={props.report && props.report.serialNumber}
                     {...register('serialNumber', { required: "feedback.empty_serial_number"})}/>
+                </Grid>
+                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
                   <TextField
                     id="entityName"
                     type="text"
@@ -155,7 +165,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     <Box>
                       <DatePicker
                         inputFormat="MM/dd/yyyy"
-                        mask="__/__/yyyy"
+                        mask="__/__/____"
                         label={ t("field.date") }
                         value={ date }
                         onChange={ setDate }
@@ -164,36 +174,32 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     </Box>
                   </LocalizationProvider>
                 </Grid>
-                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
-                  <FormLabel component="legend">
-                    <Typography variant="body2">{t("field.items")}</Typography>
-                  </FormLabel>
-                  <List>
-                    <IssuedReportItemList items={items} onItemSelected={onEditorUpdate}/>
-                    <Button
-                      fullWidth
-                      startIcon={ <AddRounded/> }
-                      onClick={ onEditorCreate }>
-                        { t("button.add") }
-                    </Button>
-                  </List>
-                </Grid>
               </Grid>
-            </Container>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="primary"
-              onClick={props.onDismiss}>
-              {t("button.cancel")}
-            </Button>
-            <Button
-              color="primary"
-              type="submit">
-              {t("button.save")}
-            </Button>
-          </DialogActions>
-        </form>
+            </Box>
+            <FormLabel component="legend">
+              <Typography variant="body2">{t("field.items")}</Typography>
+            </FormLabel>
+            { smBreakpoint
+              ? <List>
+                  <IssuedReportItemList
+                    items={items}
+                    onItemSelected={onEditorUpdate}/>
+                  <Button
+                    fullWidth
+                    startIcon={ <AddRounded/> }
+                    onClick={ onEditorCreate }>
+                    { t("button.add") }
+                  </Button>
+                </List>
+              : <IssuedReportItemDataGrid
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  items={items}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
+            }
+          </EditorContent>
+        </EditorRoot>
       </Dialog>
       <IssuedReportItemEditor
         isOpen={state.isOpen}
@@ -205,4 +211,4 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   )
 }
 
-export default IssuedReportEditor
+export default IssuedReportEditor;

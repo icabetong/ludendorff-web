@@ -8,7 +8,6 @@ import {
   AddRounded,
   DeleteOutline,
   DomainRounded,
-  LocalOfferRounded,
   PeopleOutlineRounded,
   VisibilityOffOutlined,
   VisibilityOutlined,
@@ -418,12 +417,12 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
         toolbar: {
           destinations: [
             <Button
-              key="types"
+              key="departments"
               color="primary"
               size="small"
-              startIcon={ <LocalOfferRounded fontSize="small"/> }
+              startIcon={ <DomainRounded fontSize="small"/> }
               onClick={ props.onDepartmentInvoke }>
-              { t("navigation.types") }
+              { t("navigation.departments") }
             </Button>
           ]
         }

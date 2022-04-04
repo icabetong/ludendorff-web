@@ -6,7 +6,7 @@ import {
   Button,
   Dialog,
   FormLabel,
-  Grid,
+  Grid, List,
   TextField,
   Typography,
   useMediaQuery,
@@ -25,7 +25,7 @@ import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/E
 import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
 import InventoryReportItemList from "./InventoryReportItemList";
 import { AddRounded } from "@mui/icons-material";
-import { GridCallbackDetails, GridRowId, GridSelectionModel } from "@mui/x-data-grid";
+import { GridRowId, GridSelectionModel } from "@mui/x-data-grid";
 
 type InventoryReportEditorProps = {
   isOpen: boolean,
@@ -92,7 +92,12 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   }
 
   const onSubmit = (data: FormValues) => {
-    if (!yearMonth || !date) {
+    if (!yearMonth) {
+      enqueueSnackbar(t("feedback.empty_year_month"));
+      return;
+    }
+    if (!date) {
+      enqueueSnackbar(t("feedback.empty_accountability_date"));
       return;
     }
 
@@ -133,7 +138,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
         <EditorRoot onSubmit={ handleSubmit(onSubmit) }>
           <EditorAppBar title={t("dialog.details_inventory")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box>
+            <Box sx={{mb: 2}}>
               <Grid
                 container
                 direction={ smBreakpoint ? "column" : "row" }
@@ -208,14 +213,14 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
               <Typography variant="body2">{ t("field.items") }</Typography>
             </FormLabel>
             { smBreakpoint
-              ? <>
+              ? <List>
                   <InventoryReportItemList
                     items={items}
                     onItemSelected={onEditorUpdate}/>
                   <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
                     {t("button.add")}
                   </Button>
-                </>
+                </List>
               : <InventoryReportItemDataGrid
                   items={items}
                   onAddAction={onEditorCreate}

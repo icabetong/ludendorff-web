@@ -20,7 +20,7 @@ const SettingsList = (props: SettingsListProps) => {
   return (
     <List>
       { props.preferences.map((preference: Setting) => {
-        return <SettingsItem preference={ preference }/>
+        return <SettingsItem key={preference.key} preference={ preference }/>
       })
       }
     </List>

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   FormControl,
   FormLabel,
-  Grid,
+  Grid, InputAdornment,
   ListItem,
   TextField,
   Typography,
@@ -28,6 +28,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
+import { CurrencyRubleRounded } from "@mui/icons-material";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -145,7 +146,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     helperText={ errors.description?.message !== undefined ? t(errors.description.message) : undefined }
                     defaultValue={ props.asset !== undefined ? props.asset.description : "" }
                     placeholder={ t('placeholder.asset_description') }
-                    { ...register("description", { required: "feedback.empty_asset_name" }) } />
+                    { ...register("description", { required: "feedback.empty_asset_description" }) } />
                   <FormControl
                     component="fieldset"
                     fullWidth>
@@ -185,12 +186,24 @@ const AssetEditor = (props: AssetEditorProps) => {
                     { ...register('unitOfMeasure', { required: 'feedback.empty_unit_of_measure' }) }/>
                   <TextField
                     id="unitValue"
-                    type="number"
                     label={ t("field.unit_value") }
                     error={ errors.unitValue !== undefined }
                     helperText={ errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined }
                     defaultValue={ props.asset && props.asset.unitValue }
-                    placeholder={ t('placeholder.unit_value') }
+                    inputProps={{
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*',
+                      min: 0,
+                      step: 0.01,
+                      type: "number",
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <CurrencyRubleRounded fontSize="small"/>
+                        </InputAdornment>
+                      )
+                    }}
                     { ...register('unitValue', { required: 'feedback.empty_unit_value' }) }/>
                   <TextField
                     id='remarks'

@@ -29,7 +29,7 @@ export const reducer = (state: State, action: Action): State => {
   switch (type) {
     case ActionType.CREATE:
       return {
-        user: undefined,
+        ...state,
         isCreate: true,
         isOpen: true
       }
