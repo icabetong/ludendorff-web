@@ -1,18 +1,17 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Box, Grid, Hidden, LinearProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Grid, LinearProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { EditOutlined, ImageOutlined, LockOutlined, SendOutlined, } from "@mui/icons-material";
-import PageHeader from "../../components/PageHeader";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
 import ChangeNamePrompt from "./actions/ChangeName";
 import ChangePasswordPrompt from "./actions/ChangePassword";
 import RequestResetPrompt from "./actions/RequestReset";
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
-import ComponentHeader from "../../components/ComponentHeader";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -69,15 +68,9 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
   return (
     <Box className={ classes.root }>
-      <Hidden lgDown>
-        <PageHeader
-          title={ t("navigation.profile") }/>
-      </Hidden>
-      <Hidden lgUp>
-        <ComponentHeader
-          title={ t("navigation.profile") }
-          onDrawerToggle={ props.onDrawerToggle }/>
-      </Hidden>
+      <AdaptiveHeader
+        title={t("navigation.profile")}
+        onDrawerTriggered={props.onDrawerToggle}/>
       <input
         ref={ fileInput }
         type="file"

@@ -50,18 +50,19 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
     }
   );
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = (data: FormValues) => {
     if (!asset) {
       enqueueSnackbar(t("feedback.empty_asset"));
       return;
     }
 
     let item: IssuedReportItem = {
+      ...data,
       stockNumber: asset.stockNumber,
       description: asset.description,
       unitOfMeasure: asset.unitOfMeasure,
       unitCost: asset.unitValue,
-      ...values
+      quantityIssued: parseInt(`${data.quantityIssued}`)
     }
     props.onSubmit(item)
     props.onDismiss()

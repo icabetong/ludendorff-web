@@ -28,7 +28,7 @@ import AssetPicker from "../asset/AssetPicker";
 import { isDev, newId } from "../../shared/utils";
 import { useSnackbar } from "notistack";
 import { GridSelectionModel } from "@mui/x-data-grid";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import StockCardEntryDataGrid from "./StockCardEntryDataGrid";
 
 export type FormValues = {
@@ -95,7 +95,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
     const stockCard: StockCard = {
       stockCardId: props.stockCard ? props.stockCard.stockCardId : newId(),
       ...values,
-      unitPrice: unitValue,
+      unitPrice: parseFloat(`${unitValue}`),
       ...remain,
       entries: entries,
     }

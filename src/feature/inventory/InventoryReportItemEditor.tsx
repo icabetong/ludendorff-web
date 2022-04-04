@@ -59,8 +59,8 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
       unitOfMeasure: asset.unitOfMeasure,
       unitValue: asset.unitValue,
       remarks: asset.remarks,
-      balancePerCard: values.balancePerCard,
-      onHandCount: values.onHandCount
+      balancePerCard: parseFloat(`${values.balancePerCard}`),
+      onHandCount: parseFloat(`${values.onHandCount}`)
     }
     props.onSubmit(item)
     props.onDismiss()

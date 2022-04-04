@@ -1,16 +1,14 @@
-import { Box, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useReducer, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
-import PageHeader from "../../components/PageHeader";
 import { useTranslation } from "react-i18next";
 import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
 
 import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
 import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import ComponentHeader from "../../components/ComponentHeader";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
 import { usePreferences } from "../settings/Preference";
@@ -39,6 +37,7 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { formatDate, isDev } from "../../shared/utils";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { ScreenProps } from "../shared/ScreenProps";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -163,33 +162,20 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="inventories">
-        <Hidden lgDown>
-          <PageHeader
-            title={ t('navigation.inventories') }
-            buttonText={ canWrite ? t("button.create_report") : undefined }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
-            onSearchFocusChanged={ setSearchMode }/>
-        </Hidden>
-        <Hidden lgUp>
-          <ComponentHeader
-            title={ t("navigation.inventories") }
-            onDrawerToggle={ props.onDrawerToggle }
-            buttonText={
-              canWrite ? t("button.create_report") : undefined
-            }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
-          />
-        </Hidden>
+        <AdaptiveHeader
+          title={t("navigation.inventories")}
+          actionText={canWrite ? t("button.create_report") : undefined}
+          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onDrawerTriggered={props.onDrawerToggle}
+          onSearchFocusChanged={setSearchMode}/>
         { canRead
           ? <>
               <Hidden smDown>
                 <Box className={ classes.wrapper }>
                   { searchMode
                     ? <InventoryReportDataGrid
-                      onItemSelect={ onDataGridRowDoubleClicked }
-                      onRemoveInvoke={ onRemoveInvoke }/>
+                        onItemSelect={ onDataGridRowDoubleClicked }
+                        onRemoveInvoke={ onRemoveInvoke }/>
                     : dataGrid
                   }
                 </Box>
@@ -204,6 +190,12 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                         onItemRemove={onRemoveInvoke}/>
                   : <LinearProgress/>
               }
+              <Fab
+                color="primary"
+                aria-label={t("button.add")}
+                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                <AddRounded/>
+              </Fab>
             </Hidden>
             </>
           : <ErrorNoPermissionState/>

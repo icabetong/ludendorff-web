@@ -4,7 +4,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
+  OutlinedInput, TextField,
   Theme
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
@@ -13,7 +13,7 @@ import algoliasearch from "algoliasearch/lite";
 import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import EmptyStateComponent from "../feature/state/EmptyStates";
-import React from "react";
+import React, { ChangeEvent } from "react";
 
 const useStyles = makeStyles((theme: Theme) => ({
   highlightResult: {
@@ -43,25 +43,30 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
 }
 export const Highlight = connectHighlight(CustomHighlight)
 
-const CustomSearchBox = (props: SearchBoxProvided) => {
+type SearchBoxProps = SearchBoxProvided & {
+  onFocusChanged?: (hasFocus: boolean) => void,
+}
+const SearchBoxCore = (props: SearchBoxProps) => {
   const { t } = useTranslation();
+  const onFocusGained = () => props.onFocusChanged?.(true)
+  const onFocusLost = () => props.onFocusChanged?.(props.currentRefinement.match(/^ *$/) != null)
+
+  const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    props.refine(event.target.value)
+    if (event.target.value === '') {
+      props.onFocusChanged?.(false)
+    }
+  }
 
   return (
-    <FormControl fullWidth variant="outlined">
-      <InputLabel htmlFor="search">{ t("field.search") }</InputLabel>
-      <OutlinedInput
-        id="search"
-        value={ props.currentRefinement }
-        label={ t("field.search") }
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton aria-label={ t("button.search") } edge="end" size="large">
-              <SearchOutlined/>
-            </IconButton>
-          </InputAdornment>
-        }
-        onChange={ e => props.refine(e.target.value) }/>
-    </FormControl>
+    <TextField
+      id="search"
+      size="small"
+      value={ props.currentRefinement }
+      label={ t("field.search") }
+      onFocus={ onFocusGained }
+      onBlur={ onFocusLost }
+      onChange={ onQueryChanged }/>
   );
 }
 
@@ -74,8 +79,8 @@ const EmptySearchState = (props: EmptySearchStateProps) => {
   return (
     <EmptyStateComponent
       icon={ SearchOutlined }
-      title={ t("empty_search") }
-      subtitle={ t("empty_search_summary", { query: props.query }) }/>
+      title={ t("empty.search") }
+      subtitle={ t("empty.search_summary", { query: props.query }) }/>
   );
 }
 
@@ -95,5 +100,5 @@ const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, sea
 }
 export const Results = connectStateResults(ResultsComponent)
 
-export const SearchBox = connectSearchBox(CustomSearchBox);
+export const SearchBox = connectSearchBox<SearchBoxProps>(SearchBoxCore);
 export const Provider = algoliasearch("H1BMXJXRBE", "ecfcef9a59b7ec023817ef3041de6416");

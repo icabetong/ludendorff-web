@@ -18,7 +18,6 @@ import {
   ListSubheader,
   Theme,
   Typography,
-  useTheme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import {
@@ -274,25 +273,20 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
 
 export const TopNavigationItem = (props: NavigationItemPropsType) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <Button
-      sx={ {
+      sx={{
         margin: '0 0.2em',
-        padding: '0.8em 1.8em',
+        padding: '0.4em 1em',
         textTransform: 'none',
-        backgroundColor: props.isActive ? alpha(theme.palette.primary.main, 0.2) : undefined,
-        color: props.isActive ? theme.palette.primary.main : theme.palette.text.primary
-      } }
+        fontWeight: '600',
+        fontSize: '1em',
+        color: (theme) => props.isActive ? theme.palette.primary.main : theme.palette.text.secondary
+      }}
       key={ props.itemKey }
-      startIcon={ React.createElement(props.navigation.icon) }
       onClick={ props.action }>
-      <Typography
-        variant="body2"
-        sx={ { textTransform: 'none' } }>
-        { t(props.navigation.title) }
-      </Typography>
+      { t(props.navigation.title) }
     </Button>
   );
 }

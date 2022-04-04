@@ -21,7 +21,7 @@ import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
 import { isDev, newId } from "../../shared/utils";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
 import InventoryReportItemList from "./InventoryReportItemList";
 import { AddRounded } from "@mui/icons-material";

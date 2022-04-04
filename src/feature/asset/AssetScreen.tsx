@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams, } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
@@ -10,7 +10,6 @@ import { collection, orderBy, query } from "firebase/firestore";
 
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import ComponentHeader from "../../components/ComponentHeader";
 import EmptyStateComponent from "../state/EmptyStates";
 
 import { usePermissions } from "../auth/AuthProvider";
@@ -36,7 +35,6 @@ import { ActionType, initialState, reducer } from "./AssetEditorReducer";
 import AssetEditor from "./AssetEditor";
 import TypeScreen from "../type/TypeScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
-import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -46,6 +44,7 @@ import { HitsProvided } from "react-instantsearch-core";
 import { isDev } from "../../shared/utils";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { ScreenProps } from "../shared/ScreenProps";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -210,31 +209,13 @@ const AssetScreen = (props: AssetScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="assets">
-        <Hidden lgDown>
-          <PageHeader
-            title={ t("navigation.assets") }
-            buttonText={
-              canWrite
-                ? t("button.create_asset")
-                : undefined
-            }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
-            onSearchFocusChanged={ setSearchMode }/>
-        </Hidden>
-        <Hidden lgUp>
-          <ComponentHeader
-            title={ t("navigation.assets") }
-            onDrawerToggle={ props.onDrawerToggle }
-            buttonText={
-              canWrite
-                ? t("button.create_asset")
-                : undefined
-            }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ () => dispatch({ type: ActionType.CREATE }) }
-            menuItems={ menuItems }/>
-        </Hidden>
+        <AdaptiveHeader
+          title={t("navigation.assets")}
+          actionText={canWrite ? t("button.create_asset") : undefined}
+          menuItems={menuItems}
+          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onDrawerTriggered={props.onDrawerToggle}
+          onSearchFocusChanged={setSearchMode}/>
         { canRead
           ? <>
             <Hidden smDown>
@@ -258,6 +239,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                       onItemRemove={ onRemoveInvoke }/>
                 : <LinearProgress/>
               }
+              <Fab
+                color="primary"
+                aria-label={t("button.add")}
+                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                <AddRounded/>
+              </Fab>
             </Hidden>
           </>
           : <ErrorNoPermissionState/>

@@ -31,15 +31,20 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [date, setDate] = useState<Date | null>(new Date());
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = (data: FormValues) => {
     if (!date) {
       return;
     }
 
     let entry: StockCardEntry = {
+      ...data,
       stockCardEntryId: props.entry ? props.entry.stockCardEntryId : newId(),
       date: Timestamp.fromDate(date),
-      ...values,
+      receiptQuantity: parseInt(`${data.receiptQuantity}`),
+      requestedQuantity: parseInt(`${data.requestedQuantity}`),
+      issueQuantity: parseInt(`${data.issueQuantity}`),
+      balanceQuantity: parseInt(`${data.balanceQuantity}`),
+      balanceTotalPrice: parseFloat(`${data.balanceTotalPrice}`)
     }
     props.onSubmit(entry)
     props.onDismiss()

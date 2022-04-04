@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { AppBar, Box, Button, IconButton, Slide, Theme, Toolbar, Typography, useTheme } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Slide, Theme, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { AddRounded, CloseRounded, DeleteOutlineRounded, SaveRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
@@ -14,10 +14,9 @@ type EditorAppBarProps = {
 
 const EditorAppBar = (props: EditorAppBarProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
-    <AppBar sx={{ position: 'relative' }}>
+    <AppBar sx={{ position: 'relative' }} elevation={1} enableColorOnDark>
       <Toolbar>
         <IconButton edge="start" color="inherit" onClick={props.onDismiss} aria-label={t("button.close")}>
           <CloseRounded/>
@@ -26,10 +25,10 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           {props.title}
         </Typography>
         <Button
+          color="inherit"
+          variant="outlined"
           autoFocus
-          variant={theme.palette.mode === 'dark' ? "contained" : "text" }
           size="large"
-          color={theme.palette.mode === 'dark' ? "primary" : "inherit" }
           onClick={props.onConfirm}
           type="submit"
           startIcon={<SaveRounded/>}>
@@ -51,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.default
   }
 }));
 

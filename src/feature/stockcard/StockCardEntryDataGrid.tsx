@@ -1,7 +1,7 @@
 import { makeStyles } from "@mui/styles";
 import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../shared/EditorComponent";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { StockCardEntry } from "./StockCard";
 import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useState } from "react";

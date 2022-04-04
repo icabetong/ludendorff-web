@@ -1,5 +1,5 @@
 import makeStyles from "@mui/styles/makeStyles";
-import { Box, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -29,13 +29,12 @@ import { ActionType, initialState, reducer } from "./StockCardEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
 import { isDev } from "../../shared/utils";
 import { Provider } from "../../components/Search";
-import PageHeader from "../../components/PageHeader";
-import ComponentHeader from "../../components/ComponentHeader";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import StockCardList from "./StockCardList";
 import { HitsProvided } from "react-instantsearch-core";
 import { StockCardEditor } from "./StockCardEditor";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -149,22 +148,12 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   return (
     <Box className={classes.root}>
       <InstantSearch searchClient={Provider} indexName="cards">
-        <Hidden lgDown>
-          <PageHeader
-            title={t("navigation.stock_cards")}
-            buttonText={canWrite ? t("button.create_stock_card") : undefined}
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}
-            onSearchFocusChanged={setSearchMode}/>
-        </Hidden>
-        <Hidden lgUp>
-          <ComponentHeader
-            title={t("navigation.stock_cards")}
-            onDrawerToggle={props.onDrawerToggle}
-            buttonText={canWrite ? t("button.create_stock_card") : undefined}
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}/>
-        </Hidden>
+        <AdaptiveHeader
+          title={t("navigation.stock_cards")}
+          actionText={canWrite ? t("button.create_stock_card") : undefined}
+          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onDrawerTriggered={props.onDrawerToggle}
+          onSearchFocusChanged={setSearchMode}/>
         { canRead
             ? <>
                 <Hidden smDown>
@@ -187,6 +176,12 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                           onItemRemove={onRemoveInvoke}/>
                     : <LinearProgress/>
                   }
+                  <Fab
+                    color="primary"
+                    aria-label={t("button.add")}
+                    onClick={() => dispatch({ type: ActionType.CREATE })}>
+                    <AddRounded/>
+                  </Fab>
                 </Hidden>
               </>
             : <ErrorNoPermissionState/>

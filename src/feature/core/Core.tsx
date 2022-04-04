@@ -92,6 +92,15 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     }
   },
   components: {
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          position: 'absolute',
+          bottom: '1rem',
+          right: '1rem',
+        }
+      }
+    },
     MuiDialogContent: {
       styleOverrides: {
         dividers: {

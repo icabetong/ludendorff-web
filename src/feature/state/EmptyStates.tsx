@@ -6,7 +6,7 @@ import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: '60vh',
+    height: '100%',
     padding: theme.spacing(4)
   },
   text: {

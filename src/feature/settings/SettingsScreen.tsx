@@ -1,13 +1,12 @@
 import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Hidden, IconButton, Menu, MenuItem, Switch } from "@mui/material";
+import { Box, IconButton, Menu, MenuItem, Switch } from "@mui/material";
 import { ChevronRightRounded, PaletteOutlined, TableChartOutlined, } from "@mui/icons-material";
 
-import ComponentHeader from "../../components/ComponentHeader";
-import PageHeader from "../../components/PageHeader";
 import { PreferenceContext } from "./Preference";
 import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 type SettingsScreenProps = {
   onDrawerToggle: () => void,
@@ -91,15 +90,9 @@ const SettingsScreen = (props: SettingsScreenProps) => {
 
   return (
     <Box>
-      <Hidden lgDown>
-        <PageHeader
-          title={ t("navigation.settings") }/>
-      </Hidden>
-      <Hidden lgUp>
-        <ComponentHeader
-          title={ t("navigation.settings") }
-          onDrawerToggle={ props.onDrawerToggle }/>
-      </Hidden>
+      <AdaptiveHeader
+        title={t("navigation.settings")}
+        onDrawerTriggered={props.onDrawerToggle}/>
       <SettingsList preferences={ preferences }/>
     </Box>
   );

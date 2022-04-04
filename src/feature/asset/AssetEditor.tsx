@@ -50,7 +50,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -77,6 +77,7 @@ const AssetEditor = (props: AssetEditorProps) => {
       ...data,
       stockNumber: props.asset ? props.asset?.stockNumber : data.stockNumber,
       type: type !== undefined ? type : undefined,
+      unitValue: parseFloat(`${data.unitValue}`)
     }
 
     if (props.isCreate) {
@@ -109,9 +110,9 @@ const AssetEditor = (props: AssetEditorProps) => {
   return (
     <>
       <Dialog
-        fullScreen={ isMobile }
+        fullScreen={ smBreakpoint }
         fullWidth={ true }
-        maxWidth={ isMobile ? "xs" : "md" }
+        maxWidth={ smBreakpoint ? "xs" : "md" }
         open={ props.isOpen }
         onClose={ props.onDismiss }>
         <form onSubmit={ handleSubmit(onSubmit) }>
@@ -120,10 +121,10 @@ const AssetEditor = (props: AssetEditorProps) => {
             <Container>
               <Grid
                 container
-                direction={ isMobile ? "column" : "row" }
+                direction={ smBreakpoint ? "column" : "row" }
                 alignItems="stretch"
                 justifyContent="center"
-                spacing={ isMobile ? 0 : 4 }>
+                spacing={ smBreakpoint ? 0 : 4 }>
                 <Grid
                   item
                   xs={ 6 }

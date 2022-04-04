@@ -23,7 +23,7 @@ import { DatePicker, LocalizationProvider } from "@mui/lab";
 import IssuedReportItemList from "./IssuedReportItemList";
 import { AddRounded } from "@mui/icons-material";
 import { IssuedReportItemEditor } from "./IssuedReportItemEditor";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../shared/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import IssuedReportItemDataGrid from "./IssuedReportItemDataGrid";
 import { GridSelectionModel } from "@mui/x-data-grid";
 

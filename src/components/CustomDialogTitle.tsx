@@ -20,9 +20,6 @@ const styles = (theme: Theme) =>
     header: {
       flex: 2
     },
-    actionButton: {
-      color: theme.palette.grey[500],
-    },
   });
 
 type CustomDialogTitleProps = WithStyles<typeof styles> & {
@@ -37,10 +34,9 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
       <Typography className={classes.header} variant="h6">{ children }</Typography>
       { onSearch ? (
         <IconButton
+          size="large"
           aria-label={ t("button.search") }
-          className={ classes.actionButton }
-          onClick={ onSearch }
-          size="large">
+          onClick={ onSearch }>
           <SearchOutlined/>
         </IconButton>
       ) : null }

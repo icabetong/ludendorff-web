@@ -1,4 +1,4 @@
-import { Box, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
@@ -19,8 +19,6 @@ import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
-import PageHeader from "../../components/PageHeader";
-import ComponentHeader from "../../components/ComponentHeader";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { HitsProvided } from "react-instantsearch-core";
@@ -30,6 +28,7 @@ import IssuedReportEditor from "./IssuedReportEditor";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridEmptyRow from "../../components/GridEmptyRows";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -151,24 +150,12 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   return (
     <Box className={classes.root}>
       <InstantSearch searchClient={Provider} indexName="issued">
-        <Hidden lgDown>
-          <PageHeader
-            title={t("navigation.issued")}
-            buttonText={canWrite ? t("button.create_report") : undefined}
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({type: ActionType.CREATE})}
-            onSearchFocusChanged={setSearchMode}/>
-        </Hidden>
-        <Hidden lgUp>
-          <ComponentHeader
-            title={t("navigation.issued")}
-            onDrawerToggle={props.onDrawerToggle}
-            buttonText={
-              canWrite ? t("button.create_report") : undefined
-            }
-            buttonIcon={AddRounded}
-            buttonOnClick={() => dispatch({ type: ActionType.CREATE })}/>
-        </Hidden>
+        <AdaptiveHeader
+          title={t("navigation.issued")}
+          actionText={canWrite ? t("button.create_report") : undefined}
+          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onDrawerTriggered={props.onDrawerToggle}
+          onSearchFocusChanged={setSearchMode}/>
         { canRead
            ? <>
               <Hidden smDown>
@@ -191,6 +178,12 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                           onItemRemove={onRemoveInvoke}/>
                     : <LinearProgress/>
                 }
+                <Fab
+                  color="primary"
+                  aria-label={t("button.add")}
+                  onClick={() => dispatch({ type: ActionType.CREATE })}>
+                  <AddRounded/>
+                </Fab>
               </Hidden>
             </>
           : <ErrorNoPermissionState/>

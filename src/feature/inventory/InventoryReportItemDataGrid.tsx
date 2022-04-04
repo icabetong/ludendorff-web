@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
 import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../shared/EditorComponent";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { useState } from "react";
 import { Asset } from "../asset/Asset";
 import { usePreferences } from "../settings/Preference";

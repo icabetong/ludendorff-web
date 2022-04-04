@@ -83,7 +83,9 @@ const resources = {
         unit_of_measure: 'example: "ream"',
         unit_value: 'example: "99.99"',
         remarks: 'example: "Common Supplies"',
-        search: 'Type anything'
+        search: 'Type anything',
+        entity_name: 'example: "John Doe"',
+        entity_position: 'example: "Instructor II"'
       },
       permission: {
         read: "Read",

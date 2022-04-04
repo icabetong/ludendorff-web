@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
+import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
@@ -14,7 +14,6 @@ import {
 } from "@mui/icons-material";
 import { collection, orderBy, query } from "firebase/firestore";
 
-import ComponentHeader from "../../components/ComponentHeader";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -33,7 +32,6 @@ import { department, email, firstName, lastName, position, userCollection, userI
 import UserEditor from "./UserEditor";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
-import PageHeader from "../../components/PageHeader";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -42,6 +40,7 @@ import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridEmptyRow from "../../components/GridEmptyRows";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -236,28 +235,13 @@ const UserScreen = (props: UserScreenProps) => {
       <InstantSearch
         searchClient={ Provider }
         indexName="users">
-        <Hidden lgDown>
-          <PageHeader
-            title={ t("navigation.users") }
-            buttonText={ t("button.create_user") }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ onUserEditorView }
-            onSearchFocusChanged={ setSearchMode }/>
-        </Hidden>
-        <Hidden lgUp>
-          <ComponentHeader
-            title={ t("navigation.users") }
-            onDrawerToggle={ props.onDrawerToggle }
-            buttonText={
-              canManageUsers
-                ? t("button.create_user")
-                : undefined
-            }
-            buttonIcon={ AddRounded }
-            buttonOnClick={ onUserEditorView }
-            menuItems={ menuItems }
-          />
-        </Hidden>
+        <AdaptiveHeader
+          title={t("navigation.users")}
+          menuItems={menuItems}
+          actionText={canManageUsers ? t("button.create_user") : undefined}
+          onActionEvent={onUserEditorView}
+          onDrawerTriggered={props.onDrawerToggle}
+          onSearchFocusChanged={setSearchMode}/>
         { canRead || canManageUsers
           ? <>
             <Hidden smDown>
@@ -281,8 +265,13 @@ const UserScreen = (props: UserScreenProps) => {
                     onItemSelect={ onUserSelected }/>
                 : <LinearProgress/>
               }
+              <Fab
+                color="primary"
+                aria-label={t("button.add")}
+                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                <AddRounded/>
+              </Fab>
             </Hidden>
-
           </>
           : <ErrorNoPermissionState/>
         }
