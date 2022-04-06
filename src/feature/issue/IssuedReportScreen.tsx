@@ -11,7 +11,7 @@ import { date, entityName, fundCluster, issuedCollection, serialNumber } from ".
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { formatDate, isDev } from "../../shared/utils";
-import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { AddRounded, DeleteOutlineRounded, UploadFileOutlined } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -22,13 +22,14 @@ import { Provider } from "../../components/Search";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { HitsProvided } from "react-instantsearch-core";
-import { usePreferences } from "../settings/Preference";
 import IssuedReportList from "./IssuedReportList";
 import IssuedReportEditor from "./IssuedReportEditor";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -48,10 +49,10 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
+  const { density, onDensityChanged } = useDensity('issuedDensity');
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
-  const userPreference = usePreferences();
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
     query(collection(firestore, issuedCollection), orderBy(fundCluster, "asc")), {
@@ -87,24 +88,18 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
       }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const report = params.row as IssuedReport;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => onRemoveInvoke(report) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        )
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => onRemoveInvoke(params.row as IssuedReport)}/>
+      ],
     }
-  ]
+  ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onIssuedEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -141,10 +136,15 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
       } }
       rows={ items }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       loading={ isLoading }
       getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }/>
+      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 
   return (
@@ -230,7 +230,7 @@ type IssuedReportDataGridCoreProps = HitsProvided<IssuedReport> & {
 
 const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
   const { t } = useTranslation();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('issuedDensity');
 
   const columns = [
     { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
@@ -246,24 +246,18 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
       }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const report = params.row as IssuedReport;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => props.onRemoveInvoke(report) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        )
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => props.onRemoveInvoke(params.row as IssuedReport)}/>
+      ],
     }
-  ]
+  ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
 
   return (
     <DataGrid
@@ -275,9 +269,14 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
       } }
       rows={ props.hits }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       getRowId={ (r) => r.issuedReportId }
-      onRowDoubleClick={ props.onItemSelect }/>
+      onRowDoubleClick={ props.onItemSelect }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 }
 const IssuedReportDataGrid = connectHits<IssuedReportDataGridCoreProps, IssuedReport>(IssuedReportDataGridCore)

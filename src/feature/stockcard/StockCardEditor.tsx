@@ -1,7 +1,7 @@
 import { StockCard, StockCardEntry, StockCardRepository } from "./StockCard";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Asset } from "../asset/Asset";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
@@ -53,6 +53,22 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [checked, setChecked] = useState<string[]>([]);
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      if (props.stockCard) {
+        const { stockCardId } = props.stockCard;
+
+        return await StockCardRepository.fetch(stockCardId)
+      } else return [];
+    }
+
+    fetchItems()
+      .then((arr) => setEntries(arr))
+      .catch((error) => {
+        if (isDev) console.log(error)
+      })
+  }, [props.stockCard])
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });

@@ -28,6 +28,15 @@ export type StockCardEntry = {
 }
 
 export class StockCardRepository {
+  static async fetch(stockCardId: string): Promise<StockCardEntry[]> {
+    let entriesRef = collection(firestore, stockCardCollection, `${stockCardId}/${entries}`)
+    let snapshot = await getDocs(entriesRef);
+
+    return snapshot.docs.map((doc) => {
+      return doc.data() as StockCardEntry
+    })
+  }
+
   static async create(stockCard: StockCard): Promise<void> {
     let batch = writeBatch(firestore);
     batch.set(doc(firestore, stockCardCollection, stockCard.stockCardId), stockCard)

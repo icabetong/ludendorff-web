@@ -8,10 +8,9 @@ import { useTranslation } from "react-i18next";
 import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
 
 import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
-import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
-import { usePreferences } from "../settings/Preference";
 import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
@@ -38,6 +37,9 @@ import { formatDate, isDev } from "../../shared/utils";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { ScreenProps } from "../shared/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import { Asset } from "../asset/Asset";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,7 +59,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('inventoryDensity');
   const [report, setReport] = useState<InventoryReport | undefined>(undefined);
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
@@ -97,24 +99,18 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const report = params.row as InventoryReport;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => onRemoveInvoke(report) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        )
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => onRemoveInvoke(params.row as InventoryReport)}/>
+      ],
     }
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState)
   const onInventoryEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -151,10 +147,15 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       } }
       rows={ items }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       loading={ isLoading }
       getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }/>
+      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 
   return (
@@ -241,7 +242,7 @@ type InventoryReportDataGridProps = HitsProvided<InventoryReport> & {
 }
 const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { t } = useTranslation();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('inventoryDensity');
 
   const columns = [
     { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
@@ -258,24 +259,18 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
       }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const report = params.row as InventoryReport;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => props.onRemoveInvoke(report) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        )
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => props.onRemoveInvoke(params.row as InventoryReport)}/>
+      ],
     }
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
 
   return (
     <DataGrid
@@ -287,9 +282,15 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
       } }
       rows={ props.hits }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ props.onItemSelect }/>
+      onRowDoubleClick={ props.onItemSelect }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }
+    />
   )
 }
 const InventoryReportDataGrid = connectHits<InventoryReportDataGridProps, InventoryReport>(InventoryReportDataGridCore)

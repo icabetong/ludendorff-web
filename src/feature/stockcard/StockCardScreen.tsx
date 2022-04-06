@@ -3,14 +3,13 @@ import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/materi
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
-import { AddRounded, DeleteOutline, LocalAtmOutlined } from "@mui/icons-material";
+import { AddRounded, DeleteOutline, DeleteOutlineRounded, LocalAtmOutlined } from "@mui/icons-material";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { StockCard, StockCardRepository } from "./StockCard";
-import { DataGrid, GridCellParams, GridRowParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams } from "@mui/x-data-grid";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
-import { usePreferences } from "../settings/Preference";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
@@ -35,6 +34,8 @@ import { HitsProvided } from "react-instantsearch-core";
 import { StockCardEditor } from "./StockCardEditor";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -54,7 +55,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('stockCardDensity');
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
@@ -86,23 +87,18 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     { field: unitPrice, headerName: t("field.unit_price"), flex: 1 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     {
-      field: "delete",
-      headerName: t("button.delete"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => onRemoveInvoke(params.row as StockCard) }
-            size="large">
-            <DeleteOutline/>
-          </IconButton>
-        );
-      }
+      field: "actions",
+      type: "actions",
+      flex: 0.5,
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => onRemoveInvoke(params.row as StockCard)}/>
+      ],
     }
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onStockCardEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -139,10 +135,15 @@ const StockCardScreen = (props: StockCardScreenProps) => {
       } }
       rows={ items }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       loading={ isLoading }
       getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }/>
+      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 
   return (
@@ -208,7 +209,7 @@ type StockCardDataGridProps = HitsProvided<StockCard> & {
 }
 const StockCardDataGridCore = (props: StockCardDataGridProps) => {
   const { t } = useTranslation();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('stockCardDensity');
 
   const columns = [
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
@@ -232,8 +233,20 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
           </IconButton>
         );
       }
+    },
+    {
+      field: "actions",
+      type: "actions",
+      flex: 0.5,
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => props.onRemoveInvoke(params.row as StockCard)}/>
+      ],
     }
-  ]
+  ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
 
   return (
     <DataGrid
@@ -245,9 +258,14 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
       }}
       columns={columns}
       rows={props.hits}
-      density={userPreference.density}
+      density={density}
+      columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.stockCardId}
-      onRowDoubleClick={props.onItemSelect}/>
+      onRowDoubleClick={props.onItemSelect}
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 }
 const StockCardDataGrid = connectHits<StockCardDataGridProps, StockCard>(StockCardDataGridCore);

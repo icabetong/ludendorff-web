@@ -2,11 +2,11 @@ import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
   AddRounded,
-  DeleteOutline,
+  DeleteOutline, DeleteOutlineRounded,
   DomainRounded,
   PeopleOutlineRounded,
   VisibilityOffOutlined,
@@ -41,6 +41,9 @@ import { Provider } from "../../components/Search";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import { StockCard } from "../stockcard/StockCard";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -60,7 +63,7 @@ const UserScreen = (props: UserScreenProps) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canManageUsers } = usePermissions();
-  const preferences = usePreferences();
+  const { density, onDensityChanged } = useDensity('userDensity');
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
@@ -90,48 +93,29 @@ const UserScreen = (props: UserScreenProps) => {
         let user = params.row as User;
         return user.department?.name === undefined ? t("unknown") : user.department?.name;
       }
-    }, {
-      field: "manage",
-      headerName: t("navigation.manage"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const user = params.row as User;
-        return (
-          <Tooltip
-            title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> }
-            placement="bottom">
-            <span>
-              <IconButton
-                aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }
-                onClick={ () => onModificationInvoke(user) }
-                size="large">
-                { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
-              </IconButton>
-            </span>
-          </Tooltip>
-        );
-      }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => onRemoveInvoke(params.row as User) }
-            size="large">
-            <DeleteOutline/>
-          </IconButton>
-        );
-      }
-    }
+      field: "actions",
+      type: "actions",
+      flex: 0.5,
+      getActions: (params: GridRowParams) => {
+        const user = params.row as User;
+        return [
+          <GridActionsCellItem
+            showInMenu
+            icon={<DeleteOutlineRounded/>}
+            label={t("button.delete")}
+            onClick={() => onRemoveInvoke(user)}/>,
+          <GridActionsCellItem
+            showInMenu
+            icon={params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/>}
+            label={params.row.disabled ? t("button.enable") : t("button.disable")}
+            onClick={() => onModificationInvoke(user)}/>
+        ]
+      },
+    },
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('userColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [userModify, setUserModify] = useState<User | undefined>(undefined);
@@ -223,11 +207,16 @@ const UserScreen = (props: UserScreenProps) => {
       } }
       rows={ items }
       columns={ columns }
-      density={ preferences.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       loading={ isLoading }
       paginationMode="client"
       getRowId={ (r) => r.userId }
-      onRowDoubleClick={ onDataGridRowDoubleClick }/>
+      onRowDoubleClick={ onDataGridRowDoubleClick }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 
   return (
@@ -327,7 +316,7 @@ type UserDataGridCoreProps = HitsProvided<User> & {
 }
 const UserDataGridCore = (props: UserDataGridCoreProps) => {
   const { t } = useTranslation();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('userDensity');
 
   const columns = [
     { field: userId, headerName: t("field.id"), hide: true },
@@ -351,48 +340,29 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
         let user = params.row as User;
         return user.department?.name === undefined ? t("unknown") : user.department?.name;
       }
-    }, {
-      field: "manage",
-      headerName: t("navigation.manage"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const user = params.row as User;
-        return (
-          <Tooltip
-            title={ <>{ t(user.disabled ? "button.enable" : "button.disable") }</> }
-            placement="bottom">
-            <span>
-              <IconButton
-                aria-label={ params.row.disabled ? t("button.enable") : t("button.disable") }
-                onClick={ () => props.onModificationInvoke(user) }
-                size="large">
-                { params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/> }
-              </IconButton>
-            </span>
-          </Tooltip>
-        );
-      }
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => props.onRemoveInvoke(params.row as User) }
-            size="large">
-            <DeleteOutline/>
-          </IconButton>
-        );
-      }
-    }
+      field: "actions",
+      type: "actions",
+      flex: 0.5,
+      getActions: (params: GridRowParams) => {
+        const user = params.row as User;
+        return [
+          <GridActionsCellItem
+            showInMenu
+            icon={<DeleteOutlineRounded/>}
+            label={t("button.delete")}
+            onClick={() => props.onRemoveInvoke(user)}/>,
+          <GridActionsCellItem
+            showInMenu
+            icon={params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/>}
+            label={params.row.disabled ? t("button.enable") : t("button.disable")}
+            onClick={() => props.onModificationInvoke(user)}/>
+        ]
+      },
+    },
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('userColumns', columns);
 
   return (
     <DataGrid
@@ -418,9 +388,14 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
       } }
       columns={ columns }
       rows={ props.hits }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       getRowId={ (r) => r.userId }
-      onRowDoubleClick={ props.onItemSelect }/>
+      onRowDoubleClick={ props.onItemSelect }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   )
 }
 

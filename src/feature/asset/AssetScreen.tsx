@@ -2,7 +2,7 @@ import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams, } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { AddRounded, DeleteOutlineRounded, DesktopWindowsRounded, LocalOfferRounded, } from "@mui/icons-material";
 
@@ -16,7 +16,6 @@ import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetList from "./AssetList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { usePreferences } from "../settings/Preference";
 import { getDataGridTheme } from "../core/Core";
 
 import {
@@ -45,6 +44,8 @@ import { isDev } from "../../shared/utils";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { ScreenProps } from "../shared/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -64,7 +65,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('assetDensity');
   const [asset, setAsset] = useState<Asset | null>(null);
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
@@ -120,24 +121,18 @@ const AssetScreen = (props: AssetScreenProps) => {
       flex: 1
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const asset = params.row as Asset;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => onRemoveInvoke(asset) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        );
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => onRemoveInvoke(params.row as Asset)}/>
+      ],
     }
   ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -198,10 +193,15 @@ const AssetScreen = (props: AssetScreenProps) => {
       } }
       rows={ items }
       columns={ columns }
-      density={ userPreference.density }
+      density={ density }
       loading={ isLoading }
+      columnVisibilityModel={visibleColumns}
       getRowId={ (r) => r.stockNumber }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }/>
+      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }/>
   );
 
   return (
@@ -296,7 +296,7 @@ type AssetDataGridProps = HitsProvided<Asset> & {
 }
 const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { t } = useTranslation();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('assetDensity');
 
   const columns = [
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
@@ -331,24 +331,18 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       flex: 1
     },
     {
-      field: "delete",
-      headerName: t("button.delete"),
+      field: "actions",
+      type: "actions",
       flex: 0.5,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        const asset = params.row as Asset;
-        return (
-          <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => props.onRemoveInvoke(asset) }
-            size="large">
-            <DeleteOutlineRounded/>
-          </IconButton>
-        );
-      }
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<DeleteOutlineRounded/>}
+          label={t("button.delete")}
+          onClick={() => props.onRemoveInvoke(params.row as Asset)}/>
+      ],
     }
   ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
   return (
     <DataGrid
@@ -374,9 +368,15 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       } }
       columns={ columns }
       rows={ props.hits }
-      density={ userPreference.density }
+      density={ density }
+      columnVisibilityModel={visibleColumns}
       getRowId={ (r) => r.stockNumber }
-      onRowDoubleClick={ props.onItemSelect }/>
+      onRowDoubleClick={ props.onItemSelect }
+      onStateChange={(v) => onDensityChanged(v.density.value)}
+      onColumnVisibilityModelChange={(newModel) =>
+        onVisibilityChange(newModel)
+      }
+    />
   )
 }
 const AssetDataGrid = connectHits<AssetDataGridProps, Asset>(AssetDataGridCore)

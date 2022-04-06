@@ -1,5 +1,5 @@
 import { InventoryReportItem } from "./InventoryReport";
-import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridRowParams, GridSelectionModel, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
 import { assetStockNumber, article, assetDescription, assetType, assetUnitOfMeasure, balancePerCard, onHandCount, remarks } from "../../shared/const";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
@@ -45,7 +45,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     { field: balancePerCard, headerName: t("field.balance_per_card"), flex: 1 },
     { field: onHandCount, headerName: t("field.on_hand_count"), flex: 1 },
-    { field: remarks, headerName: t("field.remarks"), flex: 1 }
+    { field: remarks, headerName: t("field.remarks"), flex: 1 },
   ]
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => {
