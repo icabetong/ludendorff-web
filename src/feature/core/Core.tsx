@@ -83,13 +83,6 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     body2: {
       fontWeight: 500
     },
-    subtitle1: {
-      fontSize: '1em'
-    },
-    subtitle2: {
-      fontSize: '1em',
-      fontWeight: 500,
-    }
   },
   components: {
     MuiFab: {
@@ -104,7 +97,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
     MuiDialogContent: {
       styleOverrides: {
         dividers: {
-          padding: '16px 0'
+          padding: '0'
         }
       }
     },
@@ -120,6 +113,13 @@ const baseTheme = (mode: PaletteMode) => createTheme({
         }
       }
     },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          background: 'transparent'
+        }
+      }
+    }
   }
 })
 

@@ -158,15 +158,17 @@ const AssetScreen = (props: AssetScreenProps) => {
       onClick={onCategoryListView}>{t("navigation.types")}</MenuItem>
   ];
 
-  const pagination = () => {
+  const PaginationController = () => {
     return (
-      <DataGridPaginationController
-        size={limit}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        onPageSizeChanged={onLimitChanged}/>
+      isEnd && items.length > 0 && items.length === limit
+        ? <DataGridPaginationController
+          size={limit}
+          canBack={isStart}
+          canForward={isEnd}
+          onBackward={getPrev}
+          onForward={getNext}
+          onPageSizeChanged={onLimitChanged}/>
+        : <></>
     )
   }
 
@@ -176,7 +178,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: pagination
+        Pagination: PaginationController
       }}
       componentsProps={{
         toolbar: {

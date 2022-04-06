@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import {
   Box,
   Button,
-  Dialog,
+  Dialog, Divider,
   FormLabel,
   Grid,
   List,
@@ -139,7 +139,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_inventory")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box sx={{ mb: 2 }}>
+            <Box>
               <Grid
                 container
                 direction={smBreakpoint ? "column" : "row"}
@@ -210,24 +210,25 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                 </Grid>
               </Grid>
             </Box>
+            { !smBreakpoint && <Divider sx={{my: 2}}/> }
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.items")}</Typography>
             </FormLabel>
             {smBreakpoint
               ? <List>
-                <InventoryReportItemList
-                  items={items}
-                  onItemSelected={onEditorUpdate}/>
-                <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
-                  {t("button.add")}
-                </Button>
-              </List>
+                  <InventoryReportItemList
+                    items={items}
+                    onItemSelected={onEditorUpdate}/>
+                  <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
+                    {t("button.add")}
+                  </Button>
+                </List>
               : <InventoryReportItemDataGrid
-                items={items}
-                onAddAction={onEditorCreate}
-                onRemoveAction={onCheckedRowsRemove}
-                onItemSelected={onEditorUpdate}
-                onCheckedRowsChanged={onCheckedRowsChanged}/>
+                  items={items}
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
         </EditorRoot>

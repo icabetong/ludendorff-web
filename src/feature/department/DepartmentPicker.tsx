@@ -18,6 +18,7 @@ import DepartmentList from "./DepartmentList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -44,6 +45,7 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
   const { canRead } = usePermissions();
+  const { limit } = useQueryLimit('departmentQueryLimit');
 
   return (
     <Dialog
@@ -62,11 +64,13 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
               <DepartmentList
                 departments={props.departments}
                 onItemSelect={props.onSelectItem}/>
-              <PaginationController
-                canBack={props.canBack}
-                canForward={props.canForward}
-                onBackward={props.onBackward}
-                onForward={props.onForward}/>
+              { props.canForward && props.departments.length > 0 && props.departments.length === limit &&
+                <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              }
             </>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>

@@ -1,21 +1,6 @@
 import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, Theme, Typography } from "@mui/material";
-
-import makeStyles from '@mui/styles/makeStyles';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  icon: {
-    width: '1.2em',
-    height: '1.2em',
-  },
-  container: {
-    width: '100%',
-    '& .MuiListItem-root': {
-      borderRadius: theme.spacing(1)
-    }
-  }
-}));
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
 
 type ProfileAction = {
   key: string,
@@ -30,17 +15,23 @@ type ProfileActionListProps = {
 
 const ProfileActionList = (props: ProfileActionListProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
 
   return (
-    <>
-      <ListSubheader>{t("actions")}</ListSubheader>
-      <List className={classes.container}>
-        {props.actions.map((action) =>
-          <ProfileActionItem action={action}/>
-        )}
-      </List>
-    </>
+    <List
+      aria-labelledby="actions-subheader"
+      subheader={
+        <ListSubheader
+          component="div"
+          id="actions-subheader">
+          {t("actions")}
+        </ListSubheader>
+      }>
+      {props.actions.map((action) =>
+        <ProfileActionItem
+          key={action.key}
+          action={action}/>
+      )}
+    </List>
   )
 }
 
@@ -49,23 +40,16 @@ type ProfileActionItemProps = {
 }
 const ProfileActionItem = (props: ProfileActionItemProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
-
   return (
     <ListItem
       button
       key={props.action.key}
       onClick={() => props.action.action()}>
       <ListItemIcon>
-        {
-          React.createElement(props.action.icon,
-            { className: classes.icon })
-        }
+        {React.createElement(props.action.icon)}
       </ListItemIcon>
       <ListItemText
-        primary={
-          <Typography variant="body2">{t(props.action.title)}</Typography>
-        }/>
+        primary={t(props.action.title)}/>
     </ListItem>
   )
 }

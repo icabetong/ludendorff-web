@@ -122,7 +122,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                   onClick={onPickerView}
                   disabled={isWritePending}>
                   <Typography variant="body2">
-                    {manager !== undefined ? manager?.name : t("not_set")}
+                    {manager !== undefined ? manager?.name : t("field.not_set")}
                   </Typography>
                 </ListItem>
               </FormControl>

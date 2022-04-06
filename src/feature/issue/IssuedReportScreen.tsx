@@ -116,15 +116,17 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     })
   }
 
-  const pagination = () => {
+  const PaginationController = () => {
     return (
-      <DataGridPaginationController
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        size={size}
-        onPageSizeChanged={onLimitChanged}/>
+      isEnd && items.length > 0 && items.length === limit
+        ? <DataGridPaginationController
+            canBack={isStart}
+            canForward={isEnd}
+            onBackward={getPrev}
+            onForward={getNext}
+            size={size}
+            onPageSizeChanged={onLimitChanged}/>
+        : <></>
     )
   }
 
@@ -134,7 +136,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: pagination
+        Pagination: PaginationController
       }}
       rows={items}
       columns={columns}

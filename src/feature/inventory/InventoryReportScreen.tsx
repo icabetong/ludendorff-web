@@ -125,15 +125,17 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     })
   }
 
-  const pagination = () => {
+  const PaginationController = () => {
     return (
-      <DataGridPaginationController
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        size={limit}
-        onPageSizeChanged={onLimitChanged}/>
+      isEnd && items.length > 0 && items.length === limit
+        ? <DataGridPaginationController
+            canBack={isStart}
+            canForward={isEnd}
+            onBackward={getPrev}
+            onForward={getNext}
+            size={limit}
+            onPageSizeChanged={onLimitChanged}/>
+        : <></>
     )
   }
 
@@ -143,7 +145,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: pagination
+        Pagination: PaginationController
       }}
       rows={items}
       columns={columns}

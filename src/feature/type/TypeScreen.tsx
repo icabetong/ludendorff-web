@@ -18,7 +18,7 @@ import { HitsProvided } from "react-instantsearch-core";
 import { collection, orderBy, query } from "firebase/firestore";
 
 import { Type } from "./Type";
-import CategoryEditorComponent from "./TypeEditor";
+import TypeEditor from "./TypeEditor";
 import { ActionType, initialState, reducer } from "./TypeEditorReducer";
 import TypeList from "./TypeList";
 import { usePermissions } from "../auth/AuthProvider";
@@ -103,15 +103,17 @@ const TypeScreen = (props: TypeScreenProps) => {
             : canRead
               ? !isLoading
                 ? <>
-                  <TypeList
-                    types={items}
-                    onItemSelect={onEditorUpdate}/>
-                  <PaginationController
-                    canBack={isStart}
-                    canForward={isEnd}
-                    onBackward={getPrev}
-                    onForward={getNext}/>
-                </>
+                    <TypeList
+                      types={items}
+                      onItemSelect={onEditorUpdate}/>
+                  { isEnd && items.length > 0 && items.length === limit
+                    && <PaginationController
+                          canBack={isStart}
+                          canForward={isEnd}
+                          onBackward={getPrev}
+                          onForward={getNext}/>
+                  }
+                  </>
                 : <LinearProgress/>
               : <ErrorNoPermissionState/>
           }
@@ -127,7 +129,7 @@ const TypeScreen = (props: TypeScreenProps) => {
             onClick={props.onDismiss}>{t("button.close")}</Button>
         </DialogActions>
       </Dialog>
-      <CategoryEditorComponent
+      <TypeEditor
         isOpen={state.isOpen}
         isCreate={state.isCreate}
         type={state.type}
@@ -167,9 +169,11 @@ const TypeListItem = (props: TypeListItemProps) => {
       key={props.type.typeId}
       onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
-        primary={<Highlight
-          attribute={typeName}
-          hit={props.type}/>}
+        primary={
+          <Highlight
+            attribute={typeName}
+            hit={props.type}/>
+        }
         secondary={t("template.count", { count: props.type.count })}/>
     </ListItem>
   )

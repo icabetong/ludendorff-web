@@ -10,7 +10,7 @@ import { firestore } from "../../index";
 import {
   Box,
   Button,
-  Dialog,
+  Dialog, Divider,
   FormLabel,
   Grid,
   List,
@@ -145,7 +145,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_stock_card")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box sx={{ mb: 2 }}>
+            <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
                     spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
@@ -169,6 +169,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                 </Grid>
               </Grid>
             </Box>
+            { !smBreakpoint && <Divider sx={{my: 2}}/> }
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.entries")}</Typography>
             </FormLabel>

@@ -15,6 +15,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Type } from "./Type";
 import TypeList from "./TypeList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -34,13 +35,13 @@ type TypePickerProps = PaginationControllerProps & {
   onDismiss: () => void,
   onSelectItem: (type: Type) => void
 }
-
 const TypePicker = (props: TypePickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
   const { canRead } = usePermissions();
+  const { limit } = useQueryLimit('typeQueryLimit');
 
   return (
     <Dialog
@@ -59,11 +60,13 @@ const TypePicker = (props: TypePickerProps) => {
               <TypeList
                 types={props.types}
                 onItemSelect={props.onSelectItem}/>
-              <PaginationController
-                canBack={props.canBack}
-                canForward={props.canForward}
-                onBackward={props.onBackward}
-                onForward={props.onForward}/>
+              { props.canForward && props.types.length > 0 && props.types.length === limit
+                && <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              }
             </>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>

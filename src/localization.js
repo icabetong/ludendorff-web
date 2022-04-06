@@ -217,10 +217,7 @@ const resources = {
       },
       info: {
         user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules.",
-        asset_should_have_assignment: "You'll need to add to to an assignment before it becames \"Operational\"",
-        asset_has_assignment: "This asset is assigned; there it's status cannot be changed other than \"Operational\"",
-        asset_has_assignment_delete: "This asset is assigned, therefore it cannot be deleted.",
-        category_count_not_zero: "There are assets with this category",
+        type_count_not_zero: "There are assets with this type",
         department_count_not_zero: "There are users who are in this department"
       },
       settings: {

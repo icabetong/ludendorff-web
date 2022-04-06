@@ -23,6 +23,7 @@ const TypeEditor = (props: TypeEditorProps) => {
   const [isWritePending, setWritePending] = React.useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  console.log(props.type)
   const onSubmit = (data: FormValues) => {
     setWritePending(true)
 
@@ -33,9 +34,9 @@ const TypeEditor = (props: TypeEditorProps) => {
     }
     if (props.isCreate) {
       TypesRepository.create(type).then(() =>
-        enqueueSnackbar(t("feedback.category_created"))
+        enqueueSnackbar(t("feedback.type_created"))
       ).catch((error) => {
-          enqueueSnackbar(t("feedback.category_create_error"))
+          enqueueSnackbar(t("feedback.type_create_error"))
           if (isDev) console.log(error)
         }
       ).finally(() => {
@@ -44,9 +45,9 @@ const TypeEditor = (props: TypeEditorProps) => {
       })
     } else {
       TypesRepository.update(type).then(() =>
-        enqueueSnackbar(t("feedback.category_updated"))
+        enqueueSnackbar(t("feedback.type_updated"))
       ).catch((error) => {
-          enqueueSnackbar(t("feedback.category_update_error"))
+          enqueueSnackbar(t("feedback.type_update_error"))
           if (isDev) console.log(error)
         }
       ).finally(() => {
@@ -72,7 +73,7 @@ const TypeEditor = (props: TypeEditorProps) => {
               id="name"
               type="text"
               label={t("field.type_name")}
-              defaultValue={props.type ? props.type.typeName : ""}
+              defaultValue={props.type?.typeName}
               error={errors.name}
               helperText={errors.name ? t(errors.name.message) : undefined}
               {...register("name", { required: "feedback.empty_type_name" })} />

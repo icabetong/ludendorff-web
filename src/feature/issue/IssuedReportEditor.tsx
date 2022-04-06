@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
-  Dialog,
+  Dialog, Divider,
   FormLabel,
   Grid,
   List,
@@ -132,7 +132,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_issued")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box sx={{ mb: 2 }}>
+            <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
                     spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
@@ -178,6 +178,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                 </Grid>
               </Grid>
             </Box>
+            { !smBreakpoint && <Divider sx={{my: 2}}/> }
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.items")}</Typography>
             </FormLabel>

@@ -172,15 +172,17 @@ const UserScreen = (props: UserScreenProps) => {
       onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
-  const pagination = () => {
+  const PaginationController = () => {
     return (
-      <DataGridPaginationController
-        size={limit}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
-        onPageSizeChanged={onLimitChanged}/>
+      isEnd && items.length > 0 && items.length === limit
+        ? <DataGridPaginationController
+            size={limit}
+            canBack={isStart}
+            canForward={isEnd}
+            onBackward={getPrev}
+            onForward={getNext}
+            onPageSizeChanged={onLimitChanged}/>
+        : <></>
     )
   }
 
@@ -190,7 +192,7 @@ const UserScreen = (props: UserScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: pagination
+        Pagination: PaginationController
       }}
       componentsProps={{
         toolbar: {

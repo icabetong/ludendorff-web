@@ -113,11 +113,13 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                   <DepartmentList
                     departments={items}
                     onItemSelect={onEditorUpdate}/>
-                  <PaginationController
-                    canBack={isStart}
-                    canForward={isEnd}
-                    onBackward={getPrev}
-                    onForward={getNext}/>
+                  { isEnd && items.length > 0 && items.length === limit &&
+                    <PaginationController
+                      canBack={isStart}
+                      canForward={isEnd}
+                      onBackward={getPrev}
+                      onForward={getNext}/>
+                  }
                 </>
                 : <LinearProgress/>
               : <ErrorNoPermissionState/>

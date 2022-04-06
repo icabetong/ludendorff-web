@@ -47,9 +47,9 @@ const TypeList = (props: TypeListProps) => {
           {
             props.types.map((category: Type) => {
               return (
-                <CategoryItem
+                <TypeItem
                   key={category.typeId}
-                  category={category}
+                  type={category}
                   onItemSelect={props.onItemSelect}
                   onItemRemove={onRemoveInvoke}/>
               );
@@ -57,36 +57,36 @@ const TypeList = (props: TypeListProps) => {
           }
         </List>
         : <EmptyStateComponent
-          icon={LocalOfferOutlined}
-          title={t("empty.type")}
-          subtitle={t("empty.type_summary")}/>
+            icon={LocalOfferOutlined}
+            title={t("empty.type")}
+            subtitle={t("empty.type_summary")}/>
       }
       <ConfirmationDialog
         isOpen={type !== undefined}
-        title="dialog.category_remove"
-        summary="dialog.category_remove_summary"
+        title="dialog.type_remove"
+        summary="dialog.type_remove_summary"
         onDismiss={onRemoveDismiss}
         onConfirm={onCategoryRemove}/>
     </>
   );
 }
 
-type CategoryItemProps = {
-  category: Type,
-  onItemSelect: (category: Type) => void,
-  onItemRemove: (category: Type) => void,
+type TypeItemProps = {
+  type: Type,
+  onItemSelect: (type: Type) => void,
+  onItemRemove: (type: Type) => void,
 }
 
-const CategoryItem = (props: CategoryItemProps) => {
+const TypeItem = (props: TypeItemProps) => {
   const { t } = useTranslation();
   const { canDelete } = usePermissions();
 
   const deleteButton = (
     <IconButton
       edge="end"
-      disabled={props.category.count > 0}
+      disabled={props.type.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.category)}
+      onClick={() => props.onItemRemove(props.type)}
       size="large">
       <DeleteOutlineRounded/>
     </IconButton>
@@ -95,17 +95,17 @@ const CategoryItem = (props: CategoryItemProps) => {
   return (
     <ListItem
       button
-      key={props.category.typeId}
-      onClick={() => props.onItemSelect(props.category)}>
+      key={props.type.typeId}
+      onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
-        primary={props.category.typeName}
-        secondary={t("template.count", { count: props.category.count })}/>
+        primary={props.type.typeName}
+        secondary={t("template.count", { count: props.type.count })}/>
       {canDelete &&
         <ListItemSecondaryAction>
-          {props.category.count > 0
-            ? <Tooltip title={<>{t("info.category_count_not_zero")}</>}>
-              <span>{deleteButton}</span>
-            </Tooltip>
+          {props.type.count > 0
+            ? <Tooltip title={<>{t("info.type_count_not_zero")}</>}>
+                <span>{deleteButton}</span>
+              </Tooltip>
             : <>{deleteButton}</>
           }
         </ListItemSecondaryAction>

@@ -1,7 +1,6 @@
 import React, { ComponentClass, FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  alpha,
   Box,
   Button,
   Dialog,
@@ -68,48 +67,6 @@ type NavigationItemPropsType = {
   isActive: boolean
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  inset: {
-    marginBottom: '1em'
-  },
-  container: {
-    borderRadius: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    [theme.breakpoints.down('sm')]: {
-      paddingLeft: '12px',
-      paddingRight: '12px',
-    },
-    '& .MuiListItemIcon-root': {
-      width: '1.6em',
-      height: '1.6em',
-      color: theme.palette.text.primary
-    },
-    '&$selected': {
-      backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.3) : alpha(theme.palette.primary.main, 0.2),
-      '& .MuiListItemIcon-root': {
-        color: theme.palette.primary.main
-      },
-      '& .MuiListItemText-root': {
-        '& .MuiTypography-root': {
-          color: theme.palette.primary.main
-        },
-      },
-    },
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.primary.main, 0.1),
-    }
-  },
-  navigation: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
-  },
-  navigationText: {
-    color: theme.palette.text.primary
-  },
-  selected: {},
-}));
-
 const destinations: NavigationItemType[] = [
   { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
   { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
@@ -119,9 +76,8 @@ const destinations: NavigationItemType[] = [
 ]
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
-  const classes = useStyles();
   const { status, user } = useAuthState();
-  const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
+  const [endSession, setEndSession] = useState(false);
   const { t } = useTranslation();
 
   const minorDestinations: NavigationItemType[] = [
@@ -135,28 +91,32 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
     { icon: SettingsOutlined, title: "navigation.settings", destination: Destination.SETTINGS },
   ]
 
-  const confirmSignOut = () => {
-    setTriggerConfirmSignOut(true);
-  }
-
-  const triggerSignOut = async () => {
+  const onConfirmEndSession = () => setEndSession(true);
+  const onDismissEndSession = () => setEndSession(false);
+  const onEndSession = async () => {
     await signOut(auth);
-    setTriggerConfirmSignOut(false);
+    setEndSession(false);
   }
 
   return (
     <Box>
-      <Box className="inset"/>
-      <ListSubheader>{t("navigation.manage")}</ListSubheader>
-      <List className={classes.navigation}>
+      <List
+        sx={{ bgColor: 'background.paper' }}
+        aria-labelledby="primary-route-subheader"
+        subheader={
+          <ListSubheader component="div" id="primary-route-subheader">{t("navigation.manage")}</ListSubheader>
+        }>
         <NavigationList
           items={destinations}
           destination={props.currentDestination}
           onNavigate={props.onNavigate}/>
       </List>
       <Divider/>
-      <ListSubheader>{t("navigation.account")}</ListSubheader>
-      <List className={classes.navigation}>
+      <List
+        aria-labelledby="secondary-route-subheader"
+        subheader={
+          <ListSubheader component="div" id="secondary-route-subheader">{t("navigation.account")}</ListSubheader>
+        }>
         <NavigationList
           items={minorDestinations}
           destination={props.currentDestination}
@@ -165,13 +125,13 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
           itemKey={1}
           navigation={{ icon: ExitToAppRounded, title: t("button.sign_out") }}
           isActive={false}
-          action={() => confirmSignOut()}/>
+          action={onConfirmEndSession}/>
       </List>
       <Dialog
-        open={triggerConfirmSignOut}
+        open={endSession}
         fullWidth={true}
         maxWidth="xs"
-        onClose={() => setTriggerConfirmSignOut(false)}>
+        onClose={onDismissEndSession}>
         <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
         <DialogContent>
           <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
@@ -179,10 +139,10 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
         <DialogActions>
           <Button
             color="primary"
-            onClick={() => setTriggerConfirmSignOut(false)}>{t("button.cancel")}</Button>
+            onClick={onDismissEndSession}>{t("button.cancel")}</Button>
           <Button
             color="primary"
-            onClick={triggerSignOut}>{t("button.continue")}</Button>
+            onClick={onEndSession}>{t("button.continue")}</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -191,13 +151,11 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
 
 
 const NavigationListItem = (props: NavigationItemPropsType) => {
-  const classes = useStyles();
   const { t } = useTranslation();
 
   return (
     <ListItem
       button
-      classes={{ root: classes.container, selected: classes.selected }}
       key={props.itemKey}
       selected={props.isActive}
       onClick={props.action}>
@@ -205,7 +163,7 @@ const NavigationListItem = (props: NavigationItemPropsType) => {
         React.createElement(props.navigation.icon)
       }
       </ListItemIcon>
-      <ListItemText primary={<Typography variant="body2">{t(props.navigation.title)}</Typography>}/>
+      <ListItemText primary={t(props.navigation.title)}/>
     </ListItem>
   )
 }
@@ -214,7 +172,7 @@ const NavigationList = (props: NavigationListPropsType) => {
   const { canRead, canManageUsers } = usePermissions();
 
   return (
-    <React.Fragment>{
+    <>{
       props.items.map((navigation: NavigationItemType) => {
         if (!canRead && navigation.destination === Destination.ASSETS)
           return <></>;
@@ -229,9 +187,8 @@ const NavigationList = (props: NavigationListPropsType) => {
             action={() => props.onNavigate(navigation.destination!!)}
             isActive={props.destination === navigation.destination}/>
         )
-
       })
-    }</React.Fragment>
+    }</>
   );
 }
 

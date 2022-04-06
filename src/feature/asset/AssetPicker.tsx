@@ -18,6 +18,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import useQueryLimit from "../shared/useQueryLimit";
 
 type AssetPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -30,8 +31,9 @@ type AssetPickerProps = PaginationControllerProps & {
 const AssetPicker = (props: AssetPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
+  const { limit } = useQueryLimit('assetQueryLimit');
 
   const onSelect = (asset: Asset) => {
     props.onSelectItem(asset);
@@ -40,7 +42,7 @@ const AssetPicker = (props: AssetPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
+      fullScreen={smBreakpoint}
       fullWidth={true}
       maxWidth="xs"
       open={props.isOpen}
@@ -54,16 +56,18 @@ const AssetPicker = (props: AssetPickerProps) => {
                 <AssetList
                   assets={props.assets}
                   onItemSelect={onSelect}/>
-                <PaginationController
-                  canBack={props.canBack}
-                  canForward={props.canForward}
-                  onBackward={props.onBackward}
-                  onForward={props.onForward}/>
+                { props.canForward && props.assets.length > 0 && props.assets.length === limit &&
+                  <PaginationController
+                    canBack={props.canBack}
+                    canForward={props.canForward}
+                    onBackward={props.onBackward}
+                    onForward={props.onForward}/>
+                }
               </>
               : <EmptyStateComponent
-                icon={DesktopWindowsRounded}
-                title={t("empty.asset")}
-                subtitle={t("empty.asset_summary")}/>
+                  icon={DesktopWindowsRounded}
+                  title={t("empty.asset")}
+                  subtitle={t("empty.asset_summary")}/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
