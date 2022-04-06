@@ -30,6 +30,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -60,11 +61,12 @@ const TypeScreen = (props: TypeScreenProps) => {
   const [search, setSearch] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
+  const { limit } = useQueryLimit('typeQueryLimit');
   const classes = useStyles();
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Type>(
     query(collection(firestore, typeCollection), orderBy(typeName, "asc")),
-    { limit: 15 }
+    { limit: limit }
   );
 
   const onSearchInvoked = () => setSearch(!search);
@@ -76,40 +78,40 @@ const TypeScreen = (props: TypeScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={ isMobile }
-        fullWidth={ true }
+        fullScreen={isMobile}
+        fullWidth={true}
         maxWidth="xs"
-        open={ props.isOpen }
-        onClose={ props.onDismiss }>
-        <CustomDialogTitle onSearch={ onSearchInvoked }>{ t("navigation.types") }</CustomDialogTitle>
+        open={props.isOpen}
+        onClose={props.onDismiss}>
+        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.types")}</CustomDialogTitle>
         <DialogContent
-          dividers={ true }
-          className={ classes.root }>
-          { search
+          dividers={true}
+          className={classes.root}>
+          {search
             ? <InstantSearch
-              searchClient={ Provider }
+              searchClient={Provider}
               indexName="types">
-              <Box className={ classes.searchBox }>
+              <Box className={classes.searchBox}>
                 <SearchBox/>
               </Box>
-              <Box className={ classes.search }>
+              <Box className={classes.search}>
                 <Results>
-                  <TypeHits onItemSelect={ onEditorUpdate }/>
+                  <TypeHits onItemSelect={onEditorUpdate}/>
                 </Results>
               </Box>
             </InstantSearch>
             : canRead
               ? !isLoading
                 ? <>
-                    <TypeList
-                      types={ items }
-                      onItemSelect={ onEditorUpdate }/>
-                    <PaginationController
-                      canBack={isStart}
-                      canForward={isEnd}
-                      onBackward={ getPrev }
-                      onForward={ getNext }/>
-                  </>
+                  <TypeList
+                    types={items}
+                    onItemSelect={onEditorUpdate}/>
+                  <PaginationController
+                    canBack={isStart}
+                    canForward={isEnd}
+                    onBackward={getPrev}
+                    onForward={getNext}/>
+                </>
                 : <LinearProgress/>
               : <ErrorNoPermissionState/>
           }
@@ -117,19 +119,19 @@ const TypeScreen = (props: TypeScreenProps) => {
         <DialogActions>
           <Button
             color="primary"
-            onClick={ onEditorCreate }
-            disabled={ !canWrite }>{ t("button.add") }</Button>
-          <div style={ { flex: '1 0 0' } }/>
+            onClick={onEditorCreate}
+            disabled={!canWrite}>{t("button.add")}</Button>
+          <div style={{ flex: '1 0 0' }}/>
           <Button
             color="primary"
-            onClick={ props.onDismiss }>{ t("button.close") }</Button>
+            onClick={props.onDismiss}>{t("button.close")}</Button>
         </DialogActions>
       </Dialog>
       <CategoryEditorComponent
-        isOpen={ state.isOpen }
-        isCreate={ state.isCreate }
-        type={ state.type }
-        onDismiss={ onEditorDismiss }/>
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        type={state.type}
+        onDismiss={onEditorDismiss}/>
     </>
   )
 }
@@ -141,10 +143,10 @@ type TypeHitsListProps = HitsProvided<Type> & {
 const CategoryHitsList = (props: TypeHitsListProps) => {
   return (
     <>
-      { props.hits.map((c: Type) => (
+      {props.hits.map((c: Type) => (
         <TypeListItem
-          type={ c }
-          onItemSelect={ props.onItemSelect }/>
+          type={c}
+          onItemSelect={props.onItemSelect}/>
       ))
       }
     </>
@@ -162,13 +164,13 @@ const TypeListItem = (props: TypeListItemProps) => {
   return (
     <ListItem
       button
-      key={ props.type.typeId }
-      onClick={ () => props.onItemSelect(props.type) }>
+      key={props.type.typeId}
+      onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
-        primary={ <Highlight
-          attribute={ typeName }
-          hit={ props.type }/> }
-        secondary={ t("template.count", { count: props.type.count }) }/>
+        primary={<Highlight
+          attribute={typeName}
+          hit={props.type}/>}
+        secondary={t("template.count", { count: props.type.count })}/>
     </ListItem>
   )
 }

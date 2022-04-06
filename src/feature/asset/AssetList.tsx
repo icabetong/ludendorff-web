@@ -13,10 +13,10 @@ const AssetList = (props: AssetListProps) => {
       props.assets.map((asset: Asset) => {
         return (
           <AssetItem
-            key={ asset.stockNumber }
-            asset={ asset }
-            onItemSelect={ props.onItemSelect }
-            onItemRemove={ props.onItemRemove }/>
+            key={asset.stockNumber}
+            asset={asset}
+            onItemSelect={props.onItemSelect}
+            onItemRemove={props.onItemRemove}/>
         )
       })
     }</List>
@@ -32,11 +32,11 @@ const AssetItem = (props: AssetItemProps) => {
   return (
     <ListItem
       button
-      key={ props.asset.stockNumber }
-      onClick={ () => props.onItemSelect(props.asset) }>
+      key={props.asset.stockNumber}
+      onClick={() => props.onItemSelect(props.asset)}>
       <ListItemText
-        primary={ props.asset.description }
-        secondary={ props.asset.type?.typeName }/>
+        primary={props.asset.description}
+        secondary={props.asset.type?.typeName}/>
     </ListItem>
   )
 }

@@ -1,8 +1,8 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Button, Fab, Hidden, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridCellParams, GridRowParams, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { AddRounded, DeleteOutlineRounded, DesktopWindowsRounded, LocalOfferRounded, } from "@mui/icons-material";
 
@@ -46,6 +46,7 @@ import { ScreenProps } from "../shared/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -66,12 +67,12 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('assetDensity');
+  const { limit, onLimitChanged } = useQueryLimit('assetQueryLimit');
   const [asset, setAsset] = useState<Asset | null>(null);
-  const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), { limit: 15 }
+    query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), { limit: limit }
   );
 
   const onRemoveInvoke = (asset: Asset) => setAsset(asset);
@@ -153,51 +154,51 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   const menuItems = [
     <MenuItem
-      key={ 0 }
-      onClick={ onCategoryListView }>{ t("navigation.types") }</MenuItem>
+      key={0}
+      onClick={onCategoryListView}>{t("navigation.types")}</MenuItem>
   ];
 
   const pagination = () => {
     return (
       <DataGridPaginationController
-        size={ size }
-        canBack={ isStart }
-        canForward={ isEnd }
-        onBackward={ getPrev }
-        onForward={ getNext }
-        onPageSizeChanged={ setSize }/>
+        size={limit}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        onPageSizeChanged={onLimitChanged}/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
-      } }
-      componentsProps={ {
+      }}
+      componentsProps={{
         toolbar: {
           destinations: [
             <Button
               key="types"
               color="primary"
               size="small"
-              startIcon={ <LocalOfferRounded fontSize="small"/> }
-              onClick={ onCategoryListView }>
-              { t("navigation.types") }
+              startIcon={<LocalOfferRounded fontSize="small"/>}
+              onClick={onCategoryListView}>
+              {t("navigation.types")}
             </Button>
           ]
         }
-      } }
-      rows={ items }
-      columns={ columns }
-      density={ density }
-      loading={ isLoading }
+      }}
+      rows={items}
+      columns={columns}
+      density={density}
+      loading={isLoading}
       columnVisibilityModel={visibleColumns}
-      getRowId={ (r) => r.stockNumber }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      getRowId={(r) => r.stockNumber}
+      onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)
@@ -205,9 +206,9 @@ const AssetScreen = (props: AssetScreenProps) => {
   );
 
   return (
-    <Box className={ classes.root }>
+    <Box className={classes.root}>
       <InstantSearch
-        searchClient={ Provider }
+        searchClient={Provider}
         indexName="assets">
         <AdaptiveHeader
           title={t("navigation.assets")}
@@ -216,27 +217,27 @@ const AssetScreen = (props: AssetScreenProps) => {
           onActionEvent={() => dispatch({ type: ActionType.CREATE })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        { canRead
+        {canRead
           ? <>
             <Hidden smDown>
-              <Box className={ classes.wrapper }>
-                { searchMode
+              <Box className={classes.wrapper}>
+                {searchMode
                   ? <AssetDataGrid
-                    onItemSelect={ onDataGridRowDoubleClicked }
-                    onRemoveInvoke={ onRemoveInvoke }
-                    onCategoryInvoke={ onCategoryListView }/>
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onRemoveInvoke={onRemoveInvoke}
+                    onCategoryInvoke={onCategoryListView}/>
                   : dataGrid
                 }
               </Box>
             </Hidden>
             <Hidden smUp>
-              { !isLoading
+              {!isLoading
                 ? items.length < 1
                   ? <AssetEmptyState/>
                   : <AssetList
-                      assets={ items }
-                      onItemSelect={ onAssetSelected }
-                      onItemRemove={ onRemoveInvoke }/>
+                    assets={items}
+                    onItemSelect={onAssetSelected}
+                    onItemRemove={onRemoveInvoke}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -250,22 +251,22 @@ const AssetScreen = (props: AssetScreenProps) => {
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      { state.isOpen &&
+      {state.isOpen &&
         <AssetEditor
-          isOpen={ state.isOpen }
-          isCreate={ state.isCreate }
-          asset={ state.asset }
-          onDismiss={ onAssetEditorDismiss }/>
+          isOpen={state.isOpen}
+          isCreate={state.isCreate}
+          asset={state.asset}
+          onDismiss={onAssetEditorDismiss}/>
       }
       <TypeScreen
-        isOpen={ isCategoryOpen }
-        onDismiss={ onCategoryListDismiss }/>
+        isOpen={isCategoryOpen}
+        onDismiss={onCategoryListDismiss}/>
       <ConfirmationDialog
         isOpen={Boolean(asset)}
         title="dialog.asset_remove"
         summary="dialog.asset_remove_summary"
-        onDismiss={ onRemoveDismiss }
-        onConfirm={ onAssetRemove }/>
+        onDismiss={onRemoveDismiss}
+        onConfirm={onAssetRemove}/>
     </Box>
   );
 }
@@ -283,9 +284,9 @@ const AssetEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={ DesktopWindowsRounded }
-      title={ t("empty.asset") }
-      subtitle={ t("empty.asset_summary") }/>
+      icon={DesktopWindowsRounded}
+      title={t("empty.asset")}
+      subtitle={t("empty.asset_summary")}/>
   );
 }
 
@@ -347,31 +348,31 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
-      } }
-      componentsProps={ {
+      }}
+      componentsProps={{
         toolbar: {
           destinations: [
             <Button
               key="types"
               color="primary"
               size="small"
-              startIcon={ <LocalOfferRounded fontSize="small"/> }
-              onClick={ props.onCategoryInvoke }>
-              { t("navigation.types") }
+              startIcon={<LocalOfferRounded fontSize="small"/>}
+              onClick={props.onCategoryInvoke}>
+              {t("navigation.types")}
             </Button>
           ]
         }
-      } }
-      columns={ columns }
-      rows={ props.hits }
-      density={ density }
+      }}
+      columns={columns}
+      rows={props.hits}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      getRowId={ (r) => r.stockNumber }
-      onRowDoubleClick={ props.onItemSelect }
+      getRowId={(r) => r.stockNumber}
+      onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)

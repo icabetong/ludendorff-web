@@ -4,7 +4,13 @@ import { TransitionProps } from "@mui/material/transitions";
 import { AddRounded, CloseRounded, DeleteOutlineRounded, SaveRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
-import { GridToolbarContainer, useGridRootProps } from "@mui/x-data-grid";
+import {
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarFilterButton,
+  useGridRootProps
+} from "@mui/x-data-grid";
 
 type EditorAppBarProps = {
   title?: string,
@@ -100,9 +106,10 @@ const EditorGridToolbar = () => {
 
   return (
     <GridToolbarContainer>
-      { props && props.toolbar &&
+      {props && props.toolbar &&
         (props.toolbar as GridEditorComponentProps).onAddAction &&
         <Button
+          size="small"
           startIcon={<AddRounded/>}
           onClick={(props.toolbar as GridEditorComponentProps).onAddAction}>
           {t("button.add")}
@@ -112,11 +119,15 @@ const EditorGridToolbar = () => {
         props && props.toolbar &&
         (props.toolbar as GridEditorComponentProps).onRemoveAction &&
         <Button
+          size="small"
           startIcon={<DeleteOutlineRounded/>}
           onClick={(props.toolbar as GridEditorComponentProps).onRemoveAction}>
           {t("button.delete")}
         </Button>
       }
+      <GridToolbarColumnsButton/>
+      <GridToolbarDensitySelector/>
+      <GridToolbarFilterButton/>
     </GridToolbarContainer>
   )
 }

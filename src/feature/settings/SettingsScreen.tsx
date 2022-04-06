@@ -47,41 +47,41 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       icon: PaletteOutlined,
       action: <Switch
         edge="end"
-        checked={ userPreferences.preferences.theme === 'dark' }
-        onChange={ onTriggerThemeChanged }/>
+        checked={userPreferences.preferences.theme === 'dark'}
+        onChange={onTriggerThemeChanged}/>
     }, {
       key: 'preference:density',
       title: t("settings.table_row_density"),
-      summary: t(`settings.table_row_density_${ userPreferences.preferences.density }`),
+      summary: t(`settings.table_row_density_${userPreferences.preferences.density}`),
       icon: TableChartOutlined,
       action: <>
         <IconButton
           aria-controls="density-menu"
           aria-haspopup="true"
-          onClick={ onDensityMenuView }
+          onClick={onDensityMenuView}
           size="large">
           <ChevronRightRounded/>
         </IconButton>
         <Menu
           keepMounted
           id="density-menu"
-          anchorEl={ densityMenuAnchor }
-          open={ Boolean(densityMenuAnchor) }
-          onClose={ onDensityMenuDismiss }>
+          anchorEl={densityMenuAnchor}
+          open={Boolean(densityMenuAnchor)}
+          onClose={onDensityMenuDismiss}>
           <MenuItem
             key="compact"
-            onClick={ () => onDensityMenuItemClick("compact") }>
-            { t(`settings.table_row_density_compact`) }
+            onClick={() => onDensityMenuItemClick("compact")}>
+            {t(`settings.table_row_density_compact`)}
           </MenuItem>
           <MenuItem
             key="standard"
-            onClick={ () => onDensityMenuItemClick("standard") }>
-            { t(`settings.table_row_density_standard`) }
+            onClick={() => onDensityMenuItemClick("standard")}>
+            {t(`settings.table_row_density_standard`)}
           </MenuItem>
           <MenuItem
             key="comfortable"
-            onClick={ () => onDensityMenuItemClick("comfortable") }>
-            { t(`settings.table_row_density_comfortable`) }
+            onClick={() => onDensityMenuItemClick("comfortable")}>
+            {t(`settings.table_row_density_comfortable`)}
           </MenuItem>
         </Menu>
       </>
@@ -93,7 +93,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       <AdaptiveHeader
         title={t("navigation.settings")}
         onDrawerTriggered={props.onDrawerToggle}/>
-      <SettingsList preferences={ preferences }/>
+      <SettingsList preferences={preferences}/>
     </Box>
   );
 }

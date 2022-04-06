@@ -93,36 +93,36 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
   return (
     <>
       <Dialog
-        fullWidth={ true }
+        fullWidth={true}
         maxWidth="xs"
-        open={ props.isOpen }
-        onClose={ props.onDismiss }>
-        <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("dialog.details_department") }</DialogTitle>
+        open={props.isOpen}
+        onClose={props.onDismiss}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle>{t("dialog.details_department")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
               <TextField
-                disabled={ isWritePending }
+                disabled={isWritePending}
                 autoFocus
                 id="name"
                 type="text"
-                label={ t("field.department_name") }
-                defaultValue={ props.department !== undefined ? props.department?.name : "" }
-                error={ errors.name !== undefined }
-                helperText={ errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined }
-                { ...register("name", { required: "feedback.empty_department_name" }) } />
+                label={t("field.department_name")}
+                defaultValue={props.department !== undefined ? props.department?.name : ""}
+                error={errors.name !== undefined}
+                helperText={errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined}
+                {...register("name", { required: "feedback.empty_department_name" })} />
               <FormControl
                 component="fieldset"
                 fullWidth>
                 <FormLabel component="legend">
-                  <Typography variant="body2">{ t("field.manager") }</Typography>
+                  <Typography variant="body2">{t("field.manager")}</Typography>
                 </FormLabel>
                 <ListItem
                   button
-                  onClick={ onPickerView }
-                  disabled={ isWritePending }>
+                  onClick={onPickerView}
+                  disabled={isWritePending}>
                   <Typography variant="body2">
-                    { manager !== undefined ? manager?.name : t("not_set") }
+                    {manager !== undefined ? manager?.name : t("not_set")}
                   </Typography>
                 </ListItem>
               </FormControl>
@@ -131,25 +131,25 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
           <DialogActions>
             <Button
               color="primary"
-              onClick={ props.onDismiss }
-              disabled={ isWritePending }>
-              { t("button.cancel") }
+              onClick={props.onDismiss}
+              disabled={isWritePending}>
+              {t("button.cancel")}
             </Button>
             <Button
               color="primary"
               type="submit"
-              disabled={ isWritePending }>
-              { t("button.save") }
+              disabled={isWritePending}>
+              {t("button.save")}
             </Button>
           </DialogActions>
         </form>
       </Dialog>
       <UserPicker
-        isOpen={ isPickerOpen }
-        users={ items }
-        isLoading={ isLoading }
-        onDismiss={ onPickerDismiss }
-        onSelectItem={ onUserSelected }
+        isOpen={isPickerOpen}
+        users={items}
+        isLoading={isLoading}
+        onDismiss={onPickerDismiss}
+        onSelectItem={onUserSelected}
         canBack={isStart}
         canForward={isEnd}
         onBackward={getPrev}

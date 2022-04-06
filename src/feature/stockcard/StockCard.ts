@@ -71,7 +71,7 @@ export class StockCardRepository {
     stockCard.entries.forEach((entry: StockCardEntry) => {
       batch.set(doc(firestore, stockCardCollection,
           `${stockCard.stockCardId}/${entries}/${entry.stockCardEntryId}`),
-          entry);
+        entry);
     });
 
     let token = await getIdTokenRefreshed();

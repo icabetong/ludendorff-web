@@ -88,8 +88,8 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const onPickerDismiss = () => setOpen(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-      query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), {
-        limit: 15
+    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), {
+      limit: 15
     }
   )
 
@@ -145,9 +145,10 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_stock_card")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box sx={{mb: 2}}>
-              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={smBreakpoint ? 0 : 4 }>
-                <Grid item xs={6} sx={{maxWidth: "100%", pt: 0, pl: 0 }}>
+            <Box sx={{ mb: 2 }}>
+              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
+                    spacing={smBreakpoint ? 0 : 4}>
+                <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
                   <TextField
                     autoFocus
                     id="entityName"
@@ -158,12 +159,12 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                     helperText={errors.entityName?.message && t(errors.entityName?.message)}
                     {...register("entityName", { required: "feedback.empty_entity_name" })}/>
                 </Grid>
-                <Grid item xs={6} sx={{maxWidth: "100%", pt: 0, pl: 0 }}>
+                <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
                   <FormLabel component="legend">
                     <Typography variant="body2">{t("field.asset")}</Typography>
                   </FormLabel>
                   <ListItem button onClick={onPickerInvoke}>
-                    { asset?.description ? asset?.description : t("button.not_set") }
+                    {asset?.description ? asset?.description : t("button.not_set")}
                   </ListItem>
                 </Grid>
               </Grid>
@@ -171,16 +172,16 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.entries")}</Typography>
             </FormLabel>
-            { smBreakpoint
+            {smBreakpoint
               ? <List>
                 <StockCardEntryList
                   entries={entries}
                   onItemSelected={onEditorUpdate}/>
                 <Button
                   fullWidth
-                  startIcon={ <AddRounded/> }
-                  onClick={ onEditorCreate }>
-                  { t("add") }
+                  startIcon={<AddRounded/>}
+                  onClick={onEditorCreate}>
+                  {t("add")}
                 </Button>
               </List>
               : <StockCardEntryDataGrid

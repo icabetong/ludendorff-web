@@ -3,7 +3,7 @@ import { Box, InputBase, TextField, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { SearchOutlined, SearchRounded } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
-import { connectSearchBox, connectStateResults, connectHighlight } from "react-instantsearch-dom";
+import { connectHighlight, connectSearchBox, connectStateResults } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
 import EmptyStateComponent from "../feature/state/EmptyStates";
 import React, { ChangeEvent } from "react";
@@ -57,11 +57,11 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
 
   return (
     <span>
-      { parsedHit.map((part, index) =>
+      {parsedHit.map((part, index) =>
         part.isHighlighted ? (
-          <span className={ classes.highlightResult } key={ index }>{ part.value }</span>
+          <span className={classes.highlightResult} key={index}>{part.value}</span>
         ) : (
-          <span key={ index }>{ part.value }</span>
+          <span key={index}>{part.value}</span>
         ))
       }
     </span>
@@ -92,16 +92,16 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
   return (
     <Box className={classes.searchContainer}>
       <Box className={classes.searchIconWrapper}>
-        <SearchRounded />
+        <SearchRounded/>
       </Box>
       <InputBase
         className={classes.searchInput}
         id="search"
         placeholder={t("field.search")}
-        value={ props.currentRefinement }
-        onFocus={ onFocusGained }
-        onBlur={ onFocusLost }
-        onChange={ onQueryChanged }/>
+        value={props.currentRefinement}
+        onFocus={onFocusGained}
+        onBlur={onFocusLost}
+        onChange={onQueryChanged}/>
     </Box>
 
   );
@@ -130,10 +130,10 @@ const SearchBoxCore = (props: SearchBoxProps) => {
       id="search"
       size="small"
       label={t("field.search")}
-      value={ props.currentRefinement }
-      onFocus={ onFocusGained }
-      onBlur={ onFocusLost }
-      onChange={ onQueryChanged }/>
+      value={props.currentRefinement}
+      onFocus={onFocusGained}
+      onBlur={onFocusLost}
+      onChange={onQueryChanged}/>
   );
 }
 
@@ -145,9 +145,9 @@ const EmptySearchState = (props: EmptySearchStateProps) => {
 
   return (
     <EmptyStateComponent
-      icon={ SearchOutlined }
-      title={ t("empty.search") }
-      subtitle={ t("empty.search_summary", { query: props.query }) }/>
+      icon={SearchOutlined}
+      title={t("empty.search")}
+      subtitle={t("empty.search_summary", { query: props.query })}/>
   );
 }
 
@@ -158,9 +158,9 @@ interface ResultsProps extends StateResultsProvided {
 const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => {
   return (
     <>
-      { searchResults && searchResults.nbHits !== 0
+      {searchResults && searchResults.nbHits !== 0
         ? children
-        : <EmptySearchState query={ searchState.query }/>
+        : <EmptySearchState query={searchState.query}/>
       }
     </>
   )

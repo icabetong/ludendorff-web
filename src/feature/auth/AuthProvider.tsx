@@ -38,8 +38,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={ authState }>
-      { children }
+    <AuthContext.Provider value={authState}>
+      {children}
     </AuthContext.Provider>
   );
 }

@@ -5,9 +5,11 @@ type UseColumnVisibilityModel = {
   visibleColumns: GridColumnVisibilityModel,
   onVisibilityChange: (model: GridColumnVisibilityModel) => void,
 }
+
 interface Model {
   [key: string]: boolean
 }
+
 const useColumnVisibilityModel = (key: string, columns: GridColDef[]) => {
   const [visibleColumns, setVisibleColumns] = useState<GridColumnVisibilityModel>(() => {
     let model: Model = {};

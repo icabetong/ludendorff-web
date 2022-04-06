@@ -21,30 +21,30 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
 
   return (
     <Dialog
-      open={ props.isOpened }
-      fullWidth={ true }
+      open={props.isOpened}
+      fullWidth={true}
       maxWidth="xs"
-      onClose={ props.onClose }>
+      onClose={props.onClose}>
 
-      <DialogTitle>{ t("view_qr_code") }</DialogTitle>
+      <DialogTitle>{t("view_qr_code")}</DialogTitle>
 
       <DialogContent>
         <DialogContentText>
-          <Typography>{ t("view_qr_code_summary") }</Typography>
+          <Typography>{t("view_qr_code_summary")}</Typography>
         </DialogContentText>
         <Grid
           container
           direction="row"
           alignItems="center"
           justifyContent="center">
-          <QRCode value={ `clsu://ludendorff/${ props.assetId }` }/>
+          <QRCode value={`clsu://ludendorff/${props.assetId}`}/>
         </Grid>
       </DialogContent>
 
       <DialogActions>
         <Button
           color="primary"
-          onClick={ props.onClose }>{ t("close") }</Button>
+          onClick={props.onClose}>{t("close")}</Button>
       </DialogActions>
     </Dialog>
   );

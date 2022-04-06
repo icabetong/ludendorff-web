@@ -43,14 +43,14 @@ export const MainLoadingStateComponent = () => {
       direction="row"
       alignItems="center"
       justifyContent="center"
-      className={ classes.root }>
+      className={classes.root}>
       <Grid
         item
-        className={ classes.wrapper }>
+        className={classes.wrapper}>
         <Logo
-          stroke={ theme.palette.primary.main }
-          className={ classes.icon }/>
-        <LinearProgress className={ classes.progress }/>
+          stroke={theme.palette.primary.main}
+          className={classes.icon}/>
+        <LinearProgress className={classes.progress}/>
       </Grid>
     </Grid>
   )
@@ -65,11 +65,11 @@ export const ContentLoadingStateComponent = () => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      className={ classes.rootContent }>
+      className={classes.rootContent}>
       <Grid
         item
-        className={ classes.wrapper }>
-        <CircularProgress className={ classes.progress }/>
+        className={classes.wrapper}>
+        <CircularProgress className={classes.progress}/>
       </Grid>
     </Grid>
   )

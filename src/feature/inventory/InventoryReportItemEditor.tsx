@@ -8,6 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormLabel,
   ListItem,
   TextField
@@ -69,63 +70,64 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
   return (
     <>
       <Dialog
-        fullWidth={ true }
+        fullWidth={true}
         maxWidth="xs"
-        open={ props.isOpen }
-        onClose={ props.onDismiss }>
-        <form onSubmit={ handleSubmit(onSubmit) }>
-          <DialogTitle>{ t("dialog.details_inventory_item") }</DialogTitle>
+        open={props.isOpen}
+        onClose={props.onDismiss}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle>{t("dialog.details_inventory_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <FormLabel component="legend">{ t("field.asset") }</FormLabel>
+              <FormLabel component="legend">{t("field.asset")}</FormLabel>
               <ListItem
                 button
-                onClick={ onPickerInvoke }>
-                { asset?.description ? asset?.description : t("button.not_set") }
+                onClick={onPickerInvoke}>
+                {asset?.description ? asset?.description : t("button.not_set")}
               </ListItem>
+              <Divider sx={{ my: 2 }}/>
               <TextField
                 autoFocus
                 id="balancePerCard"
                 type="number"
-                label={ t("field.balance_per_card") }
-                defaultValue={ props.item && props.item.balancePerCard }
-                error={ errors.balancePerCard !== undefined }
-                helperText={ errors.balancePerCard?.message && t(errors.balancePerCard?.message) }
-                disabled={ !asset }
+                label={t("field.balance_per_card")}
+                defaultValue={props.item && props.item.balancePerCard}
+                error={errors.balancePerCard !== undefined}
+                helperText={errors.balancePerCard?.message && t(errors.balancePerCard?.message)}
+                disabled={!asset}
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
-                { ...register("balancePerCard", { required: "feedback.empty_balance_per_card" }) }/>
+                {...register("balancePerCard", { required: "feedback.empty_balance_per_card" })}/>
               <TextField
                 id="onHandCount"
                 type="number"
-                label={ t("field.on_hand_count") }
-                defaultValue={ props.item && props.item.onHandCount }
-                error={ errors.onHandCount !== undefined }
-                helperText={ errors.onHandCount?.message && t(errors.onHandCount?.message) }
-                disabled={ !asset }
+                label={t("field.on_hand_count")}
+                defaultValue={props.item && props.item.onHandCount}
+                error={errors.onHandCount !== undefined}
+                helperText={errors.onHandCount?.message && t(errors.onHandCount?.message)}
+                disabled={!asset}
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
-                { ...register("onHandCount", { required: "feedback.empty_on_hand_count" }) }/>
+                {...register("onHandCount", { required: "feedback.empty_on_hand_count" })}/>
             </Container>
           </DialogContent>
           <DialogActions>
             <Button
               color="primary"
-              onClick={ props.onDismiss }>{ t("button.cancel") }</Button>
+              onClick={props.onDismiss}>{t("button.cancel")}</Button>
             <Button
               color="primary"
-              type="submit">{ t("button.save") }</Button>
+              type="submit">{t("button.save")}</Button>
           </DialogActions>
         </form>
       </Dialog>
       <AssetPicker
-        isOpen={ isOpen }
-        assets={ items }
-        isLoading={ isLoading }
-        canBack={ isStart }
-        canForward={ isEnd }
-        onBackward={ getPrev }
-        onForward={ getNext }
-        onDismiss={ onPickerDismiss }
-        onSelectItem={ setAsset }/>
+        isOpen={isOpen}
+        assets={items}
+        isLoading={isLoading}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        onDismiss={onPickerDismiss}
+        onSelectItem={setAsset}/>
     </>
   );
 }

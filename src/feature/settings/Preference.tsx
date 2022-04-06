@@ -44,8 +44,8 @@ export const PreferenceProvider: React.FC = ({ children }) => {
   }
 
   return (
-    <PreferenceContext.Provider value={ { preferences: preferences, setPreferences: onPreferenceChanged } }>
-      { children }
+    <PreferenceContext.Provider value={{ preferences: preferences, setPreferences: onPreferenceChanged }}>
+      {children}
     </PreferenceContext.Provider>
   );
 }

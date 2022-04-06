@@ -7,12 +7,12 @@ import { DataGrid, GridSelectionModel } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
-  assetStockNumber,
   assetDescription,
+  assetStockNumber,
   assetUnitOfMeasure,
   quantityIssued,
-  unitCost,
   responsibilityCenter,
+  unitCost,
 } from "../../shared/const";
 import { usePreferences } from "../settings/Preference";
 

@@ -132,9 +132,10 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_issued")} onDismiss={props.onDismiss}/>
           <EditorContent>
-            <Box sx={{mb: 2}}>
-              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center" spacing={smBreakpoint ? 0 : 4}>
-                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
+            <Box sx={{ mb: 2 }}>
+              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
+                    spacing={smBreakpoint ? 0 : 4}>
+                <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
                   <TextField
                     autoFocus
                     id="fundCluster"
@@ -143,7 +144,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     error={errors.fundCluster !== undefined}
                     helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
                     defaultValue={props.report && props.report.fundCluster}
-                    {...register('fundCluster', { required: "feedback.empty_fund_cluster"})}/>
+                    {...register('fundCluster', { required: "feedback.empty_fund_cluster" })}/>
                   <TextField
                     id="serialNumber"
                     type="text"
@@ -151,9 +152,9 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     error={errors.serialNumber !== undefined}
                     helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}
                     defaultValue={props.report && props.report.serialNumber}
-                    {...register('serialNumber', { required: "feedback.empty_serial_number"})}/>
+                    {...register('serialNumber', { required: "feedback.empty_serial_number" })}/>
                 </Grid>
-                <Grid item xs={6} sx={{maxWidth: '100%', pt: 0, pl: 0}}>
+                <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
                   <TextField
                     id="entityName"
                     type="text"
@@ -161,16 +162,16 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     error={errors.entityName !== undefined}
                     helperText={errors.entityName?.message && t(errors.entityName?.message)}
                     defaultValue={props.report && props.report.entityName}
-                    {...register('entityName', { required: "feedback.empty_entity_name"})}/>
-                  <LocalizationProvider dateAdapter={ DateAdapter }>
+                    {...register('entityName', { required: "feedback.empty_entity_name" })}/>
+                  <LocalizationProvider dateAdapter={DateAdapter}>
                     <Box>
                       <DatePicker
                         inputFormat="MM/dd/yyyy"
                         mask="__/__/____"
-                        label={ t("field.date") }
-                        value={ date }
-                        onChange={ setDate }
-                        renderInput={ (params) => <TextField { ...params } helperText={ null }/> }
+                        label={t("field.date")}
+                        value={date}
+                        onChange={setDate}
+                        renderInput={(params) => <TextField {...params} helperText={null}/>}
                       />
                     </Box>
                   </LocalizationProvider>
@@ -180,24 +181,24 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.items")}</Typography>
             </FormLabel>
-            { smBreakpoint
+            {smBreakpoint
               ? <List>
-                  <IssuedReportItemList
-                    items={items}
-                    onItemSelected={onEditorUpdate}/>
-                  <Button
-                    fullWidth
-                    startIcon={ <AddRounded/> }
-                    onClick={ onEditorCreate }>
-                    { t("button.add") }
-                  </Button>
-                </List>
-              : <IssuedReportItemDataGrid
-                  onAddAction={onEditorCreate}
-                  onRemoveAction={onCheckedRowsRemove}
-                  onItemSelected={onEditorUpdate}
+                <IssuedReportItemList
                   items={items}
-                  onCheckedRowsChanged={onCheckedRowsChanged}/>
+                  onItemSelected={onEditorUpdate}/>
+                <Button
+                  fullWidth
+                  startIcon={<AddRounded/>}
+                  onClick={onEditorCreate}>
+                  {t("button.add")}
+                </Button>
+              </List>
+              : <IssuedReportItemDataGrid
+                onAddAction={onEditorCreate}
+                onRemoveAction={onCheckedRowsRemove}
+                onItemSelected={onEditorUpdate}
+                items={items}
+                onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
         </EditorRoot>

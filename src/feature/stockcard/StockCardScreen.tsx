@@ -22,7 +22,8 @@ import {
   assetStockNumber,
   assetUnitOfMeasure,
   entityName,
-  stockCardCollection, unitPrice
+  stockCardCollection,
+  unitPrice
 } from "../../shared/const";
 import { ActionType, initialState, reducer } from "./StockCardEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -36,6 +37,7 @@ import ConfirmationDialog from "../shared/ConfirmationDialog";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,12 +59,12 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
-  const [size, setSize] = useState(15);
+  const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<StockCard>(
     query(collection(firestore, stockCardCollection), orderBy(entityName, "asc")), {
-      limit: size
+      limit: limit
     }
   )
 
@@ -120,26 +122,26 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         canForward={isEnd}
         onBackward={getPrev}
         onForward={getNext}
-        size={size}
-        onPageSizeChanged={setSize}/>
+        size={limit}
+        onPageSizeChanged={onLimitChanged}/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
-      } }
-      rows={ items }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={items}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      loading={ isLoading }
-      getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      loading={isLoading}
+      getRowId={(r) => r.inventoryReportId}
+      onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)
@@ -155,37 +157,37 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           onActionEvent={() => dispatch({ type: ActionType.CREATE })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        { canRead
-            ? <>
-                <Hidden smDown>
-                  <Box className={classes.wrapper}>
-                    { searchMode
-                        ? <StockCardDataGrid
-                            onItemSelect={onDataGridRowDoubleClicked}
-                            onRemoveInvoke={onRemoveInvoke}/>
-                        : dataGrid
-                    }
-                  </Box>
-                </Hidden>
-                <Hidden smUp>
-                  { !isLoading
-                    ? items.length < 1
-                      ? <StockCardEmptyState/>
-                      : <StockCardList
-                          stockCards={items}
-                          onItemSelect={onStockCardSelected}
-                          onItemRemove={onRemoveInvoke}/>
-                    : <LinearProgress/>
-                  }
-                  <Fab
-                    color="primary"
-                    aria-label={t("button.add")}
-                    onClick={() => dispatch({ type: ActionType.CREATE })}>
-                    <AddRounded/>
-                  </Fab>
-                </Hidden>
-              </>
-            : <ErrorNoPermissionState/>
+        {canRead
+          ? <>
+            <Hidden smDown>
+              <Box className={classes.wrapper}>
+                {searchMode
+                  ? <StockCardDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                  : dataGrid
+                }
+              </Box>
+            </Hidden>
+            <Hidden smUp>
+              {!isLoading
+                ? items.length < 1
+                  ? <StockCardEmptyState/>
+                  : <StockCardList
+                    stockCards={items}
+                    onItemSelect={onStockCardSelected}
+                    onItemRemove={onRemoveInvoke}/>
+                : <LinearProgress/>
+              }
+              <Fab
+                color="primary"
+                aria-label={t("button.add")}
+                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                <AddRounded/>
+              </Fab>
+            </Hidden>
+          </>
+          : <ErrorNoPermissionState/>
         }
       </InstantSearch>
       <StockCardEditor
@@ -194,11 +196,11 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         stockCard={state.stockCard}
         onDismiss={onStockCardEditorDismiss}/>
       <ConfirmationDialog
-        isOpen={ stockCard !== null }
+        isOpen={stockCard !== null}
         title="dialog.stock_card_remove"
         summary="dialog.stock_card_remove_summary"
-        onConfirm={ onStockCardRemove }
-        onDismiss={ onRemoveDismiss }/>
+        onConfirm={onStockCardRemove}
+        onDismiss={onRemoveDismiss}/>
     </Box>
   )
 }
@@ -226,8 +228,8 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
       renderCell: (params: GridCellParams) => {
         return (
           <IconButton
-            aria-label={ t("button.delete") }
-            onClick={ () => props.onRemoveInvoke(params.row as StockCard) }
+            aria-label={t("button.delete")}
+            onClick={() => props.onRemoveInvoke(params.row as StockCard)}
             size="large">
             <DeleteOutline/>
           </IconButton>

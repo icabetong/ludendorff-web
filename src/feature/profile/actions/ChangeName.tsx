@@ -45,48 +45,48 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
 
   return (
     <Dialog
-      open={ props.isOpen }
-      fullWidth={ true }
+      open={props.isOpen}
+      fullWidth={true}
       maxWidth="xs"
-      onClose={ props.onDismiss }>
-      <DialogTitle>{ t("action.change_name") }</DialogTitle>
-      <form onSubmit={ handleSubmit(onSubmit) }>
+      onClose={props.onDismiss}>
+      <DialogTitle>{t("action.change_name")}</DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Container disableGutters>
             <TextField
               autoFocus
               id="firstname"
               type="text"
-              defaultValue={ user?.firstName }
-              label={ t("field.first_name") }
-              error={ errors.firstName !== undefined }
-              helperText={ errors.firstName?.message && t(errors.firstName.message) }
-              disabled={ submitting }
-              { ...register("firstName", { required: "feedback.empty_first_name" }) } />
+              defaultValue={user?.firstName}
+              label={t("field.first_name")}
+              error={errors.firstName !== undefined}
+              helperText={errors.firstName?.message && t(errors.firstName.message)}
+              disabled={submitting}
+              {...register("firstName", { required: "feedback.empty_first_name" })} />
 
             <TextField
               id="lastname"
               type="text"
-              defaultValue={ user?.lastName }
-              label={ t("field.last_name") }
-              error={ errors.lastName !== undefined }
-              helperText={ errors.lastName?.message && t(errors.lastName.message) }
-              disabled={ submitting }
-              { ...register("lastName", { required: "feedback.empty_last_name" }) } />
+              defaultValue={user?.lastName}
+              label={t("field.last_name")}
+              error={errors.lastName !== undefined}
+              helperText={errors.lastName?.message && t(errors.lastName.message)}
+              disabled={submitting}
+              {...register("lastName", { required: "feedback.empty_last_name" })} />
           </Container>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            disabled={ submitting }
-            onClick={ props.onDismiss }>
-            { t("button.cancel") }
+            disabled={submitting}
+            onClick={props.onDismiss}>
+            {t("button.cancel")}
           </Button>
           <Button
             color="primary"
             type="submit"
-            disabled={ submitting }>
-            { submitting ? t("feedback.saving") : t("button.continue") }
+            disabled={submitting}>
+            {submitting ? t("feedback.saving") : t("button.continue")}
           </Button>
         </DialogActions>
       </form>

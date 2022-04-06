@@ -40,30 +40,30 @@ const AssetPicker = (props: AssetPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={ isMobile }
-      fullWidth={ true }
+      fullScreen={isMobile}
+      fullWidth={true}
       maxWidth="xs"
-      open={ props.isOpen }
-      onClose={ props.onDismiss }>
-      <DialogTitle>{ t("dialog.select_asset") }</DialogTitle>
-      <DialogContent dividers={ true }>
-        { canRead ?
+      open={props.isOpen}
+      onClose={props.onDismiss}>
+      <DialogTitle>{t("dialog.select_asset")}</DialogTitle>
+      <DialogContent dividers={true}>
+        {canRead ?
           !props.isLoading
             ? props.assets.length > 0
               ? <>
-                  <AssetList
-                    assets={ props.assets }
-                    onItemSelect={ onSelect }/>
-                  <PaginationController
-                    canBack={ props.canBack }
-                    canForward={ props.canForward }
-                    onBackward={ props.onBackward }
-                    onForward={ props.onForward }/>
-                </>
+                <AssetList
+                  assets={props.assets}
+                  onItemSelect={onSelect}/>
+                <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              </>
               : <EmptyStateComponent
-                icon={ DesktopWindowsRounded }
-                title={ t("empty.asset") }
-                subtitle={ t("empty.asset_summary") }/>
+                icon={DesktopWindowsRounded}
+                title={t("empty.asset")}
+                subtitle={t("empty.asset_summary")}/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
@@ -71,7 +71,7 @@ const AssetPicker = (props: AssetPickerProps) => {
       <DialogActions>
         <Button
           color="primary"
-          onClick={ props.onDismiss }>{ t("button.close") }</Button>
+          onClick={props.onDismiss}>{t("button.close")}</Button>
       </DialogActions>
     </Dialog>
   );

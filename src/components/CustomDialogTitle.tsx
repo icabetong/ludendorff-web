@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton, Typography, Theme } from "@mui/material";
+import { IconButton, Theme, Typography } from "@mui/material";
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
 import withStyles from '@mui/styles/withStyles';
@@ -30,16 +30,16 @@ const CustomDialogTitle = withStyles(styles)((props: CustomDialogTitleProps) => 
   const { t } = useTranslation();
   const { children, classes, onSearch, ...other } = props;
   return (
-    <MuiDialogTitle className={ classes.root } { ...other }>
-      <Typography className={classes.header} variant="h6">{ children }</Typography>
-      { onSearch ? (
+    <MuiDialogTitle className={classes.root} {...other}>
+      <Typography className={classes.header} variant="h6">{children}</Typography>
+      {onSearch ? (
         <IconButton
           size="large"
-          aria-label={ t("button.search") }
-          onClick={ onSearch }>
+          aria-label={t("button.search")}
+          onClick={onSearch}>
           <SearchOutlined/>
         </IconButton>
-      ) : null }
+      ) : null}
     </MuiDialogTitle>
   );
 })

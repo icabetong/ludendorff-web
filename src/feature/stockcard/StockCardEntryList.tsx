@@ -9,7 +9,7 @@ type StockCardEntryListProps = {
 const StockCardEntryList = (props: StockCardEntryListProps) => {
   return (
     <>
-      { props.entries && props.entries.map((entry: StockCardEntry) => {
+      {props.entries && props.entries.map((entry: StockCardEntry) => {
         return (
           <StockCardEntryListItem
             entry={entry}
@@ -26,7 +26,9 @@ type StockCardEntryListItemProps = {
 }
 
 const StockCardEntryListItem = (props: StockCardEntryListItemProps) => {
-  const onListItemClick = () => { props.onItemSelected(props.entry) }
+  const onListItemClick = () => {
+    props.onItemSelected(props.entry)
+  }
 
   return (
     <ListItem button key={props.entry.stockCardEntryId} onClick={onListItemClick}>

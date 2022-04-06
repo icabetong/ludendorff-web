@@ -7,14 +7,14 @@ import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  date,
-  reference,
-  receiptQuantity,
-  requestQuantity,
-  issueQuantity,
-  issueOffice,
   balanceQuantity,
-  balanceTotalPrice
+  balanceTotalPrice,
+  date,
+  issueOffice,
+  issueQuantity,
+  receiptQuantity,
+  reference,
+  requestQuantity
 } from "../../shared/const";
 import { usePreferences } from "../settings/Preference";
 import { formatDate } from "../../shared/utils";

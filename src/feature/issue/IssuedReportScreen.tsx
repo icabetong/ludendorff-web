@@ -1,4 +1,4 @@
-import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import { date, entityName, fundCluster, issuedCollection, serialNumber } from ".
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { formatDate, isDev } from "../../shared/utils";
-import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { AddRounded, DeleteOutlineRounded, UploadFileOutlined } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -30,6 +30,7 @@ import GridEmptyRow from "../../components/GridEmptyRows";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -51,12 +52,13 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('issuedDensity');
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
+  const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
   const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
     query(collection(firestore, issuedCollection), orderBy(fundCluster, "asc")), {
-      limit: 15
+      limit: limit
     }
   );
 
@@ -122,25 +124,25 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         onBackward={getPrev}
         onForward={getNext}
         size={size}
-        onPageSizeChanged={setSize}/>
+        onPageSizeChanged={onLimitChanged}/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
-      } }
-      rows={ items }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={items}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      loading={ isLoading }
-      getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      loading={isLoading}
+      getRowId={(r) => r.inventoryReportId}
+      onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)
@@ -156,36 +158,36 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
           onActionEvent={() => dispatch({ type: ActionType.CREATE })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        { canRead
-           ? <>
-              <Hidden smDown>
-                <Box className={classes.wrapper}>
-                  { searchMode
-                    ? <IssuedReportDataGrid
-                        onItemSelect={onDataGridRowDoubleClicked}
-                        onRemoveInvoke={onRemoveInvoke}/>
-                    : dataGrid
-                  }
-                </Box>
-              </Hidden>
-              <Hidden smUp>
-                { !isLoading
-                    ? items.length < 1
-                      ? <IssuedReportEmptyState/>
-                      : <IssuedReportList
-                          reports={items}
-                          onItemSelect={onIssuedReportSelected}
-                          onItemRemove={onRemoveInvoke}/>
-                    : <LinearProgress/>
+        {canRead
+          ? <>
+            <Hidden smDown>
+              <Box className={classes.wrapper}>
+                {searchMode
+                  ? <IssuedReportDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                  : dataGrid
                 }
-                <Fab
-                  color="primary"
-                  aria-label={t("button.add")}
-                  onClick={() => dispatch({ type: ActionType.CREATE })}>
-                  <AddRounded/>
-                </Fab>
-              </Hidden>
-            </>
+              </Box>
+            </Hidden>
+            <Hidden smUp>
+              {!isLoading
+                ? items.length < 1
+                  ? <IssuedReportEmptyState/>
+                  : <IssuedReportList
+                    reports={items}
+                    onItemSelect={onIssuedReportSelected}
+                    onItemRemove={onRemoveInvoke}/>
+                : <LinearProgress/>
+              }
+              <Fab
+                color="primary"
+                aria-label={t("button.add")}
+                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                <AddRounded/>
+              </Fab>
+            </Hidden>
+          </>
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
@@ -262,17 +264,17 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
-      } }
-      rows={ props.hits }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={props.hits}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      getRowId={ (r) => r.issuedReportId }
-      onRowDoubleClick={ props.onItemSelect }
+      getRowId={(r) => r.issuedReportId}
+      onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)

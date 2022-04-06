@@ -60,15 +60,15 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
         <DialogTitle>{t("dialog.details_stock_card_entry")}</DialogTitle>
         <DialogContent>
           <Container disableGutters>
-            <LocalizationProvider dateAdapter={ DateAdapter }>
+            <LocalizationProvider dateAdapter={DateAdapter}>
               <Box>
                 <DatePicker
                   inputFormat="MM/dd/yyyy"
                   mask="__/__/____"
-                  label={ t("field.accountability_date") }
-                  value={ date }
-                  onChange={ setDate }
-                  renderInput={ (params) => <TextField { ...params } helperText={ null }/> }
+                  label={t("field.accountability_date")}
+                  value={date}
+                  onChange={setDate}
+                  renderInput={(params) => <TextField {...params} helperText={null}/>}
                 />
               </Box>
             </LocalizationProvider>
@@ -98,7 +98,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               error={errors.requestedQuantity !== undefined}
               helperText={errors.requestedQuantity?.message && t(errors.requestedQuantity?.message)}
               inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
-              {...register("requestedQuantity", { required: "feedback.empty_request_quantity"})}/>
+              {...register("requestedQuantity", { required: "feedback.empty_request_quantity" })}/>
             <TextField
               id="issueQuantity"
               type="number"

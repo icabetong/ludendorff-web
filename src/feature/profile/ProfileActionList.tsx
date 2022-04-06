@@ -34,11 +34,11 @@ const ProfileActionList = (props: ProfileActionListProps) => {
 
   return (
     <>
-      <ListSubheader>{ t("actions") }</ListSubheader>
-      <List className={ classes.container }>
-        { props.actions.map((action) =>
-          <ProfileActionItem action={ action }/>
-        ) }
+      <ListSubheader>{t("actions")}</ListSubheader>
+      <List className={classes.container}>
+        {props.actions.map((action) =>
+          <ProfileActionItem action={action}/>
+        )}
       </List>
     </>
   )
@@ -54,8 +54,8 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
   return (
     <ListItem
       button
-      key={ props.action.key }
-      onClick={ () => props.action.action() }>
+      key={props.action.key}
+      onClick={() => props.action.action()}>
       <ListItemIcon>
         {
           React.createElement(props.action.icon,
@@ -64,7 +64,7 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
       </ListItemIcon>
       <ListItemText
         primary={
-          <Typography variant="body2">{ t(props.action.title) }</Typography>
+          <Typography variant="body2">{t(props.action.title)}</Typography>
         }/>
     </ListItem>
   )

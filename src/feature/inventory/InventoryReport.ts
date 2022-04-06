@@ -64,7 +64,7 @@ export class InventoryReportRepository {
 
     let batch = writeBatch(firestore);
 
-    let itemsRef = collection(firestore, inventoryCollection, `${ report.inventoryReportId }/${ items }`);
+    let itemsRef = collection(firestore, inventoryCollection, `${report.inventoryReportId}/${items}`);
     let snapshot = await getDocs(itemsRef);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
@@ -91,7 +91,7 @@ export class InventoryReportRepository {
     let docReference = doc(firestore, inventoryCollection, r.inventoryReportId);
     let batch = writeBatch(firestore);
 
-    let itemRef = collection(firestore, inventoryCollection, `${ report.inventoryReportId }/${ items }`);
+    let itemRef = collection(firestore, inventoryCollection, `${report.inventoryReportId}/${items}`);
     let snapshot = await getDocs(itemRef);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);

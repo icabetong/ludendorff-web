@@ -81,7 +81,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
       fontWeight: 700,
     },
     body2: {
-      fontWeight: 600
+      fontWeight: 500
     },
     subtitle1: {
       fontSize: '1em'
@@ -120,46 +120,28 @@ const baseTheme = (mode: PaletteMode) => createTheme({
         }
       }
     },
-    MuiListSubheader: {
-      styleOverrides: {
-        root: {
-          background: mode === 'dark' ? gray700 : white,
-        }
-      }
-    }
   }
 })
-
-type ThemeContextType = {
-  theme: string,
-  setTheme: Function
-}
-
-export const ThemeContext = React.createContext<ThemeContextType>({
-  theme: 'dark',
-  setTheme: () => {
-  }
-});
 
 export const CoreComponent = () => {
   const userPreferences = useContext(PreferenceContext);
 
   return <>
-    {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */ }
-    <ThemeProvider theme={ baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light') }>
+    {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
+    <ThemeProvider theme={baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
       <CssBaseline/>
-      <Router history={ history }>
+      <Router history={history}>
         <Switch>
           <Route
             path="/"
-            component={ RootComponent }
+            component={RootComponent}
             exact/>
           <Route
             path="/auth"
-            component={ AuthComponent }/>
+            component={AuthComponent}/>
           <Route
             path="*"
-            component={ ErrorNotFoundState }
+            component={ErrorNotFoundState}
             exact/>
         </Switch>
       </Router>

@@ -23,7 +23,7 @@ export const initialState: State = {
 }
 export const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
-  switch(type) {
+  switch (type) {
     case ActionType.CREATE:
       return {
         ...state,

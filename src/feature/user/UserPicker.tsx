@@ -51,32 +51,32 @@ const UserPicker = (props: UserPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={ isMobile }
-      fullWidth={ true }
+      fullScreen={isMobile}
+      fullWidth={true}
       maxWidth="xs"
-      open={ props.isOpen }
-      onClose={ props.onDismiss }>
-      <DialogTitle>{ t("user_select") }</DialogTitle>
+      open={props.isOpen}
+      onClose={props.onDismiss}>
+      <DialogTitle>{t("user_select")}</DialogTitle>
       <DialogContent
-        dividers={ true }
-        className={ classes.root }>
-        { canRead ?
+        dividers={true}
+        className={classes.root}>
+        {canRead ?
           !props.isLoading
             ? props.users.length > 0
               ? <>
-                  <UserList
-                    users={ props.users }
-                    onItemSelect={ onSelect }/>
-                  <PaginationController
-                    canBack={props.canBack}
-                    canForward={props.canForward}
-                    onBackward={props.onBackward}
-                    onForward={props.onForward}/>
-                </>
+                <UserList
+                  users={props.users}
+                  onItemSelect={onSelect}/>
+                <PaginationController
+                  canBack={props.canBack}
+                  canForward={props.canForward}
+                  onBackward={props.onBackward}
+                  onForward={props.onForward}/>
+              </>
               : <EmptyStateComponent
-                icon={ PeopleOutlineRounded }
-                title={ t("empty_user") }
-                subtitle={ t("empty_user_summary") }/>
+                icon={PeopleOutlineRounded}
+                title={t("empty_user")}
+                subtitle={t("empty_user_summary")}/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
@@ -84,7 +84,7 @@ const UserPicker = (props: UserPickerProps) => {
       <DialogActions>
         <Button
           color="primary"
-          onClick={ props.onDismiss }>{ t("close") }</Button>
+          onClick={props.onDismiss}>{t("close")}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,12 +1,12 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, Hidden, IconButton, LinearProgress, MenuItem, Theme, Tooltip } from "@mui/material";
+import { Box, Button, Fab, Hidden, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import {
   AddRounded,
-  DeleteOutline, DeleteOutlineRounded,
+  DeleteOutlineRounded,
   DomainRounded,
   PeopleOutlineRounded,
   VisibilityOffOutlined,
@@ -21,7 +21,6 @@ import { getDataGridTheme } from "../core/Core";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { usePreferences } from "../settings/Preference";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
 
@@ -43,7 +42,7 @@ import GridEmptyRow from "../../components/GridEmptyRows";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
-import { StockCard } from "../stockcard/StockCard";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -64,11 +63,13 @@ const UserScreen = (props: UserScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canManageUsers } = usePermissions();
   const { density, onDensityChanged } = useDensity('userDensity');
-  const [size, setSize] = useState(15);
+  const { limit, onLimitChanged } = useQueryLimit('userQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
-    query(collection(firestore, userCollection), orderBy(lastName, "asc")), { limit: 15 }
+    query(collection(firestore, userCollection), orderBy(lastName, "asc")), {
+      limit: limit
+    }
   );
 
   const columns = [
@@ -167,52 +168,52 @@ const UserScreen = (props: UserScreenProps) => {
 
   const menuItems = [
     <MenuItem
-      key={ 0 }
-      onClick={ onDepartmentView }>{ t("navigation.departments") }</MenuItem>
+      key={0}
+      onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
   const pagination = () => {
     return (
       <DataGridPaginationController
-        size={ size }
-        canBack={ isStart }
-        canForward={ isEnd }
-        onBackward={ getPrev }
-        onForward={ getNext }
-        onPageSizeChanged={ setSize }/>
+        size={limit}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        onPageSizeChanged={onLimitChanged}/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
-      } }
-      componentsProps={ {
+      }}
+      componentsProps={{
         toolbar: {
           destinations: [
             <Button
               key="departments"
               color="primary"
               size="small"
-              startIcon={ <DomainRounded fontSize="small"/> }
-              onClick={ onDepartmentView }>
-              { t("navigation.departments") }
+              startIcon={<DomainRounded fontSize="small"/>}
+              onClick={onDepartmentView}>
+              {t("navigation.departments")}
             </Button>
           ]
         }
-      } }
-      rows={ items }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={items}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      loading={ isLoading }
+      loading={isLoading}
       paginationMode="client"
-      getRowId={ (r) => r.userId }
-      onRowDoubleClick={ onDataGridRowDoubleClick }
+      getRowId={(r) => r.userId}
+      onRowDoubleClick={onDataGridRowDoubleClick}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)
@@ -220,9 +221,9 @@ const UserScreen = (props: UserScreenProps) => {
   )
 
   return (
-    <Box className={ classes.root }>
+    <Box className={classes.root}>
       <InstantSearch
-        searchClient={ Provider }
+        searchClient={Provider}
         indexName="users">
         <AdaptiveHeader
           title={t("navigation.users")}
@@ -231,27 +232,27 @@ const UserScreen = (props: UserScreenProps) => {
           onActionEvent={onUserEditorView}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        { canRead || canManageUsers
+        {canRead || canManageUsers
           ? <>
             <Hidden smDown>
-              <Box className={ classes.wrapper }>
-                { searchMode
+              <Box className={classes.wrapper}>
+                {searchMode
                   ? <UserDataGrid
-                    onItemSelect={ onDataGridRowDoubleClick }
-                    onModificationInvoke={ onModificationInvoke }
-                    onRemoveInvoke={ onRemoveInvoke }
-                    onDepartmentInvoke={ onDepartmentView }/>
+                    onItemSelect={onDataGridRowDoubleClick}
+                    onModificationInvoke={onModificationInvoke}
+                    onRemoveInvoke={onRemoveInvoke}
+                    onDepartmentInvoke={onDepartmentView}/>
                   : dataGrid
                 }
               </Box>
             </Hidden>
             <Hidden smUp>
-              { !isLoading
+              {!isLoading
                 ? items.length < 1
                   ? <UserEmptyStateComponent/>
                   : <UserList
-                    users={ items }
-                    onItemSelect={ onUserSelected }/>
+                    users={items}
+                    onItemSelect={onUserSelected}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -266,25 +267,25 @@ const UserScreen = (props: UserScreenProps) => {
         }
       </InstantSearch>
       <UserEditor
-        isOpen={ state.isOpen }
-        isCreate={ state.isCreate }
-        user={ state.user }
-        onDismiss={ onUserEditorDismiss }/>
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        user={state.user}
+        onDismiss={onUserEditorDismiss}/>
       <ConfirmationDialog
-        isOpen={ userModify !== undefined }
-        title={ userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable" }
-        summary={ userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary" }
-        onDismiss={ onModificationDismiss }
-        onConfirm={ onModificationConfirmed }/>
+        isOpen={userModify !== undefined}
+        title={userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
+        summary={userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
+        onDismiss={onModificationDismiss}
+        onConfirm={onModificationConfirmed}/>
       <ConfirmationDialog
-        isOpen={ userRemove !== undefined }
+        isOpen={userRemove !== undefined}
         title="dialog.user_remove"
         summary="dialog.user_remove_summary"
-        onDismiss={ onRemoveDismiss }
-        onConfirm={ onRemoveConfirmed }/>
+        onDismiss={onRemoveDismiss}
+        onConfirm={onRemoveConfirmed}/>
       <DepartmentScreen
-        isOpen={ isDepartmentOpen }
-        onDismiss={ onDepartmentDismiss }/>
+        isOpen={isDepartmentOpen}
+        onDismiss={onDepartmentDismiss}/>
     </Box>
   );
 }
@@ -302,9 +303,9 @@ const UserEmptyStateComponent = () => {
 
   return (
     <EmptyStateComponent
-      icon={ PeopleOutlineRounded }
-      title={ t("empty.user") }
-      subtitle={ t("empty.user_summary") }/>
+      icon={PeopleOutlineRounded}
+      title={t("empty.user")}
+      subtitle={t("empty.user_summary")}/>
   );
 }
 
@@ -367,31 +368,31 @@ const UserDataGridCore = (props: UserDataGridCoreProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar
-      } }
-      componentsProps={ {
+      }}
+      componentsProps={{
         toolbar: {
           destinations: [
             <Button
               key="departments"
               color="primary"
               size="small"
-              startIcon={ <DomainRounded fontSize="small"/> }
-              onClick={ props.onDepartmentInvoke }>
-              { t("navigation.departments") }
+              startIcon={<DomainRounded fontSize="small"/>}
+              onClick={props.onDepartmentInvoke}>
+              {t("navigation.departments")}
             </Button>
           ]
         }
-      } }
-      columns={ columns }
-      rows={ props.hits }
-      density={ density }
+      }}
+      columns={columns}
+      rows={props.hits}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      getRowId={ (r) => r.userId }
-      onRowDoubleClick={ props.onItemSelect }
+      getRowId={(r) => r.userId}
+      onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)

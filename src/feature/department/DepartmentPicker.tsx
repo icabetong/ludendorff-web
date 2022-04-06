@@ -47,27 +47,27 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={ isMobile }
-      fullWidth={ true }
+      fullScreen={isMobile}
+      fullWidth={true}
       maxWidth="xs"
-      open={ props.isOpen }
-      onClose={ () => props.onDismiss() }>
-      <DialogTitle>{ t("dialog.select_department") }</DialogTitle>
+      open={props.isOpen}
+      onClose={() => props.onDismiss()}>
+      <DialogTitle>{t("dialog.select_department")}</DialogTitle>
       <DialogContent
-        dividers={ true }
-        className={ classes.container }>
-        { canRead
+        dividers={true}
+        className={classes.container}>
+        {canRead
           ? !props.isLoading
             ? <>
-                <DepartmentList
-                  departments={ props.departments }
-                  onItemSelect={ props.onSelectItem }/>
-                <PaginationController
-                  canBack={props.canBack}
-                  canForward={props.canForward}
-                  onBackward={props.onBackward}
-                  onForward={props.onForward}/>
-              </>
+              <DepartmentList
+                departments={props.departments}
+                onItemSelect={props.onSelectItem}/>
+              <PaginationController
+                canBack={props.canBack}
+                canForward={props.canForward}
+                onBackward={props.onBackward}
+                onForward={props.onForward}/>
+            </>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
@@ -75,7 +75,7 @@ const DepartmentPicker = (props: DepartmentPickerProps) => {
       <DialogActions>
         <Button
           color="primary"
-          onClick={ () => props.onDismiss() }>{ t("button.close") }</Button>
+          onClick={() => props.onDismiss()}>{t("button.close")}</Button>
       </DialogActions>
     </Dialog>
   );

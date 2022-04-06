@@ -147,42 +147,42 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
   return (
     <Box>
       <Box className="inset"/>
-      <ListSubheader>{ t("navigation.manage") }</ListSubheader>
-      <List className={ classes.navigation }>
+      <ListSubheader>{t("navigation.manage")}</ListSubheader>
+      <List className={classes.navigation}>
         <NavigationList
-          items={ destinations }
-          destination={ props.currentDestination }
-          onNavigate={ props.onNavigate }/>
+          items={destinations}
+          destination={props.currentDestination}
+          onNavigate={props.onNavigate}/>
       </List>
       <Divider/>
-      <ListSubheader>{ t("navigation.account") }</ListSubheader>
-      <List className={ classes.navigation }>
+      <ListSubheader>{t("navigation.account")}</ListSubheader>
+      <List className={classes.navigation}>
         <NavigationList
-          items={ minorDestinations }
-          destination={ props.currentDestination }
-          onNavigate={ props.onNavigate }/>
+          items={minorDestinations}
+          destination={props.currentDestination}
+          onNavigate={props.onNavigate}/>
         <NavigationListItem
-          itemKey={ 1 }
-          navigation={ { icon: ExitToAppRounded, title: t("button.sign_out") } }
-          isActive={ false }
-          action={ () => confirmSignOut() }/>
+          itemKey={1}
+          navigation={{ icon: ExitToAppRounded, title: t("button.sign_out") }}
+          isActive={false}
+          action={() => confirmSignOut()}/>
       </List>
       <Dialog
-        open={ triggerConfirmSignOut }
-        fullWidth={ true }
+        open={triggerConfirmSignOut}
+        fullWidth={true}
         maxWidth="xs"
-        onClose={ () => setTriggerConfirmSignOut(false) }>
-        <DialogTitle>{ t("dialog.sign_out") }</DialogTitle>
+        onClose={() => setTriggerConfirmSignOut(false)}>
+        <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{ t("dialog.sign_out_message") }</DialogContentText>
+          <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
+            onClick={() => setTriggerConfirmSignOut(false)}>{t("button.cancel")}</Button>
           <Button
             color="primary"
-            onClick={ triggerSignOut }>{ t("button.continue") }</Button>
+            onClick={triggerSignOut}>{t("button.continue")}</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -197,15 +197,15 @@ const NavigationListItem = (props: NavigationItemPropsType) => {
   return (
     <ListItem
       button
-      classes={ { root: classes.container, selected: classes.selected } }
-      key={ props.itemKey }
-      selected={ props.isActive }
-      onClick={ props.action }>
+      classes={{ root: classes.container, selected: classes.selected }}
+      key={props.itemKey}
+      selected={props.isActive}
+      onClick={props.action}>
       <ListItemIcon>{
         React.createElement(props.navigation.icon)
       }
       </ListItemIcon>
-      <ListItemText primary={ <Typography variant="body2">{ t(props.navigation.title) }</Typography> }/>
+      <ListItemText primary={<Typography variant="body2">{t(props.navigation.title)}</Typography>}/>
     </ListItem>
   )
 }
@@ -223,11 +223,11 @@ const NavigationList = (props: NavigationListPropsType) => {
 
         return (
           <NavigationListItem
-            key={ navigation.destination }
-            itemKey={ navigation.destination }
-            navigation={ navigation }
-            action={ () => props.onNavigate(navigation.destination!!) }
-            isActive={ props.destination === navigation.destination }/>
+            key={navigation.destination}
+            itemKey={navigation.destination}
+            navigation={navigation}
+            action={() => props.onNavigate(navigation.destination!!)}
+            isActive={props.destination === navigation.destination}/>
         )
 
       })
@@ -238,9 +238,9 @@ const NavigationList = (props: NavigationListPropsType) => {
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
   return (
     <TopNavigationList
-      destination={ props.currentDestination }
-      onNavigate={ props.onNavigate }
-      items={ destinations }/>
+      destination={props.currentDestination}
+      onNavigate={props.onNavigate}
+      items={destinations}/>
   )
 }
 
@@ -251,7 +251,7 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
     <Grid
       container
       direction="row">
-      { props.items.map((nav: NavigationItemType) => {
+      {props.items.map((nav: NavigationItemType) => {
         if (!canRead && nav.destination === Destination.ASSETS)
           return <></>;
         if (!canManageUsers && nav.destination === Destination.USERS)
@@ -259,11 +259,11 @@ export const TopNavigationList = (props: NavigationListPropsType) => {
 
         return (
           <TopNavigationItem
-            key={ nav.destination }
-            itemKey={ nav.destination }
-            navigation={ nav }
-            action={ () => props.onNavigate(nav.destination!!) }
-            isActive={ props.destination === nav.destination }/>
+            key={nav.destination}
+            itemKey={nav.destination}
+            navigation={nav}
+            action={() => props.onNavigate(nav.destination!!)}
+            isActive={props.destination === nav.destination}/>
         )
       })
       }
@@ -284,9 +284,9 @@ export const TopNavigationItem = (props: NavigationItemPropsType) => {
         fontSize: '1em',
         color: (theme) => props.isActive ? theme.palette.primary.main : theme.palette.text.secondary
       }}
-      key={ props.itemKey }
-      onClick={ props.action }>
-      { t(props.navigation.title) }
+      key={props.itemKey}
+      onClick={props.action}>
+      {t(props.navigation.title)}
     </Button>
   );
 }

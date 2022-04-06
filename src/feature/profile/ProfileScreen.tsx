@@ -67,30 +67,30 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   ];
 
   return (
-    <Box className={ classes.root }>
+    <Box className={classes.root}>
       <AdaptiveHeader
         title={t("navigation.profile")}
         onDrawerTriggered={props.onDrawerToggle}/>
       <input
-        ref={ fileInput }
+        ref={fileInput}
         type="file"
         accept="image/*"
         hidden/>
 
-      { status === AuthStatus.FETCHED
+      {status === AuthStatus.FETCHED
         ?
-        <div className={ classes.wrapper }>
+        <div className={classes.wrapper}>
           <Grid
             container
-            direction={ isMobile ? "column" : "row" }
+            direction={isMobile ? "column" : "row"}
             alignItems="center"
             justifyContent="center"
-            spacing={ 2 }>
+            spacing={2}>
             <Grid
               container
               direction="row"
               item
-              sm={ 6 }
+              sm={6}
               alignItems="center"
               justifyContent="center">
               <Grid
@@ -98,12 +98,12 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 item
                 alignItems="center"
                 justifyContent="center">
-                { user?.imageUrl
+                {user?.imageUrl
                   ? <LazyLoadImage
-                    className={ classes.avatar }
-                    alt={ t("info.profile_image") }
-                    src={ user?.imageUrl }/>
-                  : <Avatar className={ classes.avatar }/>
+                    className={classes.avatar}
+                    alt={t("info.profile_image")}
+                    src={user?.imageUrl}/>
+                  : <Avatar className={classes.avatar}/>
                 }
               </Grid>
               <Grid
@@ -114,7 +114,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 <Typography
                   align="center"
                   variant="h5">
-                  { t("template.full_name", { first: user?.firstName, last: user?.lastName }) }
+                  {t("template.full_name", { first: user?.firstName, last: user?.lastName })}
                 </Typography>
               </Grid>
               <Grid
@@ -124,37 +124,37 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 justifyContent="center">
                 <Typography
                   align="center"
-                  variant="body1">{ user?.email }</Typography>
+                  variant="body1">{user?.email}</Typography>
               </Grid>
             </Grid>
             <Grid
               container
               item
-              sm={ 6 }
+              sm={6}
               alignItems="center"
               justifyContent="flex-start">
-              <ProfileInfoList user={ user }/>
-              <ProfileActionList actions={ actions }/>
+              <ProfileInfoList user={user}/>
+              <ProfileActionList actions={actions}/>
             </Grid>
           </Grid>
         </div>
         : <LinearProgress/>
       }
-      { changeName &&
+      {changeName &&
         <ChangeNamePrompt
-          isOpen={ changeName }
-          user={ user }
-          onDismiss={ onChangeNameDismiss }/>
+          isOpen={changeName}
+          user={user}
+          onDismiss={onChangeNameDismiss}/>
       }
-      { changePassword &&
+      {changePassword &&
         <ChangePasswordPrompt
-          isOpen={ changePassword }
-          onDismiss={ onChangePasswordDismiss }/>
+          isOpen={changePassword}
+          onDismiss={onChangePasswordDismiss}/>
       }
-      { requestReset &&
+      {requestReset &&
         <RequestResetPrompt
-          isOpen={ requestReset }
-          onDismiss={ onResetPasswordDismiss }/>
+          isOpen={requestReset}
+          onDismiss={onResetPasswordDismiss}/>
       }
     </Box>
   );

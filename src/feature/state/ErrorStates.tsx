@@ -46,9 +46,9 @@ export const ErrorNoPermissionState = () => {
 
   return (
     <EmptyStateComponent
-      icon={ ErrorOutlineRounded }
-      title={ t("error.no_permissions_header") }
-      subtitle={ t("error.no_permissions_summary_read") }/>
+      icon={ErrorOutlineRounded}
+      title={t("error.no_permissions_header")}
+      subtitle={t("error.no_permissions_summary_read")}/>
   );
 }
 
@@ -58,24 +58,24 @@ export const ErrorNotFoundState = () => {
   const { t } = useTranslation();
 
   return (
-    <Box className={ classes.root }>
-      <Box className={ classes.wrapper }>
+    <Box className={classes.root}>
+      <Box className={classes.wrapper}>
         <Box>
-          <Logo className={ classes.image }/>
+          <Logo className={classes.image}/>
         </Box>
-        <Box sx={ { mx: 4 } }>
-          <Typography variant="h2">{ t("error.not_found_header") }</Typography>
-          <Typography variant="h6">{ t("error.not_found_summary") }</Typography>
+        <Box sx={{ mx: 4 }}>
+          <Typography variant="h2">{t("error.not_found_header")}</Typography>
+          <Typography variant="h6">{t("error.not_found_summary")}</Typography>
 
-          <Box className={ classes.actionWrapper }>
-            <Typography variant="body1">{ t("error.not_found_info") }</Typography>
+          <Box className={classes.actionWrapper}>
+            <Typography variant="body1">{t("error.not_found_info")}</Typography>
             <Button
-              sx={ { mt: theme.spacing(4), mb: theme.spacing(6) } }
+              sx={{ mt: theme.spacing(4), mb: theme.spacing(6) }}
               variant="outlined"
               color="primary"
-              endIcon={ <ChevronRightRounded/> }
-              onClick={ () => history.push('/') }>
-              { t("button.go_to_home") }
+              endIcon={<ChevronRightRounded/>}
+              onClick={() => history.push('/')}>
+              {t("button.go_to_home")}
             </Button>
           </Box>
         </Box>

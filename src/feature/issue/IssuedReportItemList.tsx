@@ -9,7 +9,7 @@ type IssuedReportItemListProps = {
 const IssuedReportItemList = (props: IssuedReportItemListProps) => {
   return (
     <>
-      { props.items && props.items.map((item: IssuedReportItem) => {
+      {props.items && props.items.map((item: IssuedReportItem) => {
         return (
           <IssuedReportItemListItem
             item={item}

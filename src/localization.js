@@ -307,6 +307,7 @@ i18n.use(initReactI18next)
     interpolation: {
       escapeValue: false
     }
-  }).then(() => {});
+  }).then(() => {
+});
 
 export default i18n;

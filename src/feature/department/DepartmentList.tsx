@@ -51,31 +51,31 @@ const DepartmentList = (props: DepartmentListProps) => {
 
   return (
     <>
-      { props.departments.length > 0
-        ? <List className={ classes.root }>
-            {
-              props.departments.map((department: Department) => {
-                return (
-                  <DepartmentItem
-                    key={ department.departmentId }
-                    department={ department }
-                    onItemSelect={ props.onItemSelect }
-                    onItemRemove={ onRemoveInvoke }/>
-                )
-              })
-            }
-          </List>
+      {props.departments.length > 0
+        ? <List className={classes.root}>
+          {
+            props.departments.map((department: Department) => {
+              return (
+                <DepartmentItem
+                  key={department.departmentId}
+                  department={department}
+                  onItemSelect={props.onItemSelect}
+                  onItemRemove={onRemoveInvoke}/>
+              )
+            })
+          }
+        </List>
         : <EmptyStateComponent
-          icon={ DomainOutlined }
-          title={ t("empty.department") }
-          subtitle={ t("empty.department_summary") }/>
+          icon={DomainOutlined}
+          title={t("empty.department")}
+          subtitle={t("empty.department_summary")}/>
       }
       <ConfirmationDialog
-        isOpen={ department !== undefined }
+        isOpen={department !== undefined}
         title="dialog.department_remove"
         summary="dialog.department_remove_summary"
-        onDismiss={ onRemoveDismiss }
-        onConfirm={ onDepartmentRemove }/>
+        onDismiss={onRemoveDismiss}
+        onConfirm={onDepartmentRemove}/>
     </>
   );
 }
@@ -93,9 +93,9 @@ const DepartmentItem = (props: DepartmentItemProps) => {
   const deleteButton = (
     <IconButton
       edge="end"
-      disabled={ props.department.count > 0 }
-      aria-label={ t("delete") }
-      onClick={ () => props.onItemRemove(props.department) }>
+      disabled={props.department.count > 0}
+      aria-label={t("delete")}
+      onClick={() => props.onItemRemove(props.department)}>
       <DeleteOutlineRounded/>
     </IconButton>
   );
@@ -103,20 +103,20 @@ const DepartmentItem = (props: DepartmentItemProps) => {
   return (
     <ListItem
       button
-      key={ props.department.departmentId }
-      onClick={ () => props.onItemSelect(props.department) }>
+      key={props.department.departmentId}
+      onClick={() => props.onItemSelect(props.department)}>
       <ListItemText
-        primary={ props.department.name }
-        secondary={ props.department.manager?.name }/>
-      { canDelete &&
+        primary={props.department.name}
+        secondary={props.department.manager?.name}/>
+      {canDelete &&
         <ListItemSecondaryAction>
-            { props.department.count > 0
-              ? <Tooltip title={ <>{ t("info.department_count_not_zero") }</> }>
-                <span>{ deleteButton }</span>
-              </Tooltip>
-              : <>{ deleteButton }</>
-            }
-          </ListItemSecondaryAction>
+          {props.department.count > 0
+            ? <Tooltip title={<>{t("info.department_count_not_zero")}</>}>
+              <span>{deleteButton}</span>
+            </Tooltip>
+            : <>{deleteButton}</>
+          }
+        </ListItemSecondaryAction>
       }
     </ListItem>
   )

@@ -58,19 +58,19 @@ type InnerComponentPropsType = {
 const InnerComponent = (props: InnerComponentPropsType) => {
   switch (props.destination) {
     case Destination.ASSETS:
-      return <AssetScreen onDrawerToggle={ props.onDrawerToggle }/>
+      return <AssetScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.INVENTORY:
-      return <InventoryReportScreen onDrawerToggle={ props.onDrawerToggle }/>
+      return <InventoryReportScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.ISSUED:
       return <IssuedReportScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.STOCK_CARD:
       return <StockCardScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.USERS:
-      return <UserScreen onDrawerToggle={ props.onDrawerToggle }/>
+      return <UserScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.PROFILE:
-      return <ProfileScreen onDrawerToggle={ props.onDrawerToggle }/>
+      return <ProfileScreen onDrawerToggle={props.onDrawerToggle}/>
     case Destination.SETTINGS:
-      return <SettingsScreen onDrawerToggle={ props.onDrawerToggle }/>
+      return <SettingsScreen onDrawerToggle={props.onDrawerToggle}/>
     default:
       return <ErrorNotFoundState/>
   }
@@ -188,146 +188,144 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 
   const signOutDialog = (
     <Dialog
-      open={ triggerConfirmSignOut }
-      fullWidth={ true }
+      open={triggerConfirmSignOut}
+      fullWidth={true}
       maxWidth="xs"
-      onClose={ () => setTriggerConfirmSignOut(false) }>
-      <DialogTitle>{ t("dialog.sign_out") }</DialogTitle>
+      onClose={() => setTriggerConfirmSignOut(false)}>
+      <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{ t("dialog.sign_out_message") }</DialogContentText>
+        <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           color="primary"
-          onClick={ () => setTriggerConfirmSignOut(false) }>{ t("button.cancel") }</Button>
+          onClick={() => setTriggerConfirmSignOut(false)}>{t("button.cancel")}</Button>
         <Button
           color="primary"
-          onClick={ onTriggerSignOut }>{ t("button.continue") }</Button>
+          onClick={onTriggerSignOut}>{t("button.continue")}</Button>
       </DialogActions>
     </Dialog>
   )
 
   const drawerItems = (
     <NavigationComponent
-      onNavigate={ onNavigateThenDismiss }
-      currentDestination={ props.currentDestination }/>
+      onNavigate={onNavigateThenDismiss}
+      currentDestination={props.currentDestination}/>
   )
 
   return (
-    <Box className={ classes.root }>
-      <nav className={ classes.nav }>
+    <Box className={classes.root}>
+      <nav className={classes.nav}>
         <Hidden
           lgUp
           implementation="css">
           <Drawer
             variant="temporary"
-            anchor={ theme.direction === "rtl" ? 'right' : 'left' }
-            open={ drawerOpen }
-            onClose={ onToggleDrawerState }
-            classes={ {
+            anchor={theme.direction === "rtl" ? 'right' : 'left'}
+            open={drawerOpen}
+            onClose={onToggleDrawerState}
+            classes={{
               paper: classes.drawerPaper,
-            } }
-            ModalProps={ {
+            }}
+            ModalProps={{
               keepMounted: true,
-            } }>
-            { drawerItems }
+            }}>
+            {drawerItems}
           </Drawer>
         </Hidden>
         <Hidden lgDown>
-          <AppBar
-            color='inherit'
-            elevation={ 2 }>
+          <AppBar color="inherit" elevation={1}>
             <Toolbar>
               <Box
-                component={ Logo }
-                className={ classes.icon }
-                marginRight={ 3 }/>
+                component={Logo}
+                className={classes.icon}
+                marginRight={3}/>
               <Divider
                 variant="middle"
                 orientation="vertical"
                 flexItem
-                className={ classes.divider }/>
+                className={classes.divider}/>
               <Box
-                flexGrow={ 1 }
-                marginX={ 1 }>
+                flexGrow={1}
+                marginX={1}>
                 <TopNavigationComponent
-                  onNavigate={ onNavigateThenDismiss }
-                  currentDestination={ props.currentDestination }/>
+                  onNavigate={onNavigateThenDismiss}
+                  currentDestination={props.currentDestination}/>
               </Box>
               <Divider
                 variant="middle"
                 orientation="vertical"
                 flexItem
-                className={ classes.divider }/>
+                className={classes.divider}/>
               <Button
                 color="inherit"
-                ref={ anchorRef }
+                ref={anchorRef}
                 aria-haspopup="true"
-                onClick={ onTriggerMenu }
-                className={ classes.profile }
-                endIcon={ <ArrowDropDown/> }>
+                onClick={onTriggerMenu}
+                className={classes.profile}
+                endIcon={<ArrowDropDown/>}>
                 <Box
                   flexDirection="column"
                   textAlign="start">
                   <Typography
-                    className={ classes.profileName }
-                    variant="body2">{ user && user.firstName }</Typography>
+                    className={classes.profileName}
+                    variant="body2">{user && user.firstName}</Typography>
                   <Typography
-                    className={ classes.profileEmail }
-                    variant="caption">{ user && user.email }</Typography>
+                    className={classes.profileEmail}
+                    variant="caption">{user && user.email}</Typography>
                 </Box>
               </Button>
               <Popper
-                open={ menuOpen }
-                anchorEl={ anchorRef.current }
-                role={ undefined }
+                open={menuOpen}
+                anchorEl={anchorRef.current}
+                role={undefined}
                 transition
                 disablePortal>
-                { ({ TransitionProps, placement }) => (
+                {({ TransitionProps, placement }) => (
                   <Grow
-                    { ...TransitionProps }
-                    style={ {
+                    {...TransitionProps}
+                    style={{
                       transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
-                    } }>
-                    <Paper className={ classes.profileMenu }>
-                      <ClickAwayListener onClickAway={ onMenuDispose }>
+                    }}>
+                    <Paper className={classes.profileMenu}>
+                      <ClickAwayListener onClickAway={onMenuDispose}>
                         <MenuList id="navigation-menu">
                           <MenuItem
                             key="profile"
-                            onClick={ () => onNavigateThenDismiss(Destination.PROFILE) }>
+                            onClick={() => onNavigateThenDismiss(Destination.PROFILE)}>
                             <ListItemIcon><AccountCircleOutlined/></ListItemIcon>
-                            <ListItemText>{ t("navigation.profile") }</ListItemText>
+                            <ListItemText>{t("navigation.profile")}</ListItemText>
                           </MenuItem>
                           <MenuItem
                             key="settings"
-                            onClick={ () => onNavigateThenDismiss(Destination.SETTINGS) }>
+                            onClick={() => onNavigateThenDismiss(Destination.SETTINGS)}>
                             <ListItemIcon><SettingsOutlined/></ListItemIcon>
-                            <ListItemText>{ t('navigation.settings') }</ListItemText>
+                            <ListItemText>{t('navigation.settings')}</ListItemText>
                           </MenuItem>
                           <MenuItem
                             key="signOut"
-                            onClick={ () => setTriggerConfirmSignOut(true) }>
+                            onClick={() => setTriggerConfirmSignOut(true)}>
                             <ListItemIcon><ExitToAppRounded/></ListItemIcon>
-                            <ListItemText>{ t('button.sign_out') }</ListItemText>
+                            <ListItemText>{t('button.sign_out')}</ListItemText>
                           </MenuItem>
                         </MenuList>
                       </ClickAwayListener>
                     </Paper>
                   </Grow>
-                ) }
+                )}
               </Popper>
             </Toolbar>
           </AppBar>
         </Hidden>
       </nav>
-      <Box className={ classes.content }>
-        <Suspense fallback={ <ContentLoadingStateComponent/> }>
+      <Box className={classes.content}>
+        <Suspense fallback={<ContentLoadingStateComponent/>}>
           <InnerComponent
-            destination={ props.currentDestination }
-            onDrawerToggle={ onToggleDrawerState }/>
+            destination={props.currentDestination}
+            onDrawerToggle={onToggleDrawerState}/>
         </Suspense>
       </Box>
-      { signOutDialog }
+      {signOutDialog}
     </Box>
   );
 }
@@ -351,15 +349,15 @@ const RootComponent = () => {
     if (user !== undefined) {
       return (
         <SnackbarProvider
-          maxSnack={ 3 }
-          autoHideDuration={ 3000 }
-          anchorOrigin={ {
+          maxSnack={3}
+          autoHideDuration={3000}
+          anchorOrigin={{
             vertical: 'bottom',
             horizontal: isXSDeviceWidth ? 'center' : 'right'
-          } }>
+          }}>
           <RootContainerComponent
-            onNavigate={ onNavigate }
-            currentDestination={ destination }/>
+            onNavigate={onNavigate}
+            currentDestination={destination}/>
         </SnackbarProvider>
       )
     } else return <Redirect to="/auth"/>

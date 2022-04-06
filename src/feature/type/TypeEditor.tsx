@@ -58,38 +58,38 @@ const TypeEditor = (props: TypeEditorProps) => {
 
   return (
     <Dialog
-      fullWidth={ true }
+      fullWidth={true}
       maxWidth="xs"
-      open={ props.isOpen }
-      onClose={ props.onDismiss }>
-      <form onSubmit={ handleSubmit(onSubmit) }>
-        <DialogTitle>{ t("dialog.details_type") }</DialogTitle>
+      open={props.isOpen}
+      onClose={props.onDismiss}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>{t("dialog.details_type")}</DialogTitle>
         <DialogContent>
           <Container disableGutters>
             <TextField
-              disabled={ isWritePending }
+              disabled={isWritePending}
               autoFocus
               id="name"
               type="text"
-              label={ t("field.type_name") }
-              defaultValue={ props.type ? props.type.typeName : "" }
-              error={ errors.name }
-              helperText={ errors.name ? t(errors.name.message) : undefined }
-              { ...register("name", { required: "feedback.empty_type_name" }) } />
+              label={t("field.type_name")}
+              defaultValue={props.type ? props.type.typeName : ""}
+              error={errors.name}
+              helperText={errors.name ? t(errors.name.message) : undefined}
+              {...register("name", { required: "feedback.empty_type_name" })} />
           </Container>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            onClick={ props.onDismiss }
-            disabled={ isWritePending }>
-            { t("button.cancel") }
+            onClick={props.onDismiss}
+            disabled={isWritePending}>
+            {t("button.cancel")}
           </Button>
           <Button
             color="primary"
             type="submit"
-            disabled={ isWritePending }>
-            { t("button.save") }
+            disabled={isWritePending}>
+            {t("button.save")}
           </Button>
         </DialogActions>
       </form>

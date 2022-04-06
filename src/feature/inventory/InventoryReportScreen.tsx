@@ -1,4 +1,4 @@
-import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useReducer, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
 
 import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
-import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
 import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
@@ -39,7 +39,7 @@ import { ScreenProps } from "../shared/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
-import { Asset } from "../asset/Asset";
+import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -60,13 +60,13 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('inventoryDensity');
+  const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
   const [report, setReport] = useState<InventoryReport | undefined>(undefined);
-  const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
     query(collection(firestore, inventoryCollection), orderBy(fundCluster, "asc")), {
-      limit: 15
+      limit: limit
     }
   );
 
@@ -128,30 +128,30 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const pagination = () => {
     return (
       <DataGridPaginationController
-        canBack={ isStart }
-        canForward={ isEnd }
-        onBackward={ getPrev }
-        onForward={ getNext }
-        size={ size }
-        onPageSizeChanged={ setSize }/>
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
+        size={limit}
+        onPageSizeChanged={onLimitChanged}/>
     )
   }
 
   const dataGrid = (
     <DataGrid
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
         Pagination: pagination
-      } }
-      rows={ items }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={items}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      loading={ isLoading }
-      getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ onDataGridRowDoubleClicked }
+      loading={isLoading}
+      getRowId={(r) => r.inventoryReportId}
+      onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)
@@ -159,9 +159,9 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   )
 
   return (
-    <Box className={ classes.root }>
+    <Box className={classes.root}>
       <InstantSearch
-        searchClient={ Provider }
+        searchClient={Provider}
         indexName="inventories">
         <AdaptiveHeader
           title={t("navigation.inventories")}
@@ -169,27 +169,27 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
           onActionEvent={() => dispatch({ type: ActionType.CREATE })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        { canRead
+        {canRead
           ? <>
-              <Hidden smDown>
-                <Box className={ classes.wrapper }>
-                  { searchMode
-                    ? <InventoryReportDataGrid
-                        onItemSelect={ onDataGridRowDoubleClicked }
-                        onRemoveInvoke={ onRemoveInvoke }/>
-                    : dataGrid
-                  }
-                </Box>
-              </Hidden>
+            <Hidden smDown>
+              <Box className={classes.wrapper}>
+                {searchMode
+                  ? <InventoryReportDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                  : dataGrid
+                }
+              </Box>
+            </Hidden>
             <Hidden smUp>
-              { !isLoading
-                  ? items.length < 1
-                    ? <InventoryReportEmptyState/>
-                    : <InventoryReportList
-                        reports={items}
-                        onItemSelect={onInventoryReportSelected}
-                        onItemRemove={onRemoveInvoke}/>
-                  : <LinearProgress/>
+              {!isLoading
+                ? items.length < 1
+                  ? <InventoryReportEmptyState/>
+                  : <InventoryReportList
+                    reports={items}
+                    onItemSelect={onInventoryReportSelected}
+                    onItemRemove={onRemoveInvoke}/>
+                : <LinearProgress/>
               }
               <Fab
                 color="primary"
@@ -198,21 +198,21 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 <AddRounded/>
               </Fab>
             </Hidden>
-            </>
+          </>
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
       <InventoryReportEditor
-        isOpen={ state.isOpen }
-        isCreate={ state.isCreate }
-        report={ state.report }
-        onDismiss={ onInventoryEditorDismiss }/>
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        report={state.report}
+        onDismiss={onInventoryEditorDismiss}/>
       <ConfirmationDialog
-        isOpen={ report !== undefined }
+        isOpen={report !== undefined}
         title="dialog.inventory_remove"
         summary="dialog.inventory_remove_summary"
-        onConfirm={ onReportRemove }
-        onDismiss={ onRemoveDismiss }/>
+        onConfirm={onReportRemove}
+        onDismiss={onRemoveDismiss}/>
     </Box>
   )
 }
@@ -230,9 +230,9 @@ const InventoryReportEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={ Inventory2Outlined }
-      title={ t("empty.inventory_header") }
-      subtitle={ t("empty.inventory_summary") }/>
+      icon={Inventory2Outlined}
+      title={t("empty.inventory_header")}
+      subtitle={t("empty.inventory_summary")}/>
   )
 }
 
@@ -275,17 +275,17 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   return (
     <DataGrid
       hideFooterPagination
-      components={ {
+      components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
-      } }
-      rows={ props.hits }
-      columns={ columns }
-      density={ density }
+      }}
+      rows={props.hits}
+      columns={columns}
+      density={density}
       columnVisibilityModel={visibleColumns}
-      getRowId={ (r) => r.inventoryReportId }
-      onRowDoubleClick={ props.onItemSelect }
+      getRowId={(r) => r.inventoryReportId}
+      onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
         onVisibilityChange(newModel)

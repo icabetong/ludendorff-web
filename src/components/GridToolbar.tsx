@@ -18,16 +18,16 @@ const GridToolbar = () => {
 
   return (
     <GridToolbarContainer>
-      <Box flexGrow={ 8 } sx={ { mx: 2 } }>
+      <Box flexGrow={8} sx={{ mx: 2 }}>
         <GridToolbarColumnsButton/>
         <GridToolbarDensitySelector/>
-        { props && props.toolbar &&
+        {props && props.toolbar &&
           (props.toolbar as GridComponentProps).destinations &&
           (props.toolbar as GridComponentProps).destinations
         }
       </Box>
-      <Box sx={ { mx: 2 } }>
-        { props && props.toolbar &&
+      <Box sx={{ mx: 2 }}>
+        {props && props.toolbar &&
           (props.toolbar as GridComponentProps).endAction &&
           (props.toolbar as GridComponentProps).endAction
         }

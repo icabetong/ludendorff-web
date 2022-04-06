@@ -40,9 +40,9 @@ const ProfileInfoList = (props: ProfileInfoListProps) => {
 
   return (
     <>
-      <ListSubheader>{ t("information") }</ListSubheader>
-      <List className={ classes.container }>
-        { info.map((i) => <ProfileInfoItem info={ i }/>) }
+      <ListSubheader>{t("information")}</ListSubheader>
+      <List className={classes.container}>
+        {info.map((i) => <ProfileInfoItem info={i}/>)}
       </List>
     </>
   )
@@ -58,7 +58,7 @@ const ProfileInfoItem = (props: ProfileInfoItemProps) => {
 
   return (
     <ListItem
-      key={ props.info.name }>
+      key={props.info.name}>
       <ListItemIcon>
         {
           React.createElement(props.info.icon, { className: classes.icon })
@@ -66,11 +66,11 @@ const ProfileInfoItem = (props: ProfileInfoItemProps) => {
       </ListItemIcon>
       <ListItemText
         primary={
-          <Typography variant="overline">{ t(props.info.name) }</Typography>
+          <Typography variant="overline">{t(props.info.name)}</Typography>
         }
         secondary={
           <Typography
-            variant="subtitle2">{ props.info.info === undefined ? t("unknown") : props.info.info }</Typography>
+            variant="subtitle2">{props.info.info === undefined ? t("unknown") : props.info.info}</Typography>
         }/>
     </ListItem>
   )

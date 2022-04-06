@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormLabel,
   ListItem,
   TextField
@@ -83,6 +84,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
               <ListItem button onClick={onPickerInvoke}>
                 {asset?.description ? asset?.description : t("button.not_set")}
               </ListItem>
+              <Divider sx={{ my: 2 }}/>
               <TextField
                 autoFocus
                 id="quantityIssued"
@@ -92,7 +94,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
                 error={errors.quantityIssued !== undefined}
                 helperText={errors.quantityIssued?.message && t(errors.quantityIssued?.message)}
                 disabled={!asset}
-                {...register('quantityIssued', { required: "feedback.empty_quantity_issued"})}/>
+                {...register('quantityIssued', { required: "feedback.empty_quantity_issued" })}/>
               <TextField
                 id="responsibilityCenter"
                 type="text"
@@ -101,7 +103,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
                 error={errors.responsibilityCenter !== undefined}
                 helperText={errors.responsibilityCenter?.message && t(errors.responsibilityCenter?.message)}
                 disabled={!asset}
-                {...register('responsibilityCenter', { required: 'feedback.empty_responsibility_center'})}/>
+                {...register('responsibilityCenter', { required: 'feedback.empty_responsibility_center' })}/>
             </Container>
           </DialogContent>
           <DialogActions>

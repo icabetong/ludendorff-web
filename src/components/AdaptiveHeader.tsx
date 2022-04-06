@@ -82,14 +82,14 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
       <Toolbar>
         <IconButton
           edge="start"
-          onClick={ onDrawerTriggered }
-          aria-label={ t("button.show_drawer") }
+          onClick={onDrawerTriggered}
+          aria-label={t("button.show_drawer")}
           size="large">
           <MenuRounded/>
         </IconButton>
         <Hidden lgDown>
-          <Typography variant="h5" sx={{flexGrow: 1}}>
-            { title }
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>
+            {title}
           </Typography>
         </Hidden>
         <Hidden lgUp>
@@ -98,39 +98,39 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
             noWrap
             component="div"
             sx={{ flexGrow: 1, display: 'block' }}>
-            { title }
+            {title}
           </Typography>
         </Hidden>
-        { smBreakpoint && onSearchFocusChanged &&
+        {smBreakpoint && onSearchFocusChanged &&
           <SearchBoxInputBase onFocusChanged={onSearchFocusChanged}/>
         }
-        { actionText && onActionEvent &&
+        { smBreakpoint && actionText && onActionEvent &&
           <Button
             variant="contained"
             startIcon={mdBreakpoint ? <AddRounded/> : undefined}
             onClick={onActionEvent}>
-            { mdBreakpoint ? actionText : <AddRounded/>}
+            {mdBreakpoint ? actionText : <AddRounded/>}
           </Button>
         }
-        { menuItems &&
+        {menuItems &&
           <>
             <IconButton
               size="large"
               edge="end"
               aria-haspopup="true"
-              aria-label={ t("button.show_menu") }
-              onClick={ (e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget) }>
+              aria-label={t("button.show_menu")}
+              onClick={(e: React.MouseEvent<HTMLElement>) => setAnchor(e.currentTarget)}>
               <MoreVert/>
             </IconButton>
             <Menu
               keepMounted
-              anchorEl={ anchor }
-              anchorOrigin={ anchorProperties }
-              transformOrigin={ anchorProperties }
-              open={ isOpen }
-              onClose={ () => setAnchor(null) }
-              onMouseLeave={ () => setAnchor(null) }>
-              { props.menuItems &&
+              anchorEl={anchor}
+              anchorOrigin={anchorProperties}
+              transformOrigin={anchorProperties}
+              open={isOpen}
+              onClose={() => setAnchor(null)}
+              onMouseLeave={() => setAnchor(null)}>
+              {props.menuItems &&
                 props.menuItems.map((menuItem) => {
                   return menuItem
                 })
@@ -156,22 +156,22 @@ const LargeScreenHeader = (props: LargeScreenHeaderProps) => {
         mx: 3,
         pt: 4
       }}>
-      <Box flexGrow={ 3 }>
-        <Typography variant="h4">{ title }</Typography>
+      <Box flexGrow={3}>
+        <Typography variant="h4">{title}</Typography>
       </Box>
-      { onSearchFocusChanged &&
-        <Box sx={ { mx: 2 } }>
-          <SearchBox onFocusChanged={ props.onSearchFocusChanged }/>
+      {onSearchFocusChanged &&
+        <Box sx={{ mx: 2 }}>
+          <SearchBox onFocusChanged={props.onSearchFocusChanged}/>
         </Box>
       }
-      { actionText && onActionEvent &&
+      {actionText && onActionEvent &&
         <Box>
           <Button
             variant="contained"
             color="primary"
-            startIcon={ <AddRounded/> }
-            onClick={ onActionEvent }>
-            { actionText }
+            startIcon={<AddRounded/>}
+            onClick={onActionEvent}>
+            {actionText}
           </Button>
         </Box>
       }

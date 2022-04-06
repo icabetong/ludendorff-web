@@ -29,19 +29,19 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
       direction="column"
       alignItems="center"
       justifyContent="center"
-      className={ classes.root }>
+      className={classes.root}>
       <Grid item>
-        { React.createElement(props.icon, { fontSize: "large" }) }
+        {React.createElement(props.icon, { fontSize: "large" })}
       </Grid>
       <Grid item>
         <Typography
           variant="h6"
-          className={ classes.text }>{ props.title }</Typography>
+          className={classes.text}>{props.title}</Typography>
       </Grid>
       <Grid item>
         <Typography
           variant="subtitle1"
-          className={ classes.text }>{ props.subtitle }</Typography>
+          className={classes.text}>{props.subtitle}</Typography>
       </Grid>
     </Grid>
   )
