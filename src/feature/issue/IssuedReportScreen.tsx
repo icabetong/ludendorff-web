@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type IssuedReportScreenProps = ScreenProps & {}
+type IssuedReportScreenProps = ScreenProps
 const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();

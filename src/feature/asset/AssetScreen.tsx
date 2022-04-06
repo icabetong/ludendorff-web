@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type AssetScreenProps = ScreenProps & {}
+type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();

@@ -10,12 +10,12 @@ import {
   Toolbar,
   Typography,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@mui/material";
-import { SearchBox } from "./Search";
 import { AddRounded, MenuRounded, MoreVert } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
+import { SearchBox, SearchBoxInputBase } from "./Search";
 
 const useStyles = makeStyles((theme: Theme) => ({
   appBar: {
@@ -24,6 +24,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 type AdaptiveHeaderProps = CoreHeaderProps & MediumScreenHeaderProps & LargeScreenHeaderProps;
+type CoreHeaderProps = {
+  title?: string,
+  actionText?: string,
+  onActionEvent?: React.MouseEventHandler,
+  onSearchFocusChanged?: (hasFocus: boolean) => void,
+}
+type MediumScreenHeaderProps = CoreHeaderProps & {
+  menuItems?: JSX.Element[],
+  onDrawerTriggered?: () => void,
+}
+type LargeScreenHeaderProps = CoreHeaderProps
+
 const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
   const { title, menuItems, actionText, onActionEvent, onDrawerTriggered, onSearchFocusChanged } = props;
 
@@ -42,29 +54,21 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
           menuItems={menuItems}
           actionText={actionText}
           onActionEvent={onActionEvent}
-          onDrawerTriggered={onDrawerTriggered}/>
+          onDrawerTriggered={onDrawerTriggered}
+          onSearchFocusChanged={onSearchFocusChanged}/>
       </Hidden>
     </>
   )
 }
 
-type CoreHeaderProps = {
-  title?: string,
-  actionText?: string,
-  onActionEvent?: React.MouseEventHandler,
-}
-
-type MediumScreenHeaderProps = CoreHeaderProps & {
-  menuItems?: JSX.Element[],
-  onDrawerTriggered?: () => void,
-}
 
 const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.up('sm'));
-  const { title, actionText, onActionEvent, menuItems, onDrawerTriggered } = props;
+  const mdBreakpoint = useMediaQuery(theme.breakpoints.up('md'));
+  const { title, actionText, onActionEvent, menuItems, onDrawerTriggered, onSearchFocusChanged } = props;
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const isOpen = Boolean(anchor);
   const anchorProperties = { vertical: 'top', horizontal: 'right' } as const
@@ -89,16 +93,23 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
           </Typography>
         </Hidden>
         <Hidden lgUp>
-          <Typography variant="h6" sx={{flexGrow: 1}}>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: 'block' }}>
             { title }
           </Typography>
         </Hidden>
-        { smBreakpoint && actionText && onActionEvent &&
+        { smBreakpoint && onSearchFocusChanged &&
+          <SearchBoxInputBase onFocusChanged={onSearchFocusChanged}/>
+        }
+        { actionText && onActionEvent &&
           <Button
             variant="contained"
-            startIcon={<AddRounded/>}
+            startIcon={mdBreakpoint ? <AddRounded/> : undefined}
             onClick={onActionEvent}>
-            {actionText}
+            { mdBreakpoint ? actionText : <AddRounded/>}
           </Button>
         }
         { menuItems &&
@@ -132,10 +143,6 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
   )
 }
 
-type LargeScreenHeaderProps = CoreHeaderProps & {
-  onSearchFocusChanged?: (hasFocus: boolean) => void,
-}
-
 const LargeScreenHeader = (props: LargeScreenHeaderProps) => {
   const { title, actionText, onActionEvent, onSearchFocusChanged } = props;
 
@@ -154,7 +161,7 @@ const LargeScreenHeader = (props: LargeScreenHeaderProps) => {
       </Box>
       { onSearchFocusChanged &&
         <Box sx={ { mx: 2 } }>
-          <SearchBox onFocusChanged={ onSearchFocusChanged }/>
+          <SearchBox onFocusChanged={ props.onSearchFocusChanged }/>
         </Box>
       }
       { actionText && onActionEvent &&

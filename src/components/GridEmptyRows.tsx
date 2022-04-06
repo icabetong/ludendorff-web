@@ -1,4 +1,5 @@
 import { GridOverlay } from "@mui/x-data-grid";
+import React from "react";
 
 type GridEmptyRowsProps = {
   children?: JSX.Element | React.ReactNode

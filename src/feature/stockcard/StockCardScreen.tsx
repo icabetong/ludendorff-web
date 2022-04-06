@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type StockCardScreenProps = ScreenProps & {}
+type StockCardScreenProps = ScreenProps
 const StockCardScreen = (props: StockCardScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();

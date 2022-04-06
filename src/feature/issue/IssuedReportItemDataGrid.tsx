@@ -37,7 +37,7 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
 
   const columns = [
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     { field: quantityIssued, headerName: t("field.quantity_issued"), flex: 1 },
     { field: unitCost, headerName: t("field.unit_cost"), flex: 1 },

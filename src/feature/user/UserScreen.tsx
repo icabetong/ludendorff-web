@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type UserScreenProps = ScreenProps & {}
+type UserScreenProps = ScreenProps
 const UserScreen = (props: UserScreenProps) => {
   const { t } = useTranslation();
   const classes = useStyles();

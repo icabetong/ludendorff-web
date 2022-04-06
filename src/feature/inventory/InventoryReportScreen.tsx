@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-type InventoryReportScreenProps = ScreenProps & {}
+type InventoryReportScreenProps = ScreenProps
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();

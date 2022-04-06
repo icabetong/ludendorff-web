@@ -71,7 +71,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
   const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: ActionType.UPDATE, payload: item });
   const onEditorCommit = (item: IssuedReportItem) => {
-    let currentItems = items;
+    console.log(item)
+    let currentItems = Array.from(items);
     let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);
     if (index < 0) {
       currentItems.push(item);

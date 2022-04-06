@@ -16,7 +16,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
   const { t } = useTranslation();
 
   return (
-    <AppBar sx={{ position: 'relative' }} elevation={1} enableColorOnDark>
+    <AppBar sx={{ position: 'relative' }} elevation={0} enableColorOnDark>
       <Toolbar>
         <IconButton edge="start" color="inherit" onClick={props.onDismiss} aria-label={t("button.close")}>
           <CloseRounded/>
