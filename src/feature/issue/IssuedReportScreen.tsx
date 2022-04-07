@@ -143,7 +143,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
       density={density}
       columnVisibilityModel={visibleColumns}
       loading={isLoading}
-      getRowId={(r) => r.inventoryReportId}
+      getRowId={(r) => r.issuedReportId}
       onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>

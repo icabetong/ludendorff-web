@@ -73,6 +73,9 @@ const resources = {
         issue_office: "Issue Office",
         balance_quantity: "Balance Quantity",
         balance_total_price: "Balance Total Price",
+        stock_card: "Stock Card",
+        item: "Item",
+        reorder_point: "Reorder Point"
       },
       placeholder: {
         none: "None",
@@ -128,6 +131,8 @@ const resources = {
         create_report: "Create Report",
         not_set: "Not Set",
         view_qr_code: "View QR Code",
+        generate_report: "Generate Report",
+        download: "Download",
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -264,6 +269,9 @@ const resources = {
         select_department: "Select Department",
         view_qr_code: "View QR-Code",
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
+        generate_stock_card: "Report Generation",
+        generate_stock_card_summary: "Stock Card Report has been generated, click the button below to save it.",
+        generate_stock_card_summary_fetching: "Preparing your stock card report, hold on for a minute..."
       },
       template: {
         full_name: "{{first}} {{last}}",

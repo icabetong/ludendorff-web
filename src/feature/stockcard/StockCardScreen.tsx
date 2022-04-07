@@ -1,19 +1,24 @@
 import makeStyles from "@mui/styles/makeStyles";
-import { Box, Fab, Hidden, IconButton, LinearProgress, Theme } from "@mui/material";
+import { Box, Button, Fab, Hidden, LinearProgress, Theme, IconButton, } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
-import { AddRounded, DeleteOutline, DeleteOutlineRounded, LocalAtmOutlined } from "@mui/icons-material";
+import {
+  AddRounded,
+  DeleteOutlineRounded,
+  DescriptionOutlined,
+  LocalAtmOutlined
+} from "@mui/icons-material";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { StockCard, StockCardRepository } from "./StockCard";
-import { DataGrid, GridActionsCellItem, GridCellParams, GridRowParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
-import { useReducer, useState } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
@@ -38,6 +43,7 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
+import StockCardReport from "./StockCardReport";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -59,8 +65,9 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
-  const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
+  const [report, setReport] = useState<StockCard | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
+  const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<StockCard>(
     query(collection(firestore, stockCardCollection), orderBy(entityName, "asc")), {
@@ -96,11 +103,18 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => onRemoveInvoke(params.row as StockCard)}/>
+          onClick={() => onRemoveInvoke(params.row as StockCard)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => onGenerateReport(params.row as StockCard)}/>
       ],
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
+  const onGenerateReport = (stockCard: StockCard) => setReport(stockCard)
+  const onGenerateReportDismiss = () => setReport(undefined)
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onStockCardEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -142,7 +156,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
       density={density}
       columnVisibilityModel={visibleColumns}
       loading={isLoading}
-      getRowId={(r) => r.inventoryReportId}
+      getRowId={(r) => r.stockCardId}
       onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(newModel) =>
@@ -203,6 +217,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         summary="dialog.stock_card_remove_summary"
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
+      <StockCardReport isOpen={Boolean(report)} stockCard={report} onDismiss={onGenerateReportDismiss}/>
     </Box>
   )
 }
@@ -221,23 +236,6 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
     { field: assetDescription, headerName: t("field.description"), flex: 1 },
     { field: unitPrice, headerName: t("field.unit_price"), flex: 1 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
-    {
-      field: "delete",
-      headerName: t("button.delete"),
-      flex: 0.4,
-      disableColumnMenu: true,
-      sortable: false,
-      renderCell: (params: GridCellParams) => {
-        return (
-          <IconButton
-            aria-label={t("button.delete")}
-            onClick={() => props.onRemoveInvoke(params.row as StockCard)}
-            size="large">
-            <DeleteOutline/>
-          </IconButton>
-        );
-      }
-    },
     {
       field: "actions",
       type: "actions",

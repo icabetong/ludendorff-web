@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^6.4.3",
     "@date-io/date-fns": "^1.3.13",
     "@date-io/moment": "^2.11.0",
     "@emotion/react": "^11.8.2",
@@ -13,6 +14,7 @@
     "@mui/material": "^5.5.3",
     "@mui/styles": "^5.5.3",
     "@mui/x-data-grid": "^5.7.0",
+    "@react-pdf/renderer": "^2.1.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -27,6 +29,8 @@
     "algoliasearch": "^4.11.0",
     "assert": "^2.0.0",
     "axios": "^0.21.4",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
     "clsx": "^1.1.1",
     "date-fns": "^2.28.0",
     "firebase": "^9.6.7",
@@ -35,6 +39,7 @@
     "jspdf": "^2.4.0",
     "jsqr": "^1.4.0",
     "notistack": "^2.0.3",
+    "process": "^0.11.10",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -42,11 +47,15 @@
     "react-i18next": "^11.13.0",
     "react-instantsearch-dom": "^6.15.0",
     "react-lazy-load-image-component": "^1.5.1",
+    "react-pdf": "^5.7.2",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",
+    "stream-browserify": "^3.0.0",
+    "styled-components": "^5.3.5",
     "typescript": "^4.4.4",
     "use-pagination-firestore": "^0.6.0",
+    "util": "^0.12.4",
     "web-vitals": "^1.1.2",
     "workbox-background-sync": "^5.1.4",
     "workbox-broadcast-update": "^5.1.4",
@@ -62,9 +71,9 @@
     "workbox-streams": "^5.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -88,8 +97,5 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.3.2",
     "file-loader": "^6.2.0"
-  },
-  "resolutions": {
-    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
   }
 }
