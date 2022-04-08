@@ -18,6 +18,7 @@ import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorC
 import { useState } from "react";
 import { Asset } from "../asset/Asset";
 import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -56,6 +57,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     { field: onHandCount, headerName: t("field.on_hand_count"), flex: 1 },
     { field: remarks, headerName: t("field.remarks"), flex: 1 },
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryReportItemColumns', columns);
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => {
     setHasChecked(Array.from(model).length > 0)
@@ -79,9 +81,11 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         columns={columns}
         rows={props.items}
         density={density}
+        columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockNumber}
         onSelectionModelChange={onCheckedRowsChanged}
-        onStateChange={(v) => onDensityChanged(v.density.value)}/>
+        onStateChange={(v) => onDensityChanged(v.density.value)}
+        onColumnVisibilityModelChange={(v) => onVisibilityChange(v)}/>
     </Box>
   )
 }

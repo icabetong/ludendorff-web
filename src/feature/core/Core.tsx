@@ -10,12 +10,13 @@ import { ErrorNotFoundState } from "../state/ErrorStates";
 import { PreferenceContext } from "../settings/Preference";
 
 const white = '#ffffff';
-const teal300 = '#5eead4';
-const teal400 = '#2dd4bf';
-const teal500 = '#14b8a6';
-const teal600 = '#0d9488';
-const teal700 = '#0f766e';
-const teal800 = '#115e59';
+const main50 = '#e3f2fd';
+const main200 = '#90caf9';
+const main400 = '#42a5f5';
+const main500 = '#2196f3';
+const main600 = '#1e88e5';
+const main700 = '#1976d2';
+const main800 = '#1565c0';
 const gray50 = '#f9fafb';
 const gray100 = '#f3f4f6';
 const gray200 = '#e5e7eb';
@@ -35,15 +36,16 @@ const baseTheme = (mode: PaletteMode) => createTheme({
   palette: {
     mode: mode,
     primary: {
-      light: mode === 'dark' ? teal300 : teal400,
-      main: mode === 'dark' ? teal500 : teal600,
-      dark: mode === 'dark' ? teal700 : teal800,
+      light: mode === 'dark' ? main50 : main400,
+      main: mode === 'dark' ? main200 : main700,
+      dark: mode === 'dark' ? main400 : main800,
       contrastText: mode === 'dark' ? gray800 : white
     },
     secondary: {
-      light: mode === 'dark' ? teal300 : teal400,
-      main: mode === 'dark' ? teal500 : teal600,
-      dark: mode === 'dark' ? teal700 : teal800
+      light: mode === 'dark' ? main50 : main400,
+      main: mode === 'dark' ? main200 : main700,
+      dark: mode === 'dark' ? main400 : main800,
+      contrastText: mode === 'dark' ? gray800 : white
     },
     error: errorColors,
     background: {
@@ -198,13 +200,13 @@ export const getEditorDataGridTheme = (theme: Theme) => {
     '& .MuiDataGrid-toolbarContainer': {
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
-      backgroundColor: theme.palette.mode === 'dark' ? gray600 : gray200,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
       borderBottom: '1px',
       borderBottomStyle: 'solid',
       borderBottomColor: theme.palette.mode === 'dark' ? gray600 : gray300,
     },
     '& .MuiDataGrid-root': {
-      backgroundColor: 'transparent',
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
       borderColor: theme.palette.divider,
     },
     '& .MuiDataGrid-columnHeaders': {
@@ -212,6 +214,7 @@ export const getEditorDataGridTheme = (theme: Theme) => {
     },
     '& .MuiDataGrid-columnHeader': {
       fontWeight: 700,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
       '& .MuiDataGrid-columnSeparator': {
         color: theme.palette.divider
       },

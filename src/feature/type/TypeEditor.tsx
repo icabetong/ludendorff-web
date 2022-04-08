@@ -23,7 +23,6 @@ const TypeEditor = (props: TypeEditorProps) => {
   const [isWritePending, setWritePending] = React.useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  console.log(props.type)
   const onSubmit = (data: FormValues) => {
     setWritePending(true)
 

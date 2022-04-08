@@ -9,8 +9,8 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormLabel,
-  ListItem,
+  IconButton,
+  InputAdornment,
   TextField
 } from "@mui/material";
 import { Asset } from "../asset/Asset";
@@ -20,6 +20,7 @@ import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { assetCollection, assetStockNumber } from "../../shared/const";
+import { ExpandMoreRounded } from "@mui/icons-material";
 
 export type FormValues = {
   balancePerCard: number,
@@ -79,12 +80,19 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
           <DialogTitle>{t("dialog.details_inventory_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <FormLabel component="legend">{t("field.asset")}</FormLabel>
-              <ListItem
-                button
-                onClick={onPickerInvoke}>
-                {asset?.description ? asset?.description : t("button.not_set")}
-              </ListItem>
+              <TextField
+                value={asset?.description ? asset?.description: t("button.not_set")}
+                label={t("field.asset")}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={onPickerInvoke}>
+                        <ExpandMoreRounded/>
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}/>
               <Divider sx={{ my: 2 }}/>
               <TextField
                 autoFocus

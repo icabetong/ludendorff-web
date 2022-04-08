@@ -20,7 +20,7 @@ import {
   Theme,
   Typography,
   useMediaQuery,
-  useTheme, Zoom,
+  useTheme,
 } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { useSnackbar } from "notistack";
@@ -247,15 +247,15 @@ const UserEditor = (props: UserEditorProps) => {
                           <Controller
                             name="permissionRead"
                             control={control}
-                            render={({ field: { onChange, value, name, ref, } }) => (
+                            render={({ field: { onChange, name, ref, } }) => (
                               <Checkbox
                                 inputRef={ref}
                                 name={name}
                                 disabled={isWritePending}
-                                checked={props.user ? hasPermission(Permission.READ) : value}
-                                value={props.user ? hasPermission(Permission.READ) : value}
+                                defaultChecked={props.user ? hasPermission(Permission.READ) : false}
                                 onChange={onChange}/>
-                            )}/>
+                            )}
+                          />
                         }/>
                       <FormControlLabel
                         label={t("permission.write")}
@@ -263,15 +263,15 @@ const UserEditor = (props: UserEditorProps) => {
                           <Controller
                             name="permissionWrite"
                             control={control}
-                            render={({ field: { onChange, value, name, ref, } }) => (
+                            render={({ field: { onChange, name, ref, } }) => (
                               <Checkbox
                                 inputRef={ref}
                                 name={name}
                                 disabled={isWritePending}
-                                checked={props.user ? hasPermission(Permission.WRITE) : value}
-                                value={props.user ? hasPermission(Permission.WRITE) : value}
+                                defaultChecked={props.user ? hasPermission(Permission.WRITE) : false}
                                 onChange={onChange}/>
-                            )}/>
+                            )}
+                          />
                         }/>
                       <FormControlLabel
                         label={t("permission.delete")}
@@ -279,13 +279,12 @@ const UserEditor = (props: UserEditorProps) => {
                           <Controller
                             name="permissionDelete"
                             control={control}
-                            render={({ field: { onChange, value, name, ref, } }) => (
+                            render={({ field: { onChange, name, ref, } }) => (
                               <Checkbox
                                 inputRef={ref}
                                 name={name}
                                 disabled={isWritePending}
-                                checked={props.user ? hasPermission(Permission.DELETE) : value}
-                                value={props.user ? hasPermission(Permission.DELETE) : value}
+                                defaultChecked={props.user ? hasPermission(Permission.DELETE) : false}
                                 onChange={onChange}/>
                             )}/>
                         }/>
@@ -295,13 +294,12 @@ const UserEditor = (props: UserEditorProps) => {
                           <Controller
                             name="permissionManageUsers"
                             control={control}
-                            render={({ field: { onChange, value, name, ref, } }) => (
+                            render={({ field: { onChange, name, ref, } }) => (
                               <Checkbox
                                 inputRef={ref}
                                 name={name}
                                 disabled={isWritePending}
-                                checked={props.user ? hasPermission(Permission.MANAGE_USERS) : value}
-                                value={props.user ? hasPermission(Permission.MANAGE_USERS) : value}
+                                defaultChecked={props.user ? hasPermission(Permission.MANAGE_USERS) : false}
                                 onChange={onChange}/>
                             )}/>
                         }/>
@@ -311,13 +309,12 @@ const UserEditor = (props: UserEditorProps) => {
                           <Controller
                             name="permissionAdmin"
                             control={control}
-                            render={({ field: { onChange, value, name, ref, } }) => (
+                            render={({ field: { onChange, name, ref, } }) => (
                               <Checkbox
                                 inputRef={ref}
                                 name={name}
                                 disabled={isWritePending}
-                                checked={props.user ? hasPermission(Permission.ADMINISTRATIVE) : value}
-                                value={props.user ? hasPermission(Permission.ADMINISTRATIVE) : value}
+                                defaultChecked={props.user ? hasPermission(Permission.ADMINISTRATIVE) : false}
                                 onChange={(e) => {
                                   setChecked(e.target.checked);
                                   onChange(e);

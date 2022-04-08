@@ -22,7 +22,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
   const { t } = useTranslation();
 
   return (
-    <AppBar sx={{ position: 'relative' }} elevation={0} enableColorOnDark>
+    <AppBar sx={{ position: 'relative' }} elevation={0} color='transparent'>
       <Toolbar>
         <IconButton edge="start" color="inherit" onClick={props.onDismiss} aria-label={t("button.close")}>
           <CloseRounded/>
@@ -31,9 +31,9 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           {props.title}
         </Typography>
         <Button
-          color="inherit"
-          variant="outlined"
           autoFocus
+          color="primary"
+          variant="contained"
           size="large"
           onClick={props.onConfirm}
           type="submit"
@@ -55,8 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: '1',
     display: 'flex',
     flexDirection: 'column',
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.background.default
+    padding: theme.spacing(2)
   }
 }));
 

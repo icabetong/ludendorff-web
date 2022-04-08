@@ -184,6 +184,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 {searchMode
                   ? <StockCardDataGrid
                       onItemSelect={onDataGridRowDoubleClicked}
+                      onGenerateReport={onGenerateReport}
                       onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
@@ -230,6 +231,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
 
 type StockCardDataGridProps = HitsProvided<StockCard> & {
   onItemSelect: (params: GridRowParams) => void,
+  onGenerateReport: (stockCard: StockCard) => void,
   onRemoveInvoke: (stockCard: StockCard) => void,
 }
 const StockCardDataGridCore = (props: StockCardDataGridProps) => {
@@ -239,7 +241,7 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
   const columns = [
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
     { field: unitPrice, headerName: t("field.unit_price"), flex: 1 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     {
@@ -250,7 +252,12 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => props.onRemoveInvoke(params.row as StockCard)}/>
+          onClick={() => props.onRemoveInvoke(params.row as StockCard)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => props.onGenerateReport(params.row as StockCard)}/>
       ],
     }
   ];

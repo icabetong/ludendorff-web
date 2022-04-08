@@ -12,16 +12,15 @@ import {
   Button,
   Dialog, Divider,
   FormLabel,
-  Grid,
+  Grid, IconButton, InputAdornment,
   List,
-  ListItem,
   TextField,
   Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
 import StockCardEntryList from "./StockCardEntryList";
-import { AddRounded } from "@mui/icons-material";
+import { AddRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./StockCardEntryEditorReducer";
 import { StockCardEntryEditor } from "./StockCardEntryEditor";
 import AssetPicker from "../asset/AssetPicker";
@@ -160,12 +159,19 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                     {...register("entityName", { required: "feedback.empty_entity_name" })}/>
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
-                  <FormLabel component="legend">
-                    <Typography variant="body2">{t("field.asset")}</Typography>
-                  </FormLabel>
-                  <ListItem button onClick={onPickerInvoke}>
-                    {asset?.description ? asset?.description : t("button.not_set")}
-                  </ListItem>
+                  <TextField
+                    value={asset?.description ? asset?.description : t("button.not_set")}
+                    label={t("field.asset")}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={onPickerInvoke}>
+                            <ExpandMoreRounded/>
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}/>
                 </Grid>
               </Grid>
             </Box>

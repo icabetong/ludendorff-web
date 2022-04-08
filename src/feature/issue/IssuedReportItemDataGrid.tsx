@@ -15,6 +15,7 @@ import {
   unitCost,
 } from "../../shared/const";
 import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -42,7 +43,8 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
     { field: quantityIssued, headerName: t("field.quantity_issued"), flex: 1 },
     { field: unitCost, headerName: t("field.unit_cost"), flex: 1 },
     { field: responsibilityCenter, headerName: t("field.responsibility_center"), flex: 1 },
-  ]
+  ];
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedReportItemColumns', columns);
 
   const onCheckedRowChanged = (model: GridSelectionModel) => {
     setHasChecked(Array.from(model).length > 0)
@@ -65,9 +67,11 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
         columns={columns}
         rows={props.items}
         density={density}
+        columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockNumber}
         onSelectionModelChange={onCheckedRowChanged}
-        onStateChange={(v) => onDensityChanged(v.density.value)}/>
+        onStateChange={(v) => onDensityChanged(v.density.value)}
+        onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
     </Box>
   )
 }

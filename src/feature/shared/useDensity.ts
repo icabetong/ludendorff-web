@@ -8,20 +8,28 @@ type UseDensityValue = {
 }
 const useDensity = (key: string) => {
   const preferences = usePreferences();
-  const [density, setDensity] = useState<GridDensity | string>('standard');
+  const [density, setDensity] = useState<GridDensity | string>(() => {
+    let returned = localStorage.getItem(key);
+    return returned ? returned : 'standard'
+  });
 
   useEffect(() => {
-    let globalDensity = localStorage.getItem('globalDensity');
-    let localDensity = localStorage.getItem(key);
-    setDensity(localDensity ? localDensity : globalDensity ? globalDensity : 'standard');
-  }, [key]);
+    let componentDensity = localStorage.getItem(key);
 
-  const onDensityChanged = (density: GridDensity | string) => {
-    setDensity(density);
-    if (density === preferences.density) {
+    if (componentDensity) {
+      setDensity(componentDensity)
+    } else if (preferences.density) {
+      setDensity(preferences.density)
+    } else {
+      setDensity('standard')
+    }
+  }, [key, preferences.density]);
+
+  const onDensityChanged = (gridDensity: GridDensity | string) => {
+    if (gridDensity === preferences.density) {
       localStorage.removeItem(key);
     } else {
-      localStorage.setItem(key, density);
+      localStorage.setItem(key, gridDensity);
     }
   }
 

@@ -18,6 +18,7 @@ import {
 } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
 import useDensity from "../shared/useDensity";
+import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -55,6 +56,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
     { field: balanceQuantity, headerName: t("field.balance_quantity"), flex: 1 },
     { field: balanceTotalPrice, headerName: t("field.balance_total_price"), flex: 1 }
   ]
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardEntriesColumns', columns);
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => {
     setHasChecked(Array.from(model).length > 0)
@@ -77,9 +79,11 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         columns={columns}
         rows={props.entries}
         density={density}
+        columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockCardEntryId}
         onSelectionModelChange={onCheckedRowsChanged}
-        onStateChange={(v) => onDensityChanged(v.density.value)}/>
+        onStateChange={(v) => onDensityChanged(v.density.value)}
+        onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
     </Box>
   )
 }

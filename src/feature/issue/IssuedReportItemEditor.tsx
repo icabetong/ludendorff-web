@@ -15,12 +15,13 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormLabel,
-  ListItem,
+  IconButton,
+  InputAdornment,
   TextField
 } from "@mui/material";
 import AssetPicker from "../asset/AssetPicker";
 import { useSnackbar } from "notistack";
+import { ExpandMoreRounded } from "@mui/icons-material";
 
 export type FormValues = {
   quantityIssued: number,
@@ -80,10 +81,19 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
           <DialogTitle>{t("dialog.details_issued_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <FormLabel component="legend">{t("field.asset")}</FormLabel>
-              <ListItem button onClick={onPickerInvoke}>
-                {asset?.description ? asset?.description : t("button.not_set")}
-              </ListItem>
+              <TextField
+                value={asset?.description ? asset?.description : t("button.not_set")}
+                label={t("field.asset")}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={onPickerInvoke}>
+                        <ExpandMoreRounded/>
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}/>
               <Divider sx={{ my: 2 }}/>
               <TextField
                 autoFocus

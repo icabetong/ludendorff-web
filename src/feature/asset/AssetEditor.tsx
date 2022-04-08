@@ -8,13 +8,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  FormLabel,
   Grid,
+  IconButton,
   InputAdornment,
-  ListItem,
   TextField,
-  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -29,7 +26,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
-import { CurrencyRubleRounded } from "@mui/icons-material";
+import { ArrowDropDownRounded, CurrencyRubleRounded, ExpandMoreRounded } from "@mui/icons-material";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -149,20 +146,19 @@ const AssetEditor = (props: AssetEditorProps) => {
                     defaultValue={props.asset !== undefined ? props.asset.description : ""}
                     placeholder={t('placeholder.asset_description')}
                     {...register("description", { required: "feedback.empty_asset_description" })} />
-                  <FormControl
-                    component="fieldset"
-                    fullWidth>
-                    <FormLabel component="legend">
-                      <Typography variant="body2">{t("field.type")}</Typography>
-                    </FormLabel>
-                    <ListItem
-                      button
-                      onClick={onPickerView}>
-                      <Typography variant="body2">
-                        {type?.typeName !== undefined ? type?.typeName : t("button.not_set")}
-                      </Typography>
-                    </ListItem>
-                  </FormControl>
+                  <TextField
+                    value={type?.typeName !== undefined ? type?.typeName : t("button.not_set")}
+                    label={t("field.type")}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={onPickerView}>
+                            <ArrowDropDownRounded/>
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}/>
                   <TextField
                     id="classification"
                     type="text"
