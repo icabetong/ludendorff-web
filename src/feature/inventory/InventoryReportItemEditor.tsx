@@ -23,7 +23,8 @@ import { assetCollection, assetStockNumber } from "../../shared/const";
 
 export type FormValues = {
   balancePerCard: number,
-  onHandCount: number
+  onHandCount: number,
+  supplier: string,
 }
 
 type InventoryReportItemEditorProps = {
@@ -106,6 +107,15 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
                 disabled={!asset}
                 inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
                 {...register("onHandCount", { required: "feedback.empty_on_hand_count" })}/>
+              <TextField
+                id="supplier"
+                type="text"
+                label={t("field.supplier")}
+                defaultValue={props.item && props.item.supplier}
+                error={errors.supplier !== undefined}
+                helperText={errors.supplier?.message && t(errors.supplier?.message)}
+                disabled={!asset}
+                {...register("supplier", { required: "feedback.empty_supplier" })}/>
             </Container>
           </DialogContent>
           <DialogActions>

@@ -14,7 +14,7 @@ import {
   responsibilityCenter,
   unitCost,
 } from "../../shared/const";
-import { usePreferences } from "../settings/Preference";
+import useDensity from "../shared/useDensity";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -32,7 +32,7 @@ type IssuedReportItemDataGridProps = EditorDataGridProps<IssuedReportItem> & {
 const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const userPreferences = usePreferences();
+  const { density, onDensityChanged } = useDensity('issuedEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
   const columns = [
@@ -64,9 +64,10 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
         }}
         columns={columns}
         rows={props.items}
-        density={userPreferences.density}
+        density={density}
         getRowId={(row) => row.stockNumber}
-        onSelectionModelChange={onCheckedRowChanged}/>
+        onSelectionModelChange={onCheckedRowChanged}
+        onStateChange={(v) => onDensityChanged(v.density.value)}/>
     </Box>
   )
 }

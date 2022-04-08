@@ -16,8 +16,8 @@ import {
   reference,
   requestQuantity
 } from "../../shared/const";
-import { usePreferences } from "../settings/Preference";
 import { formatDate } from "../../shared/utils";
+import useDensity from "../shared/useDensity";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -34,7 +34,7 @@ type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
 const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const userPreference = usePreferences();
+  const { density, onDensityChanged } = useDensity('stockCardEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
   const columns = [
@@ -76,9 +76,10 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         }}
         columns={columns}
         rows={props.entries}
-        density={userPreference.density}
+        density={density}
         getRowId={(row) => row.stockCardEntryId}
-        onSelectionModelChange={onCheckedRowsChanged}/>
+        onSelectionModelChange={onCheckedRowsChanged}
+        onStateChange={(v) => onDensityChanged(v.density.value)}/>
     </Box>
   )
 }

@@ -1,14 +1,9 @@
 import makeStyles from "@mui/styles/makeStyles";
-import { Box, Button, Fab, Hidden, LinearProgress, Theme, IconButton, } from "@mui/material";
+import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
-import {
-  AddRounded,
-  DeleteOutlineRounded,
-  DescriptionOutlined,
-  LocalAtmOutlined
-} from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, LocalAtmOutlined } from "@mui/icons-material";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { StockCard, StockCardRepository } from "./StockCard";
 import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
@@ -43,7 +38,8 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
-import StockCardReport from "./StockCardReport";
+import { pdf } from "@react-pdf/renderer";
+import StockCardPDF from "./StockCardPDF";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -65,9 +61,9 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
-  const [report, setReport] = useState<StockCard | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
   const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<StockCard>(
     query(collection(firestore, stockCardCollection), orderBy(entityName, "asc")), {
@@ -113,8 +109,16 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
-  const onGenerateReport = (stockCard: StockCard) => setReport(stockCard)
-  const onGenerateReportDismiss = () => setReport(undefined)
+  const onGenerateReport = async (stockCard: StockCard) => {
+    stockCard.entries = await StockCardRepository.fetch(stockCard.stockCardId);
+    const blob = await pdf((<StockCardPDF stockCard={stockCard}/>)).toBlob();
+
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${stockCard.description}.pdf`;
+      linkRef.current.click();
+    }
+  }
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onStockCardEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -179,8 +183,8 @@ const StockCardScreen = (props: StockCardScreenProps) => {
               <Box className={classes.wrapper}>
                 {searchMode
                   ? <StockCardDataGrid
-                    onItemSelect={onDataGridRowDoubleClicked}
-                    onRemoveInvoke={onRemoveInvoke}/>
+                      onItemSelect={onDataGridRowDoubleClicked}
+                      onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
               </Box>
@@ -217,7 +221,9 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         summary="dialog.stock_card_remove_summary"
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
-      <StockCardReport isOpen={Boolean(report)} stockCard={report} onDismiss={onGenerateReportDismiss}/>
+      <Box sx={{display: 'none'}}>
+        <a ref={linkRef} href="https://captive.aple.com">{t("button.download")}</a>
+      </Box>
     </Box>
   )
 }

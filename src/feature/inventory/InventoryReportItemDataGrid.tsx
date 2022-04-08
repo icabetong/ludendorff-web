@@ -17,7 +17,7 @@ import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { useState } from "react";
 import { Asset } from "../asset/Asset";
-import { usePreferences } from "../settings/Preference";
+import useDensity from "../shared/useDensity";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -35,7 +35,7 @@ type InventoryReportItemDataGridProps = EditorDataGridProps<InventoryReportItem>
 const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const userPreferences = usePreferences();
+  const { density, onDensityChanged } = useDensity('inventoryEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
   const columns = [
@@ -78,9 +78,10 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         }}
         columns={columns}
         rows={props.items}
-        density={userPreferences.density}
+        density={density}
         getRowId={(row) => row.stockNumber}
-        onSelectionModelChange={onCheckedRowsChanged}/>
+        onSelectionModelChange={onCheckedRowsChanged}
+        onStateChange={(v) => onDensityChanged(v.density.value)}/>
     </Box>
   )
 }

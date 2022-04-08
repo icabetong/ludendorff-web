@@ -53,7 +53,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const { density, onDensityChanged } = useDensity('issuedDensity');
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
-  const [size, setSize] = useState(15);
   const [searchMode, setSearchMode] = useState(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
@@ -124,7 +123,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
             canForward={isEnd}
             onBackward={getPrev}
             onForward={getNext}
-            size={size}
+            size={limit}
             onPageSizeChanged={onLimitChanged}/>
         : <></>
     )

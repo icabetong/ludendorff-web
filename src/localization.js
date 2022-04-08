@@ -75,7 +75,8 @@ const resources = {
         balance_total_price: "Balance Total Price",
         stock_card: "Stock Card",
         item: "Item",
-        reorder_point: "Reorder Point"
+        reorder_point: "Reorder Point",
+        supplier: "Supplier",
       },
       placeholder: {
         none: "None",
@@ -131,7 +132,7 @@ const resources = {
         create_report: "Create Report",
         not_set: "Not Set",
         view_qr_code: "View QR Code",
-        generate_report: "Generate Report",
+        generate_report: "Generate PDF",
         download: "Download",
       },
       feedback: {
@@ -269,13 +270,15 @@ const resources = {
         select_department: "Select Department",
         view_qr_code: "View QR-Code",
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
-        generate_stock_card: "Report Generation",
+        generate_stock_card: "PDF Generation",
         generate_stock_card_summary: "Stock Card Report has been generated, click the button below to save it.",
         generate_stock_card_summary_fetching: "Preparing your stock card report, hold on for a minute..."
       },
       template: {
         full_name: "{{first}} {{last}}",
         count: "Count: {{count}}",
+        as_of_year_month: "As of {{yearMonth}}",
+        inventory_entity: "For which, {{name}}, {{position}}, Central Luzon State University, is accountable, having assumed such accountability on {{date}}"
       },
       empty: {
         asset: "No Assets Added",
@@ -294,6 +297,11 @@ const resources = {
         stock_card_summary: "There are no Stock Cards that are available on the database.",
         issued_reports_header: "No Issued Items Reports Available",
         issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database."
+      },
+      document: {
+        stock_card: "Stock Card",
+        inventory: "Report on the Physical Count of Inventories",
+        issued: "Report of Supplies and Materials Issued"
       },
       not_yet_returned: "Not Yet Returned",
       no_remarks: "No Remarks",

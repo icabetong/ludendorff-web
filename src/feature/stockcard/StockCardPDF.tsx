@@ -1,7 +1,7 @@
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { useTranslation } from "react-i18next";
-import { Table, TableRow, TableCell } from "../../components/PDFRendering";
+import { Table, TableRow } from "../../components/PDFRendering";
 import { formatDate } from "../../shared/utils"
 
 const styles = StyleSheet.create({
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   headerText: {
     display: 'flex',
     textAlign: 'center',
+    fontFamily: 'Inter',
     fontWeight: 'bold',
     fontSize: '17pt',
   },
@@ -28,16 +29,39 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: '3pt 0',
   },
-  field: {
+  fieldColumn: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
   },
-  value: {
+  field: {
+    fontFamily: 'Inter',
+    fontWeight: 'normal'
+  },
+  valueColumn: {
     flex: 3,
     display: 'flex',
     flexDirection: 'column',
   },
+  value: {
+    fontFamily: 'Inter',
+    fontWeight: 'medium',
+  },
+  tableHeader: {
+    flex: 1,
+    padding: '6pt',
+    border: '1px solid #efefef',
+    textAlign: 'center',
+    fontFamily: 'Inter',
+    fontWeight: 'medium'
+  },
+  tableData: {
+    flex: 1,
+    padding: '6pt',
+    border: '1px solid #efefef',
+    textAlign: 'center',
+    fontFamily: 'Inter',
+  }
 })
 
 type StockCardPDFProps = {
@@ -54,53 +78,53 @@ const StockCardPDF = (props: StockCardPDFProps) => {
           <Text style={styles.headerText}>{t("field.stock_card")}</Text>
         </View>
         <View style={styles.container}>
-          <View style={styles.field}>
-            <Text>{t("field.entity_name")}</Text>
-            <Text>{t("field.item")}</Text>
-            <Text>{t("field.asset_description")}</Text>
-            <Text>{t("field.unit_of_measure")}</Text>
+          <View style={styles.fieldColumn}>
+            <Text style={styles.field}>{t("field.entity_name")}</Text>
+            <Text style={styles.field}>{t("field.item")}</Text>
+            <Text style={styles.field}>{t("field.asset_description")}</Text>
+            <Text style={styles.field}>{t("field.unit_of_measure")}</Text>
           </View>
-          <View style={styles.value}>
-            <Text>{stockCard.entityName}</Text>
-            <Text style={{flex: 1}}>{stockCard.description}</Text>
-            <Text>{stockCard.unitOfMeasure}</Text>
+          <View style={styles.valueColumn}>
+            <Text style={styles.value}>{stockCard.entityName}</Text>
+            <Text style={[styles.value, {flex: 1}]}>{stockCard.description}</Text>
+            <Text style={styles.value}>{stockCard.unitOfMeasure}</Text>
           </View>
-          <View style={styles.field}>
+          <View style={styles.fieldColumn}>
             <View style={{display: 'flex', flexGrow: 1}}/>
-            <Text>{t("field.stock_number")}</Text>
-            <Text>{t("field.reorder_point")}</Text>
-            <Text>{t("field.unit_price")}</Text>
+            <Text style={styles.field}>{t("field.stock_number")}</Text>
+            <Text style={styles.field}>{t("field.reorder_point")}</Text>
+            <Text style={styles.field}>{t("field.unit_price")}</Text>
           </View>
-          <View style={styles.value}>
+          <View style={styles.valueColumn}>
             <View style={{display: 'flex', flexGrow: 1}}/>
-            <Text>{stockCard.stockNumber}</Text>
-            <Text>{stockCard.stockCardId}</Text>
-            <Text>{stockCard.unitPrice}</Text>
+            <Text style={styles.value}>{stockCard.stockNumber}</Text>
+            <Text style={styles.value}>{stockCard.stockCardId}</Text>
+            <Text style={styles.value}>{stockCard.unitPrice}</Text>
           </View>
         </View>
         <Table>
           <TableRow>
-            <TableCell text={t("field.date")}/>
-            <TableCell text={t("field.reference")}/>
-            <TableCell text={t("field.receipt_quantity")}/>
-            <TableCell text={t("field.requested_quantity")}/>
-            <TableCell text={t("field.issue_quantity")}/>
-            <TableCell text={t("field.issue_office")}/>
-            <TableCell text={t("field.balance_quantity")}/>
-            <TableCell text={t("field.balance_total_price")}/>
+            <Text style={styles.tableHeader}>{t("field.date")}</Text>
+            <Text style={styles.tableHeader}>{t("field.reference")}</Text>
+            <Text style={styles.tableHeader}>{t("field.receipt_quantity")}</Text>
+            <Text style={styles.tableHeader}>{t("field.requested_quantity")}</Text>
+            <Text style={styles.tableHeader}>{t("field.issue_quantity")}</Text>
+            <Text style={styles.tableHeader}>{t("field.issue_office")}</Text>
+            <Text style={styles.tableHeader}>{t("field.balance_quantity")}</Text>
+            <Text style={styles.tableHeader}>{t("field.balance_total_price")}</Text>
           </TableRow>
           <>
             { stockCard.entries.map((row: StockCardEntry) => {
               return (
                 <TableRow key={row.stockCardEntryId}>
-                  <TableCell text={formatDate(row.date)}/>
-                  <TableCell text={row.reference}/>
-                  <TableCell text={row.receiptQuantity.toString()}/>
-                  <TableCell text={row.requestedQuantity.toString()}/>
-                  <TableCell text={row.issueQuantity.toString()}/>
-                  <TableCell text={row.issueOffice}/>
-                  <TableCell text={row.balanceQuantity.toString()}/>
-                  <TableCell text={row.balanceTotalPrice.toString()}/>
+                  <Text style={styles.tableData}>{formatDate(row.date)}</Text>
+                  <Text style={styles.tableData}>{row.reference}</Text>
+                  <Text style={styles.tableData}>{row.receiptQuantity.toString()}</Text>
+                  <Text style={styles.tableData}>{row.requestedQuantity.toString()}</Text>
+                  <Text style={styles.tableData}>{row.issueQuantity.toString()}</Text>
+                  <Text style={styles.tableData}>{row.issueOffice}</Text>
+                  <Text style={styles.tableData}>{row.balanceQuantity.toString()}</Text>
+                  <Text style={styles.tableData}>{row.balanceTotalPrice.toString()}</Text>
                 </TableRow>
               )
             })

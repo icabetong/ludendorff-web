@@ -25,7 +25,8 @@ export type InventoryReportItem = {
   unitValue: number,
   balancePerCard: number,
   onHandCount: number,
-  remarks?: string
+  remarks?: string,
+  supplier?: string,
 }
 
 export class InventoryReportRepository {

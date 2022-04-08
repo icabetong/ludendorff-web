@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from '@react-pdf/renderer';
+import { View, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     padding: '6pt',
     border: '1px solid #efefef',
     textAlign: 'center',
+    fontFamily: 'Inter',
   }
 })
 
@@ -43,14 +44,5 @@ export const TableRow = (props: TableRowProps) => {
     <View style={styles.row}>
       {props.children && props.children}
     </View>
-  )
-}
-
-type TableCellProps = {
-  text?: string,
-}
-export const TableCell = (props: TableCellProps) => {
-  return (
-    <Text style={styles.data}>{props.text && props.text}</Text>
   )
 }
