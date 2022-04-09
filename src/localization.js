@@ -78,6 +78,8 @@ const resources = {
         reorder_point: "Reorder Point",
         supplier: "Supplier",
         not_set: "Not Set",
+        total_value: "Total Value",
+        amount: "Amount",
       },
       placeholder: {
         none: "None",

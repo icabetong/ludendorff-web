@@ -5,10 +5,9 @@ import {
   assetDescription,
   assetStockNumber,
   assetType,
-  assetUnitOfMeasure,
+  assetUnitOfMeasure, assetUnitValue,
   balancePerCard,
-  onHandCount,
-  remarks
+  onHandCount
 } from "../../shared/const";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
@@ -19,6 +18,7 @@ import { useState } from "react";
 import { Asset } from "../asset/Asset";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import { currencyFormatter } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -40,9 +40,8 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
   const [hasChecked, setHasChecked] = useState(false);
 
   const columns = [
-    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
     { field: article, headerName: t("field.article"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 3 },
     {
       field: assetType,
       headerName: t("field.type"),
@@ -52,10 +51,27 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
       }
     },
+    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 2 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
+    {
+      field: assetUnitValue,
+      headerName: t("field.unit_value"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        return currencyFormatter.format(params.value);
+      }
+    },
     { field: balancePerCard, headerName: t("field.balance_per_card"), flex: 1 },
     { field: onHandCount, headerName: t("field.on_hand_count"), flex: 1 },
-    { field: remarks, headerName: t("field.remarks"), flex: 1 },
+    {
+      field: "totalValue",
+      headerName: t("field.total_value"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let item = params.row as InventoryReportItem;
+        return currencyFormatter.format(item.unitValue * item.balancePerCard);
+      }
+    }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryReportItemColumns', columns);
 

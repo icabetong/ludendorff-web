@@ -6,7 +6,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, LocalAtmOutlined } from "@mui/icons-material";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { StockCard, StockCardRepository } from "./StockCard";
-import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { ScreenProps } from "../shared/ScreenProps";
 import GridLinearProgress from "../../components/GridLinearProgress";
 import GridToolbar from "../../components/GridToolbar";
@@ -27,7 +27,7 @@ import {
 } from "../../shared/const";
 import { ActionType, initialState, reducer } from "./StockCardEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
-import { isDev } from "../../shared/utils";
+import { currencyFormatter, isDev } from "../../shared/utils";
 import { Provider } from "../../components/Search";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import StockCardList from "./StockCardList";
@@ -88,9 +88,14 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const columns = [
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
-    { field: unitPrice, headerName: t("field.unit_price"), flex: 1 },
-    { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 2 },
+    {
+      field: unitPrice,
+      headerName: t("field.unit_price"),
+      flex: 0.5,
+      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
+    },
+    { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 0.5 },
     {
       field: "actions",
       type: "actions",
@@ -242,7 +247,12 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
     { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
-    { field: unitPrice, headerName: t("field.unit_price"), flex: 1 },
+    {
+      field: unitPrice,
+      headerName: t("field.unit_price"),
+      flex: 0.5,
+      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
+    },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     {
       field: "actions",

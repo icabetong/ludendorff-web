@@ -40,7 +40,7 @@ import { DataGridPaginationController } from "../../components/PaginationControl
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import { HitsProvided } from "react-instantsearch-core";
-import { isDev } from "../../shared/utils";
+import { currencyFormatter, isDev } from "../../shared/utils";
 import GridEmptyRow from "../../components/GridEmptyRows";
 import { ScreenProps } from "../shared/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
@@ -114,7 +114,8 @@ const AssetScreen = (props: AssetScreenProps) => {
     {
       field: assetUnitValue,
       headerName: t("field.unit_value"),
-      flex: 1
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
     },
     {
       field: assetRemarks,
@@ -326,7 +327,8 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
     {
       field: assetUnitValue,
       headerName: t("field.unit_value"),
-      flex: 1
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
     },
     {
       field: assetRemarks,

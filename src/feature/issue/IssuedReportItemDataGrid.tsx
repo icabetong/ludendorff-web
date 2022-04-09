@@ -3,7 +3,7 @@ import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { IssuedReportItem } from "./IssuedReport";
-import { DataGrid, GridSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
@@ -16,6 +16,7 @@ import {
 } from "../../shared/const";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import { currencyFormatter } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -38,11 +39,25 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
 
   const columns = [
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 3 },
     { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
     { field: quantityIssued, headerName: t("field.quantity_issued"), flex: 1 },
-    { field: unitCost, headerName: t("field.unit_cost"), flex: 1 },
-    { field: responsibilityCenter, headerName: t("field.responsibility_center"), flex: 1 },
+    {
+      field: unitCost,
+      headerName: t("field.unit_cost"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
+    },
+    { field: responsibilityCenter, headerName: t("field.responsibility_center"), flex: 1, },
+    {
+      field: "amount",
+      headerName: t("field.amount"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let item = params.row as IssuedReportItem;
+        return currencyFormatter.format(item.quantityIssued * item.unitCost)
+      }
+    }
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedReportItemColumns', columns);
 

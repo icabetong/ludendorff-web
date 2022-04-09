@@ -197,9 +197,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     }}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
-                          <CurrencyRubleRounded fontSize="small"/>
-                        </InputAdornment>
+                        <InputAdornment position="start">₱</InputAdornment>
                       )
                     }}
                     {...register('unitValue', { required: 'feedback.empty_unit_value' })}/>
