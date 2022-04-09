@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 import {
+  Alert,
   Button,
-  Card,
   Checkbox,
   Container,
   Dialog,
@@ -14,7 +14,7 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
-  Grid,
+  Grid, IconButton, InputAdornment,
   ListItem,
   TextField,
   Theme,
@@ -32,6 +32,7 @@ import { departmentCollection, departmentName } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../..";
 import { usePagination } from "use-pagination-firestore";
+import { ExpandMoreRounded } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   icon: {
@@ -162,7 +163,7 @@ const UserEditor = (props: UserEditorProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_user")}</DialogTitle>
           <DialogContent dividers={true}>
-            <Container>
+            <Container sx={{py: 1}}>
               <Grid
                 container
                 direction={isMobile ? "column" : "row"}
@@ -212,23 +213,21 @@ const UserEditor = (props: UserEditorProps) => {
                     defaultValue={props.user?.position}
                     error={errors.position !== undefined}
                     helperText={errors.position?.message !== undefined ? t(errors.position?.message) : undefined}
-                    {...register("position", { required: "feedback.empty_postion" })} />
+                    {...register("position", { required: "feedback.empty_position" })} />
 
-                  <FormControl
-                    component="fieldset"
-                    fullWidth>
-                    <FormLabel component="legend">
-                      <Typography variant="body2">{t("field.department")}</Typography>
-                    </FormLabel>
-                    <ListItem
-                      button
-                      onClick={onPickerView}
-                      disabled={isWritePending}>
-                      <Typography variant="body2">
-                        {department !== undefined ? department?.name : t("button.not_set")}
-                      </Typography>
-                    </ListItem>
-                  </FormControl>
+                  <TextField
+                    value={department !== undefined ? department?.name : t("field.not_set")}
+                    label={t("field.department")}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={onPickerView} edge="end">
+                            <ExpandMoreRounded/>
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}/>
                 </Grid>
                 <Grid
                   item
@@ -324,11 +323,7 @@ const UserEditor = (props: UserEditorProps) => {
                     </FormGroup>
                   </FormControl>
                   <Fade in={isChecked}>
-                    <Card
-                      variant="outlined"
-                      className={classes.card}>
-                      {t("info.user_editor_admin_permission")}
-                    </Card>
+                    <Alert severity="warning">{t("info.user_editor_admin_permission")}</Alert>
                   </Fade>
                 </Grid>
               </Grid>

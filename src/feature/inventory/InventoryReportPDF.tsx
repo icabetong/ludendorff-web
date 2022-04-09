@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 type InventoryPDFProps = {
   inventoryReport: InventoryReport
 }
-const InventoryPDF = (props: InventoryPDFProps) => {
+const InventoryReportPDF = (props: InventoryPDFProps) => {
   const { t } = useTranslation();
   const { inventoryReport } = props;
 
@@ -106,4 +106,4 @@ const InventoryPDF = (props: InventoryPDFProps) => {
   )
 }
 
-export default InventoryPDF;
+export default InventoryReportPDF;

@@ -155,9 +155,10 @@ type DepartmentHitsListProps = HitsProvided<Department> & {
 const DepartmentHitsList = (props: DepartmentHitsListProps) => {
   return (
     <>
-      {props.hits.map((d: Department) => (
+      {props.hits.map((department: Department) => (
         <DepartmentListItem
-          department={d}
+          key={department.departmentId}
+          department={department}
           onItemSelect={props.onItemSelect}/>
       ))
       }

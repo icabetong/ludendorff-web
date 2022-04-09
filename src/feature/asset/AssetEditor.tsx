@@ -26,7 +26,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
-import { ArrowDropDownRounded, CurrencyRubleRounded, ExpandMoreRounded } from "@mui/icons-material";
+import { CurrencyRubleRounded, ExpandMoreRounded } from "@mui/icons-material";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -116,7 +116,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_asset")}</DialogTitle>
           <DialogContent dividers={true}>
-            <Container>
+            <Container sx={{py: 1}}>
               <Grid
                 container
                 direction={smBreakpoint ? "column" : "row"}
@@ -147,14 +147,14 @@ const AssetEditor = (props: AssetEditorProps) => {
                     placeholder={t('placeholder.asset_description')}
                     {...register("description", { required: "feedback.empty_asset_description" })} />
                   <TextField
-                    value={type?.typeName !== undefined ? type?.typeName : t("button.not_set")}
+                    value={type?.typeName !== undefined ? type?.typeName : t("field.not_set")}
                     label={t("field.type")}
                     InputProps={{
                       readOnly: true,
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={onPickerView}>
-                            <ArrowDropDownRounded/>
+                          <IconButton onClick={onPickerView} edge="end">
+                            <ExpandMoreRounded/>
                           </IconButton>
                         </InputAdornment>
                       )

@@ -77,6 +77,7 @@ const resources = {
         item: "Item",
         reorder_point: "Reorder Point",
         supplier: "Supplier",
+        not_set: "Not Set",
       },
       placeholder: {
         none: "None",
@@ -130,7 +131,6 @@ const resources = {
         create_user: "Create User",
         create_stock_card: "Create Stock Card",
         create_report: "Create Report",
-        not_set: "Not Set",
         view_qr_code: "View QR Code",
         generate_report: "Generate PDF",
         download: "Download",

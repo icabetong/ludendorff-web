@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
-import { AppBar, Box, Button, IconButton, Slide, Theme, Toolbar, Typography } from "@mui/material";
+import React, { useState, ReactNode } from "react";
+import { AppBar, Box, Button, IconButton, Menu, Slide, Theme, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { AddRounded, CloseRounded, DeleteOutlineRounded, SaveRounded } from "@mui/icons-material";
+import { AddRounded, CloseRounded, DeleteOutlineRounded, MoreVert, SaveRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
 import {
@@ -14,12 +14,16 @@ import {
 
 type EditorAppBarProps = {
   title?: string,
+  menuItems?: JSX.Element[],
   onDismiss?: () => void,
   onConfirm?: () => void,
 }
 
 const EditorAppBar = (props: EditorAppBarProps) => {
   const { t } = useTranslation();
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const isOpen = Boolean(anchor);
+  const anchorProperties = { vertical: 'top', horizontal: 'right' } as const
 
   return (
     <AppBar sx={{ position: 'relative' }} elevation={0} color='transparent'>
@@ -40,6 +44,32 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           startIcon={<SaveRounded/>}>
           {t("button.save")}
         </Button>
+        { props.menuItems &&
+          <>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-haspopup="true"
+              aria-label={t("button.show_menu")}
+              onClick={(e) => setAnchor(e.currentTarget)}>
+              <MoreVert/>
+            </IconButton>
+            <Menu
+              keepMounted
+              anchorEl={anchor}
+              anchorOrigin={anchorProperties}
+              transformOrigin={anchorProperties}
+              open={isOpen}
+              onClose={() => setAnchor(null)}
+              onMouseLeave={() => setAnchor(null)}>
+              { props.menuItems &&
+                props.menuItems.map((item) => {
+                  return item
+                })
+              }
+            </Menu>
+          </>
+        }
       </Toolbar>
     </AppBar>
   )

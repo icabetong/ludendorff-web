@@ -82,13 +82,13 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
           <DialogContent>
             <Container disableGutters>
               <TextField
-                value={asset?.description ? asset?.description : t("button.not_set")}
+                value={asset?.description ? asset?.description : t("field.not_set")}
                 label={t("field.asset")}
                 InputProps={{
                   readOnly: true,
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton onClick={onPickerInvoke}>
+                      <IconButton onClick={onPickerInvoke} edge="end">
                         <ExpandMoreRounded/>
                       </IconButton>
                     </InputAdornment>

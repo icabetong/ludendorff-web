@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormLabel,
+  FormLabel, IconButton, InputAdornment,
   ListItem,
   TextField,
   Typography
@@ -23,6 +23,7 @@ import { lastName, userCollection } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../..";
 import { usePagination } from "use-pagination-firestore";
+import { ExpandMoreRounded } from "@mui/icons-material";
 
 type DepartmentEditorProps = {
   isOpen: boolean,
@@ -111,21 +112,19 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
                 error={errors.name !== undefined}
                 helperText={errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined}
                 {...register("name", { required: "feedback.empty_department_name" })} />
-              <FormControl
-                component="fieldset"
-                fullWidth>
-                <FormLabel component="legend">
-                  <Typography variant="body2">{t("field.manager")}</Typography>
-                </FormLabel>
-                <ListItem
-                  button
-                  onClick={onPickerView}
-                  disabled={isWritePending}>
-                  <Typography variant="body2">
-                    {manager !== undefined ? manager?.name : t("field.not_set")}
-                  </Typography>
-                </ListItem>
-              </FormControl>
+              <TextField
+                value={manager !== undefined ? manager?.name : t("field.not_set")}
+                label={t("field.manager")}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={onPickerView} edge="end">
+                        <ExpandMoreRounded/>
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}/>
             </Container>
           </DialogContent>
           <DialogActions>

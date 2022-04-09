@@ -206,7 +206,7 @@ export const getEditorDataGridTheme = (theme: Theme) => {
       borderBottomColor: theme.palette.mode === 'dark' ? gray600 : gray300,
     },
     '& .MuiDataGrid-root': {
-      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : theme.palette.background.paper,
       borderColor: theme.palette.divider,
     },
     '& .MuiDataGrid-columnHeaders': {
@@ -214,7 +214,7 @@ export const getEditorDataGridTheme = (theme: Theme) => {
     },
     '& .MuiDataGrid-columnHeader': {
       fontWeight: 700,
-      backgroundColor: theme.palette.mode === 'dark' ? gray700 : gray100,
+      backgroundColor: theme.palette.mode === 'dark' ? gray700 : theme.palette.background.paper,
       '& .MuiDataGrid-columnSeparator': {
         color: theme.palette.divider
       },

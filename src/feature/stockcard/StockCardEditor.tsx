@@ -10,10 +10,14 @@ import { firestore } from "../../index";
 import {
   Box,
   Button,
-  Dialog, Divider,
+  Dialog,
+  Divider,
   FormLabel,
-  Grid, IconButton, InputAdornment,
+  Grid,
+  IconButton,
+  InputAdornment,
   List,
+  MenuItem,
   TextField,
   Typography,
   useMediaQuery,
@@ -142,7 +146,9 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         onClose={props.onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_stock_card")} onDismiss={props.onDismiss}/>
+          <EditorAppBar
+            title={t("dialog.details_stock_card")}
+            onDismiss={props.onDismiss}/>
           <EditorContent>
             <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
@@ -160,13 +166,13 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
                   <TextField
-                    value={asset?.description ? asset?.description : t("button.not_set")}
+                    value={asset?.description ? asset?.description : t("field.not_set")}
                     label={t("field.asset")}
                     InputProps={{
                       readOnly: true,
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={onPickerInvoke}>
+                          <IconButton onClick={onPickerInvoke} edge="end">
                             <ExpandMoreRounded/>
                           </IconButton>
                         </InputAdornment>
