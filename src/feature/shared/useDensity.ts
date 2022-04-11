@@ -26,11 +26,8 @@ const useDensity = (key: string) => {
   }, [key, preferences.density]);
 
   const onDensityChanged = (gridDensity: GridDensity | string) => {
-    if (gridDensity === preferences.density) {
-      localStorage.removeItem(key);
-    } else {
-      localStorage.setItem(key, gridDensity);
-    }
+    setDensity(gridDensity);
+    localStorage.setItem(key, gridDensity);
   }
 
   return { density, onDensityChanged } as UseDensityValue

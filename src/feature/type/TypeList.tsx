@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { DeleteOutlineRounded, LocalOfferOutlined, } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
@@ -11,19 +10,12 @@ import { Type, TypesRepository } from "./Type";
 import { usePermissions } from "../auth/AuthProvider";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh'
-  },
-}));
-
 type TypeListProps = {
   types: Type[],
   onItemSelect: (category: Type) => void
 }
 
 const TypeList = (props: TypeListProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [type, setType] = useState<Type | undefined>(undefined);
@@ -43,7 +35,7 @@ const TypeList = (props: TypeListProps) => {
   return (
     <>
       {props.types.length > 0
-        ? <List className={classes.root}>
+        ? <List sx={{ minHeight: '100%' }}>
           {
             props.types.map((category: Type) => {
               return (
@@ -57,9 +49,9 @@ const TypeList = (props: TypeListProps) => {
           }
         </List>
         : <EmptyStateComponent
-            icon={LocalOfferOutlined}
-            title={t("empty.type")}
-            subtitle={t("empty.type_summary")}/>
+          icon={LocalOfferOutlined}
+          title={t("empty.type")}
+          subtitle={t("empty.type_summary")}/>
       }
       <ConfirmationDialog
         isOpen={type !== undefined}
@@ -104,8 +96,8 @@ const TypeItem = (props: TypeItemProps) => {
         <ListItemSecondaryAction>
           {props.type.count > 0
             ? <Tooltip title={<>{t("info.type_count_not_zero")}</>}>
-                <span>{deleteButton}</span>
-              </Tooltip>
+              <span>{deleteButton}</span>
+            </Tooltip>
             : <>{deleteButton}</>
           }
         </ListItemSecondaryAction>

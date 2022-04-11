@@ -7,7 +7,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import LinearProgress from "@mui/material/LinearProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
 import { PeopleOutlineRounded } from "@mui/icons-material";
 
 import { User } from "./User";
@@ -17,17 +16,6 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
-
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& .MuiList-padding': {
-      padding: 0
-    }
-  }
-}));
 
 type UserPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -41,7 +29,6 @@ const UserPicker = (props: UserPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const classes = useStyles();
   const { canRead } = usePermissions();
 
   const onSelect = (user: User) => {
@@ -57,9 +44,7 @@ const UserPicker = (props: UserPickerProps) => {
       open={props.isOpen}
       onClose={props.onDismiss}>
       <DialogTitle>{t("user_select")}</DialogTitle>
-      <DialogContent
-        dividers={true}
-        className={classes.root}>
+      <DialogContent dividers={true}>
         {canRead ?
           !props.isLoading
             ? props.users.length > 0

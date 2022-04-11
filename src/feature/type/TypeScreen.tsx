@@ -12,7 +12,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { collection, orderBy, query } from "firebase/firestore";
@@ -32,23 +31,6 @@ import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
 import useQueryLimit from "../shared/useQueryLimit";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& .MuiList-padding': {
-      padding: 0
-    }
-  },
-  search: {
-    minHeight: '60vh'
-  },
-  searchBox: {
-    margin: '0.6em 1em'
-  }
-}));
-
 type TypeScreenProps = {
   isOpen: boolean,
   onDismiss: () => void,
@@ -62,7 +44,6 @@ const TypeScreen = (props: TypeScreenProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
   const { limit } = useQueryLimit('typeQueryLimit');
-  const classes = useStyles();
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Type>(
     query(collection(firestore, typeCollection), orderBy(typeName, "asc")),
@@ -86,15 +67,19 @@ const TypeScreen = (props: TypeScreenProps) => {
         <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.types")}</CustomDialogTitle>
         <DialogContent
           dividers={true}
-          className={classes.root}>
+          sx={{
+            minHeight: '60vh',
+            paddingX: 0,
+            '& .MuiList-padding': { padding: 0 }
+          }}>
           {search
             ? <InstantSearch
               searchClient={Provider}
               indexName="types">
-              <Box className={classes.searchBox}>
+              <Box sx={{ margin: '0.6em 1em' }}>
                 <SearchBox/>
               </Box>
-              <Box className={classes.search}>
+              <Box sx={{ minHeight: '100%' }}>
                 <Results>
                   <TypeHits onItemSelect={onEditorUpdate}/>
                 </Results>
@@ -103,17 +88,17 @@ const TypeScreen = (props: TypeScreenProps) => {
             : canRead
               ? !isLoading
                 ? <>
-                    <TypeList
-                      types={items}
-                      onItemSelect={onEditorUpdate}/>
-                  { isEnd && items.length > 0 && items.length === limit
+                  <TypeList
+                    types={items}
+                    onItemSelect={onEditorUpdate}/>
+                  {isEnd && items.length > 0 && items.length === limit
                     && <PaginationController
-                          canBack={isStart}
-                          canForward={isEnd}
-                          onBackward={getPrev}
-                          onForward={getNext}/>
+                      canBack={isStart}
+                      canForward={isEnd}
+                      onBackward={getPrev}
+                      onForward={getNext}/>
                   }
-                  </>
+                </>
                 : <LinearProgress/>
               : <ErrorNoPermissionState/>
           }
@@ -123,7 +108,7 @@ const TypeScreen = (props: TypeScreenProps) => {
             color="primary"
             onClick={onEditorCreate}
             disabled={!canWrite}>{t("button.add")}</Button>
-          <div style={{ flex: '1 0 0' }}/>
+          <Box sx={{ flex: '1 0 0' }}/>
           <Button
             color="primary"
             onClick={props.onDismiss}>{t("button.close")}</Button>

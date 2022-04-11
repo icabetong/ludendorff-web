@@ -26,7 +26,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
-import { CurrencyRubleRounded, ExpandMoreRounded } from "@mui/icons-material";
+import { ExpandMoreRounded } from "@mui/icons-material";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -116,7 +116,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_asset")}</DialogTitle>
           <DialogContent dividers={true}>
-            <Container sx={{py: 1}}>
+            <Container sx={{ py: 1 }}>
               <Grid
                 container
                 direction={smBreakpoint ? "column" : "row"}

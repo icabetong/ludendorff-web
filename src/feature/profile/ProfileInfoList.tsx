@@ -25,11 +25,11 @@ const ProfileInfoList = (props: ProfileInfoListProps) => {
     <List
       aria-labelledby="information-subheader"
       subheader={
-      <ListSubheader
-        component="div"
-        id="information-subheader">
-        {t("information")}
-      </ListSubheader>
+        <ListSubheader
+          component="div"
+          id="information-subheader">
+          {t("information")}
+        </ListSubheader>
       }>
       {info.map((info) => <ProfileInfoItem key={info.name} info={info}/>)}
     </List>
@@ -46,7 +46,7 @@ const ProfileInfoItem = (props: ProfileInfoItemProps) => {
     <ListItem
       key={props.info.name}>
       <ListItemIcon>
-        { React.createElement(props.info.icon) }
+        {React.createElement(props.info.icon)}
       </ListItemIcon>
       <ListItemText
         primary={props.info.info === undefined ? t("unknown") : props.info.info}

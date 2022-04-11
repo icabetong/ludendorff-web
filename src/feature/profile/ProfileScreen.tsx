@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Box, Grid, LinearProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, Grid, LinearProgress, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { EditOutlined, ImageOutlined, LockOutlined, SendOutlined, } from "@mui/icons-material";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
@@ -13,29 +12,12 @@ import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    width: '100%',
-    height: '100%'
-  },
-  wrapper: {
-    height: '80%',
-    padding: '1.4em'
-  },
-  avatar: {
-    width: '20em',
-    height: '20em',
-    borderRadius: '50%'
-  }
-}))
-
 type ProfileScreenProps = {
   onDrawerToggle: () => void
 }
 
 const ProfileScreen = (props: ProfileScreenProps) => {
   const { status, user } = useAuthState();
-  const classes = useStyles();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -67,7 +49,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   ];
 
   return (
-    <Box className={classes.root}>
+    <Box sx={{ width: '100%' }}>
       <AdaptiveHeader
         title={t("navigation.profile")}
         onDrawerTriggered={props.onDrawerToggle}/>
@@ -79,7 +61,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
       {status === AuthStatus.FETCHED
         ?
-        <div className={classes.wrapper}>
+        <Box sx={{ height: '80%', padding: 2 }}>
           <Grid
             container
             direction={isMobile ? "column" : "row"}
@@ -99,11 +81,22 @@ const ProfileScreen = (props: ProfileScreenProps) => {
                 alignItems="center"
                 justifyContent="center">
                 {user?.imageUrl
-                  ? <LazyLoadImage
-                    className={classes.avatar}
-                    alt={t("info.profile_image")}
-                    src={user?.imageUrl}/>
-                  : <Avatar className={classes.avatar}/>
+                  ? <Box
+                      component={LazyLoadImage}
+                      sx={{
+                        width: '20em',
+                        height: '20em',
+                        borderRadius: '50%'
+                      }}
+                      alt={t("info.profile_image")}
+                      src={user?.imageUrl}/>
+                  : <Box
+                      component={Avatar}
+                      sx={{
+                        width: '20em',
+                        height: '20em',
+                        borderRadius: '50%'
+                      }}/>
                 }
               </Grid>
               <Grid
@@ -133,11 +126,13 @@ const ProfileScreen = (props: ProfileScreenProps) => {
               sm={6}
               alignItems="center"
               justifyContent="flex-start">
-              <ProfileInfoList user={user}/>
-              <ProfileActionList actions={actions}/>
+              <Stack direction="column">
+                <ProfileInfoList user={user}/>
+                <ProfileActionList actions={actions}/>
+              </Stack>
             </Grid>
           </Grid>
-        </div>
+        </Box>
         : <LinearProgress/>
       }
       {changeName &&

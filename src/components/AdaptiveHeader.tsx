@@ -6,7 +6,6 @@ import {
   Hidden,
   IconButton,
   Menu,
-  Theme,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -14,14 +13,7 @@ import {
 } from "@mui/material";
 import { AddRounded, MenuRounded, MoreVert } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@mui/styles";
 import { SearchBox, SearchBoxInputBase } from "./Search";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
-}))
 
 type AdaptiveHeaderProps = CoreHeaderProps & MediumScreenHeaderProps & LargeScreenHeaderProps;
 type CoreHeaderProps = {
@@ -64,7 +56,6 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
 
 const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.up('sm'));
   const mdBreakpoint = useMediaQuery(theme.breakpoints.up('md'));
@@ -78,7 +69,7 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
       position="static"
       color="transparent"
       elevation={0}
-      className={classes.appBar}>
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
         <IconButton
           edge="start"
@@ -104,7 +95,7 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
         {smBreakpoint && onSearchFocusChanged &&
           <SearchBoxInputBase onFocusChanged={onSearchFocusChanged}/>
         }
-        { smBreakpoint && actionText && onActionEvent &&
+        {smBreakpoint && actionText && onActionEvent &&
           <Button
             variant="contained"
             startIcon={mdBreakpoint ? <AddRounded/> : undefined}

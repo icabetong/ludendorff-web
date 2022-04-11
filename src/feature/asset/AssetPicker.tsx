@@ -56,7 +56,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                 <AssetList
                   assets={props.assets}
                   onItemSelect={onSelect}/>
-                { props.canForward && props.assets.length > 0 && props.assets.length === limit &&
+                {props.canForward && props.assets.length > 0 && props.assets.length === limit &&
                   <PaginationController
                     canBack={props.canBack}
                     canForward={props.canForward}
@@ -65,9 +65,9 @@ const AssetPicker = (props: AssetPickerProps) => {
                 }
               </>
               : <EmptyStateComponent
-                  icon={DesktopWindowsRounded}
-                  title={t("empty.asset")}
-                  subtitle={t("empty.asset_summary")}/>
+                icon={DesktopWindowsRounded}
+                title={t("empty.asset")}
+                subtitle={t("empty.asset_summary")}/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }

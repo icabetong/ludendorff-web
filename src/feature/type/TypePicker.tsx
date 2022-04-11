@@ -8,8 +8,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
-import makeStyles from '@mui/styles/makeStyles';
-
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Type } from "./Type";
@@ -17,16 +15,6 @@ import TypeList from "./TypeList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/useQueryLimit";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& .MuiList-padding': {
-      padding: 0
-    }
-  }
-}));
 
 type TypePickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -39,7 +27,6 @@ const TypePicker = (props: TypePickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const classes = useStyles();
   const { canRead } = usePermissions();
   const { limit } = useQueryLimit('typeQueryLimit');
 
@@ -51,16 +38,14 @@ const TypePicker = (props: TypePickerProps) => {
       open={props.isOpen}
       onClose={props.onDismiss}>
       <DialogTitle>{t("dialog.select_type")}</DialogTitle>
-      <DialogContent
-        dividers={true}
-        className={classes.root}>
+      <DialogContent dividers={true}>
         {canRead
           ? !props.isLoading
             ? <>
               <TypeList
                 types={props.types}
                 onItemSelect={props.onSelectItem}/>
-              { props.canForward && props.types.length > 0 && props.types.length === limit
+              {props.canForward && props.types.length > 0 && props.types.length === limit
                 && <PaginationController
                   canBack={props.canBack}
                   canForward={props.canForward}

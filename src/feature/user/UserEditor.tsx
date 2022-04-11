@@ -9,20 +9,20 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle, Fade,
+  DialogTitle,
+  Fade,
   FormControl,
   FormControlLabel,
   FormGroup,
   FormLabel,
-  Grid, IconButton, InputAdornment,
-  ListItem,
+  Grid,
+  IconButton,
+  InputAdornment,
   TextField,
-  Theme,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
 import { Permission, User, UserRepository } from "./User";
@@ -33,20 +33,6 @@ import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../..";
 import { usePagination } from "use-pagination-firestore";
 import { ExpandMoreRounded } from "@mui/icons-material";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  icon: {
-    width: '1em',
-    height: '1em',
-    color: theme.palette.text.primary
-  },
-  gridItem: {
-    maxWidth: '100%'
-  },
-  card: {
-    padding: '1em'
-  }
-}));
 
 type UserEditorProps = {
   isOpen: boolean,
@@ -69,7 +55,6 @@ type FormValues = {
 
 const UserEditor = (props: UserEditorProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -163,17 +148,14 @@ const UserEditor = (props: UserEditorProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_user")}</DialogTitle>
           <DialogContent dividers={true}>
-            <Container sx={{py: 1}}>
+            <Container sx={{ py: 1 }}>
               <Grid
                 container
                 direction={isMobile ? "column" : "row"}
                 alignItems="stretch"
                 justifyContent="center"
                 spacing={isMobile ? 0 : 4}>
-                <Grid
-                  item
-                  xs={6}
-                  className={classes.gridItem}>
+                <Grid item xs={6} sx={{ maxWidth: '100%' }}>
                   <TextField
                     autoFocus
                     disabled={isWritePending}
@@ -229,10 +211,7 @@ const UserEditor = (props: UserEditorProps) => {
                       )
                     }}/>
                 </Grid>
-                <Grid
-                  item
-                  xs={6}
-                  className={classes.gridItem}>
+                <Grid item xs={6} sx={{ maxWidth: '100%' }}>
                   <FormControl
                     component="fieldset"
                     fullWidth>

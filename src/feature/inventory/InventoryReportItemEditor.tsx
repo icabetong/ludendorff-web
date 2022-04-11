@@ -81,7 +81,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
           <DialogContent>
             <Container disableGutters>
               <TextField
-                value={asset?.description ? asset?.description: t("field.not_set")}
+                value={asset?.description ? asset?.description : t("field.not_set")}
                 label={t("field.asset")}
                 InputProps={{
                   readOnly: true,

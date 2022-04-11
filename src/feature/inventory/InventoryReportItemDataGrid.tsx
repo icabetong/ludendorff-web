@@ -5,7 +5,8 @@ import {
   assetDescription,
   assetStockNumber,
   assetType,
-  assetUnitOfMeasure, assetUnitValue,
+  assetUnitOfMeasure,
+  assetUnitValue,
   balancePerCard,
   onHandCount
 } from "../../shared/const";

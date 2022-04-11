@@ -1,4 +1,4 @@
-import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { useTranslation } from "react-i18next";
 import { Table, TableRow } from "../../components/PDFRendering";
@@ -86,17 +86,17 @@ const StockCardPDF = (props: StockCardPDFProps) => {
           </View>
           <View style={styles.valueColumn}>
             <Text style={styles.value}>{stockCard.entityName}</Text>
-            <Text style={[styles.value, {flex: 1}]}>{stockCard.description}</Text>
+            <Text style={[styles.value, { flex: 1 }]}>{stockCard.description}</Text>
             <Text style={styles.value}>{stockCard.unitOfMeasure}</Text>
           </View>
           <View style={styles.fieldColumn}>
-            <View style={{display: 'flex', flexGrow: 1}}/>
+            <View style={{ display: 'flex', flexGrow: 1 }}/>
             <Text style={styles.field}>{t("field.stock_number")}</Text>
             <Text style={styles.field}>{t("field.reorder_point")}</Text>
             <Text style={styles.field}>{t("field.unit_price")}</Text>
           </View>
           <View style={styles.valueColumn}>
-            <View style={{display: 'flex', flexGrow: 1}}/>
+            <View style={{ display: 'flex', flexGrow: 1 }}/>
             <Text style={styles.value}>{stockCard.stockNumber}</Text>
             <Text style={styles.value}>{stockCard.stockCardId}</Text>
             <Text style={styles.value}>{stockCard.unitPrice}</Text>
@@ -114,7 +114,7 @@ const StockCardPDF = (props: StockCardPDFProps) => {
             <Text style={styles.tableHeader}>{t("field.balance_total_price")}</Text>
           </TableRow>
           <>
-            { stockCard.entries.map((row: StockCardEntry) => {
+            {stockCard.entries.map((row: StockCardEntry) => {
               return (
                 <TableRow key={row.stockCardEntryId}>
                   <Text style={styles.tableData}>{formatDate(row.date)}</Text>

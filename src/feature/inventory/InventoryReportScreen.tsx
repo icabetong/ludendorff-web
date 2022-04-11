@@ -1,11 +1,11 @@
 import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { useReducer, useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import { useTranslation } from "react-i18next";
-import { AddRounded, DeleteOutlineRounded, Inventory2Outlined } from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, Inventory2Outlined } from "@mui/icons-material";
 
 import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
@@ -40,12 +40,10 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
+import InventoryReportPDF from "./InventoryReportPDF";
+import { pdf } from "@react-pdf/renderer";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    height: '100%',
-    width: '100%',
-  },
   wrapper: {
     height: '90%',
     padding: '1.4em',
@@ -63,6 +61,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
   const [report, setReport] = useState<InventoryReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
     query(collection(firestore, inventoryCollection), orderBy(fundCluster, "asc")), {
@@ -106,11 +105,25 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => onRemoveInvoke(params.row as InventoryReport)}/>
+          onClick={() => onRemoveInvoke(params.row as InventoryReport)}/>,
+        <GridActionsCellItem
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => onGenerateReport(params.row as InventoryReport)}/>
       ],
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
+  const onGenerateReport = async (inventoryReport: InventoryReport) => {
+    inventoryReport.items = await InventoryReportRepository.fetch(inventoryReport.inventoryReportId);
+    const blob = await pdf((<InventoryReportPDF inventoryReport={inventoryReport}/>)).toBlob();
+
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${inventoryReport.fundCluster}.pdf`;
+      linkRef.current?.click();
+    }
+  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
   const onInventoryEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -125,27 +138,23 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     })
   }
 
-  const PaginationController = () => {
-    return (
-      isEnd && items.length > 0 && items.length === limit
-        ? <DataGridPaginationController
-            canBack={isStart}
-            canForward={isEnd}
-            onBackward={getPrev}
-            onForward={getNext}
-            size={limit}
-            onPageSizeChanged={onLimitChanged}/>
-        : <></>
-    )
-  }
-
   const dataGrid = (
     <DataGrid
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: PaginationController
+        Pagination: DataGridPaginationController,
+      }}
+      componentsProps={{
+        pagination: {
+          size: limit,
+          canBack: isStart,
+          canForward: isEnd,
+          onBackward: getPrev,
+          onForward: getNext,
+          onPageSizeChanged: onLimitChanged
+        }
       }}
       rows={items}
       columns={columns}
@@ -161,7 +170,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   )
 
   return (
-    <Box className={classes.root}>
+    <Box sx={{ width: '100%' }}>
       <InstantSearch
         searchClient={Provider}
         indexName="inventories">
@@ -178,6 +187,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 {searchMode
                   ? <InventoryReportDataGrid
                     onItemSelect={onDataGridRowDoubleClicked}
+                    onGenerateReport={onGenerateReport}
                     onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
@@ -215,6 +225,9 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         summary="dialog.inventory_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
+      <Box sx={{ display: 'none' }}>
+        <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
+      </Box>
     </Box>
   )
 }
@@ -240,6 +253,7 @@ const InventoryReportEmptyState = () => {
 
 type InventoryReportDataGridProps = HitsProvided<InventoryReport> & {
   onItemSelect: (params: GridRowParams) => void,
+  onGenerateReport: (report: InventoryReport) => void,
   onRemoveInvoke: (report: InventoryReport) => void,
 }
 const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
@@ -268,7 +282,11 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => props.onRemoveInvoke(params.row as InventoryReport)}/>
+          onClick={() => props.onRemoveInvoke(params.row as InventoryReport)}/>,
+        <GridActionsCellItem
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => props.onGenerateReport(params.row as InventoryReport)}/>
       ],
     }
   ]

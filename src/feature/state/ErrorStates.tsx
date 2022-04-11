@@ -1,45 +1,10 @@
 import { useTranslation } from "react-i18next";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, Button, Typography } from "@mui/material";
 import { ChevronRightRounded, ErrorOutlineRounded, } from "@mui/icons-material";
-
 import history from "../navigation/History";
 import EmptyStateComponent from "./EmptyStates";
 import { ReactComponent as Logo } from "./404.svg";
-import { Theme, useTheme } from "@mui/material";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%', height: '100%',
-    padding: theme.spacing(2)
-  },
-  wrapper: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
-    }
-  },
-  image: {
-    width: '24em',
-    [theme.breakpoints.down('sm')]: {
-      width: '12em',
-      marginBottom: '1em'
-    }
-  },
-  actionWrapper: {
-    marginTop: theme.spacing(6),
-  },
-  action: {
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(6)
-  },
-}));
+import { useTheme } from "@mui/material";
 
 export const ErrorNoPermissionState = () => {
   const { t } = useTranslation();
@@ -53,21 +18,36 @@ export const ErrorNoPermissionState = () => {
 }
 
 export const ErrorNotFoundState = () => {
-  const classes = useStyles();
   const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.wrapper}>
-        <Box>
-          <Logo className={classes.image}/>
-        </Box>
+    <Box sx={{ width: '100%', height: '100vh', padding: 2 }}>
+      <Box sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: {
+          xs: 'column',
+          md: 'row'
+        },
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Box component={Logo} sx={{
+          width: {
+            xs: '12em',
+            md: '24em',
+          },
+          marginBottom: {
+            xs: '1em',
+            md: 0
+          }
+        }}/>
         <Box sx={{ mx: 4 }}>
           <Typography variant="h2">{t("error.not_found_header")}</Typography>
           <Typography variant="h6">{t("error.not_found_summary")}</Typography>
 
-          <Box className={classes.actionWrapper}>
+          <Box sx={{ marginTop: 6 }}>
             <Typography variant="body1">{t("error.not_found_info")}</Typography>
             <Button
               sx={{ mt: theme.spacing(4), mb: theme.spacing(6) }}

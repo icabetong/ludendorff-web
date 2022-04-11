@@ -8,11 +8,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  FormLabel, IconButton, InputAdornment,
-  ListItem,
-  TextField,
-  Typography
+  IconButton,
+  InputAdornment,
+  TextField
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";

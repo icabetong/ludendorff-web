@@ -43,7 +43,6 @@ import StockCardPDF from "./StockCardPDF";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: '100%',
     width: '100%',
   },
   wrapper: {
@@ -138,27 +137,23 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     })
   }
 
-  const pagination = () => {
-    return (
-      isEnd && items.length > 0 && items.length === limit
-        ? <DataGridPaginationController
-            canBack={isStart}
-            canForward={isEnd}
-            onBackward={getPrev}
-            onForward={getNext}
-            size={limit}
-            onPageSizeChanged={onLimitChanged}/>
-        : <></>
-    )
-  }
-
   const dataGrid = (
     <DataGrid
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: pagination
+        Pagination: DataGridPaginationController,
+      }}
+      componentsProps={{
+        pagination: {
+          size: limit,
+          canBack: isStart,
+          canForward: isEnd,
+          onBackward: getPrev,
+          onForward: getNext,
+          onPageSizeChanged: onLimitChanged
+        }
       }}
       rows={items}
       columns={columns}
@@ -168,13 +163,11 @@ const StockCardScreen = (props: StockCardScreenProps) => {
       getRowId={(r) => r.stockCardId}
       onRowDoubleClick={onDataGridRowDoubleClicked}
       onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }/>
+      onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
   )
 
   return (
-    <Box className={classes.root}>
+    <Box sx={{ width: '100%' }}>
       <InstantSearch searchClient={Provider} indexName="cards">
         <AdaptiveHeader
           title={t("navigation.stock_cards")}
@@ -188,9 +181,9 @@ const StockCardScreen = (props: StockCardScreenProps) => {
               <Box className={classes.wrapper}>
                 {searchMode
                   ? <StockCardDataGrid
-                      onItemSelect={onDataGridRowDoubleClicked}
-                      onGenerateReport={onGenerateReport}
-                      onRemoveInvoke={onRemoveInvoke}/>
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onGenerateReport={onGenerateReport}
+                    onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
               </Box>
@@ -227,8 +220,8 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         summary="dialog.stock_card_remove_summary"
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
-      <Box sx={{display: 'none'}}>
-        <a ref={linkRef} href="https://captive.aple.com">{t("button.download")}</a>
+      <Box sx={{ display: 'none' }}>
+        <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>
     </Box>
   )

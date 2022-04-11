@@ -34,7 +34,6 @@ import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: '100%',
     width: '100%'
   },
   wrapper: {
@@ -115,27 +114,23 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     })
   }
 
-  const PaginationController = () => {
-    return (
-      isEnd && items.length > 0 && items.length === limit
-        ? <DataGridPaginationController
-            canBack={isStart}
-            canForward={isEnd}
-            onBackward={getPrev}
-            onForward={getNext}
-            size={limit}
-            onPageSizeChanged={onLimitChanged}/>
-        : <></>
-    )
-  }
-
   const dataGrid = (
     <DataGrid
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: PaginationController
+        Pagination: DataGridPaginationController,
+      }}
+      componentsProps={{
+        pagination: {
+          size: limit,
+          canBack: isStart,
+          canForward: isEnd,
+          onBackward: getPrev,
+          onForward: getNext,
+          onPageSizeChanged: onLimitChanged
+        }
       }}
       rows={items}
       columns={columns}
@@ -151,7 +146,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   )
 
   return (
-    <Box className={classes.root}>
+    <Box sx={{ width: '100%' }}>
       <InstantSearch searchClient={Provider} indexName="issued">
         <AdaptiveHeader
           title={t("navigation.issued")}

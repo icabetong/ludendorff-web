@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
     width: '100%', // if turned into viewport width; it will cause horizontal scrollbar!
-    height: '100vh',
+    minHeight: '100vh',
     [theme.breakpoints.up('lg')]: {
       flexDirection: 'column'
     }
@@ -111,6 +111,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '0 auto',
     flexGrow: 1,
     overflowY: 'hidden',
+    display: 'flex',
     [theme.breakpoints.up('xl')]: {
       maxWidth: '1600px'
     }
@@ -342,7 +343,7 @@ const RootComponent = () => {
   const onNavigate = (newDestination: Destination) => {
     setDestination(newDestination)
   }
-
+  
   if (status === AuthStatus.PENDING) {
     return <MainLoadingStateComponent/>
   } else if (status === AuthStatus.FETCHED) {

@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { AppBar, Box, Button, IconButton, Menu, Slide, Theme, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { AddRounded, CloseRounded, DeleteOutlineRounded, MoreVert, SaveRounded } from "@mui/icons-material";
@@ -44,7 +44,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           startIcon={<SaveRounded/>}>
           {t("button.save")}
         </Button>
-        { props.menuItems &&
+        {props.menuItems &&
           <>
             <IconButton
               size="large"
@@ -62,7 +62,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
               open={isOpen}
               onClose={() => setAnchor(null)}
               onMouseLeave={() => setAnchor(null)}>
-              { props.menuItems &&
+              {props.menuItems &&
                 props.menuItems.map((item) => {
                   return item
                 })

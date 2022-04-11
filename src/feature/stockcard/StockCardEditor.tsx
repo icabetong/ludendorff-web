@@ -17,7 +17,6 @@ import {
   IconButton,
   InputAdornment,
   List,
-  MenuItem,
   TextField,
   Typography,
   useMediaQuery,
@@ -181,7 +180,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                 </Grid>
               </Grid>
             </Box>
-            { !smBreakpoint && <Divider sx={{my: 2}}/> }
+            {!smBreakpoint && <Divider sx={{ my: 2 }}/>}
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.entries")}</Typography>
             </FormLabel>

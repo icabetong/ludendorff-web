@@ -11,14 +11,11 @@ import {
   Divider,
   Grid,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Theme,
-  Typography,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import {
   AccountCircleOutlined,
   DesktopWindowsRounded,
@@ -154,17 +151,14 @@ const NavigationListItem = (props: NavigationItemPropsType) => {
   const { t } = useTranslation();
 
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.itemKey}
       selected={props.isActive}
       onClick={props.action}>
-      <ListItemIcon>{
-        React.createElement(props.navigation.icon)
-      }
+      <ListItemIcon>{React.createElement(props.navigation.icon)}
       </ListItemIcon>
       <ListItemText primary={t(props.navigation.title)}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

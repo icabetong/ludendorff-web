@@ -45,10 +45,6 @@ import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    height: '100%',
-    width: '100%'
-  },
   wrapper: {
     height: '90%',
     padding: '1.4em',
@@ -172,27 +168,13 @@ const UserScreen = (props: UserScreenProps) => {
       onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
-  const PaginationController = () => {
-    return (
-      isEnd && items.length > 0 && items.length === limit
-        ? <DataGridPaginationController
-            size={limit}
-            canBack={isStart}
-            canForward={isEnd}
-            onBackward={getPrev}
-            onForward={getNext}
-            onPageSizeChanged={onLimitChanged}/>
-        : <></>
-    )
-  }
-
   const dataGrid = (
     <DataGrid
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: PaginationController
+        Pagination: DataGridPaginationController
       }}
       componentsProps={{
         toolbar: {
@@ -206,6 +188,14 @@ const UserScreen = (props: UserScreenProps) => {
               {t("navigation.departments")}
             </Button>
           ]
+        },
+        pagination: {
+          size: limit,
+          canBack: isStart,
+          canForward: isEnd,
+          onBackward: getPrev,
+          onForward: getNext,
+          onPageSizeChanged: onLimitChanged
         }
       }}
       rows={items}
@@ -223,7 +213,7 @@ const UserScreen = (props: UserScreenProps) => {
   )
 
   return (
-    <Box className={classes.root}>
+    <Box sx={{width: '100%'}}>
       <InstantSearch
         searchClient={Provider}
         indexName="users">

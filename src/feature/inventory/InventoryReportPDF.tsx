@@ -1,8 +1,8 @@
-import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Style } from "@react-pdf/types";
 import { useTranslation } from "react-i18next";
 import { Table, TableRow } from "../../components/PDFRendering";
-import { formatDate } from "../../shared/utils";
-import { InventoryReport } from "./InventoryReport";
+import { InventoryReport, InventoryReportItem } from "./InventoryReport";
 
 const styles = StyleSheet.create({
   page: {
@@ -52,21 +52,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontWeight: 'medium',
   },
-  tableHeader: {
-    flex: 1,
-    padding: '6pt',
-    border: '1px solid #efefef',
-    textAlign: 'center',
-    fontFamily: 'Inter',
-    fontWeight: 'medium'
-  },
-  tableData: {
-    flex: 1,
-    padding: '6pt',
-    border: '1px solid #efefef',
-    textAlign: 'center',
-    fontFamily: 'Inter',
-  }
 })
 
 type InventoryPDFProps = {
@@ -75,6 +60,16 @@ type InventoryPDFProps = {
 const InventoryReportPDF = (props: InventoryPDFProps) => {
   const { t } = useTranslation();
   const { inventoryReport } = props;
+  const cellStyle: Style = {
+    padding: '6pt',
+    border: '1px solid #efefef',
+    textAlign: 'center',
+    fontFamily: 'Inter',
+  }
+  const headerStyle: Style = {
+    fontWeight: 'medium',
+    ...cellStyle,
+  }
 
   return (
     <Document>
@@ -93,7 +88,7 @@ const InventoryReportPDF = (props: InventoryPDFProps) => {
             <Text style={styles.value}>{inventoryReport.fundCluster}</Text>
           </View>
         </View>
-        <View style={{display: 'flex'}}>
+        <View style={{ display: 'flex' }}>
           <Text>
             {t("template.inventory_entity", {
               name: inventoryReport.entityName,
@@ -101,6 +96,35 @@ const InventoryReportPDF = (props: InventoryPDFProps) => {
             })}
           </Text>
         </View>
+        <Table>
+          <TableRow>
+            <Text style={{ flex: 2, ...headerStyle }}>{t("field.article")}</Text>
+            <Text style={{ flex: 4, ...headerStyle }}>{t("field.asset_description")}</Text>
+            <Text style={{ flex: 2, ...headerStyle }}>{t("field.stock_number")}</Text>
+            <Text style={{ flex: 1, ...headerStyle }}>{t("field.unit_of_measure")}</Text>
+            <Text style={{ flex: 1, ...headerStyle }}>{t("field.unit_value")}</Text>
+            <Text style={{ flex: 1, ...headerStyle }}>{t("field.balance_per_card")}</Text>
+            <Text style={{ flex: 1, ...headerStyle }}>{t("field.on_hand_count")}</Text>
+            <Text style={{ flex: 1.5, ...headerStyle }}>{t("field.total_price")}</Text>
+          </TableRow>
+          <>
+            {props.inventoryReport.items.map((row: InventoryReportItem) => {
+              return (
+                <TableRow key={row.stockNumber}>
+                  <Text style={{ flex: 2, ...cellStyle }}>{row.article}</Text>
+                  <Text style={{ flex: 4, ...cellStyle }}>{row.description}</Text>
+                  <Text style={{ flex: 2, ...cellStyle }}>{row.stockNumber}</Text>
+                  <Text style={{ flex: 1, ...cellStyle }}>{row.unitOfMeasure}</Text>
+                  <Text style={{ flex: 1, ...cellStyle }}>{row.unitValue}</Text>
+                  <Text style={{ flex: 1, ...cellStyle }}>{row.balancePerCard}</Text>
+                  <Text style={{ flex: 1, ...cellStyle }}>{row.onHandCount}</Text>
+                  <Text style={{ flex: 1.5, ...cellStyle }}>{row.balancePerCard * row.unitValue}</Text>
+                </TableRow>
+              )
+            })
+            }
+          </>
+        </Table>
       </Page>
     </Document>
   )

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Theme, Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
 import { DeleteOutlineRounded, DomainOutlined } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
@@ -12,24 +11,12 @@ import { Department, DepartmentRepository } from "./Department";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { isDev } from "../../shared/utils";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    minHeight: '60vh'
-  },
-  uiIcon: {
-    width: '4em',
-    height: '4em',
-    color: theme.palette.text.primary
-  },
-}));
-
 type DepartmentListProps = {
   departments: Department[],
   onItemSelect: (department: Department) => void
 }
 
 const DepartmentList = (props: DepartmentListProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [department, setDepartment] = useState<Department | undefined>(undefined);
@@ -52,7 +39,7 @@ const DepartmentList = (props: DepartmentListProps) => {
   return (
     <>
       {props.departments.length > 0
-        ? <List className={classes.root}>
+        ? <List sx={{ minHeight: '100%' }}>
           {
             props.departments.map((department: Department) => {
               return (

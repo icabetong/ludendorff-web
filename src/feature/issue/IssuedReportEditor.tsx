@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
-  Dialog, Divider,
+  Dialog,
+  Divider,
   FormLabel,
   Grid,
   List,
@@ -71,7 +72,6 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
   const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: ActionType.UPDATE, payload: item });
   const onEditorCommit = (item: IssuedReportItem) => {
-    console.log(item)
     let currentItems = Array.from(items);
     let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);
     if (index < 0) {
@@ -178,7 +178,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                 </Grid>
               </Grid>
             </Box>
-            { !smBreakpoint && <Divider sx={{my: 2}}/> }
+            {!smBreakpoint && <Divider sx={{ my: 2 }}/>}
             <FormLabel component="legend">
               <Typography variant="body2">{t("field.items")}</Typography>
             </FormLabel>

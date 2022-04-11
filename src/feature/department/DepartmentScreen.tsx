@@ -12,7 +12,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { HitsProvided } from "react-instantsearch-core";
 import { collection, orderBy, query } from "firebase/firestore";
@@ -32,23 +31,6 @@ import { PaginationController } from "../../components/PaginationController";
 import { usePagination } from "use-pagination-firestore";
 import useQueryLimit from "../shared/useQueryLimit";
 
-const useStyles = makeStyles(() => ({
-  root: {
-    minHeight: '60vh',
-    paddingTop: 0,
-    paddingBottom: 0,
-    '& .MuiList-padding': {
-      padding: 0
-    }
-  },
-  search: {
-    minHeight: '60vh'
-  },
-  searchBox: {
-    margin: '0.6em 1em'
-  }
-}));
-
 type DepartmentScreenProps = {
   isOpen: boolean,
   onDismiss: () => void
@@ -58,7 +40,6 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const classes = useStyles();
   const { canRead, canWrite } = usePermissions();
   const { limit } = useQueryLimit('departmentQueryLimit');
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -90,17 +71,21 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
         <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.departments")}</CustomDialogTitle>
         <DialogContent
           dividers={true}
-          className={classes.root}>
+          sx={{
+            minHeight: '60vh',
+            paddingX: 0,
+            '& .MuiList-padding': { padding: 0 }
+          }}>
           {search
             ?
             <Box>
               <InstantSearch
                 searchClient={Provider}
                 indexName="departments">
-                <Box className={classes.searchBox}>
+                <Box sx={{ margin: '0.6em 1em' }}>
                   <SearchBox/>
                 </Box>
-                <Box className={classes.search}>
+                <Box sx={{minHeight: '100%'}}>
                   <Results>
                     <DepartmentHits onItemSelect={onEditorUpdate}/>
                   </Results>
@@ -113,7 +98,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
                   <DepartmentList
                     departments={items}
                     onItemSelect={onEditorUpdate}/>
-                  { isEnd && items.length > 0 && items.length === limit &&
+                  {isEnd && items.length > 0 && items.length === limit &&
                     <PaginationController
                       canBack={isStart}
                       canForward={isEnd}
@@ -130,7 +115,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             color="primary"
             onClick={onEditorCreate}
             disabled={!canWrite}>{t("button.add")}</Button>
-          <div style={{ flex: '1 0 0' }}/>
+          <Box sx={{ flex: '1 0 0' }}/>
           <Button
             color="primary"
             onClick={props.onDismiss}>{t("button.close")}</Button>

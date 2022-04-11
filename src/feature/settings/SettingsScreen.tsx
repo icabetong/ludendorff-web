@@ -89,7 +89,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   ]
 
   return (
-    <Box>
+    <Box sx={{ width: '100%' }}>
       <AdaptiveHeader
         title={t("navigation.settings")}
         onDrawerTriggered={props.onDrawerToggle}/>
