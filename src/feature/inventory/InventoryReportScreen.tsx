@@ -144,7 +144,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: DataGridPaginationController,
+        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
       }}
       componentsProps={{
         pagination: {

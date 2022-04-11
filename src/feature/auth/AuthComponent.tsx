@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
-import { Alert, Box, Button, Container, Paper, TextField, Typography, Stack } from "@mui/material";
+import { Alert, Box, Button, Container, Paper, Stack, TextField, Typography } from "@mui/material";
 import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../index";
 

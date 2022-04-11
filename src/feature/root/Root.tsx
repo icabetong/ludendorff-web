@@ -343,7 +343,7 @@ const RootComponent = () => {
   const onNavigate = (newDestination: Destination) => {
     setDestination(newDestination)
   }
-  
+
   if (status === AuthStatus.PENDING) {
     return <MainLoadingStateComponent/>
   } else if (status === AuthStatus.FETCHED) {

@@ -161,7 +161,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: DataGridPaginationController
+        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
       }}
       componentsProps={{
         toolbar: {

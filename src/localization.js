@@ -80,6 +80,7 @@ const resources = {
         not_set: "Not Set",
         total_value: "Total Value",
         amount: "Amount",
+        unit: "Unit",
       },
       placeholder: {
         none: "None",
@@ -252,6 +253,12 @@ const resources = {
         user_enable_summary: "Are you sure you want to enable this user account? With proper permissions, you can always disable this account in the future.",
         user_remove: "Remove this user?",
         user_remove_summary: "Are you sure you want to remove this user account? All data associated with this account will be removed as well and cannot be recovered.",
+        issued_report_remove: "Remove Report?",
+        issued_report_remove_summary: "Are you sure you want to remove this report? Once finished, this action cannot be undone.",
+        stock_card_remove: "Remove Stock Card?",
+        stock_card_remove_summary: "Are you are you want to remove this stock card? Once finished, this action cannot be undone.",
+        inventory_remove: "Remove Report?",
+        inventory_remove_summary: "Are you sure you want to remove this report? Once finished, this action cannot be undone.",
         send_reset_link_title: "Send Password Reset Link",
         send_reset_link_message: "If you forgot your password for this account, you can request to reset it requesting a reset email.",
         duplicate_title: "Duplicate Record",
@@ -274,7 +281,7 @@ const resources = {
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
         generate_stock_card: "PDF Generation",
         generate_stock_card_summary: "Stock Card Report has been generated, click the button below to save it.",
-        generate_stock_card_summary_fetching: "Preparing your stock card report, hold on for a minute..."
+        generate_stock_card_summary_fetching: "Preparing your stock card report, hold on for a minute...",
       },
       template: {
         full_name: "{{first}} {{last}}",

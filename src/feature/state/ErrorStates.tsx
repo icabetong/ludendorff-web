@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { ChevronRightRounded, ErrorOutlineRounded, } from "@mui/icons-material";
 import history from "../navigation/History";
 import EmptyStateComponent from "./EmptyStates";
 import { ReactComponent as Logo } from "./404.svg";
-import { useTheme } from "@mui/material";
 
 export const ErrorNoPermissionState = () => {
   const { t } = useTranslation();

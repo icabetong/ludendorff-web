@@ -75,7 +75,7 @@ const StockCardPDF = (props: StockCardPDFProps) => {
     <Document>
       <Page style={styles.page} orientation="landscape">
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>{t("field.stock_card")}</Text>
+          <Text style={styles.headerText}>{t("document.stock_card")}</Text>
         </View>
         <View style={styles.container}>
           <View style={styles.fieldColumn}>

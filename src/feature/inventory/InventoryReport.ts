@@ -1,6 +1,6 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
 import { firestore } from "../..";
-import { inventoryCollection, items } from "../../shared/const";
+import { inventoryCollection, items as itemsCollection } from "../../shared/const";
 import { TypeCore } from "../type/Type";
 import { getIdTokenRefreshed } from "../user/User";
 import axios from "axios";
@@ -31,7 +31,7 @@ export type InventoryReportItem = {
 
 export class InventoryReportRepository {
   static async fetch(reportId: string): Promise<InventoryReportItem[]> {
-    let itemsRef = collection(firestore, inventoryCollection, `${reportId}/${items}`)
+    let itemsRef = collection(firestore, inventoryCollection, reportId, itemsCollection)
     let snapshot = await getDocs(itemsRef);
 
     return snapshot.docs.map((doc) => {
@@ -46,7 +46,8 @@ export class InventoryReportRepository {
 
     batch.set(docReference, r);
     items.forEach((item) => {
-      batch.set(doc(firestore, inventoryCollection, r.inventoryReportId), item);
+      batch.set(doc(firestore, inventoryCollection,
+        r.inventoryReportId, itemsCollection, item.stockNumber), item);
     });
     await batch.commit();
 
@@ -65,7 +66,8 @@ export class InventoryReportRepository {
 
     let batch = writeBatch(firestore);
 
-    let itemsRef = collection(firestore, inventoryCollection, `${report.inventoryReportId}/${items}`);
+    let itemsRef = collection(firestore, inventoryCollection,
+      `${report.inventoryReportId}/${itemsCollection}`);
     let snapshot = await getDocs(itemsRef);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
@@ -73,7 +75,8 @@ export class InventoryReportRepository {
 
     batch.set(docReference, r);
     items.forEach((item) => {
-      batch.set(doc(firestore, inventoryCollection, r.inventoryReportId), item);
+      batch.set(doc(firestore, inventoryCollection,
+        r.inventoryReportId, itemsCollection, item.stockNumber), item);
     });
 
     await batch.commit();

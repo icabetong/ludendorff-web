@@ -1,6 +1,6 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
-import { entries, stockCardCollection } from "../../shared/const";
+import { entries as entriesCollection, stockCardCollection } from "../../shared/const";
 import axios from "axios";
 import { getIdTokenRefreshed } from "../user/User";
 import { SERVER_URL } from "../../shared/utils";
@@ -29,7 +29,8 @@ export type StockCardEntry = {
 
 export class StockCardRepository {
   static async fetch(stockCardId: string): Promise<StockCardEntry[]> {
-    let entriesRef = collection(firestore, stockCardCollection, `${stockCardId}/${entries}`)
+    let entriesRef = collection(firestore, stockCardCollection, stockCardId,
+      entriesCollection);
     let snapshot = await getDocs(entriesRef);
 
     return snapshot.docs.map((doc) => {
@@ -38,12 +39,14 @@ export class StockCardRepository {
   }
 
   static async create(stockCard: StockCard): Promise<void> {
+    const { entries, ...card } = stockCard;
+
     let batch = writeBatch(firestore);
-    batch.set(doc(firestore, stockCardCollection, stockCard.stockCardId), stockCard)
+    batch.set(doc(firestore, stockCardCollection, stockCard.stockCardId), card);
 
     stockCard.entries.forEach((entry: StockCardEntry) => {
       batch.set(doc(firestore, stockCardCollection,
-          `${stockCard.stockCardId}/${entries}/${entry.stockCardEntryId}`),
+          `${stockCard.stockCardId}/${entriesCollection}/${entry.stockCardEntryId}`),
         entry);
     });
 
@@ -53,16 +56,18 @@ export class StockCardRepository {
     return await axios.patch(`${SERVER_URL}/stock-card-entries`, {
       token: token,
       id: stockCard.stockCardId,
-      entries: entries,
+      entries: entriesCollection,
     });
   }
 
   static async update(stockCard: StockCard): Promise<void> {
+    const { entries, ...card } = stockCard;
+
     let batch = writeBatch(firestore);
-    batch.set(doc(firestore, stockCardCollection, stockCard.stockCardId), stockCard);
+    batch.set(doc(firestore, stockCardCollection, stockCard.stockCardId), card);
 
     let reference = collection(firestore, stockCardCollection,
-      `${stockCard.stockCardId}/${entries}`);
+      stockCard.stockCardId, entriesCollection);
     let snapshot = await getDocs(reference);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);
@@ -70,7 +75,7 @@ export class StockCardRepository {
 
     stockCard.entries.forEach((entry: StockCardEntry) => {
       batch.set(doc(firestore, stockCardCollection,
-          `${stockCard.stockCardId}/${entries}/${entry.stockCardEntryId}`),
+          stockCard.stockCardId, entriesCollection, entry.stockCardEntryId),
         entry);
     });
 
@@ -86,7 +91,7 @@ export class StockCardRepository {
     let batch = writeBatch(firestore);
 
     let reference = collection(firestore, stockCardCollection,
-      `${stockCard.stockCardId}/${entries}`);
+      `${stockCard.stockCardId}/${entriesCollection}`);
     let snapshot = await getDocs(reference);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);

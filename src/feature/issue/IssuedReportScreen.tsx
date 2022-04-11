@@ -4,7 +4,7 @@ import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
 import { usePermissions } from "../auth/AuthProvider";
-import { useReducer, useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
 import { usePagination } from "use-pagination-firestore";
 import { date, entityName, fundCluster, issuedCollection, serialNumber } from "../../shared/const";
@@ -12,7 +12,7 @@ import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { formatDate, isDev } from "../../shared/utils";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import { AddRounded, DeleteOutlineRounded, UploadFileOutlined } from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, UploadFileOutlined } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -31,6 +31,8 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
+import IssuedReportPDF from "./IssuedReportPDF";
+import { pdf } from "@react-pdf/renderer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -53,6 +55,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
     query(collection(firestore, issuedCollection), orderBy(fundCluster, "asc")), {
@@ -95,11 +98,26 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => onRemoveInvoke(params.row as IssuedReport)}/>
+          onClick={() => onRemoveInvoke(params.row as IssuedReport)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => onGenerateReport(params.row as IssuedReport)}/>
       ],
     }
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
+  const onGenerateReport = async (issuedReport: IssuedReport) => {
+    issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
+    const blob = await pdf((<IssuedReportPDF  issuedReport={issuedReport}/>)).toBlob();
+
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${issuedReport.fundCluster}.pdf`;
+      linkRef.current?.click();
+    }
+  }
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onIssuedEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -120,7 +138,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: DataGridPaginationController,
+        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
       }}
       componentsProps={{
         pagination: {
@@ -160,8 +178,9 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
               <Box className={classes.wrapper}>
                 {searchMode
                   ? <IssuedReportDataGrid
-                    onItemSelect={onDataGridRowDoubleClicked}
-                    onRemoveInvoke={onRemoveInvoke}/>
+                      onItemSelect={onDataGridRowDoubleClicked}
+                      onGenerateReport={onGenerateReport}
+                      onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
               </Box>
@@ -198,6 +217,9 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         summary="dialog.issued_report_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
+      <Box sx={{display: 'none'}}>
+        <a ref={linkRef} href="https://capstive.apple.com">{t("button.download")}</a>
+      </Box>
     </Box>
   )
 }
@@ -223,6 +245,7 @@ const IssuedReportEmptyState = () => {
 
 type IssuedReportDataGridCoreProps = HitsProvided<IssuedReport> & {
   onItemSelect: (params: GridRowParams) => void,
+  onGenerateReport: (report: IssuedReport) => void,
   onRemoveInvoke: (report: IssuedReport) => void,
 }
 
@@ -251,7 +274,12 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
         <GridActionsCellItem
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => props.onRemoveInvoke(params.row as IssuedReport)}/>
+          onClick={() => props.onRemoveInvoke(params.row as IssuedReport)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<DescriptionOutlined/>}
+          label={t("button.generate_report")}
+          onClick={() => props.onGenerateReport(params.row as IssuedReport)}/>
       ],
     }
   ];

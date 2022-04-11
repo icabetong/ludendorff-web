@@ -174,7 +174,7 @@ const UserScreen = (props: UserScreenProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyRows,
         Toolbar: GridToolbar,
-        Pagination: DataGridPaginationController
+        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
       }}
       componentsProps={{
         toolbar: {
