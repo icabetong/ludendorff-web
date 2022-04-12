@@ -235,7 +235,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
           </Drawer>
         </Hidden>
         <Hidden lgDown>
-          <AppBar color="inherit" elevation={1}>
+          <AppBar color="inherit" elevation={0}>
             <Toolbar>
               <Box
                 component={Logo}
@@ -319,6 +319,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
           </AppBar>
         </Hidden>
       </nav>
+      <Divider/>
       <Box className={classes.content}>
         <Suspense fallback={<ContentLoadingStateComponent/>}>
           <InnerComponent

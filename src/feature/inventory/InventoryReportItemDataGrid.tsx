@@ -1,5 +1,5 @@
 import { InventoryReportItem } from "./InventoryReport";
-import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridRowParams, GridSelectionModel, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
 import {
   article,
   assetDescription,
@@ -20,6 +20,7 @@ import { Asset } from "../asset/Asset";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import { currencyFormatter } from "../../shared/utils";
+import { EditRounded } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -72,6 +73,16 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         let item = params.row as InventoryReportItem;
         return currencyFormatter.format(item.unitValue * item.balancePerCard);
       }
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<EditRounded/>}
+          label={t("button.edit")}
+          onClick={() => props.onItemSelected(params.row as InventoryReportItem)}/>
+      ]
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryReportItemColumns', columns);
@@ -82,8 +93,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
   }
 
   return (
-    <Box
-      className={classes.dataGrid}>
+    <Box className={classes.dataGrid}>
       <DataGrid
         checkboxSelection
         components={{
@@ -92,7 +102,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         componentsProps={{
           toolbar: {
             onAddAction: props.onAddAction,
-            onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
+            onRemoveAction: hasChecked ? props.onRemoveAction() : undefined,
           }
         }}
         columns={columns}
@@ -102,7 +112,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         getRowId={(row) => row.stockNumber}
         onSelectionModelChange={onCheckedRowsChanged}
         onStateChange={(v) => onDensityChanged(v.density.value)}
-        onColumnVisibilityModelChange={(v) => onVisibilityChange(v)}/>
+        onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
     </Box>
   )
 }

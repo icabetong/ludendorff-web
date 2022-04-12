@@ -15,7 +15,7 @@ import {
   useTheme
 } from "@mui/material";
 import { useEffect, useReducer, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterDateFns';
 import { ActionType, initialState, reducer } from "./InventoryReportItemEditorReducer";
@@ -47,12 +47,31 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
   const [yearMonth, setYearMonth] = useState<Date | null>(new Date());
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<InventoryReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const onDismiss = () => {
+    props.onDismiss();
+    reset();
+  }
+
+  useEffect(() => {
+    setDate(props.report?.accountabilityDate ? props.report?.accountabilityDate?.toDate() : null)
+  }, [props.report])
+
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        fundCluster: props.report?.fundCluster ? props.report?.fundCluster : "",
+        entityName: props.report?.entityName ? props.report?.entityName : "",
+        entityPosition: props.report?.entityPosition ? props.report?.entityPosition : ""
+      })
+    }
+  }, [props.isOpen, props.report, reset])
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -118,7 +137,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
           enqueueSnackbar(t("feedback.inventory_create_error"))
           if (isDev) console.log(error)
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     } else {
       InventoryReportRepository.update(inventoryReport)
         .then(() => enqueueSnackbar(t("feedback.inventory_updated")))
@@ -126,7 +145,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
           enqueueSnackbar(t("feedback.inventory_update_error"))
           if (isDev) console.log(error)
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     }
   }
 
@@ -135,10 +154,10 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       <Dialog
         fullScreen={true}
         open={props.isOpen}
-        onClose={props.onDismiss}
+        onClose={onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_inventory")} onDismiss={props.onDismiss}/>
+          <EditorAppBar title={t("dialog.details_inventory")} onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
               <Grid
@@ -151,33 +170,48 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                   item
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <TextField
-                    autoFocus
-                    id="fundCluster"
-                    type="text"
-                    label={t("field.fund_cluster")}
-                    error={errors.fundCluster !== undefined}
-                    helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
-                    defaultValue={props.report && props.report.fundCluster}
-                    {...register('fundCluster', { required: "feedback.empty_fund_cluster" })}/>
-                  <TextField
-                    id="entityName"
-                    type="text"
-                    label={t("field.entity_name")}
-                    error={errors.entityName !== undefined}
-                    helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                    defaultValue={props.report && props.report.entityName}
-                    placeholder={t("placeholder.entity_name")}
-                    {...register("entityName", { required: "feedback.empty_entity_name" })}/>
-                  <TextField
-                    id="entityPosition"
-                    type="text"
-                    label={t("field.entity_position")}
-                    error={errors.entityPosition !== undefined}
-                    helperText={errors.entityPosition?.message && t(errors.entityPosition?.message)}
-                    defaultValue={props.report && props.report.entityPosition}
-                    placeholder={t("placeholder.entity_position")}
-                    {...register("entityPosition", { required: "feedback.empty_entity_position" })}/>
+                  <Controller
+                    name="fundCluster"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        autoFocus
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.fund_cluster")}
+                        error={errors.fundCluster !== undefined}
+                        helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
+                        {...register('fundCluster', { required: "feedback.empty_fund_cluster" })}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_fund_cluster" }}}/>
+                  <Controller
+                    name="entityName"
+                    control={control}
+                    render={({ field: { ref, ...inputProps } }) => (
+                      <TextField
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.entity_name")}
+                        error={errors.entityName !== undefined}
+                        helperText={errors.entityName?.message && t(errors.entityName?.message)}
+                        placeholder={t("placeholder.entity_name")}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_entity_name" }}}/>
+                  <Controller
+                    name="entityPosition"
+                    control={control}
+                    render={({ field: { ref, ...inputProps } }) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.entity_position")}
+                        error={errors.entityPosition !== undefined}
+                        helperText={errors.entityPosition?.message && t(errors.entityPosition?.message)}
+                        placeholder={t("placeholder.entity_position")}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_entity_position" }}}/>
                 </Grid>
                 <Grid
                   item
@@ -217,19 +251,19 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
             </FormLabel>
             {smBreakpoint
               ? <List>
-                <InventoryReportItemList
-                  items={items}
-                  onItemSelected={onEditorUpdate}/>
-                <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
-                  {t("button.add")}
-                </Button>
-              </List>
+                  <InventoryReportItemList
+                    items={items}
+                    onItemSelected={onEditorUpdate}/>
+                  <Button fullWidth startIcon={<AddRounded/>} onClick={onEditorCreate}>
+                    {t("button.add")}
+                  </Button>
+                </List>
               : <InventoryReportItemDataGrid
-                items={items}
-                onAddAction={onEditorCreate}
-                onRemoveAction={onCheckedRowsRemove}
-                onItemSelected={onEditorUpdate}
-                onCheckedRowsChanged={onCheckedRowsChanged}/>
+                  items={items}
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
         </EditorRoot>

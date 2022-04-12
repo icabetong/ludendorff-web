@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   Button,
   Container,
@@ -37,16 +37,31 @@ type FormValues = {
 const DepartmentEditor = (props: DepartmentEditorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, setValue, control } = useForm<FormValues>();
   const [isWritePending, setWritePending] = useState<boolean>(false);
   const [isPickerOpen, setPickerOpen] = useState(false);
-  const [manager, setManager] = useState<UserCore | undefined>(props.department?.manager);
+  const [manager, setManager] = useState<UserCore | undefined>(undefined);
+
+  useEffect(() => {
+    setManager(props.department?.manager);
+  }, [props.department])
+
+  useEffect(() => {
+    if (props.isOpen) {
+      setValue("name", props.department?.name ? props.department.name : "")
+    }
+  }, [props.isOpen, props.department, setValue])
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
     query(collection(firestore, userCollection), orderBy(lastName, "asc")), {
       limit: 15
     }
-  )
+  );
+
+  const onDismiss = () => {
+    setWritePending(false);
+    props.onDismiss();
+  }
 
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
@@ -67,10 +82,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
           enqueueSnackbar(t("feedback.department_create_error"));
           if (isDev) console.log(error)
         })
-        .finally(() => {
-          setWritePending(false);
-          props.onDismiss();
-        })
+        .finally(onDismiss)
     } else {
       DepartmentRepository.update(department)
         .then(() => enqueueSnackbar(t("feedback.department_updated")))
@@ -78,10 +90,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
           enqueueSnackbar(t("feedback.department_update_error"));
           if (isDev) console.log(error);
         })
-        .finally(() => {
-          setWritePending(false);
-          props.onDismiss();
-        })
+        .finally(onDismiss)
     }
   }
 
@@ -95,21 +104,25 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
         fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}
-        onClose={props.onDismiss}>
+        onClose={onDismiss}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_department")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <TextField
-                disabled={isWritePending}
-                autoFocus
-                id="name"
-                type="text"
-                label={t("field.department_name")}
-                defaultValue={props.department !== undefined ? props.department?.name : ""}
-                error={errors.name !== undefined}
-                helperText={errors.name?.message !== undefined ? t("feedback.empty_department_name") : undefined}
-                {...register("name", { required: "feedback.empty_department_name" })} />
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    autoFocus
+                    type="text"
+                    inputRef={ref}
+                    label={t("field.department_name")}
+                    error={errors.name !== undefined}
+                    helperText={errors.name?.message !== undefined ? t(errors.name?.message) : undefined}/>
+                  )}
+                rules={{ required: { value: true, message: "feedback.empty_department_name" }}}/>
               <TextField
                 value={manager !== undefined ? manager?.name : t("field.not_set")}
                 label={t("field.manager")}
@@ -128,7 +141,7 @@ const DepartmentEditor = (props: DepartmentEditorProps) => {
           <DialogActions>
             <Button
               color="primary"
-              onClick={props.onDismiss}
+              onClick={onDismiss}
               disabled={isWritePending}>
               {t("button.cancel")}
             </Button>

@@ -14,7 +14,7 @@ import {
   useTheme
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useReducer, useState } from "react";
 import { isDev, newId } from "../../shared/utils";
 import { ActionType, initialState, reducer } from "./IssuedReportItemEditorReducer";
@@ -46,11 +46,25 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<IssuedReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    setDate(props.report?.date ? props.report?.date?.toDate() : null)
+  }, [props.report])
+
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        fundCluster: props.report?.fundCluster,
+        entityName: props.report?.entityName,
+        serialNumber: props.report?.serialNumber
+      })
+    }
+  }, [props.isOpen, props.report, reset])
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -136,33 +150,47 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
                     spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <TextField
-                    autoFocus
-                    id="fundCluster"
-                    type="text"
-                    label={t("field.fund_cluster")}
-                    error={errors.fundCluster !== undefined}
-                    helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
-                    defaultValue={props.report && props.report.fundCluster}
-                    {...register('fundCluster', { required: "feedback.empty_fund_cluster" })}/>
-                  <TextField
-                    id="serialNumber"
-                    type="text"
-                    label={t("field.serial_number")}
-                    error={errors.serialNumber !== undefined}
-                    helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}
-                    defaultValue={props.report && props.report.serialNumber}
-                    {...register('serialNumber', { required: "feedback.empty_serial_number" })}/>
+                  <Controller
+                    name="fundCluster"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        autoFocus
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.fund_cluster")}
+                        error={errors.fundCluster !== undefined}
+                        helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_fund_cluster" }}}/>
+                  <Controller
+                    name="serialNumber"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.serial_number")}
+                        error={errors.serialNumber !== undefined}
+                        helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_serial_number" }}}/>
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <TextField
-                    id="entityName"
-                    type="text"
-                    label={t("field.entity_name")}
-                    error={errors.entityName !== undefined}
-                    helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                    defaultValue={props.report && props.report.entityName}
-                    {...register('entityName', { required: "feedback.empty_entity_name" })}/>
+                  <Controller
+                    name="entityName"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        inputRef={ref}
+                        label={t("field.entity_name")}
+                        error={errors.entityName !== undefined}
+                        helperText={errors.entityName?.message && t(errors.entityName?.message)}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_entity_name" }}}/>
                   <LocalizationProvider dateAdapter={DateAdapter}>
                     <Box>
                       <DatePicker
@@ -171,8 +199,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         label={t("field.date")}
                         value={date}
                         onChange={setDate}
-                        renderInput={(params) => <TextField {...params} helperText={null}/>}
-                      />
+                        renderInput={(params) => <TextField {...params} helperText={null}/>}/>
                     </Box>
                   </LocalizationProvider>
                 </Grid>

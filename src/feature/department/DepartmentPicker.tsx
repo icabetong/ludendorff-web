@@ -28,13 +28,13 @@ type DepartmentPickerProps = PaginationControllerProps & {
 const DepartmentPicker = (props: DepartmentPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
   const { limit } = useQueryLimit('departmentQueryLimit');
 
   return (
     <Dialog
-      fullScreen={isMobile}
+      fullScreen={smBreakpoint}
       fullWidth={true}
       maxWidth="xs"
       open={props.isOpen}

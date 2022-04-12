@@ -1,6 +1,6 @@
 import { StockCard, StockCardEntry, StockCardRepository } from "./StockCard";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useReducer, useState } from "react";
 import { Asset } from "../asset/Asset";
 import { usePagination } from "use-pagination-firestore";
@@ -48,13 +48,23 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, setValue, control } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | null>(null);
   const [isOpen, setOpen] = useState(false);
   const [entries, setEntries] = useState<StockCardEntry[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [checked, setChecked] = useState<string[]>([]);
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if (props.isOpen) {
+      setValue("entityName", props.stockCard?.entityName)
+    }
+  }, [props.isOpen, props.stockCard, setValue])
+
+  const onDismiss = () => {
+    props.onDismiss();
+  }
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -142,30 +152,35 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       <Dialog
         open={props.isOpen}
         fullScreen={true}
-        onClose={props.onDismiss}
+        onClose={onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar
             title={t("dialog.details_stock_card")}
-            onDismiss={props.onDismiss}/>
+            onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
                     spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
-                  <TextField
-                    autoFocus
-                    id="entityName"
-                    type="text"
-                    label={t("field.entity_name")}
-                    defaultValue={props.stockCard && props.stockCard?.entityName}
-                    error={errors.entityName !== undefined}
-                    helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                    {...register("entityName", { required: "feedback.empty_entity_name" })}/>
+                  <Controller
+                    control={control}
+                    name="entityName"
+                    render={({ field: { ref, ...inputProps } }) => (
+                      <TextField
+                        {...inputProps}
+                        autoFocus
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.entity_name")}
+                        error={errors.entityName !== undefined}
+                        helperText={errors.entityName?.message && t(errors.entityName?.message)}/>
+                    )}
+                    rules={{ required: { value: true, message: 'feedback.empty_entity_name' }}}/>
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
                   <TextField
-                    value={asset?.description ? asset?.description : t("field.not_set")}
+                    value={!props.stockCard ? asset?.description ? asset?.description : t("field.not_set") : props.stockCard.description }
                     label={t("field.asset")}
                     InputProps={{
                       readOnly: true,
@@ -186,22 +201,22 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
             </FormLabel>
             {smBreakpoint
               ? <List>
-                <StockCardEntryList
-                  entries={entries}
-                  onItemSelected={onEditorUpdate}/>
-                <Button
-                  fullWidth
-                  startIcon={<AddRounded/>}
-                  onClick={onEditorCreate}>
-                  {t("add")}
-                </Button>
-              </List>
+                  <StockCardEntryList
+                    entries={entries}
+                    onItemSelected={onEditorUpdate}/>
+                  <Button
+                    fullWidth
+                    startIcon={<AddRounded/>}
+                    onClick={onEditorCreate}>
+                    {t("add")}
+                  </Button>
+                </List>
               : <StockCardEntryDataGrid
-                onAddAction={onEditorCreate}
-                onRemoveAction={onCheckedRowsRemove}
-                onItemSelected={onEditorUpdate}
-                entries={entries}
-                onCheckedRowsChanged={onCheckedRowsChanged}/>
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  entries={entries}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
         </EditorRoot>
@@ -219,6 +234,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       <StockCardEntryEditor
         isOpen={state.isOpen}
         isCreate={state.isCreate}
+        entry={state.entry}
         onSubmit={onEditorCommit}
         onDismiss={onEditorDismiss}/>
     </>

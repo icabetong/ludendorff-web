@@ -1,8 +1,8 @@
 import { IssuedReportItem } from "./IssuedReport";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Asset } from "../asset/Asset";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
 import { assetCollection, assetStockNumber } from "../../shared/const";
@@ -39,9 +39,22 @@ type IssuedReportItemEditorProps = {
 export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        quantityIssued: props.item?.quantityIssued ? props.item?.quantityIssued : 0,
+        responsibilityCenter: props.item?.responsibilityCenter
+      })
+    }
+  }, [props.isOpen, props.item, reset])
+
+  const onDismiss = () => {
+    props.onDismiss();
+  }
 
   const onPickerInvoke = () => setOpen(true);
   const onPickerDismiss = () => setOpen(false);
@@ -66,8 +79,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
       unitCost: asset.unitValue,
       quantityIssued: parseInt(`${data.quantityIssued}`)
     }
-    props.onSubmit(item)
-    props.onDismiss()
+    props.onSubmit(item);
   }
 
   return (
@@ -75,14 +87,13 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
       <Dialog
         fullWidth={true}
         maxWidth="xs"
-        open={props.isOpen}
-        onClose={props.onDismiss}>
+        open={props.isOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_issued_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
               <TextField
-                value={asset?.description ? asset?.description : t("field.not_set")}
+                value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
                 label={t("field.asset")}
                 InputProps={{
                   readOnly: true,
@@ -95,31 +106,41 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
                   )
                 }}/>
               <Divider sx={{ my: 2 }}/>
-              <TextField
-                autoFocus
-                id="quantityIssued"
-                type="number"
-                label={t("field.quantity_issued")}
-                defaultValue={props.item && props.item.quantityIssued}
-                error={errors.quantityIssued !== undefined}
-                helperText={errors.quantityIssued?.message && t(errors.quantityIssued?.message)}
-                disabled={!asset}
-                {...register('quantityIssued', { required: "feedback.empty_quantity_issued" })}/>
-              <TextField
-                id="responsibilityCenter"
-                type="text"
-                label={t("field.responsibility_center")}
-                defaultValue={props.item && props.item.responsibilityCenter}
-                error={errors.responsibilityCenter !== undefined}
-                helperText={errors.responsibilityCenter?.message && t(errors.responsibilityCenter?.message)}
-                disabled={!asset}
-                {...register('responsibilityCenter', { required: 'feedback.empty_responsibility_center' })}/>
+              <Controller
+                name="quantityIssued"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    autoFocus
+                    type="number"
+                    inputRef={ref}
+                    label={t("field.quantity_issued")}
+                    error={errors.quantityIssued !== undefined}
+                    helperText={errors.quantityIssued?.message && t(errors.quantityIssued?.message)}
+                    disabled={!props.item ? !asset : false}/>
+                )}
+                rules={{ required: { value: true, message: 'feedback.empty_quantity_issued' }}}/>
+              <Controller
+                name="responsibilityCenter"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    type="text"
+                    inputRef={ref}
+                    label={t("field.responsibility_center")}
+                    error={errors.responsibilityCenter !== undefined}
+                    helperText={errors.responsibilityCenter?.message && t(errors.responsibilityCenter?.message)}
+                    disabled={!props.item ? !asset : false}/>
+                )}
+                rules={{ required: { value: true, message: "feedback.empty_responsibility_center" }}}/>
             </Container>
           </DialogContent>
           <DialogActions>
             <Button
               color="primary"
-              onClick={props.onDismiss}>
+              onClick={onDismiss}>
               {t("button.cancel")}
             </Button>
             <Button

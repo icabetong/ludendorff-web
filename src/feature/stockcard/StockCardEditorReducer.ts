@@ -26,7 +26,7 @@ export const reducer = (state: State, action: Action) => {
   switch (type) {
     case ActionType.CREATE:
       return {
-        ...state,
+        stockCard: undefined,
         isCreate: true,
         isOpen: true,
       }

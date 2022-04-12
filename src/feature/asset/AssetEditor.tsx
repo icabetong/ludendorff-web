@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
+  Box,
   Button,
   Container,
   Dialog,
@@ -49,10 +50,31 @@ const AssetEditor = (props: AssetEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
   const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
+
+  useEffect(() => {
+    setType(props.asset?.type)
+  }, [props.asset])
+
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        stockNumber: props.asset ? props.asset.stockNumber : "",
+        description: props.asset?.description ? props.asset.description : "",
+        classification: props.asset?.classification ? props.asset.classification : "",
+        unitOfMeasure: props.asset?.unitOfMeasure ? props.asset.unitOfMeasure : "",
+        unitValue: props.asset?.unitValue ? props.asset.unitValue : 0,
+        remarks: props.asset?.remarks ? props.asset.remarks : ""
+      })
+    }
+  }, [props.isOpen, props.asset, reset])
+
+  const onDismiss = () => {
+    props.onDismiss();
+  }
 
   const onPickerView = () => setPickerOpen(true);
   const onPickerDismiss = () => setPickerOpen(false);
@@ -85,7 +107,7 @@ const AssetEditor = (props: AssetEditorProps) => {
           enqueueSnackbar(t("feedback.asset_create_error"))
           if (isDev) console.log(error)
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     } else {
       AssetRepository.update(asset, previousTypeId)
         .then(() => enqueueSnackbar(t("feedback.asset_updated")))
@@ -93,7 +115,7 @@ const AssetEditor = (props: AssetEditorProps) => {
           enqueueSnackbar(t("feedback.asset_update_error"))
           if (isDev) console.log(error)
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     }
   }
 
@@ -111,8 +133,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         fullScreen={smBreakpoint}
         fullWidth={true}
         maxWidth={smBreakpoint ? "xs" : "md"}
-        open={props.isOpen}
-        onClose={props.onDismiss}>
+        open={props.isOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_asset")}</DialogTitle>
           <DialogContent dividers={true}>
@@ -127,25 +148,35 @@ const AssetEditor = (props: AssetEditorProps) => {
                   item
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <TextField
-                    autoFocus
-                    id="stockNumber"
-                    type="text"
-                    label={t("field.stock_number")}
-                    error={errors.stockNumber !== undefined}
-                    helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
-                    defaultValue={props.asset && props.asset.stockNumber}
-                    placeholder={t('placeholder.stock_number')}
-                    {...register("stockNumber", { required: "feedback.empty_asset_stock_number" })}/>
-                  <TextField
-                    id="description"
-                    type="text"
-                    label={t("field.asset_description")}
-                    error={errors.description !== undefined}
-                    helperText={errors.description?.message !== undefined ? t(errors.description.message) : undefined}
-                    defaultValue={props.asset !== undefined ? props.asset.description : ""}
-                    placeholder={t('placeholder.asset_description')}
-                    {...register("description", { required: "feedback.empty_asset_description" })} />
+                  <Controller
+                    control={control}
+                    name="stockNumber"
+                    render={( { field: { ref, ...inputProps } }) => (
+                      <TextField
+                        {...inputProps}
+                        autoFocus
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.stock_number")}
+                        error={errors.stockNumber !== undefined}
+                        helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
+                        placeholder={t('placeholder.stock_number')}/>
+                    )}
+                  rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" }}}/>
+                  <Controller
+                    control={control}
+                    name="description"
+                    render={( { field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.asset_description")}
+                        error={errors.description !== undefined}
+                        helperText={errors.description?.message !== undefined ? t(errors.description.message) : undefined}
+                        placeholder={t('placeholder.asset_description')} />
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_asset_description" }}}/>
                   <TextField
                     value={type?.typeName !== undefined ? type?.typeName : t("field.not_set")}
                     label={t("field.type")}
@@ -159,56 +190,75 @@ const AssetEditor = (props: AssetEditorProps) => {
                         </InputAdornment>
                       )
                     }}/>
-                  <TextField
-                    id="classification"
-                    type="text"
-                    label={t("field.classification")}
-                    error={errors.classification !== undefined}
-                    helperText={errors.classification?.message !== undefined ? t(errors.classification.message) : undefined}
-                    defaultValue={props.asset && props.asset.classification}
-                    placeholder={t('placeholder.classification')}
-                    {...register('classification', { required: "feedback.empty_classification" })}/>
+                  <Controller
+                    control={control}
+                    name="classification"
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.classification")}
+                        error={errors.classification !== undefined}
+                        helperText={errors.classification?.message !== undefined ? t(errors.classification.message) : undefined}
+                        placeholder={t('placeholder.classification')}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_classification" }}}/>
                 </Grid>
                 <Grid
                   item
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <TextField
-                    id="unitOfMeasure"
-                    type="text"
-                    label={t("field.unit_of_measure")}
-                    error={errors.unitOfMeasure !== undefined}
-                    helperText={errors.unitOfMeasure?.message !== undefined ? t(errors.unitOfMeasure.message) : undefined}
-                    defaultValue={props.asset && props.asset.unitOfMeasure}
-                    placeholder={t('placeholder.unit_of_measure')}
-                    {...register('unitOfMeasure', { required: 'feedback.empty_unit_of_measure' })}/>
-                  <TextField
-                    id="unitValue"
-                    label={t("field.unit_value")}
-                    error={errors.unitValue !== undefined}
-                    helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
-                    defaultValue={props.asset && props.asset.unitValue}
-                    inputProps={{
-                      inputMode: 'numeric',
-                      pattern: '[0-9]*',
-                      min: 0,
-                      step: 0.01,
-                      type: "number",
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">₱</InputAdornment>
-                      )
-                    }}
-                    {...register('unitValue', { required: 'feedback.empty_unit_value' })}/>
-                  <TextField
-                    id='remarks'
-                    type="text"
-                    multiline
-                    rows={4}
-                    label={t('field.remarks')}
-                    defaultValue={props.asset && props.asset.remarks}
-                    {...register('remarks', { required: 'feedback.empty_asset_remarks' })}/>
+                  <Controller
+                    control={control}
+                    name="unitOfMeasure"
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.unit_of_measure")}
+                        error={errors.unitOfMeasure !== undefined}
+                        helperText={errors.unitOfMeasure?.message !== undefined ? t(errors.unitOfMeasure.message) : undefined}
+                        placeholder={t('placeholder.unit_of_measure')}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_unit_of_measure" }}}/>
+                  <Controller
+                    control={control}
+                    name="unitValue"
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        inputRef={ref}
+                        label={t("field.unit_value")}
+                        error={errors.unitValue !== undefined}
+                        helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
+                        inputProps={{
+                          inputMode: 'numeric',
+                          pattern: '[0-9]*',
+                          min: 0,
+                          step: 0.01,
+                          type: "number",
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">₱</InputAdornment>
+                          )
+                        }}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_unit_value" }}}/>
+                  <Controller
+                    control={control}
+                    name="remarks"
+                    render={({ field: { ref, ...inputProps } }) => (
+                      <TextField
+                        {...inputProps}
+                        multiline
+                        type="text"
+                        inputRef={ref}
+                        rows={4}
+                        label={t('field.remarks')}/>
+                    )}/>
                 </Grid>
               </Grid>
             </Container>
@@ -219,7 +269,7 @@ const AssetEditor = (props: AssetEditorProps) => {
               color="primary"
               onClick={onQRCodeView}
               disabled={props.asset?.stockNumber === undefined}>{t("button.view_qr_code")}</Button>
-            <div style={{ flex: '1 0 0' }}/>
+            <Box sx={{ flex: '1 0 0' }}/>
             <Button
               color="primary"
               onClick={props.onDismiss}>
@@ -233,19 +283,17 @@ const AssetEditor = (props: AssetEditorProps) => {
           </DialogActions>
         </form>
       </Dialog>
-      {isPickerOpen &&
-        <TypePicker
-          isOpen={isPickerOpen}
-          types={items}
-          isLoading={isLoading}
-          onDismiss={onPickerDismiss}
-          onSelectItem={onTypeChanged}
-          canBack={isStart}
-          canForward={isEnd}
-          onBackward={getPrev}
-          onForward={getNext}/>
-      }
-      {isQRCodeOpen && props.asset !== undefined &&
+      <TypePicker
+        isOpen={isPickerOpen}
+        types={items}
+        isLoading={isLoading}
+        onDismiss={onPickerDismiss}
+        onSelectItem={onTypeChanged}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}/>
+      { props.asset &&
         <QrCodeViewComponent
           isOpened={isQRCodeOpen}
           assetId={props.asset.stockNumber}

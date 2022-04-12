@@ -39,7 +39,7 @@ type DepartmentScreenProps = {
 const DepartmentScreen = (props: DepartmentScreenProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead, canWrite } = usePermissions();
   const { limit } = useQueryLimit('departmentQueryLimit');
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -63,7 +63,7 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={isMobile}
+        fullScreen={smBreakpoint}
         fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}
@@ -121,13 +121,11 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             onClick={props.onDismiss}>{t("button.close")}</Button>
         </DialogActions>
       </Dialog>
-      {state.isOpen &&
-        <DepartmentEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          department={state.department}
-          onDismiss={onEditorDismiss}/>
-      }
+      <DepartmentEditor
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        department={state.department}
+        onDismiss={onEditorDismiss}/>
     </>
   )
 }

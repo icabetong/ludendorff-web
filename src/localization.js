@@ -137,6 +137,7 @@ const resources = {
         view_qr_code: "View QR Code",
         generate_report: "Generate PDF",
         download: "Download",
+        filter: "Filter",
       },
       feedback: {
         error_generic: "An internal error occurred",

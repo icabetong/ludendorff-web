@@ -3,7 +3,7 @@ import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { StockCardEntry } from "./StockCard";
-import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridRowParams, GridSelectionModel, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,11 +14,12 @@ import {
   issueQuantity,
   receiptQuantity,
   reference,
-  requestQuantity
+  requestedQuantity
 } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import { EditRounded } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -50,11 +51,21 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
     },
     { field: reference, headerName: t("field.reference"), flex: 1 },
     { field: receiptQuantity, headerName: t("field.receipt_quantity"), flex: 1 },
-    { field: requestQuantity, headerName: t("field.requested_quantity"), flex: 1 },
+    { field: requestedQuantity, headerName: t("field.requested_quantity"), flex: 1 },
     { field: issueQuantity, headerName: t("field.issue_quantity"), flex: 1 },
     { field: issueOffice, headerName: t("field.issue_office"), flex: 1 },
     { field: balanceQuantity, headerName: t("field.balance_quantity"), flex: 1 },
-    { field: balanceTotalPrice, headerName: t("field.balance_total_price"), flex: 1 }
+    { field: balanceTotalPrice, headerName: t("field.balance_total_price"), flex: 1 },
+    {
+      field: 'actions',
+      type: 'actions',
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<EditRounded/>}
+          label={t("button.edit")}
+          onClick={() => props.onItemSelected(params.row as StockCardEntry)}/>
+      ]
+    }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardEntriesColumns', columns);
 

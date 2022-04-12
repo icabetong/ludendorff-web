@@ -244,13 +244,11 @@ const AssetScreen = (props: AssetScreenProps) => {
           : <ErrorNoPermissionState/>
         }
       </InstantSearch>
-      {state.isOpen &&
-        <AssetEditor
-          isOpen={state.isOpen}
-          isCreate={state.isCreate}
-          asset={state.asset}
-          onDismiss={onAssetEditorDismiss}/>
-      }
+      <AssetEditor
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        asset={state.asset}
+        onDismiss={onAssetEditorDismiss}/>
       <TypeScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>

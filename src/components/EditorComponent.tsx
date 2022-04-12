@@ -1,7 +1,13 @@
 import React, { ReactNode, useState } from "react";
 import { AppBar, Box, Button, IconButton, Menu, Slide, Theme, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { AddRounded, CloseRounded, DeleteOutlineRounded, MoreVert, SaveRounded } from "@mui/icons-material";
+import {
+  AddRounded,
+  CloseRounded,
+  DeleteOutlineRounded,
+  MoreVert,
+  SaveRounded
+} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@mui/styles";
 import {
@@ -128,6 +134,7 @@ const Transition = React.forwardRef(function Transition(
 type GridEditorComponentProps = {
   onAddAction: () => void,
   onRemoveAction: () => void,
+  onSelectAction: () => void,
 }
 const EditorGridToolbar = () => {
   const { t } = useTranslation();

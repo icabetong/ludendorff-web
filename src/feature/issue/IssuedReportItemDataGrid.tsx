@@ -3,7 +3,13 @@ import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { IssuedReportItem } from "./IssuedReport";
-import { DataGrid, GridSelectionModel, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowParams,
+  GridSelectionModel,
+  GridValueGetterParams
+} from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
@@ -17,6 +23,7 @@ import {
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import { currencyFormatter } from "../../shared/utils";
+import { EditRounded } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -57,6 +64,16 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
         let item = params.row as IssuedReportItem;
         return currencyFormatter.format(item.quantityIssued * item.unitCost)
       }
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem
+          icon={<EditRounded/>}
+          label={t("button.edit")}
+          onClick={() => props.onItemSelected(params.row as IssuedReportItem)}/>
+      ]
     }
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedReportItemColumns', columns);
@@ -70,13 +87,14 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
     <Box className={classes.dataGrid}>
       <DataGrid
         checkboxSelection
+        disableSelectionOnClick
         components={{
           Toolbar: EditorGridToolbar
         }}
         componentsProps={{
           toolbar: {
             onAddAction: props.onAddAction,
-            onRemoveAction: hasChecked ? props.onRemoveAction : undefined
+            onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
           }
         }}
         columns={columns}

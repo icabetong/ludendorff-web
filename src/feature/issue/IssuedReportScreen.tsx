@@ -300,9 +300,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
       getRowId={(r) => r.issuedReportId}
       onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }/>
+      onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
   )
 }
 const IssuedReportDataGrid = connectHits<IssuedReportDataGridCoreProps, IssuedReport>(IssuedReportDataGridCore)

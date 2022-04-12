@@ -1,6 +1,6 @@
 import { InventoryReportItem } from "./InventoryReport";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   Button,
   Container,
@@ -14,7 +14,7 @@ import {
   TextField
 } from "@mui/material";
 import { Asset } from "../asset/Asset";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AssetPicker from "../asset/AssetPicker";
 import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
@@ -38,9 +38,19 @@ type InventoryReportItemEditorProps = {
 
 export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        balancePerCard: props.item?.balancePerCard ? props.item?.balancePerCard : 0,
+        onHandCount: props.item?.onHandCount ? props.item?.onHandCount : 0,
+        supplier: props.item?.supplier ? props.item?.supplier : "",
+      })
+    }
+  }, [props.isOpen, props.item, reset])
 
   const onPickerInvoke = () => setOpen(true);
   const onPickerDismiss = () => setOpen(false);
@@ -48,6 +58,11 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
     query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), { limit: 15 }
   )
+
+  const onDismiss = () => {
+    props.onDismiss();
+    reset();
+  }
 
   const onSubmit = (values: FormValues) => {
     if (!asset) {
@@ -65,8 +80,8 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
       balancePerCard: parseFloat(`${values.balancePerCard}`),
       onHandCount: parseFloat(`${values.onHandCount}`)
     }
-    props.onSubmit(item)
-    props.onDismiss()
+    props.onSubmit(item);
+    reset();
   }
 
   return (
@@ -75,13 +90,13 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}
-        onClose={props.onDismiss}>
+        onClose={onDismiss}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_inventory_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
               <TextField
-                value={asset?.description ? asset?.description : t("field.not_set")}
+                value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
                 label={t("field.asset")}
                 InputProps={{
                   readOnly: true,
@@ -94,42 +109,56 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
                   )
                 }}/>
               <Divider sx={{ my: 2 }}/>
-              <TextField
-                autoFocus
-                id="balancePerCard"
-                type="number"
-                label={t("field.balance_per_card")}
-                defaultValue={props.item && props.item.balancePerCard}
-                error={errors.balancePerCard !== undefined}
-                helperText={errors.balancePerCard?.message && t(errors.balancePerCard?.message)}
-                disabled={!asset}
-                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
-                {...register("balancePerCard", { required: "feedback.empty_balance_per_card" })}/>
-              <TextField
-                id="onHandCount"
-                type="number"
-                label={t("field.on_hand_count")}
-                defaultValue={props.item && props.item.onHandCount}
-                error={errors.onHandCount !== undefined}
-                helperText={errors.onHandCount?.message && t(errors.onHandCount?.message)}
-                disabled={!asset}
-                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
-                {...register("onHandCount", { required: "feedback.empty_on_hand_count" })}/>
-              <TextField
-                id="supplier"
-                type="text"
-                label={t("field.supplier")}
-                defaultValue={props.item && props.item.supplier}
-                error={errors.supplier !== undefined}
-                helperText={errors.supplier?.message && t(errors.supplier?.message)}
-                disabled={!asset}
-                {...register("supplier", { required: "feedback.empty_supplier" })}/>
+              <Controller
+                name="balancePerCard"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    autoFocus
+                    type="number"
+                    inputRef={ref}
+                    label={t("field.balance_per_card")}
+                    error={errors.balancePerCard !== undefined}
+                    helperText={errors.balancePerCard?.message && t(errors.balancePerCard?.message)}
+                    disabled={!props.item ? !asset : false}
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                )}
+                rules={{ required: { value: true, message: "feedback.empty_balance_per_card" }}}/>
+              <Controller
+                name="onHandCount"
+                control={control}
+                render={({ field: { ref, ...inputProps } }) => (
+                  <TextField
+                    {...inputProps}
+                    type="number"
+                    inputRef={ref}
+                    label={t("field.on_hand_count")}
+                    error={errors.onHandCount !== undefined}
+                    helperText={errors.onHandCount?.message && t(errors.onHandCount?.message)}
+                    disabled={!props.item ? !asset : false}
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                )}
+                rules={{ required: { value: true, message: "feedback.empty_on_hand_count" }}}/>
+              <Controller
+                name="supplier"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    type="text"
+                    inputRef={ref}
+                    label={t("field.supplier")}
+                    error={errors.supplier !== undefined}
+                    helperText={errors.supplier?.message && t(errors.supplier?.message)}
+                    disabled={!asset}/>
+                )}/>
             </Container>
           </DialogContent>
           <DialogActions>
             <Button
               color="primary"
-              onClick={props.onDismiss}>{t("button.cancel")}</Button>
+              onClick={onDismiss}>{t("button.cancel")}</Button>
             <Button
               color="primary"
               type="submit">{t("button.save")}</Button>

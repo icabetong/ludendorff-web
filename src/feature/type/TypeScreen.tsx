@@ -54,7 +54,7 @@ const TypeScreen = (props: TypeScreenProps) => {
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-  const onEditorUpdate = (category: Type) => dispatch({ type: ActionType.UPDATE, payload: category })
+  const onEditorUpdate = (type: Type) => dispatch({ type: ActionType.UPDATE, payload: type })
 
   return (
     <>
@@ -93,10 +93,10 @@ const TypeScreen = (props: TypeScreenProps) => {
                     onItemSelect={onEditorUpdate}/>
                   {isEnd && items.length > 0 && items.length === limit
                     && <PaginationController
-                      canBack={isStart}
-                      canForward={isEnd}
-                      onBackward={getPrev}
-                      onForward={getNext}/>
+                          canBack={isStart}
+                          canForward={isEnd}
+                          onBackward={getPrev}
+                          onForward={getNext}/>
                   }
                 </>
                 : <LinearProgress/>

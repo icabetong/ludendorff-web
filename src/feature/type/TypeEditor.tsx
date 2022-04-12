@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { Type, TypesRepository } from "./Type";
 import { isDev, newId } from "../../shared/utils";
 
-type FormValues = {
-  name?: string
+type FormData = {
+  typeName?: string
 }
 
 type TypeEditorProps = {
@@ -21,15 +22,26 @@ const TypeEditor = (props: TypeEditorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [isWritePending, setWritePending] = React.useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { handleSubmit, formState: { errors }, control, setValue } = useForm<FormData>();
 
-  const onSubmit = (data: FormValues) => {
-    setWritePending(true)
+  useEffect(() => {
+    if (props.isOpen) {
+      setValue("typeName", props.type ? props.type?.typeName : "")
+    }
+  }, [setValue, props.type, props.isOpen])
+
+  const onDismiss = () => {
+    setWritePending(false);
+    props.onDismiss();
+  }
+
+  const onSubmit = (data: FormData) => {
+    setWritePending(true);
 
     let type: Type = {
       typeId: props.type ? props.type.typeId : newId(),
       count: props.type ? props.type.count : 0,
-      typeName: data.name,
+      typeName: data.typeName,
     }
     if (props.isCreate) {
       TypesRepository.create(type).then(() =>
@@ -38,10 +50,7 @@ const TypeEditor = (props: TypeEditorProps) => {
           enqueueSnackbar(t("feedback.type_create_error"))
           if (isDev) console.log(error)
         }
-      ).finally(() => {
-        setWritePending(false);
-        props.onDismiss();
-      })
+      ).finally(onDismiss)
     } else {
       TypesRepository.update(type).then(() =>
         enqueueSnackbar(t("feedback.type_updated"))
@@ -49,10 +58,7 @@ const TypeEditor = (props: TypeEditorProps) => {
           enqueueSnackbar(t("feedback.type_update_error"))
           if (isDev) console.log(error)
         }
-      ).finally(() => {
-        setWritePending(false);
-        props.onDismiss();
-      })
+      ).finally(onDismiss)
     }
   }
 
@@ -60,37 +66,40 @@ const TypeEditor = (props: TypeEditorProps) => {
     <Dialog
       fullWidth={true}
       maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
+      open={props.isOpen}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogTitle>{t("dialog.details_type")}</DialogTitle>
         <DialogContent>
           <Container disableGutters>
-            <TextField
-              disabled={isWritePending}
-              autoFocus
-              id="name"
-              type="text"
-              label={t("field.type_name")}
-              defaultValue={props.type?.typeName}
-              error={errors.name}
-              helperText={errors.name ? t(errors.name.message) : undefined}
-              {...register("name", { required: "feedback.empty_type_name" })} />
+            <Controller
+              control={control}
+              name="typeName"
+              render={({ field: { ref, ...inputProps } }) => (
+                <TextField
+                  {...inputProps}
+                  type="text"
+                  inputRef={ref}
+                  label={t("field.type_name")}
+                  error={errors.typeName !== undefined}
+                  helperText={errors.typeName?.message && t(errors.typeName.message)}
+                  disabled={isWritePending}/>
+              )}
+              rules={{ required: { value: true, message: "feedback.empty_type_name" }}}/>
           </Container>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            onClick={props.onDismiss}
+            onClick={onDismiss}
             disabled={isWritePending}>
             {t("button.cancel")}
           </Button>
-          <Button
+          <LoadingButton
             color="primary"
             type="submit"
-            disabled={isWritePending}>
+            loading={isWritePending}>
             {t("button.save")}
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </form>
     </Dialog>

@@ -2,7 +2,6 @@ import { Type } from "./Type";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
-  CHANGED = "changed",
   CREATE = "create",
   UPDATE = "update",
   DISMISS = "dismiss"
@@ -41,7 +40,7 @@ export const reducer = (state: State, action: Action) => {
       }
     case ActionType.DISMISS:
       return {
-        ...state,
+        isCreate: false,
         isOpen: false,
         type: undefined
       }
