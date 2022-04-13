@@ -58,7 +58,8 @@ export type User = {
   position?: string,
   department?: DepartmentCore,
   deviceToken?: string,
-  disabled: boolean
+  disabled: boolean,
+  setupCompleted: boolean,
 }
 
 export type UserCore = {

@@ -125,7 +125,8 @@ const UserEditor = (props: UserEditorProps) => {
       lastName: data.lastName,
       email: data.email,
       position: data.position,
-      permissions: permissions
+      permissions: permissions,
+      setupCompleted: props.user !== undefined ? props.user?.setupCompleted : false,
     }
 
     if (props.isCreate) {

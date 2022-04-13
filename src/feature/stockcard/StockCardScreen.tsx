@@ -271,14 +271,14 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
   const columns = [
     { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 2 },
     {
       field: unitPrice,
       headerName: t("field.unit_price"),
       flex: 0.5,
       valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
     },
-    { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 1 },
+    { field: assetUnitOfMeasure, headerName: t("field.unit_of_measure"), flex: 0.5 },
     {
       field: "actions",
       type: "actions",

@@ -18,7 +18,7 @@ type State = {
 }
 
 export const initialState: State = {
-  user: { userId: newId(), permissions: [], disabled: false },
+  user: { userId: newId(), permissions: [], disabled: false, setupCompleted: false },
   isCreate: true,
   isOpen: false
 }
