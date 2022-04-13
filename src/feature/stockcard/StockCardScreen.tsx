@@ -207,9 +207,10 @@ const StockCardScreen = (props: StockCardScreenProps) => {
               <Box className={classes.wrapper}>
                 {searchMode
                   ? <StockCardDataGrid
-                    onItemSelect={onDataGridRowDoubleClicked}
-                    onGenerateReport={onGenerateReport}
-                    onRemoveInvoke={onRemoveInvoke}/>
+                      onItemSelect={onDataGridRowDoubleClicked}
+                      onGenerateReport={onGenerateReport}
+                      onExportSpreadsheet={onExportToSpreadsheet}
+                      onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
               </Box>
@@ -260,6 +261,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
 type StockCardDataGridProps = HitsProvided<StockCard> & {
   onItemSelect: (params: GridRowParams) => void,
   onGenerateReport: (stockCard: StockCard) => void,
+  onExportSpreadsheet: (stockCard: StockCard) => void,
   onRemoveInvoke: (stockCard: StockCard) => void,
 }
 const StockCardDataGridCore = (props: StockCardDataGridProps) => {
@@ -290,7 +292,12 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
           showInMenu
           icon={<DescriptionOutlined/>}
           label={t("button.generate_report")}
-          onClick={() => props.onGenerateReport(params.row as StockCard)}/>
+          onClick={() => props.onGenerateReport(params.row as StockCard)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<ExcelIcon/>}
+          label={t("button.export_spreadsheet")}
+          onClick={() => props.onExportSpreadsheet(params.row as StockCard)}/>
       ],
     }
   ];

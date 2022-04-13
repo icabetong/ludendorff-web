@@ -11,7 +11,7 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, stockCard: StockC
   ]
 
   // create header
-  workSheet.addRow([`${t("document.stock_card")}`]);
+  workSheet.addRow([t("document.stock_card").toUpperCase()]);
   workSheet.mergeCells('A1:I1');
   workSheet.getCell('A1').fill = {
     type: 'pattern',
@@ -29,15 +29,15 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, stockCard: StockC
   workSheet.getRow(1).height = 40;
 
   // create form
-  workSheet.addRow([`${t("field.entity_name")}`, `${stockCard.entityName}`]);
+  workSheet.addRow([t("field.entity_name"), stockCard.entityName]);
   workSheet.mergeCells('B2:I2');
   workSheet.getCell('B2').font = { bold: true }
   workSheet.addRow([
-      `${t("field.item")}`,
-      `${stockCard.description}`,
+      t("field.item"),
+      stockCard.description,
       ...Array(4).fill(""),
-      `${t("field.stock_number")}`,
-      `${stockCard.stockNumber}`
+      t("field.stock_number"),
+      stockCard.stockNumber
     ]);
   workSheet.getCell('A2').border = {
     top: { style: 'thick' }, bottom: { style: 'thick' }, left: { style: 'thick' },
@@ -47,17 +47,17 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, stockCard: StockC
   }
 
   workSheet.addRow([
-    `${t("field.asset_description")}`,
+    t("field.asset_description"),
     ...Array(5).fill(""),
-    `${t("field.reorder_point")}`
+    t("field.reorder_point"),
   ]);
 
   workSheet.addRow([
-    `${t("field.unit_of_measure")}`, "",
-    `${stockCard.unitOfMeasure}`,
+    t("field.unit_of_measure"), "",
+    stockCard.unitOfMeasure,
     ...Array(3).fill(""),
-    `${t("field.unit_price")}`,
-    `${stockCard.unitPrice}`
+    t("field.unit_price"),
+    stockCard.unitPrice
   ])
 
   // add gray colour on the form
@@ -89,22 +89,22 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, stockCard: StockC
   }
 
   workSheet.addRow([
-    `${t("field.date")}`,
-    `${t("field.reference")}`,
-    `${t("field.receipt")}`,
-    `${t("field.requested")}`,
-    `${t("field.issue")}`, "",
-    `${t("field.balance")}`, "",
-    `${t("field.days_to_consume")}`
+    t("field.date"),
+    t("field.reference"),
+    t("field.receipt"),
+    t("field.requested"),
+    t("field.issue"), "",
+    t("field.balance"), "",
+    t("field.days_to_consume")
   ]);
   workSheet.addRow([
     "", "",
-    `${t("field.quantity")}`,
-    `${t("field.quantity")}`,
-    `${t("field.quantity")}`,
-    `${t("field.office")}`,
-    `${t("field.quantity")}`,
-    `${t("field.total_price")}`,
+    t("field.quantity"),
+    t("field.quantity"),
+    t("field.quantity"),
+    t("field.office"),
+    t("field.quantity"),
+    t("field.total_price"),
     ""
   ])
 

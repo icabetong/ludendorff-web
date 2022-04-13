@@ -88,7 +88,8 @@ const resources = {
         quantity: "Quantity",
         office: "Office",
         total_price: "Total Price",
-        days_to_consume: "No. of Days to Consume"
+        days_to_consume: "No. of Days to Consume",
+        ris_no: "RIS No.",
       },
       placeholder: {
         none: "None",

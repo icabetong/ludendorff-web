@@ -33,6 +33,10 @@ import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
 import IssuedReportPDF from "./IssuedReportPDF";
 import { pdf } from "@react-pdf/renderer";
+import { ExcelIcon } from "../../components/CustomIcons";
+import * as Excel from "exceljs";
+import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
+import { convertWorkbookToBlob } from "../shared/Spreadsheet";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -103,7 +107,12 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
           showInMenu
           icon={<DescriptionOutlined/>}
           label={t("button.generate_report")}
-          onClick={() => onGenerateReport(params.row as IssuedReport)}/>
+          onClick={() => onGenerateReport(params.row as IssuedReport)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<ExcelIcon/>}
+          label={t("button.export_spreadsheet")}
+          onClick={() => onExportSpreadsheet(params.row as IssuedReport)}/>
       ],
     }
   ];
@@ -115,6 +124,18 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     if (linkRef && linkRef.current) {
       linkRef.current.href = URL.createObjectURL(blob);
       linkRef.current.download = `${issuedReport.fundCluster}.pdf`;
+      linkRef.current?.click();
+    }
+  }
+  const onExportSpreadsheet = async (issuedReport: IssuedReport) => {
+    issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
+    const workBook = new Excel.Workbook();
+    convertIssuedReportToSpreadsheet(workBook, issuedReport);
+
+    const blob = await convertWorkbookToBlob(workBook);
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${t("document.issued")}.xlsx`;
       linkRef.current?.click();
     }
   }
@@ -180,6 +201,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                   ? <IssuedReportDataGrid
                       onItemSelect={onDataGridRowDoubleClicked}
                       onGenerateReport={onGenerateReport}
+                      onExportSpreadsheet={onExportSpreadsheet}
                       onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
@@ -246,6 +268,7 @@ const IssuedReportEmptyState = () => {
 type IssuedReportDataGridCoreProps = HitsProvided<IssuedReport> & {
   onItemSelect: (params: GridRowParams) => void,
   onGenerateReport: (report: IssuedReport) => void,
+  onExportSpreadsheet: (report: IssuedReport) => void,
   onRemoveInvoke: (report: IssuedReport) => void,
 }
 
@@ -279,7 +302,12 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
           showInMenu
           icon={<DescriptionOutlined/>}
           label={t("button.generate_report")}
-          onClick={() => props.onGenerateReport(params.row as IssuedReport)}/>
+          onClick={() => props.onGenerateReport(params.row as IssuedReport)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<ExcelIcon/>}
+          label={t("button.export_spreadsheet")}
+          onClick={() => props.onExportSpreadsheet(params.row as IssuedReport)}/>
       ],
     }
   ];
