@@ -81,6 +81,14 @@ const resources = {
         total_value: "Total Value",
         amount: "Amount",
         unit: "Unit",
+        receipt: "Receipt",
+        requested: "Requested",
+        issue: "Issue",
+        balance: "Balance",
+        quantity: "Quantity",
+        office: "Office",
+        total_price: "Total Price",
+        days_to_consume: "No. of Days to Consume"
       },
       placeholder: {
         none: "None",
@@ -136,6 +144,7 @@ const resources = {
         create_report: "Create Report",
         view_qr_code: "View QR Code",
         generate_report: "Generate PDF",
+        export_spreadsheet: "Export to Spreadsheet",
         download: "Download",
         filter: "Filter",
       },
@@ -280,9 +289,8 @@ const resources = {
         select_department: "Select Department",
         view_qr_code: "View QR-Code",
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
-        generate_stock_card: "PDF Generation",
-        generate_stock_card_summary: "Stock Card Report has been generated, click the button below to save it.",
-        generate_stock_card_summary_fetching: "Preparing your stock card report, hold on for a minute...",
+        generating_spreadsheet: "Preparing Spreadsheet",
+        generating_spreadsheet_summary: "Ludendorff is preparing the necessary components to export the requested data to a file. This won't take long."
       },
       template: {
         full_name: "{{first}} {{last}}",
@@ -334,3 +342,5 @@ i18n.use(initReactI18next)
 });
 
 export default i18n;
+const t = i18n.t.bind(i18n);
+export { t };

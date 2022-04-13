@@ -12,6 +12,9 @@ module.exports = {
           buffer: require.resolve("buffer"),
           asset: require.resolve("assert"),
         },
+        alias: {
+          process: "process/browser"
+        },
       },
       plugins: [
         new webpack.ProvidePlugin({
@@ -19,6 +22,16 @@ module.exports = {
           process: "process/browser",
         }),
       ],
+      module: {
+        rules: [
+          {
+            test: /\.m?js/,
+            resolve: {
+              fullySpecified: false
+            }
+          }
+        ]
+      }
     },
   },
 };

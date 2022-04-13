@@ -38,7 +38,7 @@ type InventoryReportItemEditorProps = {
 
 export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
 

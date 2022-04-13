@@ -40,6 +40,11 @@ import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
 import { pdf } from "@react-pdf/renderer";
 import StockCardPDF from "./StockCardPDF";
+import { ExcelIcon } from "../../components/CustomIcons";
+import { convertStockCardToWorkSheet } from "./StockCardSheet";
+import * as Excel from "exceljs";
+import { convertWorkbookToBlob } from "../shared/Spreadsheet";
+import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -61,6 +66,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
   const [searchMode, setSearchMode] = useState(false);
+  const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
   const linkRef = useRef<HTMLAnchorElement | null>(null);
 
@@ -108,12 +114,18 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           showInMenu
           icon={<DescriptionOutlined/>}
           label={t("button.generate_report")}
-          onClick={() => onGenerateReport(params.row as StockCard)}/>
+          onClick={() => onGenerateReport(params.row as StockCard)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<ExcelIcon/>}
+          label={t("button.export_spreadsheet")}
+          onClick={() => onExportToSpreadsheet(params.row as StockCard)}/>
       ],
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
   const onGenerateReport = async (stockCard: StockCard) => {
+    setBackgroundWork(true);
     stockCard.entries = await StockCardRepository.fetch(stockCard.stockCardId);
     const blob = await pdf((<StockCardPDF stockCard={stockCard}/>)).toBlob();
 
@@ -122,6 +134,20 @@ const StockCardScreen = (props: StockCardScreenProps) => {
       linkRef.current.download = `${stockCard.description}.pdf`;
       linkRef.current.click();
     }
+    setBackgroundWork(false);
+  }
+  const onExportToSpreadsheet = async (stockCard: StockCard) => {
+    setBackgroundWork(true);
+    const workBook = new Excel.Workbook();
+    convertStockCardToWorkSheet(workBook, stockCard);
+
+    const blob = await convertWorkbookToBlob(workBook)
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${t("document.stock_card")}.xlsx`;
+      linkRef.current.click();
+    }
+    setBackgroundWork(false);
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -193,9 +219,9 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 ? items.length < 1
                   ? <StockCardEmptyState/>
                   : <StockCardList
-                    stockCards={items}
-                    onItemSelect={onStockCardSelected}
-                    onItemRemove={onRemoveInvoke}/>
+                      stockCards={items}
+                      onItemSelect={onStockCardSelected}
+                      onItemRemove={onRemoveInvoke}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -220,6 +246,10 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         summary="dialog.stock_card_remove_summary"
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
+      <BackgroundWorkDialog
+        isOpen={hasBackgroundWork}
+        title={t("dialog.generating_spreadsheet")}
+        summary={t("dialog.generating_spreadsheet_summary")}/>
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>
