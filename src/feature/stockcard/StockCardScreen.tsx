@@ -3,7 +3,7 @@ import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
-import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, LocalAtmOutlined } from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, LocalAtmOutlined } from "@mui/icons-material";
 import { connectHits, InstantSearch } from "react-instantsearch-dom";
 import { StockCard, StockCardRepository } from "./StockCard";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
@@ -38,8 +38,6 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
-import { pdf } from "@react-pdf/renderer";
-import StockCardPDF from "./StockCardPDF";
 import { ExcelIcon } from "../../components/CustomIcons";
 import { convertStockCardToWorkSheet } from "./StockCardSheet";
 import * as Excel from "exceljs";
@@ -112,11 +110,6 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           onClick={() => onRemoveInvoke(params.row as StockCard)}/>,
         <GridActionsCellItem
           showInMenu
-          icon={<DescriptionOutlined/>}
-          label={t("button.generate_report")}
-          onClick={() => onGenerateReport(params.row as StockCard)}/>,
-        <GridActionsCellItem
-          showInMenu
           icon={<ExcelIcon/>}
           label={t("button.export_spreadsheet")}
           onClick={() => onExportToSpreadsheet(params.row as StockCard)}/>
@@ -124,18 +117,6 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
-  const onGenerateReport = async (stockCard: StockCard) => {
-    setBackgroundWork(true);
-    stockCard.entries = await StockCardRepository.fetch(stockCard.stockCardId);
-    const blob = await pdf((<StockCardPDF stockCard={stockCard}/>)).toBlob();
-
-    if (linkRef && linkRef.current) {
-      linkRef.current.href = URL.createObjectURL(blob);
-      linkRef.current.download = `${stockCard.description}.pdf`;
-      linkRef.current.click();
-    }
-    setBackgroundWork(false);
-  }
   const onExportToSpreadsheet = async (stockCard: StockCard) => {
     setBackgroundWork(true);
     const workBook = new Excel.Workbook();
@@ -208,7 +189,6 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 {searchMode
                   ? <StockCardDataGrid
                       onItemSelect={onDataGridRowDoubleClicked}
-                      onGenerateReport={onGenerateReport}
                       onExportSpreadsheet={onExportToSpreadsheet}
                       onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
@@ -260,7 +240,6 @@ const StockCardScreen = (props: StockCardScreenProps) => {
 
 type StockCardDataGridProps = HitsProvided<StockCard> & {
   onItemSelect: (params: GridRowParams) => void,
-  onGenerateReport: (stockCard: StockCard) => void,
   onExportSpreadsheet: (stockCard: StockCard) => void,
   onRemoveInvoke: (stockCard: StockCard) => void,
 }
@@ -288,11 +267,6 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
           onClick={() => props.onRemoveInvoke(params.row as StockCard)}/>,
-        <GridActionsCellItem
-          showInMenu
-          icon={<DescriptionOutlined/>}
-          label={t("button.generate_report")}
-          onClick={() => props.onGenerateReport(params.row as StockCard)}/>,
         <GridActionsCellItem
           showInMenu
           icon={<ExcelIcon/>}

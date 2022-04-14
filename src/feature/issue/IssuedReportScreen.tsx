@@ -12,7 +12,7 @@ import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { formatDate, isDev } from "../../shared/utils";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import { AddRounded, DeleteOutlineRounded, DescriptionOutlined, UploadFileOutlined } from "@mui/icons-material";
+import { AddRounded, DeleteOutlineRounded, UploadFileOutlined } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { DataGridPaginationController } from "../../components/PaginationController";
 import GridLinearProgress from "../../components/GridLinearProgress";
@@ -31,8 +31,6 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useDensity from "../shared/useDensity";
 import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
-import IssuedReportPDF from "./IssuedReportPDF";
-import { pdf } from "@react-pdf/renderer";
 import { ExcelIcon } from "../../components/CustomIcons";
 import * as Excel from "exceljs";
 import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
@@ -105,11 +103,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
           onClick={() => onRemoveInvoke(params.row as IssuedReport)}/>,
         <GridActionsCellItem
           showInMenu
-          icon={<DescriptionOutlined/>}
-          label={t("button.generate_report")}
-          onClick={() => onGenerateReport(params.row as IssuedReport)}/>,
-        <GridActionsCellItem
-          showInMenu
           icon={<ExcelIcon/>}
           label={t("button.export_spreadsheet")}
           onClick={() => onExportSpreadsheet(params.row as IssuedReport)}/>
@@ -117,16 +110,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     }
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
-  const onGenerateReport = async (issuedReport: IssuedReport) => {
-    issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
-    const blob = await pdf((<IssuedReportPDF  issuedReport={issuedReport}/>)).toBlob();
-
-    if (linkRef && linkRef.current) {
-      linkRef.current.href = URL.createObjectURL(blob);
-      linkRef.current.download = `${issuedReport.fundCluster}.pdf`;
-      linkRef.current?.click();
-    }
-  }
   const onExportSpreadsheet = async (issuedReport: IssuedReport) => {
     issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
     const workBook = new Excel.Workbook();
@@ -200,7 +183,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                 {searchMode
                   ? <IssuedReportDataGrid
                       onItemSelect={onDataGridRowDoubleClicked}
-                      onGenerateReport={onGenerateReport}
                       onExportSpreadsheet={onExportSpreadsheet}
                       onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
@@ -267,7 +249,6 @@ const IssuedReportEmptyState = () => {
 
 type IssuedReportDataGridCoreProps = HitsProvided<IssuedReport> & {
   onItemSelect: (params: GridRowParams) => void,
-  onGenerateReport: (report: IssuedReport) => void,
   onExportSpreadsheet: (report: IssuedReport) => void,
   onRemoveInvoke: (report: IssuedReport) => void,
 }
@@ -298,11 +279,6 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridCoreProps) => {
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
           onClick={() => props.onRemoveInvoke(params.row as IssuedReport)}/>,
-        <GridActionsCellItem
-          showInMenu
-          icon={<DescriptionOutlined/>}
-          label={t("button.generate_report")}
-          onClick={() => props.onGenerateReport(params.row as IssuedReport)}/>,
         <GridActionsCellItem
           showInMenu
           icon={<ExcelIcon/>}
