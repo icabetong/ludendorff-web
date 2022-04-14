@@ -81,7 +81,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
       onHandCount: parseFloat(`${values.onHandCount}`)
     }
     props.onSubmit(item);
-    reset();
+    onDismiss();
   }
 
   return (

@@ -108,7 +108,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
     let currentItems = Array.from(items);
     checked.forEach((id: string) => {
       currentItems = currentItems.filter((i) => i.stockNumber !== id);
-    })
+    });
     setItems(currentItems);
   }
 
@@ -190,6 +190,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                     control={control}
                     render={({ field: { ref, ...inputProps } }) => (
                       <TextField
+                        {...inputProps}
                         type="text"
                         inputRef={ref}
                         label={t("field.entity_name")}

@@ -42,6 +42,10 @@ import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
 import useQueryLimit from "../shared/useQueryLimit";
 import InventoryReportPDF from "./InventoryReportPDF";
 import { pdf } from "@react-pdf/renderer";
+import { ExcelIcon } from "../../components/CustomIcons";
+import * as Excel from "exceljs";
+import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
+import { convertWorkbookToBlob } from "../shared/Spreadsheet";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -107,9 +111,15 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
           label={t("button.delete")}
           onClick={() => onRemoveInvoke(params.row as InventoryReport)}/>,
         <GridActionsCellItem
+          showInMenu
           icon={<DescriptionOutlined/>}
           label={t("button.generate_report")}
-          onClick={() => onGenerateReport(params.row as InventoryReport)}/>
+          onClick={() => onGenerateReport(params.row as InventoryReport)}/>,
+        <GridActionsCellItem
+          showInMenu
+          icon={<ExcelIcon/>}
+          label={t("button.export_spreadsheet")}
+          onClick={() => onExportSpreadsheet(params.row as InventoryReport)}/>
       ],
     }
   ]
@@ -121,6 +131,18 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     if (linkRef && linkRef.current) {
       linkRef.current.href = URL.createObjectURL(blob);
       linkRef.current.download = `${inventoryReport.fundCluster}.pdf`;
+      linkRef.current?.click();
+    }
+  }
+  const onExportSpreadsheet = async (inventoryReport: InventoryReport) => {
+    inventoryReport.items = await InventoryReportRepository.fetch(inventoryReport.inventoryReportId);
+    const workBook = new Excel.Workbook();
+    convertInventoryReportToSpreadsheet(workBook, inventoryReport);
+
+    const blob = await convertWorkbookToBlob(workBook);
+    if (linkRef && linkRef.current) {
+      linkRef.current.href = URL.createObjectURL(blob);
+      linkRef.current.download = `${t("document.inventory")}.xlsx`;
       linkRef.current?.click();
     }
   }
@@ -186,9 +208,9 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
               <Box className={classes.wrapper}>
                 {searchMode
                   ? <InventoryReportDataGrid
-                    onItemSelect={onDataGridRowDoubleClicked}
-                    onGenerateReport={onGenerateReport}
-                    onRemoveInvoke={onRemoveInvoke}/>
+                      onItemSelect={onDataGridRowDoubleClicked}
+                      onGenerateReport={onGenerateReport}
+                      onRemoveInvoke={onRemoveInvoke}/>
                   : dataGrid
                 }
               </Box>
@@ -198,9 +220,9 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 ? items.length < 1
                   ? <InventoryReportEmptyState/>
                   : <InventoryReportList
-                    reports={items}
-                    onItemSelect={onInventoryReportSelected}
-                    onItemRemove={onRemoveInvoke}/>
+                      reports={items}
+                      onItemSelect={onInventoryReportSelected}
+                      onItemRemove={onRemoveInvoke}/>
                 : <LinearProgress/>
               }
               <Fab

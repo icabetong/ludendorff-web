@@ -46,7 +46,7 @@ export class StockCardRepository {
 
     stockCard.entries.forEach((entry: StockCardEntry) => {
       batch.set(doc(firestore, stockCardCollection,
-          `${stockCard.stockCardId}/${entriesCollection}/${entry.stockCardEntryId}`),
+          stockCard.stockCardId, entriesCollection, entry.stockCardEntryId),
         entry);
     });
 
@@ -91,7 +91,7 @@ export class StockCardRepository {
     let batch = writeBatch(firestore);
 
     let reference = collection(firestore, stockCardCollection,
-      `${stockCard.stockCardId}/${entriesCollection}`);
+      stockCard.stockCardId, entriesCollection);
     let snapshot = await getDocs(reference);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);

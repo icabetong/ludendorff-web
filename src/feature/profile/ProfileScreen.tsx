@@ -135,22 +135,15 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         </Box>
         : <LinearProgress/>
       }
-      {changeName &&
-        <ChangeNamePrompt
-          isOpen={changeName}
-          user={user}
-          onDismiss={onChangeNameDismiss}/>
-      }
-      {changePassword &&
-        <ChangePasswordPrompt
-          isOpen={changePassword}
-          onDismiss={onChangePasswordDismiss}/>
-      }
-      {requestReset &&
-        <RequestResetPrompt
-          isOpen={requestReset}
-          onDismiss={onResetPasswordDismiss}/>
-      }
+      <ChangeNamePrompt
+        isOpen={changeName}
+        onDismiss={onChangeNameDismiss}/>
+      <ChangePasswordPrompt
+        isOpen={changePassword}
+        onDismiss={onChangePasswordDismiss}/>
+      <RequestResetPrompt
+        isOpen={requestReset}
+        onDismiss={onResetPasswordDismiss}/>
     </Box>
   );
 }

@@ -1,6 +1,6 @@
 import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
+import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
 
 type ProfileAction = {
   key: string,
@@ -41,8 +41,7 @@ type ProfileActionItemProps = {
 const ProfileActionItem = (props: ProfileActionItemProps) => {
   const { t } = useTranslation();
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.action.key}
       onClick={() => props.action.action()}>
       <ListItemIcon>
@@ -50,7 +49,7 @@ const ProfileActionItem = (props: ProfileActionItemProps) => {
       </ListItemIcon>
       <ListItemText
         primary={t(props.action.title)}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

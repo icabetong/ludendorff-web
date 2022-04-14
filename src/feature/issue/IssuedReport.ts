@@ -88,7 +88,8 @@ export class IssuedReportRepository {
     let docReference = doc(firestore, issuedCollection, r.issuedReportId);
     let batch = writeBatch(firestore);
 
-    let itemRef = collection(firestore, issuedCollection, `${r.issuedReportId}/${items}`);
+    let itemRef = collection(firestore, issuedCollection,
+      r.issuedReportId, itemsCollection);
     let snapshot = await getDocs(itemRef);
     snapshot.docs.forEach((doc) => {
       batch.delete(doc.ref);

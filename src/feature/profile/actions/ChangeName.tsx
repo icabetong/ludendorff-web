@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField, } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useAuthState } from "../../auth/AuthProvider";
-import { User, UserRepository } from "../../user/User";
+import { updateDoc, doc } from "firebase/firestore";
+import { firestore } from "../../../index";
+import { userCollection } from "../../../shared/const";
 
-type FormValues = {
+type FormData = {
   firstName: string,
   lastName: string
 }
 
 type ChangeNamePromptProps = {
-  isOpen: boolean
-  user: User | undefined,
+  isOpen: boolean,
   onDismiss: () => void
 }
 
@@ -21,26 +22,28 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
   const { t } = useTranslation();
   const { user } = useAuthState();
   const { enqueueSnackbar } = useSnackbar();
-  const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const [hasBackgroundWork, setHasBackgroundWork] = useState(false);
+  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormData>();
 
-  const onSubmit = (data: FormValues) => {
-    if (props.user) {
-      setSubmitting(true);
-      let user: User = {
-        ...props.user,
-        firstName: data.firstName,
-        lastName: data.lastName,
-      }
-
-      UserRepository.update(user)
-        .then(() => enqueueSnackbar(t('feedback.name_changed')))
-        .catch(() => enqueueSnackbar(t('feedback.name_change_error')))
-        .finally(() => {
-          setSubmitting(false);
-          props.onDismiss();
-        })
+  useEffect(() => {
+    if (props.isOpen) {
+      reset({
+        lastName: user?.lastName,
+        firstName: user?.firstName,
+      })
     }
+  }, [props.isOpen, user, reset])
+
+  const onSubmit = async (data: FormData) => {
+    if (!user || !user.userId)
+      return;
+
+    setHasBackgroundWork(true);
+    await updateDoc(doc(firestore, userCollection, user.userId), data)
+
+    enqueueSnackbar(t('feedback.name_changed'));
+    setHasBackgroundWork(false);
+    props.onDismiss();
   }
 
   return (
@@ -53,40 +56,50 @@ const ChangeNamePrompt = (props: ChangeNamePromptProps) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Container disableGutters>
-            <TextField
-              autoFocus
-              id="firstname"
-              type="text"
-              defaultValue={user?.firstName}
-              label={t("field.first_name")}
-              error={errors.firstName !== undefined}
-              helperText={errors.firstName?.message && t(errors.firstName.message)}
-              disabled={submitting}
-              {...register("firstName", { required: "feedback.empty_first_name" })} />
-
-            <TextField
-              id="lastname"
-              type="text"
-              defaultValue={user?.lastName}
-              label={t("field.last_name")}
-              error={errors.lastName !== undefined}
-              helperText={errors.lastName?.message && t(errors.lastName.message)}
-              disabled={submitting}
-              {...register("lastName", { required: "feedback.empty_last_name" })} />
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field: { ref, ...inputProps }}) => (
+                <TextField
+                  {...inputProps}
+                  autoFocus
+                  type="text"
+                  inputRef={ref}
+                  label={t("field.first_name")}
+                  error={errors.firstName !== undefined}
+                  helperText={errors.firstName?.message && t(errors.firstName.message)}
+                  disabled={hasBackgroundWork}/>
+              )}
+              rules={{ required: { value: true, message: "feedback.empty_first_name" }}}/>
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field: { ref, ...inputProps }}) => (
+                <TextField
+                  {...inputProps}
+                  autoFocus
+                  type="text"
+                  inputRef={ref}
+                  label={t("field.last_name")}
+                  error={errors.lastName !== undefined}
+                  helperText={errors.lastName?.message && t(errors.lastName.message)}
+                  disabled={hasBackgroundWork}/>
+              )}
+              rules={{ required: { value: true, message: "feedback.empty_lirst_name" }}}/>
           </Container>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            disabled={submitting}
+            disabled={hasBackgroundWork}
             onClick={props.onDismiss}>
             {t("button.cancel")}
           </Button>
           <Button
             color="primary"
             type="submit"
-            disabled={submitting}>
-            {submitting ? t("feedback.saving") : t("button.continue")}
+            disabled={hasBackgroundWork}>
+            {hasBackgroundWork ? t("feedback.saving") : t("button.continue")}
           </Button>
         </DialogActions>
       </form>

@@ -90,6 +90,7 @@ const resources = {
         total_price: "Total Price",
         days_to_consume: "No. of Days to Consume",
         ris_no: "RIS No.",
+        value: "Value"
       },
       placeholder: {
         none: "None",
@@ -325,7 +326,8 @@ const resources = {
       document: {
         stock_card: "Stock Card",
         inventory: "Report on the Physical Count of Inventories",
-        issued: "Report of Supplies and Materials Issued"
+        issued: "Report of Supplies and Materials Issued",
+        type_of_inventory_item: "Type of Inventory Item",
       },
       not_yet_returned: "Not Yet Returned",
       no_remarks: "No Remarks",
