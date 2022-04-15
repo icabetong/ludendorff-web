@@ -15,7 +15,6 @@ import {
   Divider,
   Drawer,
   Grow,
-  Hidden,
   lighten,
   ListItemIcon,
   ListItemText,

@@ -35,6 +35,7 @@ import { ExcelIcon } from "../../components/CustomIcons";
 import * as Excel from "exceljs";
 import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
 import { convertWorkbookToBlob } from "../shared/Spreadsheet";
+import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,6 +58,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
+  const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
@@ -111,6 +113,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
   const onExportSpreadsheet = async (issuedReport: IssuedReport) => {
+    setBackgroundWork(true);
     issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
     const workBook = new Excel.Workbook();
     convertIssuedReportToSpreadsheet(workBook, issuedReport);
@@ -121,6 +124,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
       linkRef.current.download = `${t("document.issued")}.xlsx`;
       linkRef.current?.click();
     }
+    setBackgroundWork(false);
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -219,6 +223,10 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         summary="dialog.issued_report_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
+      <BackgroundWorkDialog
+         isOpen={hasBackgroundWork}
+         title={t("dialog.generating_spreadsheet")}
+         summary={t("dialog.generating_spreadsheet_summary")}/>
       <Box sx={{display: 'none'}}>
         <a ref={linkRef} href="https://capstive.apple.com">{t("button.download")}</a>
       </Box>

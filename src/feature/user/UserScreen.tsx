@@ -229,20 +229,20 @@ const UserScreen = (props: UserScreenProps) => {
             <Box className={classes.wrapper} sx={{ display: { xs: "none", sm: "block" }}}>
               {searchMode
                 ? <UserDataGrid
-                  onItemSelect={onDataGridRowDoubleClick}
-                  onModificationInvoke={onModificationInvoke}
-                  onRemoveInvoke={onRemoveInvoke}
-                  onDepartmentInvoke={onDepartmentView}/>
+                    onItemSelect={onDataGridRowDoubleClick}
+                    onModificationInvoke={onModificationInvoke}
+                    onRemoveInvoke={onRemoveInvoke}
+                    onDepartmentInvoke={onDepartmentView}/>
                 : dataGrid
               }
             </Box>
-            <Box sx={{ display: { xs: "none", sm: "block" }}}>
+            <Box sx={{ display: { xs: "block", sm: "none" }}}>
               {!isLoading
                 ? items.length < 1
                   ? <UserEmptyStateComponent/>
                   : <UserList
-                    users={items}
-                    onItemSelect={onUserSelected}/>
+                      users={items}
+                      onItemSelect={onUserSelected}/>
                 : <LinearProgress/>
               }
               <Fab

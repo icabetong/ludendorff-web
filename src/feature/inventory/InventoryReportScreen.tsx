@@ -44,6 +44,7 @@ import { ExcelIcon } from "../../components/CustomIcons";
 import * as Excel from "exceljs";
 import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
 import { convertWorkbookToBlob } from "../shared/Spreadsheet";
+import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -63,6 +64,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
   const [report, setReport] = useState<InventoryReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
+  const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
@@ -118,6 +120,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
   const onExportSpreadsheet = async (inventoryReport: InventoryReport) => {
+    setBackgroundWork(true);
     inventoryReport.items = await InventoryReportRepository.fetch(inventoryReport.inventoryReportId);
     const workBook = new Excel.Workbook();
     convertInventoryReportToSpreadsheet(workBook, inventoryReport);
@@ -128,6 +131,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       linkRef.current.download = `${t("document.inventory")}.xlsx`;
       linkRef.current?.click();
     }
+    setBackgroundWork(false);
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -228,6 +232,10 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         summary="dialog.inventory_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
+      <BackgroundWorkDialog
+        isOpen={hasBackgroundWork}
+        title={t("dialog.generating_spreadsheet")}
+        summary={t("dialog.generating_spreadsheet_summary")}/>
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>

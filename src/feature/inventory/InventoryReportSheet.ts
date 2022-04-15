@@ -104,12 +104,14 @@ const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, inventory
   }
 
   for (let r = 9; r <= 10; r++) {
-    let row = workSheet.getRow(r);
-    row.font = { bold: true };
-    row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-    row.border = {
-      top: { style: 'thick' }, bottom: { style: 'thick' },
-      left: { style: 'thick' }, right: { style: 'thick' }
+    for (let c = 1; c <= 11; c++) {
+      let cell = workSheet.getCell(r, c);
+      cell.font = { bold: true };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.border = {
+        top: { style: 'thick' }, bottom: { style: 'thick' },
+        left: { style: 'thick' }, right: { style: 'thick' }
+      }
     }
   }
 }
