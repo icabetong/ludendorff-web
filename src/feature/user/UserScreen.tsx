@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, Hidden, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Button, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
@@ -226,19 +226,17 @@ const UserScreen = (props: UserScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead || canManageUsers
           ? <>
-            <Hidden smDown>
-              <Box className={classes.wrapper}>
-                {searchMode
-                  ? <UserDataGrid
-                    onItemSelect={onDataGridRowDoubleClick}
-                    onModificationInvoke={onModificationInvoke}
-                    onRemoveInvoke={onRemoveInvoke}
-                    onDepartmentInvoke={onDepartmentView}/>
-                  : dataGrid
-                }
-              </Box>
-            </Hidden>
-            <Hidden smUp>
+            <Box className={classes.wrapper} sx={{ display: { xs: "none", sm: "block" }}}>
+              {searchMode
+                ? <UserDataGrid
+                  onItemSelect={onDataGridRowDoubleClick}
+                  onModificationInvoke={onModificationInvoke}
+                  onRemoveInvoke={onRemoveInvoke}
+                  onDepartmentInvoke={onDepartmentView}/>
+                : dataGrid
+              }
+            </Box>
+            <Box sx={{ display: { xs: "none", sm: "block" }}}>
               {!isLoading
                 ? items.length < 1
                   ? <UserEmptyStateComponent/>
@@ -253,7 +251,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onClick={() => dispatch({ type: ActionType.CREATE })}>
                 <AddRounded/>
               </Fab>
-            </Hidden>
+            </Box>
           </>
           : <ErrorNoPermissionState/>
         }

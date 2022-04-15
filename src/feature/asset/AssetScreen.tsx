@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, Hidden, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Button, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
@@ -212,25 +212,23 @@ const AssetScreen = (props: AssetScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Hidden smDown>
-              <Box className={classes.wrapper}>
-                {searchMode
-                  ? <AssetDataGrid
-                    onItemSelect={onDataGridRowDoubleClicked}
-                    onRemoveInvoke={onRemoveInvoke}
-                    onCategoryInvoke={onCategoryListView}/>
-                  : dataGrid
-                }
-              </Box>
-            </Hidden>
-            <Hidden smUp>
+            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+              {searchMode
+                ? <AssetDataGrid
+                  onItemSelect={onDataGridRowDoubleClicked}
+                  onRemoveInvoke={onRemoveInvoke}
+                  onCategoryInvoke={onCategoryListView}/>
+                : dataGrid
+              }
+            </Box>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading
                 ? items.length < 1
                   ? <AssetEmptyState/>
                   : <AssetList
-                    assets={items}
-                    onItemSelect={onAssetSelected}
-                    onItemRemove={onRemoveInvoke}/>
+                      assets={items}
+                      onItemSelect={onAssetSelected}
+                      onItemRemove={onRemoveInvoke}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -239,7 +237,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onClick={() => dispatch({ type: ActionType.CREATE })}>
                 <AddRounded/>
               </Fab>
-            </Hidden>
+            </Box>
           </>
           : <ErrorNoPermissionState/>
         }

@@ -1,4 +1,4 @@
-import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
@@ -178,18 +178,16 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Hidden smDown>
-              <Box className={classes.wrapper}>
-                {searchMode
-                  ? <IssuedReportDataGrid
-                      onItemSelect={onDataGridRowDoubleClicked}
-                      onExportSpreadsheet={onExportSpreadsheet}
-                      onRemoveInvoke={onRemoveInvoke}/>
-                  : dataGrid
-                }
-              </Box>
-            </Hidden>
-            <Hidden smUp>
+            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+              {searchMode
+                ? <IssuedReportDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onExportSpreadsheet={onExportSpreadsheet}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                : dataGrid
+              }
+            </Box>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading
                 ? items.length < 1
                   ? <IssuedReportEmptyState/>
@@ -205,7 +203,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                 onClick={() => dispatch({ type: ActionType.CREATE })}>
                 <AddRounded/>
               </Fab>
-            </Hidden>
+            </Box>
           </>
           : <ErrorNoPermissionState/>
         }

@@ -1,4 +1,4 @@
-import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, Theme } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useReducer, useRef, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
@@ -187,18 +187,16 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Hidden smDown>
-              <Box className={classes.wrapper}>
-                {searchMode
-                  ? <InventoryReportDataGrid
-                      onItemSelect={onDataGridRowDoubleClicked}
-                      onExportSpreadsheet={onExportSpreadsheet}
-                      onRemoveInvoke={onRemoveInvoke}/>
-                  : dataGrid
-                }
-              </Box>
-            </Hidden>
-            <Hidden smUp>
+            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+              {searchMode
+                ? <InventoryReportDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onExportSpreadsheet={onExportSpreadsheet}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                : dataGrid
+              }
+            </Box>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading
                 ? items.length < 1
                   ? <InventoryReportEmptyState/>
@@ -214,7 +212,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 onClick={() => dispatch({ type: ActionType.CREATE })}>
                 <AddRounded/>
               </Fab>
-            </Hidden>
+            </Box>
           </>
           : <ErrorNoPermissionState/>
         }

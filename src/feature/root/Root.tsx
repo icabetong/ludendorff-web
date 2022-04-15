@@ -218,9 +218,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   return (
     <Box className={classes.root}>
       <nav className={classes.nav}>
-        <Hidden
-          lgUp
-          implementation="css">
+        <Box sx={{ display: { sx: 'block', lg: 'none' }}}>
           <Drawer
             variant="temporary"
             anchor={theme.direction === "rtl" ? 'right' : 'left'}
@@ -234,8 +232,8 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             }}>
             {drawerItems}
           </Drawer>
-        </Hidden>
-        <Hidden lgDown>
+        </Box>
+        <Box sx={{ display: { xs: 'none', lg: 'block' }}}>
           <AppBar color="inherit" elevation={0}>
             <Toolbar>
               <Box
@@ -318,7 +316,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
               </Popper>
             </Toolbar>
           </AppBar>
-        </Hidden>
+        </Box>
       </nav>
       <Divider/>
       <Box className={classes.content}>

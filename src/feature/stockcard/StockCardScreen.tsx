@@ -1,5 +1,5 @@
 import makeStyles from "@mui/styles/makeStyles";
-import { Box, Fab, Hidden, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, Theme } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
@@ -184,18 +184,16 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Hidden smDown>
-              <Box className={classes.wrapper}>
-                {searchMode
-                  ? <StockCardDataGrid
-                      onItemSelect={onDataGridRowDoubleClicked}
-                      onExportSpreadsheet={onExportToSpreadsheet}
-                      onRemoveInvoke={onRemoveInvoke}/>
-                  : dataGrid
-                }
-              </Box>
-            </Hidden>
-            <Hidden smUp>
+            <Box className={classes.wrapper} sx={{ display: { sx: 'none', sm: 'block' } }}>
+              {searchMode
+                ? <StockCardDataGrid
+                    onItemSelect={onDataGridRowDoubleClicked}
+                    onExportSpreadsheet={onExportToSpreadsheet}
+                    onRemoveInvoke={onRemoveInvoke}/>
+                : dataGrid
+              }
+            </Box>
+            <Box sx={{ display: { sx: 'block', sm: 'none' }}}>
               {!isLoading
                 ? items.length < 1
                   ? <StockCardEmptyState/>
@@ -211,7 +209,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 onClick={() => dispatch({ type: ActionType.CREATE })}>
                 <AddRounded/>
               </Fab>
-            </Hidden>
+            </Box>
           </>
           : <ErrorNoPermissionState/>
         }

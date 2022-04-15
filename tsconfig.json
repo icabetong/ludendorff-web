@@ -32,6 +32,7 @@
   ],
   "exclude": [
     "src/localization.js",
-    "src/shared/const.js"
+    "src/shared/const.js",
+    "**/node_modules", "**/.*/"
   ]
 }

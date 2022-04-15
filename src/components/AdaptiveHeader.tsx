@@ -3,7 +3,6 @@ import {
   AppBar,
   Box,
   Button,
-  Hidden,
   IconButton,
   Menu,
   Toolbar,
@@ -33,14 +32,14 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
 
   return (
     <>
-      <Hidden lgDown>
+      <Box sx={{ display: { xs: 'none', lg: 'block' }}}>
         <LargeScreenHeader
           title={title}
           actionText={actionText}
           onActionEvent={onActionEvent}
           onSearchFocusChanged={onSearchFocusChanged}/>
-      </Hidden>
-      <Hidden lgUp>
+      </Box>
+      <Box sx={{ display: { xs: 'block', lg: 'none' }}}>
         <MediumScreenHeader
           title={title}
           menuItems={menuItems}
@@ -48,7 +47,7 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
           onActionEvent={onActionEvent}
           onDrawerTriggered={onDrawerTriggered}
           onSearchFocusChanged={onSearchFocusChanged}/>
-      </Hidden>
+      </Box>
     </>
   )
 }
@@ -78,12 +77,12 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
           size="large">
           <MenuRounded/>
         </IconButton>
-        <Hidden lgDown>
+        <Box sx={{ display: { xs: 'none', lg: 'block' }}}>
           <Typography variant="h5" sx={{ flexGrow: 1 }}>
             {title}
           </Typography>
-        </Hidden>
-        <Hidden lgUp>
+        </Box>
+        <Box sx={{ display: { xs: 'block', lg: 'none' }}}>
           <Typography
             variant="h6"
             noWrap
@@ -91,7 +90,7 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
             sx={{ flexGrow: 1, display: 'block' }}>
             {title}
           </Typography>
-        </Hidden>
+        </Box>
         {smBreakpoint && onSearchFocusChanged &&
           <SearchBoxInputBase onFocusChanged={onSearchFocusChanged}/>
         }
