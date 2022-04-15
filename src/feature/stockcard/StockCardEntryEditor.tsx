@@ -61,7 +61,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
     let entry: StockCardEntry = {
       ...data,
       stockCardEntryId: props.entry ? props.entry.stockCardEntryId : newId(),
-      date: Timestamp.fromDate(date),
+      date: props.entry?.date ? props.entry?.date : Timestamp.fromDate(date),
       receiptQuantity: parseInt(`${data.receiptQuantity}`),
       requestedQuantity: parseInt(`${data.requestedQuantity}`),
       issueQuantity: parseInt(`${data.issueQuantity}`),

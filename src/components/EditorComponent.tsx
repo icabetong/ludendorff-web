@@ -17,9 +17,11 @@ import {
   GridToolbarFilterButton,
   useGridRootProps
 } from "@mui/x-data-grid";
+import { LoadingButton } from "@mui/lab";
 
 type EditorAppBarProps = {
   title?: string,
+  loading?: boolean,
   menuItems?: JSX.Element[],
   onDismiss?: () => void,
   onConfirm?: () => void,
@@ -40,8 +42,9 @@ const EditorAppBar = (props: EditorAppBarProps) => {
         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
           {props.title}
         </Typography>
-        <Button
+        <LoadingButton
           autoFocus
+          loading={props.loading}
           color="primary"
           variant="contained"
           size="large"
@@ -49,7 +52,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           type="submit"
           startIcon={<SaveRounded/>}>
           {t("button.save")}
-        </Button>
+        </LoadingButton>
         {props.menuItems &&
           <>
             <IconButton

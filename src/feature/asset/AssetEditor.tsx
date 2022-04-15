@@ -162,7 +162,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
                         placeholder={t('placeholder.stock_number')}/>
                     )}
-                  rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" }}}/>
+                    rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" }}}/>
                   <Controller
                     control={control}
                     name="description"

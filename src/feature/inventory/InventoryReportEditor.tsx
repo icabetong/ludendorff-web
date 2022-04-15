@@ -52,9 +52,11 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<InventoryReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
+  const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const onDismiss = () => {
+    setBackgroundWork(false);
     props.onDismiss();
     reset();
   }
@@ -101,6 +103,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       currentItems[index] = item;
     }
     setItems(currentItems);
+    onEditorDismiss();
   }
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => setChecked(model.map((id: GridRowId) => `${id}`));
@@ -122,6 +125,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       return;
     }
 
+    setBackgroundWork(true);
     const inventoryReport: InventoryReport = {
       inventoryReportId: props.report ? props.report.inventoryReportId : newId(),
       ...data,
@@ -157,7 +161,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
         onClose={onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_inventory")} onDismiss={onDismiss}/>
+          <EditorAppBar title={t("dialog.details_inventory")} loading={hasBackgroundWork} onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
               <Grid
@@ -182,7 +186,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                         label={t("field.fund_cluster")}
                         error={errors.fundCluster !== undefined}
                         helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
-                        {...register('fundCluster', { required: "feedback.empty_fund_cluster" })}/>
+                        disabled={hasBackgroundWork}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_fund_cluster" }}}/>
                   <Controller
@@ -196,7 +200,8 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                         label={t("field.entity_name")}
                         error={errors.entityName !== undefined}
                         helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                        placeholder={t("placeholder.entity_name")}/>
+                        placeholder={t("placeholder.entity_name")}
+                        disabled={hasBackgroundWork}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_entity_name" }}}/>
                   <Controller
@@ -210,7 +215,8 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                         label={t("field.entity_position")}
                         error={errors.entityPosition !== undefined}
                         helperText={errors.entityPosition?.message && t(errors.entityPosition?.message)}
-                        placeholder={t("placeholder.entity_position")}/>
+                        placeholder={t("placeholder.entity_position")}
+                        disabled={hasBackgroundWork}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_entity_position" }}}/>
                 </Grid>
@@ -226,6 +232,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                         views={['year', 'month']}
                         label={t("field.year_month")}
                         value={yearMonth}
+                        disabled={hasBackgroundWork}
                         onChange={setYearMonth}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                       />
@@ -239,6 +246,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                         label={t("field.accountability_date")}
                         value={date}
                         onChange={setDate}
+                        disabled={hasBackgroundWork}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
                       />
                     </Box>

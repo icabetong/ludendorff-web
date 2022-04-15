@@ -65,23 +65,27 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
   }
 
   const onSubmit = (values: FormValues) => {
-    if (!asset) {
-      return;
+    if (asset) {
+      let item: InventoryReportItem = {
+        stockNumber: asset.stockNumber,
+        article: asset.classification,
+        description: asset.description,
+        type: asset.type,
+        unitOfMeasure: asset.unitOfMeasure,
+        unitValue: asset.unitValue,
+        remarks: asset.remarks,
+        balancePerCard: parseFloat(`${values.balancePerCard}`),
+        onHandCount: parseFloat(`${values.onHandCount}`)
+      }
+      props.onSubmit(item);
+    } else if (props.item) {
+      let item: InventoryReportItem = {
+        ...props.item,
+        balancePerCard: parseFloat(`${values.balancePerCard}`),
+        onHandCount: parseFloat(`${values.onHandCount}`)
+      }
+      props.onSubmit(item);
     }
-
-    let item: InventoryReportItem = {
-      stockNumber: asset.stockNumber,
-      article: asset.classification,
-      description: asset.description,
-      type: asset.type,
-      unitOfMeasure: asset.unitOfMeasure,
-      unitValue: asset.unitValue,
-      remarks: asset.remarks,
-      balancePerCard: parseFloat(`${values.balancePerCard}`),
-      onHandCount: parseFloat(`${values.onHandCount}`)
-    }
-    props.onSubmit(item);
-    onDismiss();
   }
 
   return (

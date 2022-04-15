@@ -102,7 +102,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         componentsProps={{
           toolbar: {
             onAddAction: props.onAddAction,
-            onRemoveAction: hasChecked ? props.onRemoveAction() : undefined,
+            onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
           }
         }}
         columns={columns}

@@ -79,6 +79,7 @@ export class StockCardRepository {
         entry);
     });
 
+    await batch.commit();
     let token = await getIdTokenRefreshed();
     return await axios.patch(`${SERVER_URL}/stock-card-entries`, {
       token: token,

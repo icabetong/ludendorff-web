@@ -66,20 +66,24 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   );
 
   const onSubmit = (data: FormValues) => {
-    if (!asset) {
-      enqueueSnackbar(t("feedback.empty_asset"));
-      return;
+    if (asset) {
+      let item: IssuedReportItem = {
+        ...data,
+        stockNumber: asset.stockNumber,
+        description: asset.description,
+        unitOfMeasure: asset.unitOfMeasure,
+        unitCost: asset.unitValue,
+        quantityIssued: parseInt(`${data.quantityIssued}`)
+      }
+      props.onSubmit(item);
+    } else if (props.item) {
+      let item: IssuedReportItem = {
+        ...data,
+        ...props.item,
+        quantityIssued: parseInt(`${data.quantityIssued}`)
+      }
+      props.onSubmit(item);
     }
-
-    let item: IssuedReportItem = {
-      ...data,
-      stockNumber: asset.stockNumber,
-      description: asset.description,
-      unitOfMeasure: asset.unitOfMeasure,
-      unitCost: asset.unitValue,
-      quantityIssued: parseInt(`${data.quantityIssued}`)
-    }
-    props.onSubmit(item);
   }
 
   return (

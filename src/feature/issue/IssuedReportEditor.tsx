@@ -50,6 +50,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<IssuedReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
+  const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -82,6 +83,11 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       })
   }, [props.report]);
 
+  const onDismiss = () => {
+    setBackgroundWork(false);
+    props.onDismiss();
+  }
+
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
   const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
   const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: ActionType.UPDATE, payload: item });
@@ -110,11 +116,12 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       return;
     }
 
+    setBackgroundWork(true);
     const issuedReport: IssuedReport = {
       issuedReportId: props.report ? props.report.issuedReportId : newId(),
       ...data,
       items: items,
-      date: Timestamp.fromDate(date),
+      date: props.report ? props.report.date : Timestamp.fromDate(date),
     }
 
     if (props.isCreate) {
@@ -124,7 +131,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
           enqueueSnackbar(t("feedback.issued_report_create_error"))
           if (isDev) console.log(error);
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     } else {
       IssuedReportRepository.update(issuedReport)
         .then(() => enqueueSnackbar(t("feedback.issued_report_updated")))
@@ -132,7 +139,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
           enqueueSnackbar(t("feedback.issued_report_update_error"))
           if (isDev) console.log(error);
         })
-        .finally(props.onDismiss)
+        .finally(onDismiss)
     }
   }
 
@@ -144,7 +151,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         onClose={props.onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_issued")} onDismiss={props.onDismiss}/>
+          <EditorAppBar title={t("dialog.details_issued")} loading={hasBackgroundWork} onDismiss={props.onDismiss}/>
           <EditorContent>
             <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
@@ -161,7 +168,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         inputRef={ref}
                         label={t("field.fund_cluster")}
                         error={errors.fundCluster !== undefined}
-                        helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}/>
+                        helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
+                        disabled={hasBackgroundWork}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_fund_cluster" }}}/>
                   <Controller
@@ -174,7 +182,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         inputRef={ref}
                         label={t("field.serial_number")}
                         error={errors.serialNumber !== undefined}
-                        helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}/>
+                        helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}
+                        disabled={hasBackgroundWork}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_serial_number" }}}/>
                 </Grid>
@@ -199,7 +208,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         label={t("field.date")}
                         value={date}
                         onChange={setDate}
-                        renderInput={(params) => <TextField {...params} helperText={null}/>}/>
+                        renderInput={(params) => <TextField {...params} helperText={null}/>}
+                        disabled={hasBackgroundWork}/>
                     </Box>
                   </LocalizationProvider>
                 </Grid>
