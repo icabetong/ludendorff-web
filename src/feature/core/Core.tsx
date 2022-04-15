@@ -118,7 +118,7 @@ const baseTheme = (mode: PaletteMode) => createTheme({
           background: 'transparent'
         }
       }
-    }
+    },
   }
 })
 

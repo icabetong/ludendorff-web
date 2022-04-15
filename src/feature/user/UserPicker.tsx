@@ -28,7 +28,7 @@ type UserPickerProps = PaginationControllerProps & {
 const UserPicker = (props: UserPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
 
   const onSelect = (user: User) => {
@@ -38,12 +38,12 @@ const UserPicker = (props: UserPickerProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
+      fullScreen={smBreakpoint}
       fullWidth={true}
       maxWidth="xs"
       open={props.isOpen}
       onClose={props.onDismiss}>
-      <DialogTitle>{t("user_select")}</DialogTitle>
+      <DialogTitle>{t("dialog.select_user")}</DialogTitle>
       <DialogContent dividers={true}>
         {canRead ?
           !props.isLoading
@@ -60,8 +60,8 @@ const UserPicker = (props: UserPickerProps) => {
               </>
               : <EmptyStateComponent
                 icon={PeopleOutlineRounded}
-                title={t("empty_user")}
-                subtitle={t("empty_user_summary")}/>
+                title={t("empty.user")}
+                subtitle={t("empty.user_summary")}/>
             : <LinearProgress/>
           : <ErrorNoPermissionState/>
         }
@@ -69,7 +69,7 @@ const UserPicker = (props: UserPickerProps) => {
       <DialogActions>
         <Button
           color="primary"
-          onClick={props.onDismiss}>{t("close")}</Button>
+          onClick={props.onDismiss}>{t("button.close")}</Button>
       </DialogActions>
     </Dialog>
   );

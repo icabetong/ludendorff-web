@@ -13,6 +13,7 @@ const IssuedReportList = (props: IssuedReportListProps) => {
         props.reports.map((report) => {
           return (
             <IssuedReportListItem
+              key={report.issuedReportId}
               report={report}
               onItemSelect={props.onItemSelect}/>
           )

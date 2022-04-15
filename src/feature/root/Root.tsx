@@ -22,13 +22,12 @@ import {
   MenuList,
   Paper,
   Popper,
-  Theme,
+  Stack,
   Toolbar,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { SnackbarProvider } from "notistack";
 import { AccountCircleOutlined, ArrowDropDown, ExitToAppRounded, SettingsOutlined } from "@mui/icons-material";
 import { ReactComponent as Logo } from "../../shared/brand.svg";
@@ -76,78 +75,12 @@ const InnerComponent = (props: InnerComponentPropsType) => {
   }
 }
 
-const drawerWidth = 240;
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    display: 'flex',
-    width: '100%', // if turned into viewport width; it will cause horizontal scrollbar!
-    minHeight: '100vh',
-    [theme.breakpoints.up('lg')]: {
-      flexDirection: 'column'
-    }
-  },
-  nav: {
-    [theme.breakpoints.up('lg')]: {
-      height: 64,
-      flexShrink: 0,
-    }
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  container: {
-    minWidth: '100%',
-    minHeight: '100%',
-  },
-  divider: {
-    margin: '0.8em 0'
-  },
-  icon: {
-    maxWidth: '3em',
-    maxHeight: '3em',
-  },
-  content: {
-    width: '100%',
-    margin: '0 auto',
-    flexGrow: 1,
-    overflowY: 'hidden',
-    display: 'flex',
-    [theme.breakpoints.up('xl')]: {
-      maxWidth: '1600px'
-    }
-  },
-  headerIcon: {
-    fontSize: '1em',
-    display: 'block',
-    margin: 'auto'
-  },
-  header: {
-    display: 'block',
-    textAlign: 'center'
-  },
-  profile: {
-    marginLeft: theme.spacing(2),
-  },
-  profileName: {
-    textTransform: 'none',
-    color: theme.palette.text.primary,
-  },
-  profileEmail: {
-    textTransform: 'none',
-    color: theme.palette.text.secondary,
-  },
-  profileMenu: {
-    backgroundColor: lighten(theme.palette.background.paper, 0.2)
-  }
-}));
-
 type RootContainerComponentPropsType = {
   onNavigate: (destination: Destination) => void,
   currentDestination: Destination,
 }
 
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
-  const classes = useStyles();
   const theme = useTheme();
   const { user } = useAuthState();
   const { t } = useTranslation();
@@ -215,16 +148,16 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   )
 
   return (
-    <Box className={classes.root}>
-      <nav className={classes.nav}>
+    <Stack sx={{ width: '100%', minHeight: '100vh' }}>
+      <Box component="nav" sx={{ height: { lg: 64 }, flexShrink: { lg: 0 }}}>
         <Box sx={{ display: { sx: 'block', lg: 'none' }}}>
           <Drawer
             variant="temporary"
             anchor={theme.direction === "rtl" ? 'right' : 'left'}
             open={drawerOpen}
             onClose={onToggleDrawerState}
-            classes={{
-              paper: classes.drawerPaper,
+            PaperProps={{
+              sx: { width: 240 }
             }}
             ModalProps={{
               keepMounted: true,
@@ -237,13 +170,13 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             <Toolbar>
               <Box
                 component={Logo}
-                className={classes.icon}
-                marginRight={3}/>
+                marginRight={3}
+                sx={{ maxWidth: '3em', maxHeight: '3em' }}/>
               <Divider
                 variant="middle"
                 orientation="vertical"
                 flexItem
-                className={classes.divider}/>
+                sx={{ margin: '0.8em 0' }}/>
               <Box
                 flexGrow={1}
                 marginX={1}>
@@ -255,22 +188,28 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                 variant="middle"
                 orientation="vertical"
                 flexItem
-                className={classes.divider}/>
+                sx={{ margin: '0.8em 0' }}/>
               <Button
                 color="inherit"
+                sx={{ marginLeft: 2 }}
                 ref={anchorRef}
                 aria-haspopup="true"
                 onClick={onTriggerMenu}
-                className={classes.profile}
                 endIcon={<ArrowDropDown/>}>
                 <Box
                   flexDirection="column"
                   textAlign="start">
                   <Typography
-                    className={classes.profileName}
+                    sx={{
+                      textTransform: 'none',
+                      color: (theme) => theme.palette.text.primary
+                    }}
                     variant="body2">{user && user.firstName}</Typography>
                   <Typography
-                    className={classes.profileEmail}
+                    sx={{
+                      textTransform: 'none',
+                      color: (theme) => theme.palette.text.secondary
+                    }}
                     variant="caption">{user && user.email}</Typography>
                 </Box>
               </Button>
@@ -286,7 +225,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
                     style={{
                       transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'
                     }}>
-                    <Paper className={classes.profileMenu}>
+                    <Paper sx={{ backgroundColor: theme => lighten(theme.palette.background.paper, 0.2)}}>
                       <ClickAwayListener onClickAway={onMenuDispose}>
                         <MenuList id="navigation-menu">
                           <MenuItem
@@ -316,9 +255,16 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
             </Toolbar>
           </AppBar>
         </Box>
-      </nav>
+      </Box>
       <Divider/>
-      <Box className={classes.content}>
+      <Box sx={{
+        display: 'flex',
+        width: '100%',
+        maxWidth: { xl: '1600px' },
+        margin: '0 auto',
+        flexGrow: 1,
+        overflowY: 'hidden',
+      }}>
         <Suspense fallback={<ContentLoadingStateComponent/>}>
           <InnerComponent
             destination={props.currentDestination}
@@ -326,7 +272,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
         </Suspense>
       </Box>
       {signOutDialog}
-    </Box>
+    </Stack>
   );
 }
 

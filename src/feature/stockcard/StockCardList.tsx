@@ -14,6 +14,7 @@ const StockCardList = (props: StockCardListProps) => {
         props.stockCards.map((stockCard: StockCard) => {
           return (
             <StockCardListItem
+              key={stockCard.stockCardId}
               stockCard={stockCard}
               onItemSelect={props.onItemSelect}/>
           )
@@ -41,4 +42,4 @@ const StockCardListItem = (props: StockCardListItemProps) => {
   )
 }
 
-export default StockCardList;
+export default StockCardList

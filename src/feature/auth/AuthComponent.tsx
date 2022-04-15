@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
-import { Alert, Box, Button, Container, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Container, Paper, Stack, TextField, Typography } from "@mui/material";
 import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../index";
+import { LoadingButton } from "@mui/lab";
 
-type FormValues = {
+type FormData = {
   email: string,
   password: string
 }
 
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, control } = useForm<FormData>();
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<AuthError | undefined>(undefined);
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: FormData) => {
     setIsAuthenticating(true)
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
@@ -57,32 +58,44 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                 </Box>
               }
               <Box sx={{ paddingY: 4 }}>
-                <TextField
-                  sx={{ my: 1 }}
-                  id="email"
-                  type="text"
-                  label={t("field.email")}
-                  error={errors.email !== undefined}
-                  disabled={isAuthenticating}
-                  {...register("email", { required: true })} />
-                <TextField
-                  id="password"
-                  type="password"
-                  label={t("field.password")}
-                  error={errors.password !== undefined}
-                  disabled={isAuthenticating}
-                  {...register("password", { required: false })} />
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field: { ref, ...inputProps}}) => (
+                    <TextField
+                      {...inputProps}
+                      sx={{ my: 1 }}
+                      type="text"
+                      inputRef={ref}
+                      label={t("field.email")}
+                      error={errors.email !== undefined}
+                      disabled={isAuthenticating}/>
+                  )}
+                  rules={{ required: true }}/>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field: { ref, ...inputProps }}) => (
+                    <TextField
+                      {...inputProps}
+                      type="password"
+                      inputRef={ref}
+                      label={t("field.password")}
+                      error={errors.password !== undefined}
+                      disabled={isAuthenticating}/>
+                  )}
+                  rules={{ required: true }}/>
               </Box>
-              <Button
+              <LoadingButton
                 size="large"
                 type="submit"
                 variant="contained"
                 color="primary"
                 aria-label={t("button.sign_in")}
                 fullWidth={true}
-                disabled={isAuthenticating}>
-                {isAuthenticating ? t("feedback.authenticating") : t("button.sign_in")}
-              </Button>
+                loading={isAuthenticating}>
+                {t("button.sign_in")}
+              </LoadingButton>
             </Paper>
           </Container>
         </Stack>

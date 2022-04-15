@@ -14,6 +14,7 @@ const InventoryReportList = (props: InventoryReportListProps) => {
         props.reports.map((report) => {
           return (
             <InventoryReportItem
+              key={report.inventoryReportId}
               report={report}
               onItemSelect={props.onItemSelect}/>
           )
