@@ -4,7 +4,7 @@ import { formatDate } from "../../shared/utils";
 import * as Excel from "exceljs";
 import { numToLetter } from "../shared/Spreadsheet";
 
-const convertStockCardToWorkSheet = (workBook: Excel.Workbook, stockCard: StockCard) => {
+const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, stockCard: StockCard) => {
   const workSheet = workBook.addWorksheet(stockCard.stockNumber);
   workSheet.columns = [
     { width: 18 }, { width: 24 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 20 }, { width: 16 }, { width: 22 }, { width: 14 }

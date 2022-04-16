@@ -41,8 +41,8 @@ import useQueryLimit from "../shared/useQueryLimit";
 import { ExcelIcon } from "../../components/CustomIcons";
 import { convertStockCardToWorkSheet } from "./StockCardSheet";
 import * as Excel from "exceljs";
-import { convertWorkbookToBlob } from "../shared/Spreadsheet";
-import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
+import { convertWorkbookToBlob, fileExtension } from "../shared/Spreadsheet";
+import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -65,6 +65,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const [stockCard, setStockCard] = useState<StockCard | null>(null);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
+  const [toExport, setToExport] = useState<StockCard | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
   const linkRef = useRef<HTMLAnchorElement | null>(null);
 
@@ -118,17 +119,24 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
   const onExportToSpreadsheet = async (stockCard: StockCard) => {
-    setBackgroundWork(true);
-    const workBook = new Excel.Workbook();
-    convertStockCardToWorkSheet(workBook, stockCard);
+    setToExport(stockCard);
+  }
+  const onExportDismiss = () => setToExport(undefined);
+  const onExport = async (params: ExportParameters) => {
+    if (toExport) {
+      setBackgroundWork(true);
+      const workBook = new Excel.Workbook();
+      convertStockCardToWorkSheet(workBook, params.worksheetName, toExport);
 
-    const blob = await convertWorkbookToBlob(workBook)
-    if (linkRef && linkRef.current) {
-      linkRef.current.href = URL.createObjectURL(blob);
-      linkRef.current.download = `${t("document.stock_card")}.xlsx`;
-      linkRef.current.click();
+      const blob = await convertWorkbookToBlob(workBook)
+      if (linkRef && linkRef.current) {
+        linkRef.current.href = URL.createObjectURL(blob);
+        linkRef.current.download = `${params.fileName}${fileExtension}`;
+        linkRef.current.click();
+      }
+      setBackgroundWork(false);
     }
-    setBackgroundWork(false);
+    onExportDismiss();
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -184,7 +192,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { sx: 'none', sm: 'block' } }}>
+            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' } }}>
               {searchMode
                 ? <StockCardDataGrid
                     onItemSelect={onDataGridRowDoubleClicked}
@@ -225,10 +233,25 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         summary="dialog.stock_card_remove_summary"
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
-      <BackgroundWorkDialog
-        isOpen={hasBackgroundWork}
-        title={t("dialog.generating_spreadsheet")}
-        summary={t("dialog.generating_spreadsheet_summary")}/>
+      <ExportSpreadsheetDialog
+        isOpen={Boolean(toExport)}
+        isWorking={hasBackgroundWork}
+        fileName={toExport?.description}
+        worksheetName={toExport?.entityName}
+        fileNameOptions={ toExport &&
+          [...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.description ? [toExport!.description] : []),
+            ...(toExport!.stockNumber ? [toExport!.stockNumber] : [])
+          ]
+        }
+        worksheetOptions={ toExport &&
+          [...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.description ? [toExport!.description] : []),
+            ...(toExport!.stockNumber ? [toExport!.stockNumber] : [])
+          ]
+        }
+        onDismiss={onExportDismiss}
+        onSubmit={onExport}/>
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>

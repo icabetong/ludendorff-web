@@ -43,8 +43,9 @@ import useQueryLimit from "../shared/useQueryLimit";
 import { ExcelIcon } from "../../components/CustomIcons";
 import * as Excel from "exceljs";
 import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
-import { convertWorkbookToBlob } from "../shared/Spreadsheet";
+import { convertWorkbookToBlob, fileExtension } from "../shared/Spreadsheet";
 import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
+import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -63,6 +64,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { density, onDensityChanged } = useDensity('inventoryDensity');
   const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
   const [report, setReport] = useState<InventoryReport | undefined>(undefined);
+  const [toExport, setToExport] = useState<InventoryReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -119,19 +121,26 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
-  const onExportSpreadsheet = async (inventoryReport: InventoryReport) => {
-    setBackgroundWork(true);
-    inventoryReport.items = await InventoryReportRepository.fetch(inventoryReport.inventoryReportId);
-    const workBook = new Excel.Workbook();
-    convertInventoryReportToSpreadsheet(workBook, inventoryReport);
+  const onExportSpreadsheet = (inventoryReport: InventoryReport) => {
+    setToExport(inventoryReport);
+  }
+  const onExportDismiss = () => setToExport(undefined);
+  const onExport = async (params: ExportParameters) => {
+    if (toExport) {
+      setBackgroundWork(true);
+      toExport.items = await InventoryReportRepository.fetch(toExport.inventoryReportId);
+      const workBook = new Excel.Workbook();
+      convertInventoryReportToSpreadsheet(workBook, params.worksheetName, toExport);
 
-    const blob = await convertWorkbookToBlob(workBook);
-    if (linkRef && linkRef.current) {
-      linkRef.current.href = URL.createObjectURL(blob);
-      linkRef.current.download = `${t("document.inventory")}.xlsx`;
-      linkRef.current?.click();
+      const blob = await convertWorkbookToBlob(workBook);
+      if (linkRef && linkRef.current) {
+        linkRef.current.href = URL.createObjectURL(blob);
+        linkRef.current.download = `${params.fileName}${fileExtension}`;
+        linkRef.current?.click();
+      }
+      setBackgroundWork(false);
     }
-    setBackgroundWork(false);
+    onExportDismiss();
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -232,10 +241,25 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         summary="dialog.inventory_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
-      <BackgroundWorkDialog
-        isOpen={hasBackgroundWork}
-        title={t("dialog.generating_spreadsheet")}
-        summary={t("dialog.generating_spreadsheet_summary")}/>
+      <ExportSpreadsheetDialog
+        isOpen={Boolean(toExport)}
+        isWorking={hasBackgroundWork}
+        fileName={toExport?.fundCluster}
+        worksheetName={toExport?.fundCluster}
+        fileNameOptions={ toExport &&
+          [...(toExport!.fundCluster ? [toExport!.fundCluster] : []),
+            ...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.yearMonth ? [toExport!.yearMonth] : [])
+          ]
+        }
+        worksheetOptions={ toExport &&
+          [...(toExport!.fundCluster ? [toExport!.fundCluster] : []),
+            ...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.yearMonth ? [toExport!.yearMonth] : [])
+          ]
+        }
+        onDismiss={onExportDismiss}
+        onSubmit={onExport}/>
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>

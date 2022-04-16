@@ -77,17 +77,17 @@ const MediumScreenHeader = (props: MediumScreenHeaderProps) => {
           size="large">
           <MenuRounded/>
         </IconButton>
-        <Box sx={{ display: { xs: 'none', lg: 'block' }}}>
-          <Typography variant="h5" sx={{ flexGrow: 1 }}>
+        <Box sx={{ display: { xs: 'none', lg: 'block' }, flexGrow: 1 }}>
+          <Typography variant="h5" component="div">
             {title}
           </Typography>
         </Box>
-        <Box sx={{ display: { xs: 'block', lg: 'none' }}}>
+        <Box sx={{ display: { xs: 'block', lg: 'none' }, flexGrow: 1 }}>
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ flexGrow: 1, display: 'block' }}>
+            sx={{ display: 'block' }}>
             {title}
           </Typography>
         </Box>

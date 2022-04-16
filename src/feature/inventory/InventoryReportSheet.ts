@@ -3,7 +3,7 @@ import { t } from "../../localization";
 import { InventoryReport } from "./InventoryReport";
 import { formatDate } from "../../shared/utils";
 
-const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, inventoryReport: InventoryReport) => {
+const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, name: string, inventoryReport: InventoryReport) => {
   const workSheet = workBook.addWorksheet(inventoryReport.fundCluster);
   workSheet.columns = [
     { width: 18 }, { width: 68 }, { width: 32 }, { width: 10 }, { width: 12 }, { width: 12 }, { width: 12 },
@@ -95,11 +95,13 @@ const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, inventory
   let prefixRow = 10;
   let rows = inventoryReport.items.length + prefixRow;
   for (let r = prefixRow + 1; r <= rows; r++) {
-    let row = workSheet.getRow(r);
-    row.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-    row.border = {
-      top: { style: 'thin' }, bottom: { style: 'thin' },
-      left: { style: 'thin' }, right: { style: 'thin' }
+    for (let c = 1; c <= 11; c++) {
+      let cell = workSheet.getCell(r, c);
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+      cell.border = {
+        top: { style: 'thin' }, bottom: { style: 'thin' },
+        left: { style: 'thin' }, right: { style: 'thin' }
+      }
     }
   }
 

@@ -2,8 +2,8 @@ import * as Excel from "exceljs";
 import { t } from "../../localization";
 import { IssuedReport } from "./IssuedReport";
 
-const convertIssuedReportToSpreadsheet = (workBook: Excel.Workbook, issuedReport: IssuedReport) => {
-  const workSheet = workBook.addWorksheet(issuedReport.fundCluster);
+const convertIssuedReportToSpreadsheet = (workBook: Excel.Workbook, name: string, issuedReport: IssuedReport) => {
+  const workSheet = workBook.addWorksheet(name);
   workSheet.columns = [
     { width: 8 }, { width: 12 }, { width: 16 }, { width: 32 }, { width: 10 }, { width: 10 }, { width: 12 }, { width: 16 }
   ]

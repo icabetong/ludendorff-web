@@ -34,8 +34,8 @@ import useQueryLimit from "../shared/useQueryLimit";
 import { ExcelIcon } from "../../components/CustomIcons";
 import * as Excel from "exceljs";
 import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
-import { convertWorkbookToBlob } from "../shared/Spreadsheet";
-import BackgroundWorkDialog from "../shared/BackgroundWorkDialog";
+import { convertWorkbookToBlob, fileExtension } from "../shared/Spreadsheet";
+import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,6 +57,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const { density, onDensityChanged } = useDensity('issuedDensity');
   const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
+  const [toExport, setToExport] = useState<IssuedReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -113,18 +114,25 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
   const onExportSpreadsheet = async (issuedReport: IssuedReport) => {
-    setBackgroundWork(true);
-    issuedReport.items = await IssuedReportRepository.fetch(issuedReport.issuedReportId);
-    const workBook = new Excel.Workbook();
-    convertIssuedReportToSpreadsheet(workBook, issuedReport);
+    setToExport(issuedReport);
+  }
+  const onExportDismiss = () => setToExport(undefined);
+  const onExport = async (params: ExportParameters) => {
+    if (toExport) {
+      setBackgroundWork(true);
+      toExport.items = await IssuedReportRepository.fetch(toExport.issuedReportId);
+      const workBook = new Excel.Workbook();
+      convertIssuedReportToSpreadsheet(workBook, params.worksheetName, toExport);
 
-    const blob = await convertWorkbookToBlob(workBook);
-    if (linkRef && linkRef.current) {
-      linkRef.current.href = URL.createObjectURL(blob);
-      linkRef.current.download = `${t("document.issued")}.xlsx`;
-      linkRef.current?.click();
+      const blob = await convertWorkbookToBlob(workBook);
+      if (linkRef && linkRef.current) {
+        linkRef.current.href = URL.createObjectURL(blob);
+        linkRef.current.download = `${params.fileName}${fileExtension}`;
+        linkRef.current?.click();
+      }
+      setBackgroundWork(false);
     }
-    setBackgroundWork(false);
+    onExportDismiss();
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -223,10 +231,25 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         summary="dialog.issued_report_remove_summary"
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
-      <BackgroundWorkDialog
-         isOpen={hasBackgroundWork}
-         title={t("dialog.generating_spreadsheet")}
-         summary={t("dialog.generating_spreadsheet_summary")}/>
+      <ExportSpreadsheetDialog
+        isOpen={Boolean(toExport)}
+        isWorking={hasBackgroundWork}
+        fileName={toExport?.serialNumber}
+        worksheetName={toExport?.fundCluster}
+        fileNameOptions={toExport &&
+          [...(toExport!.fundCluster ? [toExport!.fundCluster] : []),
+            ...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.serialNumber ? [toExport!.serialNumber] : [])
+          ]
+        }
+        worksheetOptions={toExport &&
+          [...(toExport!.fundCluster ? [toExport!.fundCluster] : []),
+            ...(toExport!.entityName ? [toExport!.entityName] : []),
+            ...(toExport!.serialNumber ? [toExport!.serialNumber] : [])
+          ]
+        }
+        onDismiss={onExportDismiss}
+        onSubmit={onExport}/>
       <Box sx={{display: 'none'}}>
         <a ref={linkRef} href="https://capstive.apple.com">{t("button.download")}</a>
       </Box>

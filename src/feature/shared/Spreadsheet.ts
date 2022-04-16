@@ -1,5 +1,7 @@
 import * as Excel from "exceljs";
 
+const fileExtension = ".xlsx";
+
 function numToLetter(num: number) {
   return String.fromCharCode(65 + (num - 1))
 }
@@ -21,5 +23,6 @@ async function convertWorkbookToBlob(workbook: Excel.Workbook) {
 export {
   letterToNum,
   numToLetter,
-  convertWorkbookToBlob
+  convertWorkbookToBlob,
+  fileExtension
 }
