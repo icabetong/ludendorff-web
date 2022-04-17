@@ -29,7 +29,7 @@ import { typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type TypeScreenProps = {
   isOpen: boolean,

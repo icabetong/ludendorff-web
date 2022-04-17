@@ -2,7 +2,7 @@ import { StockCard } from "./StockCard";
 import { t } from "../../localization";
 import { formatDate } from "../../shared/utils";
 import * as Excel from "exceljs";
-import { numToLetter } from "../shared/Spreadsheet";
+import { numToLetter } from "../../shared/spreadsheet";
 
 const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, stockCard: StockCard) => {
   const workSheet = workBook.addWorksheet(stockCard.stockNumber);

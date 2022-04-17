@@ -3,7 +3,14 @@ import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { StockCardEntry } from "./StockCard";
-import { DataGrid, GridRowParams, GridSelectionModel, GridValueGetterParams, GridActionsCellItem } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridRowParams,
+  GridSelectionModel,
+  GridValueGetterParams,
+  GridActionsCellItem,
+  GridLoadingOverlay
+} from "@mui/x-data-grid";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -17,8 +24,8 @@ import {
   requestedQuantity
 } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
-import useDensity from "../shared/useDensity";
-import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
+import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { EditRounded } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -79,7 +86,8 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
       <DataGrid
         checkboxSelection
         components={{
-          Toolbar: EditorGridToolbar
+          Toolbar: EditorGridToolbar,
+          LoadingOverlay: GridLoadingOverlay
         }}
         componentsProps={{
           toolbar: {
@@ -87,6 +95,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
             onRemoveAction: hasChecked ? props.onRemoveAction : undefined
           }
         }}
+        loading={props.isLoading}
         columns={columns}
         rows={props.entries}
         density={density}

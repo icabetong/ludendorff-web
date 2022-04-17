@@ -15,7 +15,7 @@ import DepartmentList from "./DepartmentList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type DepartmentPickerProps = PaginationControllerProps & {
   isOpen: boolean,

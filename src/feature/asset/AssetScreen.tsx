@@ -1,52 +1,34 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
-import { AddRounded, DeleteOutlineRounded, DesktopWindowsRounded, LocalOfferRounded, } from "@mui/icons-material";
-
+import { AddRounded } from "@mui/icons-material";
 import { collection, orderBy, query } from "firebase/firestore";
-
-import GridLinearProgress from "../../components/GridLinearProgress";
-import GridToolbar from "../../components/GridToolbar";
-import EmptyStateComponent from "../state/EmptyStates";
-
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetList from "./AssetList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { getDataGridTheme } from "../core/Core";
-
 import {
-  assetClassification,
   assetCollection,
   assetDescription,
-  assetRemarks,
-  assetStockNumber,
-  assetType,
-  assetUnitOfMeasure,
-  assetUnitValue,
 } from "../../shared/const";
-
 import { ActionType, initialState, reducer } from "./AssetEditorReducer";
-
 import AssetEditor from "./AssetEditor";
 import TypeScreen from "../type/TypeScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
-import { DataGridPaginationController } from "../../components/PaginationController";
-import { connectHits, InstantSearch } from "react-instantsearch-dom";
+import { InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
-import { HitsProvided } from "react-instantsearch-core";
-import { currencyFormatter, isDev } from "../../shared/utils";
-import GridEmptyRow from "../../components/GridEmptyRows";
-import { ScreenProps } from "../shared/ScreenProps";
+import { isDev } from "../../shared/utils";
+import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useDensity from "../shared/useDensity";
-import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import AssetDataGrid from "./AssetDataGrid";
+import { AssetEmptyState } from "./AssetEmptyState";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -62,7 +44,6 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
-  const { density, onDensityChanged } = useDensity('assetDensity');
   const { limit, onLimitChanged } = useQueryLimit('assetQueryLimit');
   const [asset, setAsset] = useState<Asset | null>(null);
   const [searchMode, setSearchMode] = useState(false);
@@ -84,53 +65,6 @@ const AssetScreen = (props: AssetScreenProps) => {
         .finally(onRemoveDismiss)
     }
   }
-
-  const columns = [
-    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
-    {
-      field: assetType,
-      headerName: t("field.type"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let asset = params.row as Asset;
-        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
-      }
-    },
-    {
-      field: assetClassification,
-      headerName: t("field.classification"),
-      flex: 1,
-    },
-    {
-      field: assetUnitOfMeasure,
-      headerName: t("field.unit_of_measure"),
-      flex: 1
-    },
-    {
-      field: assetUnitValue,
-      headerName: t("field.unit_value"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
-    },
-    {
-      field: assetRemarks,
-      headerName: t("field.remarks"),
-      flex: 1
-    },
-    {
-      field: "actions",
-      type: "actions",
-      flex: 0.5,
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<DeleteOutlineRounded/>}
-          label={t("button.delete")}
-          onClick={() => onRemoveInvoke(params.row as Asset)}/>
-      ],
-    }
-  ];
-  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
@@ -155,49 +89,6 @@ const AssetScreen = (props: AssetScreenProps) => {
       onClick={onCategoryListView}>{t("navigation.types")}</MenuItem>
   ];
 
-  const dataGrid = (
-    <DataGrid
-      components={{
-        LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: AssetDataGridEmptyRows,
-        Toolbar: GridToolbar,
-        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
-      }}
-      componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="types"
-              color="primary"
-              size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
-              onClick={onCategoryListView}>
-              {t("navigation.types")}
-            </Button>
-          ]
-        },
-        pagination: {
-          size: limit,
-          canBack: isStart,
-          canForward: isEnd,
-          onBackward: getPrev,
-          onForward: getNext,
-          onPageSizeChanged: onLimitChanged
-        }
-      }}
-      rows={items}
-      columns={columns}
-      density={density}
-      loading={isLoading}
-      columnVisibilityModel={visibleColumns}
-      getRowId={(r) => r.stockNumber}
-      onRowDoubleClick={onDataGridRowDoubleClicked}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }/>
-  );
-
   return (
     <Box sx={{ width: '100%' }}>
       <InstantSearch
@@ -213,13 +104,19 @@ const AssetScreen = (props: AssetScreenProps) => {
         {canRead
           ? <>
             <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
-              {searchMode
-                ? <AssetDataGrid
-                  onItemSelect={onDataGridRowDoubleClicked}
-                  onRemoveInvoke={onRemoveInvoke}
-                  onCategoryInvoke={onCategoryListView}/>
-                : dataGrid
-              }
+              <AssetDataGrid
+                items={items}
+                size={limit}
+                canBack={isStart}
+                canForward={isEnd}
+                isLoading={isLoading}
+                isSearching={searchMode}
+                onBackward={getPrev}
+                onForward={getNext}
+                onItemSelect={onDataGridRowDoubleClicked}
+                onRemoveInvoke={onRemoveInvoke}
+                onTypesInvoke={onCategoryListView}
+                onPageSizeChanged={onLimitChanged}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading
@@ -259,117 +156,5 @@ const AssetScreen = (props: AssetScreenProps) => {
     </Box>
   );
 }
-
-const AssetDataGridEmptyRows = () => {
-  return (
-    <GridEmptyRow>
-      <AssetEmptyState/>
-    </GridEmptyRow>
-  )
-}
-
-const AssetEmptyState = () => {
-  const { t } = useTranslation();
-
-  return (
-    <EmptyStateComponent
-      icon={DesktopWindowsRounded}
-      title={t("empty.asset")}
-      subtitle={t("empty.asset_summary")}/>
-  );
-}
-
-type AssetDataGridProps = HitsProvided<Asset> & {
-  onItemSelect: (params: GridRowParams) => void,
-  onRemoveInvoke: (asset: Asset) => void,
-  onCategoryInvoke: () => void,
-}
-const AssetDataGridCore = (props: AssetDataGridProps) => {
-  const { t } = useTranslation();
-  const { density, onDensityChanged } = useDensity('assetDensity');
-
-  const columns = [
-    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
-    {
-      field: assetType,
-      headerName: t("field.type"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let asset = params.row as Asset;
-        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
-      }
-    },
-    {
-      field: assetClassification,
-      headerName: t("field.classification"),
-      flex: 1,
-    },
-    {
-      field: assetUnitOfMeasure,
-      headerName: t("field.unit_of_measure"),
-      flex: 1
-    },
-    {
-      field: assetUnitValue,
-      headerName: t("field.unit_value"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
-    },
-    {
-      field: assetRemarks,
-      headerName: t("field.remarks"),
-      flex: 1
-    },
-    {
-      field: "actions",
-      type: "actions",
-      flex: 0.5,
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<DeleteOutlineRounded/>}
-          label={t("button.delete")}
-          onClick={() => props.onRemoveInvoke(params.row as Asset)}/>
-      ],
-    }
-  ];
-  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
-
-  return (
-    <DataGrid
-      hideFooterPagination
-      components={{
-        LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: AssetDataGridEmptyRows,
-        Toolbar: GridToolbar,
-      }}
-      componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="types"
-              color="primary"
-              size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
-              onClick={props.onCategoryInvoke}>
-              {t("navigation.types")}
-            </Button>
-          ]
-        }
-      }}
-      columns={columns}
-      rows={props.hits}
-      density={density}
-      columnVisibilityModel={visibleColumns}
-      getRowId={(r) => r.stockNumber}
-      onRowDoubleClick={props.onItemSelect}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }
-    />
-  )
-}
-const AssetDataGrid = connectHits<AssetDataGridProps, Asset>(AssetDataGridCore)
 
 export default AssetScreen;

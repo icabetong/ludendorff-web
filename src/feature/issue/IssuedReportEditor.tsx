@@ -50,12 +50,13 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<IssuedReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
-  const [hasBackgroundWork, setBackgroundWork] = useState(false);
+  const [isFetching, setFetching] = useState(false);
+  const [isWriting, setWriting] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    setDate(props.report?.date ? props.report?.date?.toDate() : null)
-  }, [props.report])
+    setDate(props.report?.date ? props.report?.date?.toDate() : null);
+  }, [props.report]);
 
   useEffect(() => {
     if (props.isOpen) {
@@ -76,15 +77,17 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       } else return [];
     }
 
+    setFetching(true);
     fetchItems()
       .then((arr) => setItems(arr))
       .catch((error) => {
         if (isDev) console.log(error);
       })
+      .finally(() => setFetching(false));
   }, [props.report]);
 
   const onDismiss = () => {
-    setBackgroundWork(false);
+    setWriting(false);
     props.onDismiss();
   }
 
@@ -116,7 +119,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       return;
     }
 
-    setBackgroundWork(true);
+    setWriting(true);
     const issuedReport: IssuedReport = {
       issuedReportId: props.report ? props.report.issuedReportId : newId(),
       ...data,
@@ -151,7 +154,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         onClose={props.onDismiss}
         TransitionComponent={Transition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_issued")} loading={hasBackgroundWork} onDismiss={props.onDismiss}/>
+          <EditorAppBar title={t("dialog.details_issued")} loading={isWriting} onDismiss={props.onDismiss}/>
           <EditorContent>
             <Box>
               <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
@@ -169,7 +172,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         label={t("field.fund_cluster")}
                         error={errors.fundCluster !== undefined}
                         helperText={errors.fundCluster?.message && t(errors.fundCluster?.message)}
-                        disabled={hasBackgroundWork}/>
+                        disabled={isWriting}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_fund_cluster" }}}/>
                   <Controller
@@ -183,7 +186,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         label={t("field.serial_number")}
                         error={errors.serialNumber !== undefined}
                         helperText={errors.serialNumber?.message && t(errors.serialNumber?.message)}
-                        disabled={hasBackgroundWork}/>
+                        disabled={isWriting}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_serial_number" }}}/>
                 </Grid>
@@ -209,7 +212,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                         value={date}
                         onChange={setDate}
                         renderInput={(params) => <TextField {...params} helperText={null}/>}
-                        disabled={hasBackgroundWork}/>
+                        disabled={isWriting}/>
                     </Box>
                   </LocalizationProvider>
                 </Grid>
@@ -232,11 +235,12 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                 </Button>
               </List>
               : <IssuedReportItemDataGrid
-                onAddAction={onEditorCreate}
-                onRemoveAction={onCheckedRowsRemove}
-                onItemSelected={onEditorUpdate}
-                items={items}
-                onCheckedRowsChanged={onCheckedRowsChanged}/>
+                  isLoading={isFetching}
+                  items={items}
+                  onAddAction={onEditorCreate}
+                  onRemoveAction={onCheckedRowsRemove}
+                  onItemSelected={onEditorUpdate}
+                  onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
         </EditorRoot>

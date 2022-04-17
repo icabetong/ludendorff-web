@@ -172,6 +172,7 @@ const EditorGridToolbar = () => {
 }
 
 type EditorDataGridProps<T> = {
+  isLoading?: boolean,
   onAddAction: () => void,
   onRemoveAction: () => void,
   onItemSelected: (t: T) => void,

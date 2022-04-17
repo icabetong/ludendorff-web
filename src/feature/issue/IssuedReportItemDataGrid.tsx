@@ -5,7 +5,7 @@ import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorC
 import { IssuedReportItem } from "./IssuedReport";
 import {
   DataGrid,
-  GridActionsCellItem,
+  GridActionsCellItem, GridLoadingOverlay,
   GridRowParams,
   GridSelectionModel,
   GridValueGetterParams
@@ -20,8 +20,8 @@ import {
   responsibilityCenter,
   unitCost,
 } from "../../shared/const";
-import useDensity from "../shared/useDensity";
-import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
+import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { currencyFormatter } from "../../shared/utils";
 import { EditRounded } from "@mui/icons-material";
 
@@ -89,7 +89,8 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
         checkboxSelection
         disableSelectionOnClick
         components={{
-          Toolbar: EditorGridToolbar
+          Toolbar: EditorGridToolbar,
+          LoadingOverlay: GridLoadingOverlay
         }}
         componentsProps={{
           toolbar: {
@@ -97,6 +98,7 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
             onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
           }
         }}
+        loading={props.isLoading}
         columns={columns}
         rows={props.items}
         density={density}

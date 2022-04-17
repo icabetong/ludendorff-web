@@ -14,7 +14,7 @@ import {
   TextField
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { fileExtension } from "./Spreadsheet";
+import { spreadsheetFileExtension } from "../../shared/spreadsheet";
 
 type ExportParameters = {
   fileName: string,
@@ -66,7 +66,8 @@ const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
                     label={t("field.filename")}
                     error={errors.fileName !== undefined}
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">{fileExtension}</InputAdornment>
+                      ...params.InputProps,
+                      endAdornment: <InputAdornment position="end">{spreadsheetFileExtension}</InputAdornment>
                     }}/>
                   )}
                   onChange={(e, i) => onChange(i)}/>

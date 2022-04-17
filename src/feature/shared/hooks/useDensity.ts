@@ -1,6 +1,6 @@
 import { GridDensity } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { usePreferences } from "../settings/Preference";
+import { usePreferences } from "../../settings/Preference";
 
 type UseDensityValue = {
   density: GridDensity,

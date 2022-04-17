@@ -54,7 +54,8 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const [entries, setEntries] = useState<StockCardEntry[]>([]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [checked, setChecked] = useState<string[]>([]);
-  const [hasBackgroundWork, setBackgroundWork] = useState(false);
+  const [isFetching, setFetching] = useState(false);
+  const [isWriting, setWriting] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -64,7 +65,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   }, [props.isOpen, props.stockCard, setValue])
 
   const onDismiss = () => {
-    setBackgroundWork(false);
+    setWriting(false);
     props.onDismiss();
   }
 
@@ -77,11 +78,13 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       } else return [];
     }
 
+    setFetching(true);
     fetchItems()
       .then((arr) => setEntries(arr))
       .catch((error) => {
         if (isDev) console.log(error)
       })
+      .finally(() => setFetching(false));
   }, [props.stockCard])
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
@@ -161,7 +164,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar
             title={t("dialog.details_stock_card")}
-            loading={hasBackgroundWork}
+            loading={isWriting}
             onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
@@ -180,7 +183,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                         label={t("field.entity_name")}
                         error={errors.entityName !== undefined}
                         helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                        disabled={hasBackgroundWork}/>
+                        disabled={isWriting}/>
                     )}
                     rules={{ required: { value: true, message: 'feedback.empty_entity_name' }}}/>
                 </Grid>
@@ -188,7 +191,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                   <TextField
                     value={!props.stockCard ? asset?.description ? asset?.description : t("field.not_set") : props.stockCard.description }
                     label={t("field.asset")}
-                    disabled={hasBackgroundWork}
+                    disabled={isWriting}
                     InputProps={{
                       readOnly: true,
                       endAdornment: (
@@ -219,10 +222,11 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                   </Button>
                 </List>
               : <StockCardEntryDataGrid
+                  entries={entries}
+                  isLoading={isFetching}
                   onAddAction={onEditorCreate}
                   onRemoveAction={onCheckedRowsRemove}
                   onItemSelected={onEditorUpdate}
-                  entries={entries}
                   onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>

@@ -1,48 +1,30 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
-import {
-  AddRounded,
-  DeleteOutlineRounded,
-  DomainRounded,
-  PeopleOutlineRounded,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from "@mui/icons-material";
+import { AddRounded } from "@mui/icons-material";
 import { collection, orderBy, query } from "firebase/firestore";
-
-import GridLinearProgress from "../../components/GridLinearProgress";
-import GridToolbar from "../../components/GridToolbar";
-import EmptyStateComponent from "../state/EmptyStates";
 import { getDataGridTheme } from "../core/Core";
-
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
-
 import { ActionType, initialState, reducer } from "./UserEditorReducer";
-
-import { department, email, firstName, lastName, position, userCollection, userId, } from "../../shared/const";
-
+import { lastName, userCollection } from "../../shared/const";
 import UserEditor from "./UserEditor";
 import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
-import { DataGridPaginationController } from "../../components/PaginationController";
-import { HitsProvided } from "react-instantsearch-core";
-import { connectHits, InstantSearch } from "react-instantsearch-dom";
+import { InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
-import { ScreenProps } from "../shared/ScreenProps";
-import GridEmptyRow from "../../components/GridEmptyRows";
+import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useDensity from "../shared/useDensity";
-import useColumnVisibilityModel from "../shared/useColumnVisibilityModel";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import { UserEmptyState } from "./UserEmptyState";
+import UserDataGrid from "./UserDataGrid";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -58,7 +40,6 @@ const UserScreen = (props: UserScreenProps) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canManageUsers } = usePermissions();
-  const { density, onDensityChanged } = useDensity('userDensity');
   const { limit, onLimitChanged } = useQueryLimit('userQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
 
@@ -67,53 +48,6 @@ const UserScreen = (props: UserScreenProps) => {
       limit: limit
     }
   );
-
-  const columns = [
-    { field: userId, headerName: t("field.id"), hide: true },
-    { field: lastName, headerName: t("field.last_name"), flex: 1 },
-    { field: firstName, headerName: t("field.first_name"), flex: 1 },
-    { field: email, headerName: t("field.email"), flex: 1 },
-    {
-      field: position,
-      headerName: t("field.position"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let user = params.row as User;
-        return user.position === undefined ? t("unknown") : user.position;
-      }
-    },
-    {
-      field: department,
-      headerName: t("field.department"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let user = params.row as User;
-        return user.department?.name === undefined ? t("unknown") : user.department?.name;
-      }
-    },
-    {
-      field: "actions",
-      type: "actions",
-      flex: 0.5,
-      getActions: (params: GridRowParams) => {
-        const user = params.row as User;
-        return [
-          <GridActionsCellItem
-            showInMenu
-            icon={<DeleteOutlineRounded/>}
-            label={t("button.delete")}
-            onClick={() => onRemoveInvoke(user)}/>,
-          <GridActionsCellItem
-            showInMenu
-            icon={params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/>}
-            label={params.row.disabled ? t("button.enable") : t("button.disable")}
-            onClick={() => onModificationInvoke(user)}/>
-        ]
-      },
-    },
-  ]
-  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('userColumns', columns);
-
   const [state, dispatch] = useReducer(reducer, initialState);
   const [userModify, setUserModify] = useState<User | undefined>(undefined);
   const [userRemove, setUserRemove] = useState<User | undefined>(undefined);
@@ -168,50 +102,6 @@ const UserScreen = (props: UserScreenProps) => {
       onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
   ]
 
-  const dataGrid = (
-    <DataGrid
-      components={{
-        LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: UserDataGridEmptyRows,
-        Toolbar: GridToolbar,
-        Pagination: isEnd && items.length > 0 && items.length === limit ? DataGridPaginationController : null,
-      }}
-      componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="departments"
-              color="primary"
-              size="small"
-              startIcon={<DomainRounded fontSize="small"/>}
-              onClick={onDepartmentView}>
-              {t("navigation.departments")}
-            </Button>
-          ]
-        },
-        pagination: {
-          size: limit,
-          canBack: isStart,
-          canForward: isEnd,
-          onBackward: getPrev,
-          onForward: getNext,
-          onPageSizeChanged: onLimitChanged
-        }
-      }}
-      rows={items}
-      columns={columns}
-      density={density}
-      columnVisibilityModel={visibleColumns}
-      loading={isLoading}
-      paginationMode="client"
-      getRowId={(r) => r.userId}
-      onRowDoubleClick={onDataGridRowDoubleClick}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }/>
-  )
-
   return (
     <Box sx={{width: '100%'}}>
       <InstantSearch
@@ -227,19 +117,25 @@ const UserScreen = (props: UserScreenProps) => {
         {canRead || canManageUsers
           ? <>
             <Box className={classes.wrapper} sx={{ display: { xs: "none", sm: "block" }}}>
-              {searchMode
-                ? <UserDataGrid
-                    onItemSelect={onDataGridRowDoubleClick}
-                    onModificationInvoke={onModificationInvoke}
-                    onRemoveInvoke={onRemoveInvoke}
-                    onDepartmentInvoke={onDepartmentView}/>
-                : dataGrid
-              }
+              <UserDataGrid
+                items={items}
+                size={limit}
+                canBack={isStart}
+                canForward={isEnd}
+                isLoading={isLoading}
+                isSearching={searchMode}
+                onBackward={getPrev}
+                onForward={getNext}
+                onPageSizeChanged={onLimitChanged}
+                onItemSelect={onDataGridRowDoubleClick}
+                onRemoveInvoke={onRemoveInvoke}
+                onDepartmentInvoke={onDepartmentView}
+                onModificationInvoke={onModificationInvoke}/>
             </Box>
             <Box sx={{ display: { xs: "block", sm: "none" }}}>
               {!isLoading
                 ? items.length < 1
-                  ? <UserEmptyStateComponent/>
+                  ? <UserEmptyState/>
                   : <UserList
                       users={items}
                       onItemSelect={onUserSelected}/>
@@ -279,117 +175,5 @@ const UserScreen = (props: UserScreenProps) => {
     </Box>
   );
 }
-
-const UserDataGridEmptyRows = () => {
-  return (
-    <GridEmptyRow>
-      <UserEmptyStateComponent/>
-    </GridEmptyRow>
-  )
-}
-
-const UserEmptyStateComponent = () => {
-  const { t } = useTranslation();
-
-  return (
-    <EmptyStateComponent
-      icon={PeopleOutlineRounded}
-      title={t("empty.user")}
-      subtitle={t("empty.user_summary")}/>
-  );
-}
-
-type UserDataGridCoreProps = HitsProvided<User> & {
-  onItemSelect: (params: GridRowParams) => void,
-  onModificationInvoke: (user: User) => void,
-  onRemoveInvoke: (user: User) => void,
-  onDepartmentInvoke: () => void,
-}
-const UserDataGridCore = (props: UserDataGridCoreProps) => {
-  const { t } = useTranslation();
-  const { density, onDensityChanged } = useDensity('userDensity');
-
-  const columns = [
-    { field: userId, headerName: t("field.id"), hide: true },
-    { field: lastName, headerName: t("field.last_name"), flex: 1 },
-    { field: firstName, headerName: t("field.first_name"), flex: 1 },
-    { field: email, headerName: t("field.email"), flex: 1 },
-    {
-      field: position,
-      headerName: t("field.position"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let user = params.row as User;
-        return user.position === undefined ? t("unknown") : user.position;
-      }
-    },
-    {
-      field: department,
-      headerName: t("field.department"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let user = params.row as User;
-        return user.department?.name === undefined ? t("unknown") : user.department?.name;
-      }
-    },
-    {
-      field: "actions",
-      type: "actions",
-      flex: 0.5,
-      getActions: (params: GridRowParams) => {
-        const user = params.row as User;
-        return [
-          <GridActionsCellItem
-            showInMenu
-            icon={<DeleteOutlineRounded/>}
-            label={t("button.delete")}
-            onClick={() => props.onRemoveInvoke(user)}/>,
-          <GridActionsCellItem
-            showInMenu
-            icon={params.row.disabled ? <VisibilityOutlined/> : <VisibilityOffOutlined/>}
-            label={params.row.disabled ? t("button.enable") : t("button.disable")}
-            onClick={() => props.onModificationInvoke(user)}/>
-        ]
-      },
-    },
-  ]
-  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('userColumns', columns);
-
-  return (
-    <DataGrid
-      hideFooterPagination
-      components={{
-        LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: UserDataGridEmptyRows,
-        Toolbar: GridToolbar
-      }}
-      componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="departments"
-              color="primary"
-              size="small"
-              startIcon={<DomainRounded fontSize="small"/>}
-              onClick={props.onDepartmentInvoke}>
-              {t("navigation.departments")}
-            </Button>
-          ]
-        }
-      }}
-      columns={columns}
-      rows={props.hits}
-      density={density}
-      columnVisibilityModel={visibleColumns}
-      getRowId={(r) => r.userId}
-      onRowDoubleClick={props.onItemSelect}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(newModel) =>
-        onVisibilityChange(newModel)
-      }/>
-  )
-}
-
-const UserDataGrid = connectHits<UserDataGridCoreProps, User>(UserDataGridCore)
 
 export default UserScreen;

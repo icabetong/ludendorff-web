@@ -13,7 +13,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Type } from "./Type";
 import TypeList from "./TypeList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 
 type TypePickerProps = PaginationControllerProps & {

@@ -25,7 +25,7 @@ export const PaginationController = (props: PaginationControllerProps) => {
   )
 }
 
-type DataGridPaginationControllerProps = PaginationControllerProps & {
+export type DataGridPaginationControllerProps = PaginationControllerProps & {
   size: number,
   onPageSizeChanged: (size: number) => void,
 }

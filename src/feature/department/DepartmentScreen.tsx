@@ -29,7 +29,7 @@ import { departmentCollection, departmentManagerName, departmentName } from "../
 import { firestore } from "../../index";
 import { PaginationController } from "../../components/PaginationController";
 import { usePagination } from "use-pagination-firestore";
-import useQueryLimit from "../shared/useQueryLimit";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type DepartmentScreenProps = {
   isOpen: boolean,
