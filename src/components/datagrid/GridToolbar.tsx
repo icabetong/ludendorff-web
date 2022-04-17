@@ -14,7 +14,7 @@ type GridComponentProps = {
 }
 
 const GridToolbar = () => {
-  const props = useGridRootProps().componentsProps
+  const props = useGridRootProps().componentsProps;
 
   return (
     <GridToolbarContainer>

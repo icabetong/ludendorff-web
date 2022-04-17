@@ -29,6 +29,8 @@ import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/sp
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 import IssuedReportDataGrid from "./IssuedReportDataGrid";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
+import useSort from "../shared/hooks/useSort";
+import { OrderByDirection } from "@firebase/firestore-types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -53,11 +55,26 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const { sortMethod, onSortMethodChange } = useSort('issuedSort');
+
+  const onParseQuery = () => {
+    let field = fundCluster;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
+    }
+
+    return query(collection(firestore, issuedCollection), orderBy(field, direction));
+  }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
-    query(collection(firestore, issuedCollection), orderBy(fundCluster, "asc")), {
-      limit: limit
-    }
+    onParseQuery(), { limit: limit }
   );
 
   const onRemoveInvoke = (report: IssuedReport) => setReport(report);
@@ -128,21 +145,23 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                 canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
+                sortMethod={sortMethod}
                 onBackward={getPrev}
                 onForward={getNext}
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
-                onRemoveInvoke={onRemoveInvoke}/>
+                onRemoveInvoke={onRemoveInvoke}
+                onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading
                 ? items.length < 1
                   ? <IssuedReportEmptyState/>
                   : <IssuedReportList
-                    reports={items}
-                    onItemSelect={onIssuedReportSelected}
-                    onItemRemove={onRemoveInvoke}/>
+                      reports={items}
+                      onItemSelect={onIssuedReportSelected}
+                      onItemRemove={onRemoveInvoke}/>
                 : <LinearProgress/>
               }
               <Fab

@@ -32,6 +32,8 @@ import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/sp
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 import StockCardDataGrid from "./StockCardDataGrid";
 import { StockCardEmptyState } from "./StockCardEmptyState";
+import { OrderByDirection } from "@firebase/firestore-types";
+import useSort from "../shared/hooks/useSort";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -56,11 +58,26 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const [toExport, setToExport] = useState<StockCard | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
   const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const { sortMethod, onSortMethodChange } = useSort('issuedSort');
+
+  const onParseQuery = () => {
+    let field = entityName;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
+    }
+
+    return query(collection(firestore, stockCardCollection), orderBy(field, direction));
+  }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<StockCard>(
-    query(collection(firestore, stockCardCollection), orderBy(entityName, "asc")), {
-      limit: limit
-    }
+    onParseQuery(), { limit: limit }
   )
 
   const onRemoveInvoke = (stockCard: StockCard) => setStockCard(stockCard);
@@ -130,12 +147,14 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
+                sortMethod={sortMethod}
                 onBackward={getPrev}
                 onForward={getNext}
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
-                onRemoveInvoke={onRemoveInvoke}/>
+                onRemoveInvoke={onRemoveInvoke}
+                onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { sx: 'block', sm: 'none' }}}>
               {!isLoading

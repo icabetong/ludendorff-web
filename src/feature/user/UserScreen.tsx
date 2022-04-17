@@ -25,6 +25,8 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { UserEmptyState } from "./UserEmptyState";
 import UserDataGrid from "./UserDataGrid";
+import useSort from "../shared/hooks/useSort";
+import { OrderByDirection } from "@firebase/firestore-types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -42,11 +44,26 @@ const UserScreen = (props: UserScreenProps) => {
   const { canRead, canManageUsers } = usePermissions();
   const { limit, onLimitChanged } = useQueryLimit('userQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
+  const { sortMethod, onSortMethodChange } = useSort('userSort');
+
+  const onParseQuery = () => {
+    let field = lastName;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
+    }
+
+    return query(collection(firestore, userCollection), orderBy(field, direction));
+  }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
-    query(collection(firestore, userCollection), orderBy(lastName, "asc")), {
-      limit: limit
-    }
+    onParseQuery(), { limit: limit }
   );
   const [state, dispatch] = useReducer(reducer, initialState);
   const [userModify, setUserModify] = useState<User | undefined>(undefined);
@@ -124,13 +141,15 @@ const UserScreen = (props: UserScreenProps) => {
                 canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
+                sortMethod={sortMethod}
                 onBackward={getPrev}
                 onForward={getNext}
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClick}
                 onRemoveInvoke={onRemoveInvoke}
                 onDepartmentInvoke={onDepartmentView}
-                onModificationInvoke={onModificationInvoke}/>
+                onModificationInvoke={onModificationInvoke}
+                onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: "block", sm: "none" }}}>
               {!isLoading

@@ -32,6 +32,8 @@ import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/sp
 import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
 import InventoryReportDataGrid from "./InventoryReportDataGrid";
 import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
+import { OrderByDirection } from "@firebase/firestore-types";
+import useSort from "../shared/hooks/useSort";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -53,9 +55,26 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
+  const { sortMethod, onSortMethodChange } = useSort('inventorySort');
+
+  const onParseQuery = () => {
+    let field = fundCluster;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
+    }
+
+    return query(collection(firestore, inventoryCollection), orderBy(field, direction));
+  }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
-    query(collection(firestore, inventoryCollection), orderBy(fundCluster, "asc")), {
+    onParseQuery(), {
       limit: limit
     }
   );
@@ -130,12 +149,14 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 isSearching={searchMode}
                 canBack={isStart}
                 canForward={isEnd}
+                sortMethod={sortMethod}
                 onBackward={getPrev}
                 onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
                 onRemoveInvoke={onRemoveInvoke}
-                onPageSizeChanged={onLimitChanged}/>
+                onPageSizeChanged={onLimitChanged}
+                onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading

@@ -39,7 +39,7 @@ type TypeScreenProps = {
 const TypeScreen = (props: TypeScreenProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const [search, setSearch] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
@@ -59,7 +59,7 @@ const TypeScreen = (props: TypeScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={isMobile}
+        fullScreen={smBreakpoint}
         fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}

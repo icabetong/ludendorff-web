@@ -29,6 +29,8 @@ import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import AssetDataGrid from "./AssetDataGrid";
 import { AssetEmptyState } from "./AssetEmptyState";
+import useSort from "../shared/hooks/useSort";
+import { OrderByDirection } from "@firebase/firestore-types";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -47,9 +49,26 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { limit, onLimitChanged } = useQueryLimit('assetQueryLimit');
   const [asset, setAsset] = useState<Asset | null>(null);
   const [searchMode, setSearchMode] = useState(false);
+  const { sortMethod, onSortMethodChange } = useSort('assetSort');
+
+  const onParseQuery = () => {
+    let field = assetDescription;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
+    }
+
+    return query(collection(firestore, assetCollection), orderBy(field, direction))
+  }
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetDescription, "asc")), { limit: limit }
+    onParseQuery(), { limit: limit }
   );
 
   const onRemoveInvoke = (asset: Asset) => setAsset(asset);
@@ -111,12 +130,14 @@ const AssetScreen = (props: AssetScreenProps) => {
                 canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
+                sortMethod={sortMethod}
                 onBackward={getPrev}
                 onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onRemoveInvoke={onRemoveInvoke}
                 onTypesInvoke={onCategoryListView}
-                onPageSizeChanged={onLimitChanged}/>
+                onPageSizeChanged={onLimitChanged}
+                onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
               {!isLoading

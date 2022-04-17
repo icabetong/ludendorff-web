@@ -20,7 +20,6 @@ import {
   TextField
 } from "@mui/material";
 import AssetPicker from "../asset/AssetPicker";
-import { useSnackbar } from "notistack";
 import { ExpandMoreRounded } from "@mui/icons-material";
 
 export type FormValues = {
@@ -38,7 +37,6 @@ type IssuedReportItemEditorProps = {
 
 export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
   const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);

@@ -9,8 +9,8 @@ import { DeleteOutlineRounded } from "@mui/icons-material";
 import { ExcelIcon } from "../../components/CustomIcons";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
-import GridLinearProgress from "../../components/GridLinearProgress";
-import GridToolbar from "../../components/GridToolbar";
+import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
+import GridToolbar from "../../components/datagrid/GridToolbar";
 import { DataGridPaginationController } from "../../components/PaginationController";
 import { InventoryReportDataGridEmptyState } from "./InventoryReportEmptyState";
 import { connectHits } from "react-instantsearch-dom";
@@ -76,12 +76,16 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
           onPageSizeChanged: props.onPageSizeChanged,
         }
       }}
+      sortingMode="server"
       rows={props.isSearching ? props.hits : props.items}
       columns={columns}
+      loading={props.isLoading}
       density={density}
       columnVisibilityModel={visibleColumns}
-      loading={props.isLoading}
       getRowId={(r) => r.inventoryReportId}
+      onSortModelChange={(m, d) => {
+        props?.onSortMethodChanged && props?.onSortMethodChanged(m);
+      }}
       onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}/>

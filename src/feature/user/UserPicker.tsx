@@ -16,6 +16,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type UserPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -30,6 +31,7 @@ const UserPicker = (props: UserPickerProps) => {
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
+  const { limit } = useQueryLimit('userQueryLimit');
 
   const onSelect = (user: User) => {
     props.onSelectItem(user);
@@ -44,7 +46,13 @@ const UserPicker = (props: UserPickerProps) => {
       open={props.isOpen}
       onClose={props.onDismiss}>
       <DialogTitle>{t("dialog.select_user")}</DialogTitle>
-      <DialogContent dividers={true}>
+      <DialogContent
+        dividers={true}
+        sx={{
+          minHeight: '60vh',
+          paddingX: 0,
+          '& .MuiList-padding': { padding: 0 }
+        }}>
         {canRead ?
           !props.isLoading
             ? props.users.length > 0
@@ -52,11 +60,13 @@ const UserPicker = (props: UserPickerProps) => {
                 <UserList
                   users={props.users}
                   onItemSelect={onSelect}/>
-                <PaginationController
-                  canBack={props.canBack}
-                  canForward={props.canForward}
-                  onBackward={props.onBackward}
-                  onForward={props.onForward}/>
+                { props.canForward && props.users?.length > 0 && props.users.length === limit &&
+                  <PaginationController
+                    canBack={props.canBack}
+                    canForward={props.canForward}
+                    onBackward={props.onBackward}
+                    onForward={props.onForward}/>
+                }
               </>
               : <EmptyStateComponent
                 icon={PeopleOutlineRounded}

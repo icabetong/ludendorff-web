@@ -4,8 +4,8 @@ import { DataGridProps } from "../shared/types/DataGridProps";
 import { HitsProvided } from "react-instantsearch-core";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { connectHits } from "react-instantsearch-dom";
-import GridLinearProgress from "../../components/GridLinearProgress";
-import GridToolbar from "../../components/GridToolbar";
+import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
+import GridToolbar from "../../components/datagrid/GridToolbar";
 import { Button } from "@mui/material";
 import { DeleteOutlineRounded, LocalOfferRounded } from "@mui/icons-material";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
@@ -108,12 +108,17 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
           onPageSizeChanged: props.onPageSizeChanged
         }
       }}
+      sortingMode="server"
       columns={columns}
       rows={props.isSearching ? props.hits : props.items}
       loading={props.isLoading}
       density={density}
+      sortModel={props.sortMethod}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.stockNumber}
+      onSortModelChange={(m, d) => {
+        props?.onSortMethodChanged && props?.onSortMethodChanged(m)
+      }}
       onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}

@@ -67,7 +67,7 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
     </span>
   )
 }
-export const Highlight = connectHighlight(CustomHighlight)
+
 
 type SearchBoxInputBaseProps = SearchBoxProvided & {
   onFocusChanged?: (hasFocus: boolean) => void,
@@ -166,7 +166,7 @@ const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, sea
   )
 }
 export const Results = connectStateResults(ResultsComponent)
-
+export const Highlight = connectHighlight(CustomHighlight)
 export const SearchBox = connectSearchBox<SearchBoxProps>(SearchBoxCore);
 export const SearchBoxInputBase = connectSearchBox<SearchBoxInputBaseProps>(SearchBoxInputBaseCore)
 export const Provider = algoliasearch("H1BMXJXRBE", "ecfcef9a59b7ec023817ef3041de6416");

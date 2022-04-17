@@ -16,6 +16,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
 
@@ -54,6 +55,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
+  const [isWriting, setWriting] = useState(false);
 
   useEffect(() => {
     setType(props.asset?.type)
@@ -73,6 +75,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   }, [props.isOpen, props.asset, reset])
 
   const onDismiss = () => {
+    setWriting(false);
     props.onDismiss();
   }
 
@@ -100,6 +103,7 @@ const AssetEditor = (props: AssetEditorProps) => {
       unitValue: parseFloat(`${data.unitValue}`)
     }
 
+    setWriting(true);
     if (props.isCreate) {
       AssetRepository.create(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_created")))
@@ -130,7 +134,6 @@ const AssetEditor = (props: AssetEditorProps) => {
   return (
     <>
       <Dialog
-        fullScreen={smBreakpoint}
         fullWidth={true}
         maxWidth={smBreakpoint ? "xs" : "md"}
         open={props.isOpen}>
@@ -159,6 +162,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         inputRef={ref}
                         label={t("field.stock_number")}
                         error={errors.stockNumber !== undefined}
+                        disabled={isWriting}
                         helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
                         placeholder={t('placeholder.stock_number')}/>
                     )}
@@ -173,6 +177,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         inputRef={ref}
                         label={t("field.asset_description")}
                         error={errors.description !== undefined}
+                        disabled={isWriting}
                         helperText={errors.description?.message !== undefined ? t(errors.description.message) : undefined}
                         placeholder={t('placeholder.asset_description')} />
                     )}
@@ -180,6 +185,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                   <TextField
                     value={type?.typeName !== undefined ? type?.typeName : t("field.not_set")}
                     label={t("field.type")}
+                    disabled={isWriting}
                     InputProps={{
                       readOnly: true,
                       endAdornment: (
@@ -200,6 +206,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         inputRef={ref}
                         label={t("field.classification")}
                         error={errors.classification !== undefined}
+                        disabled={isWriting}
                         helperText={errors.classification?.message !== undefined ? t(errors.classification.message) : undefined}
                         placeholder={t('placeholder.classification')}/>
                     )}
@@ -219,6 +226,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         inputRef={ref}
                         label={t("field.unit_of_measure")}
                         error={errors.unitOfMeasure !== undefined}
+                        disabled={isWriting}
                         helperText={errors.unitOfMeasure?.message !== undefined ? t(errors.unitOfMeasure.message) : undefined}
                         placeholder={t('placeholder.unit_of_measure')}/>
                     )}
@@ -232,6 +240,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                         inputRef={ref}
                         label={t("field.unit_value")}
                         error={errors.unitValue !== undefined}
+                        disabled={isWriting}
                         helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
                         inputProps={{
                           inputMode: 'numeric',
@@ -257,29 +266,33 @@ const AssetEditor = (props: AssetEditorProps) => {
                         type="text"
                         inputRef={ref}
                         rows={4}
-                        label={t('field.remarks')}/>
+                        label={t('field.remarks')}
+                        disabled={isWriting}/>
                     )}/>
                 </Grid>
               </Grid>
             </Container>
           </DialogContent>
-
           <DialogActions>
             <Button
               color="primary"
               onClick={onQRCodeView}
-              disabled={props.asset?.stockNumber === undefined}>{t("button.view_qr_code")}</Button>
+              disabled={props.asset?.stockNumber === undefined || isWriting}>
+              {t("button.view_qr_code")}
+            </Button>
             <Box sx={{ flex: '1 0 0' }}/>
             <Button
               color="primary"
+              disabled={isWriting}
               onClick={props.onDismiss}>
               {t("button.cancel")}
             </Button>
-            <Button
+            <LoadingButton
+              loading={isWriting}
               color="primary"
               type="submit">
               {t("button.save")}
-            </Button>
+            </LoadingButton>
           </DialogActions>
         </form>
       </Dialog>
