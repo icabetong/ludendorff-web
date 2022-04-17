@@ -59,7 +59,12 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
             onSubmit={handleSubmit(onSubmit)}
             maxWidth={smBreakpoint ? undefined : "sm"}>
             <Paper
-              sx={{height: '100%', padding: { xs: 4, md: 8 }}}
+              sx={{
+                height: '100%',
+                padding: { xs: 4, md: 8 },
+                backgroundColor: 'rgba(255, 255, 255, 0.75)',
+                backgroundFilter: 'blur(20px)'
+              }}
               elevation={8}>
               <Box sx={{
                 paddingY: 2,

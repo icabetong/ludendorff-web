@@ -59,7 +59,7 @@ const TypeScreen = (props: TypeScreenProps) => {
   return (
     <>
       <Dialog
-        fullScreen={smBreakpoint}
+        fullScreen={true}
         fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}

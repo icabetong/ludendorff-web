@@ -137,8 +137,8 @@ const resources = {
         duplicate: "Duplicate",
         show_menu: "Show menu",
         show_drawer: "Show drawer",
-        sign_in: "Sign in",
-        sign_out: "Sign-out",
+        sign_in: "Log in",
+        sign_out: "Log out",
         go_to_home: "Go to Home",
         request_asset: "Request Asset",
         create_asset: "Create Asset",
@@ -255,7 +255,7 @@ const resources = {
         table_row_density_comfortable: "Comfortable"
       },
       dialog: {
-        sign_out: "Sign out?",
+        sign_out: "Log out?",
         sign_out_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
         asset_remove: "Remove asset?",
         asset_remove_summary: "Do you want to remove this asset? Once finished, this action cannot be undone.",
