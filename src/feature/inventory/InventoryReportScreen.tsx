@@ -191,6 +191,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
+        key="inventoryExport"
         isOpen={Boolean(toExport)}
         isWorking={hasBackgroundWork}
         fileName={toExport?.fundCluster}

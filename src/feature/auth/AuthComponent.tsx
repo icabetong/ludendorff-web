@@ -3,10 +3,23 @@ import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import { withRouter } from "react-router-dom";
-import { Alert, Box, Container, Paper, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Container,
+  InputAdornment,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../index";
 import { LoadingButton } from "@mui/lab";
+import { LockOutlined, MailOutlineRounded } from "@mui/icons-material";
+import { ReactComponent as Logo } from "../../shared/icon.svg";
 
 type FormData = {
   email: string,
@@ -18,6 +31,8 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
   const { handleSubmit, formState: { errors }, control } = useForm<FormData>();
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<AuthError | undefined>(undefined);
+  const theme = useTheme();
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
 
   const onSubmit = (data: FormData) => {
     setIsAuthenticating(true)
@@ -42,13 +57,27 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
           <Container
             component="form"
             onSubmit={handleSubmit(onSubmit)}
-            maxWidth="xs">
+            maxWidth={smBreakpoint ? undefined : "sm"}>
             <Paper
-              sx={{height: '100%', padding: 4}}
+              sx={{height: '100%', padding: { xs: 4, md: 8 }}}
               elevation={8}>
-              <Box sx={{ paddingY: 2 }}>
-                <Typography variant="h5">{t("auth.hello")}</Typography>
-                <Typography variant="h5">{t("auth.welcome_back")}</Typography>
+              <Box sx={{
+                paddingY: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center' }}>
+                <Box
+                  component={Logo}
+                  sx={{
+                    width: '6em',
+                    height: '6em',
+                    marginBottom: 4,
+                    color: (theme) => theme.palette.text.primary
+                  }}
+                />
+                <Typography variant="h5" align="center">{t("auth.title")}</Typography>
+                <Typography variant="body1" align="center" sx={{ marginTop: 2 }}>{t("auth.summary")}</Typography>
               </Box>
               {error != null &&
                 <Box sx={{ paddingY: 2 }}>
@@ -57,7 +86,7 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                   </Alert>
                 </Box>
               }
-              <Box sx={{ paddingY: 4 }}>
+              <Box sx={{ paddingY: 2 }}>
                 <Controller
                   name="email"
                   control={control}
@@ -67,9 +96,16 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                       sx={{ my: 1 }}
                       type="text"
                       inputRef={ref}
-                      label={t("field.email")}
+                      placeholder={t("field.email")}
                       error={errors.email !== undefined}
-                      disabled={isAuthenticating}/>
+                      disabled={isAuthenticating}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <MailOutlineRounded/>
+                          </InputAdornment>
+                        )
+                      }}/>
                   )}
                   rules={{ required: true }}/>
                 <Controller
@@ -80,9 +116,16 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
                       {...inputProps}
                       type="password"
                       inputRef={ref}
-                      label={t("field.password")}
+                      placeholder={t("field.password")}
                       error={errors.password !== undefined}
-                      disabled={isAuthenticating}/>
+                      disabled={isAuthenticating}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockOutlined/>
+                          </InputAdornment>
+                        )
+                      }}/>
                   )}
                   rules={{ required: true }}/>
               </Box>

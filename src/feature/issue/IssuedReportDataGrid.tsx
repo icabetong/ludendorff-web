@@ -75,9 +75,14 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
           onPageSizeChanged: props.onPageSizeChanged
         }
       }}
+      sortingMode="server"
       rows={props.isSearching ? props.hits : props.items}
       columns={columns}
       density={density}
+      sortModel={props.sortMethod}
+      onSortModelChange={(m, d) => {
+        props?.onSortMethodChanged && props?.onSortMethodChanged(m);
+      }}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.issuedReportId}
       onRowDoubleClick={props.onItemSelect}

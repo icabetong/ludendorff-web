@@ -187,6 +187,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         onConfirm={onReportRemove}
         onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
+        key="issuedExport"
         isOpen={Boolean(toExport)}
         isWorking={hasBackgroundWork}
         fileName={toExport?.serialNumber}

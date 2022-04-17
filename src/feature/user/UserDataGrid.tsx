@@ -101,11 +101,16 @@ const UserDataGridCore = (props: UserDataGridProps) => {
           onPageSizeChanged: props.onPageSizeChanged
         }
       }}
+      sortingMode="server"
+      sortModel={props.sortMethod}
       columns={columns}
       rows={props.hits}
       density={density}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.userId}
+      onSortModelChange={(m, d) => {
+        props?.onSortMethodChanged && props?.onSortMethodChanged(m)
+      }}
       onRowDoubleClick={props.onItemSelect}
       onStateChange={(v) => onDensityChanged(v.density.value)}
       onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}/>

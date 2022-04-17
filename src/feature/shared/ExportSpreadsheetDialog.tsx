@@ -4,12 +4,12 @@ import { useForm, Controller } from "react-hook-form";
 import {
   Autocomplete,
   Box,
-  Button,
+  Button, Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogTitle, FormControlLabel, FormGroup,
   InputAdornment,
   TextField
 } from "@mui/material";
@@ -22,6 +22,7 @@ type ExportParameters = {
 }
 
 type ExportSpreadsheetDialogProps = {
+  key: string,
   isOpen: boolean,
   isWorking: boolean,
   fileName?: string,
@@ -35,6 +36,7 @@ type ExportSpreadsheetDialogProps = {
 const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
   const { t } = useTranslation();
   const { handleSubmit, formState: { errors }, control, reset } = useForm<ExportParameters>();
+
 
   useEffect(() => {
     reset({
@@ -92,6 +94,9 @@ const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
                   onChange={(e, i) => onChange(i)}/>
               )}
               rules={{ required: true }}/>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox/>} label={t("field.remember_options")}/>
+            </FormGroup>
           </Box>
         </DialogContent>
         <DialogActions>

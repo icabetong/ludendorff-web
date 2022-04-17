@@ -6,8 +6,8 @@ const resources = {
     translation: {
       app_name: "Ludendorff",
       auth: {
-        hello: "Hello.",
-        welcome_back: "Welcome Back."
+        title: "Log in to Ludendorff",
+        summary: "Enter your email address and password"
       },
       navigation: {
         manage: "Manage",
@@ -92,7 +92,6 @@ const resources = {
         ris_no: "RIS No.",
         value: "Value",
         filename: "Filename",
-        worksheet_name: "Worksheet name",
       },
       placeholder: {
         none: "None",

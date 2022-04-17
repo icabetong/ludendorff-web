@@ -81,6 +81,7 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
       columns={columns}
       loading={props.isLoading}
       density={density}
+      sortModel={props.sortMethod}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.inventoryReportId}
       onSortModelChange={(m, d) => {

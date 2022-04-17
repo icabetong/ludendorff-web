@@ -189,6 +189,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         onConfirm={onStockCardRemove}
         onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
+        key="stockCardExport"
         isOpen={Boolean(toExport)}
         isWorking={hasBackgroundWork}
         fileName={toExport?.description}
