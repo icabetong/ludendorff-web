@@ -1,41 +1,18 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
 import { DeleteOutlineRounded, DomainOutlined } from "@mui/icons-material";
-import { useSnackbar } from "notistack";
-
 import EmptyStateComponent from "../state/EmptyStates";
-
 import { usePermissions } from "../auth/AuthProvider";
-import { Department, DepartmentRepository } from "./Department";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
-import { isDev } from "../../shared/utils";
+import { Department } from "./Department";
 
 type DepartmentListProps = {
   departments: Department[],
-  onItemSelect: (department: Department) => void
+  onItemSelect: (department: Department) => void,
+  onRemoveInvoke?: (department: Department) => void,
 }
 
 const DepartmentList = (props: DepartmentListProps) => {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
-  const [department, setDepartment] = useState<Department | undefined>(undefined);
-
-  const onRemoveInvoke = (department: Department) => setDepartment(department);
-  const onRemoveDismiss = () => setDepartment(undefined);
-
-  const onDepartmentRemove = () => {
-    if (department !== undefined) {
-      DepartmentRepository.remove(department)
-        .then(() => enqueueSnackbar(t("feedback.department_removed")))
-        .catch((error) => {
-          enqueueSnackbar(t("feedback.department_remove_error"));
-          if (isDev) console.log(error)
-        })
-        .finally(onRemoveDismiss)
-    }
-  }
-
   return (
     <>
       {props.departments.length > 0
@@ -47,7 +24,7 @@ const DepartmentList = (props: DepartmentListProps) => {
                   key={department.departmentId}
                   department={department}
                   onItemSelect={props.onItemSelect}
-                  onItemRemove={onRemoveInvoke}/>
+                  onItemRemove={props.onRemoveInvoke}/>
               )
             })
           }
@@ -57,12 +34,6 @@ const DepartmentList = (props: DepartmentListProps) => {
           title={t("empty.department")}
           subtitle={t("empty.department_summary")}/>
       }
-      <ConfirmationDialog
-        isOpen={department !== undefined}
-        title="dialog.department_remove"
-        summary="dialog.department_remove_summary"
-        onDismiss={onRemoveDismiss}
-        onConfirm={onDepartmentRemove}/>
     </>
   );
 }
@@ -70,7 +41,7 @@ const DepartmentList = (props: DepartmentListProps) => {
 type DepartmentItemProps = {
   department: Department,
   onItemSelect: (department: Department) => void,
-  onItemRemove: (department: Department) => void
+  onItemRemove?: (department: Department) => void
 }
 
 const DepartmentItem = (props: DepartmentItemProps) => {
@@ -82,7 +53,9 @@ const DepartmentItem = (props: DepartmentItemProps) => {
       edge="end"
       disabled={props.department.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.department)}>
+      onClick={() => {
+        props.onItemRemove && props.onItemRemove(props.department)
+      }}>
       <DeleteOutlineRounded/>
     </IconButton>
   );

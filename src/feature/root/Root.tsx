@@ -80,8 +80,8 @@ type RootContainerComponentPropsType = {
   currentDestination: Destination,
 }
 
+const drawerWidth = 256;
 const RootContainerComponent = (props: RootContainerComponentPropsType) => {
-  const theme = useTheme();
   const { user } = useAuthState();
   const { t } = useTranslation();
   const [triggerConfirmSignOut, setTriggerConfirmSignOut] = useState(false);
@@ -141,6 +141,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
     </Dialog>
   )
 
+  const container = window !== undefined ? () => window.document.body : undefined;
   const drawerItems = (
     <NavigationComponent
       onNavigate={onNavigateThenDismiss}
@@ -150,17 +151,18 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   return (
     <Stack sx={{ width: '100%', minHeight: '100vh' }}>
       <Box component="nav" sx={{ height: { lg: 64 }, flexShrink: { lg: 0 }}}>
-        <Box sx={{ display: { sx: 'block', lg: 'none' }}}>
+        <Box sx={{ display: { xs: 'block', lg: 'none' }}}>
           <Drawer
-            variant="temporary"
-            anchor={theme.direction === "rtl" ? 'right' : 'left'}
             open={drawerOpen}
+            container={container}
+            variant="temporary"
             onClose={onToggleDrawerState}
-            PaperProps={{
-              sx: { width: 240 }
-            }}
             ModalProps={{
               keepMounted: true,
+            }}
+            sx={{
+              display: { width: '100%', xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
             }}>
             {drawerItems}
           </Drawer>
@@ -258,8 +260,8 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
       </Box>
       <Divider/>
       <Box sx={{
-        display: 'flex',
         width: '100%',
+        display: 'flex',
         maxWidth: { xl: '1600px' },
         margin: '0 auto',
         flexGrow: 1,

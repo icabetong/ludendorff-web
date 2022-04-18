@@ -1,8 +1,18 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Box, Grid, LinearProgress, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { EditOutlined, ImageOutlined, LockOutlined, SendOutlined, } from "@mui/icons-material";
+import {
+  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText,
+  DialogTitle,
+  Grid,
+  LinearProgress, ListItemIcon, ListItemText,
+  MenuItem,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
+import { EditOutlined, ImageOutlined, LockOutlined, LogoutRounded, SendOutlined, } from "@mui/icons-material";
 import ProfileInfoList from "./ProfileInfoList";
 import ProfileActionList from "./ProfileActionList";
 import ChangeNamePrompt from "./actions/ChangeName";
@@ -11,6 +21,7 @@ import RequestResetPrompt from "./actions/RequestReset";
 import { AuthStatus, useAuthState } from "../auth/AuthProvider";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { auth } from "../../index";
 
 type ProfileScreenProps = {
   onDrawerToggle: () => void
@@ -23,6 +34,13 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fileInput = useRef<HTMLInputElement | null>(null);
+
+  const [onSignOut, setSignOut] = useState(false);
+  const onSignOutInvoke = () => setSignOut(true);
+  const onSignOutDismiss = () => setSignOut(false);
+  const onEndSession = async () => {
+    await auth.signOut();
+  }
 
   const [changeName, setChangeName] = useState(false);
   const onChangeNameInvoke = () => setChangeName(true);
@@ -52,6 +70,12 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     <Box sx={{ width: '100%' }}>
       <AdaptiveHeader
         title={t("navigation.profile")}
+        menuItems={[
+          <MenuItem key={0} onClick={onSignOutInvoke}>
+            <ListItemIcon><LogoutRounded/></ListItemIcon>
+            <ListItemText>{t("button.sign_out")}</ListItemText>
+          </MenuItem>
+        ]}
         onDrawerTriggered={props.onDrawerToggle}/>
       <input
         ref={fileInput}
@@ -144,6 +168,23 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       <RequestResetPrompt
         isOpen={requestReset}
         onDismiss={onResetPasswordDismiss}/>
+      <Dialog
+        open={onSignOut}
+        fullWidth={true}
+        maxWidth="xs">
+        <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="primary"
+            onClick={onSignOutDismiss}>{t("button.cancel")}</Button>
+          <Button
+            color="primary"
+            onClick={onEndSession}>{t("button.continue")}</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

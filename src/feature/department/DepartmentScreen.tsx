@@ -2,48 +2,49 @@ import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
-  Button,
   Dialog,
-  DialogActions,
-  DialogContent,
+  DialogContent, Fab,
   LinearProgress,
-  ListItem,
-  ListItemText,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import { connectHits, InstantSearch } from "react-instantsearch-dom";
-import { HitsProvided } from "react-instantsearch-core";
+import { InstantSearch } from "react-instantsearch-dom";
 import { collection, orderBy, query } from "firebase/firestore";
-
-import { Department } from "./Department";
+import { Department, DepartmentRepository } from "./Department";
 import DepartmentEditor from "./DepartmentEditor";
 import { ActionType, initialState, reducer } from "./DepartmentEditorReducer";
 import DepartmentList from "./DepartmentList";
 import { usePermissions } from "../auth/AuthProvider";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
-import CustomDialogTitle from "../../components/CustomDialogTitle";
-import { Highlight, Provider, Results, SearchBox } from "../../components/Search";
-import { departmentCollection, departmentManagerName, departmentName } from "../../shared/const";
-
+import { Provider } from "../../components/Search";
+import { departmentCollection, departmentName } from "../../shared/const";
 import { firestore } from "../../index";
 import { PaginationController } from "../../components/PaginationController";
 import { usePagination } from "use-pagination-firestore";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
+import DialogToolbar from "../../components/DialogToolbar";
+import { Transition } from "../../components/EditorComponent";
+import DepartmentDataGrid from "./DepartmentDataGrid";
+import useSort from "../shared/hooks/useSort";
+import { getEditorDataGridTheme } from "../core/Core";
+import { isDev } from "../../shared/utils";
+import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { useSnackbar } from "notistack";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { AddRounded } from "@mui/icons-material";
+import DepartmentSearchList from "./DepartmentSearchList";
 
-type DepartmentScreenProps = {
+type DepartmentScreenProps =   {
   isOpen: boolean,
   onDismiss: () => void
 }
 
 const DepartmentScreen = (props: DepartmentScreenProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+  const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
-  const { limit } = useQueryLimit('departmentQueryLimit');
+  const { limit, onLimitChanged } = useQueryLimit('departmentQueryLimit');
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [department, setDepartment] = useState<Department | undefined>(undefined);
   const [search, setSearch] = useState(false);
+  const { sortMethod, onSortMethodChange } = useSort('departmentSort');
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
     query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), {
@@ -58,17 +59,34 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   const onEditorUpdate = (department: Department) => dispatch({
     type: ActionType.UPDATE,
     payload: department
-  })
+  });
+
+  const onRemoveInvoke = (department: Department) => setDepartment(department);
+  const onRemoveDismiss = () => setDepartment(undefined);
+
+  const onDepartmentRemove = () => {
+    if (department !== undefined) {
+      DepartmentRepository.remove(department)
+        .then(() => enqueueSnackbar(t("feedback.department_removed")))
+        .catch((error) => {
+          enqueueSnackbar(t("feedback.department_remove_error"));
+          if (isDev) console.log(error)
+        })
+        .finally(onRemoveDismiss)
+    }
+  }
 
   return (
-    <>
+    <InstantSearch searchClient={Provider} indexName="departments">
       <Dialog
-        fullScreen={smBreakpoint}
-        fullWidth={true}
-        maxWidth="xs"
+        fullScreen={true}
         open={props.isOpen}
-        onClose={props.onDismiss}>
-        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.departments")}</CustomDialogTitle>
+        TransitionComponent={Transition}>
+        <DialogToolbar
+          title={t("navigation.departments")}
+          onAdd={canWrite ? onEditorCreate : undefined}
+          onDismiss={props.onDismiss}
+          onSearchFocusChanged={onSearchInvoked}/>
         <DialogContent
           dividers={true}
           sx={{
@@ -76,97 +94,77 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
             paddingX: 0,
             '& .MuiList-padding': { padding: 0 }
           }}>
-          {search
-            ?
-            <Box>
-              <InstantSearch
-                searchClient={Provider}
-                indexName="departments">
-                <Box sx={{ margin: '0.6em 1em' }}>
-                  <SearchBox/>
+          { canRead
+            ? <>
+                <Box sx={(theme) => ({
+                  maxWidth: { xl: '1600px' },
+                  display: { xs: 'none', md: 'block' },
+                  p: 2,
+                  height: '100%',
+                  margin: '0 auto',
+                  ...getEditorDataGridTheme(theme),
+                })}>
+                  <DepartmentDataGrid
+                    items={items}
+                    size={limit}
+                    isSearching={search}
+                    sortMethod={sortMethod}
+                    canBack={isStart}
+                    canForward={isEnd}
+                    onBackward={getPrev}
+                    onForward={getNext}
+                    onPageSizeChanged={onLimitChanged}
+                    onItemSelect={onEditorUpdate}
+                    onRemoveInvoke={onRemoveInvoke}
+                    onSortMethodChanged={onSortMethodChange}/>
                 </Box>
-                <Box sx={{minHeight: '100%'}}>
-                  <Results>
-                    <DepartmentHits onItemSelect={onEditorUpdate}/>
-                  </Results>
-                </Box>
-              </InstantSearch>
-            </Box>
-            : canRead
-              ? !isLoading
-                ? <>
-                  <DepartmentList
-                    departments={items}
-                    onItemSelect={onEditorUpdate}/>
-                  {isEnd && items.length > 0 && items.length === limit &&
-                    <PaginationController
-                      canBack={isStart}
-                      canForward={isEnd}
-                      onBackward={getPrev}
-                      onForward={getNext}/>
-                  }
-                </>
-                : <LinearProgress/>
-              : <ErrorNoPermissionState/>
+                <Box sx={{ height: '100%', display: { xs: 'block', md: 'none' }}}>
+                { !isLoading
+                  ? <>
+                    { search
+                      ? <DepartmentSearchList onItemSelect={onEditorUpdate}/>
+                      : <>
+                          <DepartmentList
+                            departments={items}
+                            onItemSelect={onEditorUpdate}
+                            onRemoveInvoke={onRemoveInvoke}/>
+                        { isEnd && items.length > 0 && items.length === limit &&
+                          <PaginationController
+                            canBack={isStart}
+                            canForward={isEnd}
+                            onBackward={getPrev}
+                            onForward={getNext}/>
+                        }
+                        </>
+                    }
+                    { canWrite &&
+                      <Fab color="primary" aria-label={t("button.add")} onClick={onEditorCreate}>
+                        <AddRounded/>
+                      </Fab>
+                    }
+                  </>
+                  : <LinearProgress/>
+                }
+              </Box>
+              </>
+            : <ErrorNoPermissionState/>
           }
+
         </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            onClick={onEditorCreate}
-            disabled={!canWrite}>{t("button.add")}</Button>
-          <Box sx={{ flex: '1 0 0' }}/>
-          <Button
-            color="primary"
-            onClick={props.onDismiss}>{t("button.close")}</Button>
-        </DialogActions>
       </Dialog>
       <DepartmentEditor
         isOpen={state.isOpen}
         isCreate={state.isCreate}
         department={state.department}
         onDismiss={onEditorDismiss}/>
-    </>
+      <ConfirmationDialog
+        isOpen={department !== undefined}
+        title="dialog.department_remove"
+        summary="dialog.department_remove_summary"
+        onDismiss={onRemoveDismiss}
+        onConfirm={onDepartmentRemove}/>
+    </InstantSearch>
   )
 }
 
 export default DepartmentScreen;
-
-type DepartmentHitsListProps = HitsProvided<Department> & {
-  onItemSelect: (department: Department) => void
-}
-const DepartmentHitsList = (props: DepartmentHitsListProps) => {
-  return (
-    <>
-      {props.hits.map((department: Department) => (
-        <DepartmentListItem
-          key={department.departmentId}
-          department={department}
-          onItemSelect={props.onItemSelect}/>
-      ))
-      }
-    </>
-  )
-}
-const DepartmentHits = connectHits<DepartmentHitsListProps, Department>(DepartmentHitsList)
-
-type DepartmentListItemProps = {
-  department: Department,
-  onItemSelect: (department: Department) => void
-}
-const DepartmentListItem = (props: DepartmentListItemProps) => {
-  return (
-    <ListItem
-      button
-      key={props.department.departmentId}
-      onClick={() => props.onItemSelect(props.department)}>
-      <ListItemText
-        primary={<Highlight
-          attribute={departmentName}
-          hit={props.department}/>}
-        secondary={<Highlight
-          attribute={departmentManagerName}
-          hit={props.department}/>}/>
-    </ListItem>
-  )
-}

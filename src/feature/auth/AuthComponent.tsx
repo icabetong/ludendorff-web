@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
@@ -28,11 +28,15 @@ type FormData = {
 
 const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
   const { t } = useTranslation();
-  const { handleSubmit, formState: { errors }, control } = useForm<FormData>();
+  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormData>();
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<AuthError | undefined>(undefined);
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+
+  useEffect(() => {
+    reset({ email: '', password: '' });
+  }, [reset]);
 
   const onSubmit = (data: FormData) => {
     setIsAuthenticating(true)

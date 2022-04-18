@@ -2,34 +2,27 @@ import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
-  LinearProgress,
-  ListItem,
-  ListItemText,
-  useMediaQuery,
-  useTheme,
+  LinearProgress
 } from "@mui/material";
-import { connectHits, InstantSearch } from "react-instantsearch-dom";
-import { HitsProvided } from "react-instantsearch-core";
+import { InstantSearch } from "react-instantsearch-dom";
 import { collection, orderBy, query } from "firebase/firestore";
-
 import { Type } from "./Type";
 import TypeEditor from "./TypeEditor";
 import { ActionType, initialState, reducer } from "./TypeEditorReducer";
 import TypeList from "./TypeList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import CustomDialogTitle from "../../components/CustomDialogTitle";
-import { Highlight, Provider, Results, SearchBox } from "../../components/Search";
+import { Provider } from "../../components/Search";
 import { typeCollection, typeName } from "../../shared/const";
-
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
+import DialogToolbar from "../../components/DialogToolbar";
+import { Transition } from "../../components/EditorComponent";
+import TypeSearchList from "./TypeSearchList";
 
 type TypeScreenProps = {
   isOpen: boolean,
@@ -38,8 +31,6 @@ type TypeScreenProps = {
 
 const TypeScreen = (props: TypeScreenProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const [search, setSearch] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
@@ -57,14 +48,16 @@ const TypeScreen = (props: TypeScreenProps) => {
   const onEditorUpdate = (type: Type) => dispatch({ type: ActionType.UPDATE, payload: type })
 
   return (
-    <>
+    <InstantSearch searchClient={Provider} indexName="types">
       <Dialog
         fullScreen={true}
-        fullWidth={true}
-        maxWidth="xs"
         open={props.isOpen}
-        onClose={props.onDismiss}>
-        <CustomDialogTitle onSearch={onSearchInvoked}>{t("navigation.types")}</CustomDialogTitle>
+        TransitionComponent={Transition}>
+        <DialogToolbar
+          title={t("navigation.types")}
+          onAdd={canWrite ? onEditorCreate : undefined}
+          onDismiss={props.onDismiss}
+          onSearchFocusChanged={onSearchInvoked}/>
         <DialogContent
           dividers={true}
           sx={{
@@ -72,94 +65,34 @@ const TypeScreen = (props: TypeScreenProps) => {
             paddingX: 0,
             '& .MuiList-padding': { padding: 0 }
           }}>
-          {search
-            ? <InstantSearch
-              searchClient={Provider}
-              indexName="types">
-              <Box sx={{ margin: '0.6em 1em' }}>
-                <SearchBox/>
-              </Box>
-              <Box sx={{ minHeight: '100%' }}>
-                <Results>
-                  <TypeHits onItemSelect={onEditorUpdate}/>
-                </Results>
-              </Box>
-            </InstantSearch>
-            : canRead
-              ? !isLoading
-                ? <>
-                  <TypeList
-                    types={items}
-                    onItemSelect={onEditorUpdate}/>
-                  {isEnd && items.length > 0 && items.length === limit
-                    && <PaginationController
+          { canRead
+            ? !isLoading
+              ? <Box>
+                  { search
+                    ? <TypeSearchList onItemSelect={onEditorUpdate}/>
+                    : <>
+                      <TypeList types={items} onItemSelect={onEditorUpdate}/>
+                      { isEnd && items.length > 0 && items.length === limit &&
+                        <PaginationController
                           canBack={isStart}
                           canForward={isEnd}
                           onBackward={getPrev}
                           onForward={getNext}/>
+                      }
+                    </>
                   }
-                </>
-                : <LinearProgress/>
-              : <ErrorNoPermissionState/>
+                </Box>
+              : <LinearProgress/>
+            : <ErrorNoPermissionState/>
           }
         </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            onClick={onEditorCreate}
-            disabled={!canWrite}>{t("button.add")}</Button>
-          <Box sx={{ flex: '1 0 0' }}/>
-          <Button
-            color="primary"
-            onClick={props.onDismiss}>{t("button.close")}</Button>
-        </DialogActions>
       </Dialog>
       <TypeEditor
         isOpen={state.isOpen}
         isCreate={state.isCreate}
         type={state.type}
         onDismiss={onEditorDismiss}/>
-    </>
+    </InstantSearch>
   )
 }
 export default TypeScreen;
-
-type TypeHitsListProps = HitsProvided<Type> & {
-  onItemSelect: (category: Type) => void
-}
-const CategoryHitsList = (props: TypeHitsListProps) => {
-  return (
-    <>
-      {props.hits.map((c: Type) => (
-        <TypeListItem
-          type={c}
-          onItemSelect={props.onItemSelect}/>
-      ))
-      }
-    </>
-  )
-}
-const TypeHits = connectHits<TypeHitsListProps, Type>(CategoryHitsList);
-
-type TypeListItemProps = {
-  type: Type,
-  onItemSelect: (category: Type) => void
-}
-const TypeListItem = (props: TypeListItemProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <ListItem
-      button
-      key={props.type.typeId}
-      onClick={() => props.onItemSelect(props.type)}>
-      <ListItemText
-        primary={
-          <Highlight
-            attribute={typeName}
-            hit={props.type}/>
-        }
-        secondary={t("template.count", { count: props.type.count })}/>
-    </ListItem>
-  )
-}

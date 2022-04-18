@@ -1,34 +1,24 @@
-import React, { ComponentClass, FunctionComponent, useState } from "react";
+import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
   Grid,
-  List,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  ListSubheader,
+  Paper,
+  Typography,
 } from "@mui/material";
 import {
-  AccountCircleOutlined,
   DesktopWindowsRounded,
-  ExitToAppRounded,
   Inventory2Outlined,
   LocalAtmOutlined,
   PeopleOutlineRounded,
   SettingsOutlined,
   UploadFileOutlined
 } from "@mui/icons-material";
-import { signOut } from "firebase/auth";
-import { AuthStatus, useAuthState, usePermissions } from "../auth/AuthProvider";
-import { auth } from "../../index";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
+import { NavigationList, NavigationListItem } from "./NavigationList";
 
 export enum Destination {
   ASSETS = 1,
@@ -73,117 +63,73 @@ const destinations: NavigationItemType[] = [
 ]
 
 export const NavigationComponent = (props: NavigationComponentPropsType) => {
-  const { status, user } = useAuthState();
-  const [endSession, setEndSession] = useState(false);
+  const { user } = useAuthState();
   const { t } = useTranslation();
 
-  const minorDestinations: NavigationItemType[] = [
-    {
-      icon: AccountCircleOutlined,
-      title: status === AuthStatus.FETCHED && user?.firstName !== undefined
-        ? user!.firstName
-        : t("profile"),
-      destination: Destination.PROFILE
-    },
-    { icon: SettingsOutlined, title: "navigation.settings", destination: Destination.SETTINGS },
-  ]
-
-  const onConfirmEndSession = () => setEndSession(true);
-  const onDismissEndSession = () => setEndSession(false);
-  const onEndSession = async () => {
-    await signOut(auth);
-    setEndSession(false);
-  }
-
   return (
-    <Box>
-      <List
-        sx={{ bgColor: 'background.paper' }}
-        aria-labelledby="primary-route-subheader"
-        subheader={
-          <ListSubheader component="div" id="primary-route-subheader">{t("navigation.manage")}</ListSubheader>
-        }>
-        <NavigationList
-          items={destinations}
-          destination={props.currentDestination}
-          onNavigate={props.onNavigate}/>
-      </List>
-      <Divider/>
-      <List
-        aria-labelledby="secondary-route-subheader"
-        subheader={
-          <ListSubheader component="div" id="secondary-route-subheader">{t("navigation.account")}</ListSubheader>
-        }>
-        <NavigationList
-          items={minorDestinations}
-          destination={props.currentDestination}
-          onNavigate={props.onNavigate}/>
-        <NavigationListItem
-          itemKey={1}
-          navigation={{ icon: ExitToAppRounded, title: t("button.sign_out") }}
-          isActive={false}
-          action={onConfirmEndSession}/>
-      </List>
-      <Dialog
-        open={endSession}
-        fullWidth={true}
-        maxWidth="xs"
-        onClose={onDismissEndSession}>
-        <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            onClick={onDismissEndSession}>{t("button.cancel")}</Button>
-          <Button
-            color="primary"
-            onClick={onEndSession}>{t("button.continue")}</Button>
-        </DialogActions>
-      </Dialog>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        backgroundColor: theme => theme.palette.divider
+      }}>
+      <NavigationList
+        key="primary-routes"
+        current={props.currentDestination}
+        onNavigate={props.onNavigate}
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+        { user &&
+          <Box sx={{ padding: 2, textOverflow: 'ellipsis', mb: 2 }}>
+            <Paper variant="outlined">
+              <ListItemButton
+                onClick={() => props.onNavigate(Destination.PROFILE)}>
+                <ListItemText
+                  primary={
+                    <Typography noWrap sx={{ fontWeight: 500 }}>
+                      {t("template.full_name", { last: user.lastName, first: user.firstName })}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography noWrap sx={{ fontSize: '0.8em', fontWeight: 400 }}>
+                      {user.email}
+                    </Typography>
+                  }/>
+              </ListItemButton>
+            </Paper>
+          </Box>
+        }
+        <Box sx={{ flex: 1 }}>
+          {
+            destinations.map((item) => {
+              return (
+                <NavigationListItem
+                  key={item.destination}
+                  itemKey={item.destination}
+                  icon={item.icon}
+                  title={item.title}
+                  active={props.currentDestination === item.destination}
+                  onNavigate={() => {
+                    item.destination && props.onNavigate(item.destination)
+                  }}/>
+              )
+            })
+          }
+        </Box>
+        <Box sx={{ mb: 1 }}>
+          <NavigationListItem
+            itemKey={Destination.SETTINGS}
+            icon={SettingsOutlined}
+            title="navigation.settings"
+            onNavigate={() => props.onNavigate(Destination.SETTINGS)}/>
+        </Box>
+      </NavigationList>
     </Box>
   )
-}
-
-
-const NavigationListItem = (props: NavigationItemPropsType) => {
-  const { t } = useTranslation();
-
-  return (
-    <ListItemButton
-      key={props.itemKey}
-      selected={props.isActive}
-      onClick={props.action}>
-      <ListItemIcon>{React.createElement(props.navigation.icon)}
-      </ListItemIcon>
-      <ListItemText primary={t(props.navigation.title)}/>
-    </ListItemButton>
-  )
-}
-
-const NavigationList = (props: NavigationListPropsType) => {
-  const { canRead, canManageUsers } = usePermissions();
-
-  return (
-    <>{
-      props.items.map((navigation: NavigationItemType) => {
-        if (!canRead && navigation.destination === Destination.ASSETS)
-          return <></>;
-        if (!canManageUsers && navigation.destination === Destination.USERS)
-          return <></>;
-
-        return (
-          <NavigationListItem
-            key={navigation.destination}
-            itemKey={navigation.destination}
-            navigation={navigation}
-            action={() => props.onNavigate(navigation.destination!!)}
-            isActive={props.destination === navigation.destination}/>
-        )
-      })
-    }</>
-  );
 }
 
 export const TopNavigationComponent = (props: NavigationComponentPropsType) => {
