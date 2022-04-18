@@ -4,12 +4,12 @@ import { useForm, Controller } from "react-hook-form";
 import {
   Autocomplete,
   Box,
-  Button, Checkbox,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, FormControlLabel, FormGroup,
+  DialogTitle,
   InputAdornment,
   TextField
 } from "@mui/material";
