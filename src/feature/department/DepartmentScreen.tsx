@@ -30,6 +30,7 @@ import { useSnackbar } from "notistack";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { AddRounded } from "@mui/icons-material";
 import DepartmentSearchList from "./DepartmentSearchList";
+import { OrderByDirection } from "@firebase/firestore-types";
 
 type DepartmentScreenProps =   {
   isOpen: boolean,
@@ -46,10 +47,24 @@ const DepartmentScreen = (props: DepartmentScreenProps) => {
   const [search, setSearch] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('departmentSort');
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    query(collection(firestore, departmentCollection), orderBy(departmentName, "asc")), {
-      limit: limit,
+  const onParseQuery = () => {
+    let field = departmentName;
+    let direction: OrderByDirection = "asc";
+    if (sortMethod.length > 0) {
+      field = sortMethod[0].field;
+      switch(sortMethod[0].sort) {
+        case "asc":
+        case "desc":
+          direction = sortMethod[0].sort;
+          break;
+      }
     }
+
+    return query(collection(firestore, departmentCollection), orderBy(field, direction))
+  }
+
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
+   onParseQuery(), { limit: limit, }
   )
 
   const onSearchInvoked = () => setSearch(!search);

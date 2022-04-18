@@ -42,7 +42,7 @@ const DepartmentDataGridCore = (props: DepartmentDataGridProps) => {
     }
   ];
   const { density, onDensityChanged } = useDensity('departmentDensity');
-  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('departmentSort', columns);
+  const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('departmentColumns', columns);
 
   return (
     <DataGrid

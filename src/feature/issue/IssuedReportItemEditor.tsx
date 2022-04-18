@@ -45,7 +45,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
     if (props.isOpen) {
       reset({
         quantityIssued: props.item?.quantityIssued ? props.item?.quantityIssued : 0,
-        responsibilityCenter: props.item?.responsibilityCenter
+        responsibilityCenter: props.item?.responsibilityCenter ? props.item?.responsibilityCenter : ""
       })
     }
   }, [props.isOpen, props.item, reset])
