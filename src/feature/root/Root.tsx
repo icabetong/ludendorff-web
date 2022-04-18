@@ -151,22 +151,20 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
   return (
     <Stack sx={{ width: '100%', minHeight: '100vh' }}>
       <Box component="nav" sx={{ height: { lg: 64 }, flexShrink: { lg: 0 }}}>
-        <Box sx={{ display: { xs: 'block', lg: 'none' }}}>
-          <Drawer
-            open={drawerOpen}
-            container={container}
-            variant="temporary"
-            onClose={onToggleDrawerState}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            sx={{
-              display: { width: '100%', xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-            }}>
-            {drawerItems}
-          </Drawer>
-        </Box>
+        <Drawer
+          open={drawerOpen}
+          container={container}
+          variant="temporary"
+          onClose={onToggleDrawerState}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { width: '100%', xs: 'block', lg: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}>
+          {drawerItems}
+        </Drawer>
         <Box sx={{ display: { xs: 'none', lg: 'block' }}}>
           <AppBar color="inherit" elevation={0}>
             <Toolbar>

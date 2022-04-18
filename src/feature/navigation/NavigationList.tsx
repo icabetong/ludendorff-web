@@ -1,6 +1,6 @@
 import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SxProps, Theme } from "@mui/material";
+import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SxProps, Theme, lighten, darken } from "@mui/material";
 import { Destination } from "./NavigationComponent";
 
 type NavigationListProps = {
@@ -27,7 +27,7 @@ const NavigationList = (props: NavigationListProps) => {
         ...props.sx,
         backgroundColor: theme => theme.palette.background.paper,
         '&& .Mui-selected': {
-          backgroundColor: theme => theme.palette.grey[200]
+          backgroundColor: theme => theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.25) : darken(theme.palette.background.paper, 0.15),
         }
       }}>
       {props.children}
@@ -53,7 +53,6 @@ const NavigationListItem = (props: NavigationListItemProps) => {
       sx={{
         borderRadius: 2,
         margin: theme => theme.spacing(1, 2),
-        color: theme => props.active ? theme.palette.grey[700] : theme.palette.grey[600],
       }}>
       <ListItemIcon>{React.createElement(props.icon)}</ListItemIcon>
       <ListItemText

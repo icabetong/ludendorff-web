@@ -37,7 +37,6 @@ const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
   const { t } = useTranslation();
   const { handleSubmit, formState: { errors }, control, reset } = useForm<ExportParameters>();
 
-
   useEffect(() => {
     reset({
       fileName: props.fileName ? props.fileName : "",
