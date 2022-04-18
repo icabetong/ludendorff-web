@@ -94,9 +94,6 @@ const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
                   onChange={(e, i) => onChange(i)}/>
               )}
               rules={{ required: true }}/>
-            <FormGroup>
-              <FormControlLabel control={<Checkbox/>} label={t("field.remember_options")}/>
-            </FormGroup>
           </Box>
         </DialogContent>
         <DialogActions>

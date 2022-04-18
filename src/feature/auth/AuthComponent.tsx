@@ -66,8 +66,6 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
               sx={{
                 height: '100%',
                 padding: { xs: 4, md: 8 },
-                backgroundColor: 'rgba(255, 255, 255, 0.75)',
-                backgroundFilter: 'blur(20px)'
               }}
               elevation={8}>
               <Box sx={{
