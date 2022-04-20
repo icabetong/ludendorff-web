@@ -1,6 +1,7 @@
 import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   Box,
   Button,
   Grid,
@@ -19,6 +20,7 @@ import {
 } from "@mui/icons-material";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { NavigationList, NavigationListItem } from "./NavigationList";
+import { getHostOperatingSystem } from "../../shared/utils";
 
 export enum Destination {
   ASSETS = 1,
@@ -120,6 +122,14 @@ export const NavigationComponent = (props: NavigationComponentPropsType) => {
             })
           }
         </Box>
+        { getHostOperatingSystem() === 'Android'
+          &&
+          <Box sx={{ padding: 2 }}>
+            <Alert severity="info">
+              {t("info.native_app_available")}
+            </Alert>
+          </Box>
+        }
         <Box sx={{ mb: 1 }}>
           <NavigationListItem
             itemKey={Destination.SETTINGS}
