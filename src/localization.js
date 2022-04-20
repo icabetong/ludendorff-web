@@ -231,6 +231,7 @@ const resources = {
         name_change_error: "Error updating name",
         password_change_error: "Error updating password",
         avatar_change_error: "Error updating user profile picture",
+        stock_number_already_exists: "The stock number you entered already exists",
       },
       error: {
         no_permissions_header: "Insufficient Permissions",
@@ -238,13 +239,14 @@ const resources = {
         no_permissions_summary_write: "Unfortunately, you do not have the proper permissions to perform this operation. Contact the system administrators for assistance.",
         not_found_header: "Whoops!",
         not_found_summary: "We can't seem to find that page you're looking for.",
-        not_found_info: "Maybe you can head back home and find it there instead?"
+        not_found_info: "Maybe you can head back home and find it there instead?",
       },
       info: {
         user_editor_admin_permission: "Adding \"Administrative\" permission overrides lower permission rules.",
         type_count_not_zero: "There are assets with this type",
         department_count_not_zero: "There are users who are in this department",
         native_app_available: "You are currently using Ludendorff in a mobile environment; consider installing the native app to access more features of the system.",
+        stock_number_cannot_be_changed: "The Asset's stock number cannot be changed once entered"
       },
       settings: {
         dark_theme: "Dark Theme",

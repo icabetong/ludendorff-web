@@ -12,19 +12,19 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  TextField,
+  TextField, Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query } from "firebase/firestore";
+import { collection, doc, orderBy, query, getDoc } from "firebase/firestore";
 
 import { Asset, AssetRepository } from "./Asset";
 import { minimize, Type, TypeCore } from "../type/Type";
 import TypePicker from "../type/TypePicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { typeCollection, typeName } from "../../shared/const";
+import { assetCollection, typeCollection, typeName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
@@ -91,7 +91,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   );
 
   let previousTypeId: string | undefined = undefined;
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     if (!data.stockNumber) {
       return;
     }
@@ -103,8 +103,16 @@ const AssetEditor = (props: AssetEditorProps) => {
       unitValue: parseFloat(`${data.unitValue}`)
     }
 
-    setWriting(true);
+
     if (props.isCreate) {
+      let reference = doc(firestore, assetCollection, data.stockNumber);
+      let snapshot = await getDoc(reference);
+      if (snapshot.exists()) {
+        enqueueSnackbar(t("feedback.stock_number_already_exists"), { variant: "error" } );
+        return;
+      }
+
+      setWriting(true);
       AssetRepository.create(asset)
         .then(() => enqueueSnackbar(t("feedback.asset_created")))
         .catch((error) => {
@@ -113,6 +121,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         })
         .finally(onDismiss)
     } else {
+      setWriting(true);
       AssetRepository.update(asset, previousTypeId)
         .then(() => enqueueSnackbar(t("feedback.asset_updated")))
         .catch((error) => {
@@ -130,6 +139,25 @@ const AssetEditor = (props: AssetEditorProps) => {
     setType(minimize(newType));
     onPickerDismiss();
   }
+
+  const stockNumberField = (
+    <Controller
+      control={control}
+      name="stockNumber"
+      render={( { field: { ref, ...inputProps } }) => (
+        <TextField
+          {...inputProps}
+          autoFocus
+          type="text"
+          inputRef={ref}
+          label={t("field.stock_number")}
+          error={errors.stockNumber !== undefined}
+          disabled={isWriting || Boolean(props.asset)}
+          helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
+          placeholder={t('placeholder.stock_number')}/>
+      )}
+      rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" }}}/>
+  )
 
   return (
     <>
@@ -151,22 +179,12 @@ const AssetEditor = (props: AssetEditorProps) => {
                   item
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <Controller
-                    control={control}
-                    name="stockNumber"
-                    render={( { field: { ref, ...inputProps } }) => (
-                      <TextField
-                        {...inputProps}
-                        autoFocus
-                        type="text"
-                        inputRef={ref}
-                        label={t("field.stock_number")}
-                        error={errors.stockNumber !== undefined}
-                        disabled={isWriting}
-                        helperText={errors.stockNumber?.message !== undefined ? t(errors.stockNumber.message) : undefined}
-                        placeholder={t('placeholder.stock_number')}/>
-                    )}
-                    rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" }}}/>
+                  { props.asset
+                    ? <Tooltip title={<>{t("info.stock_number_cannot_be_changed")}</>}>
+                        <span>{stockNumberField}</span>
+                      </Tooltip>
+                    : stockNumberField
+                  }
                   <Controller
                     control={control}
                     name="description"
