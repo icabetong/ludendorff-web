@@ -3,12 +3,11 @@ import { User } from "./User";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import useDensity from "../shared/hooks/useDensity";
-import { department, email, firstName, lastName, position, userId } from "../../shared/const";
-import { DeleteOutlineRounded, DomainRounded, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { email, firstName, lastName, position, userId } from "../../shared/const";
+import { DeleteOutlineRounded, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
-import { Button } from "@mui/material";
 import { connectHits } from "react-instantsearch-dom";
 import { UserDataGridEmptyState } from "./UserEmptyState";
 import { DataGridPaginationController } from "../../components/PaginationController";
@@ -18,7 +17,6 @@ type UserDataGridProps = HitsProvided<User> & DataGridProps<User> & {
   onItemSelect: (params: GridRowParams) => void,
   onModificationInvoke: (user: User) => void,
   onRemoveInvoke: (user: User) => void,
-  onDepartmentInvoke: () => void,
 }
 const UserDataGridCore = (props: UserDataGridProps) => {
   const { t } = useTranslation();
@@ -36,15 +34,6 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       valueGetter: (params: GridValueGetterParams) => {
         let user = params.row as User;
         return user.position === undefined ? t("unknown") : user.position;
-      }
-    },
-    {
-      field: department,
-      headerName: t("field.department"),
-      flex: 1,
-      valueGetter: (params: GridValueGetterParams) => {
-        let user = params.row as User;
-        return user.department?.name === undefined ? t("unknown") : user.department?.name;
       }
     },
     {
@@ -80,18 +69,6 @@ const UserDataGridCore = (props: UserDataGridProps) => {
         Pagination: props.canForward && props.items.length > 0 && props.items.length === props.size ? DataGridPaginationController : null,
       }}
       componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="departments"
-              color="primary"
-              size="small"
-              startIcon={<DomainRounded fontSize="small"/>}
-              onClick={props.onDepartmentInvoke}>
-              {t("navigation.departments")}
-            </Button>
-          ]
-        },
         pagination: {
           size: props.size,
           canBack: props.canBack,

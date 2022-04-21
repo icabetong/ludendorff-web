@@ -11,7 +11,7 @@ import {
   article,
   assetDescription,
   assetStockNumber,
-  assetType,
+  assetCategory,
   assetUnitOfMeasure,
   assetUnitValue,
   balancePerCard,
@@ -52,12 +52,12 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     { field: article, headerName: t("field.article"), flex: 1 },
     { field: assetDescription, headerName: t("field.asset_description"), flex: 3 },
     {
-      field: assetType,
-      headerName: t("field.type"),
+      field: assetCategory,
+      headerName: t("field.category"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
-        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
+        return asset.type?.categoryName === undefined ? t("unknown") : asset.type?.categoryName;
       }
     },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 2 },

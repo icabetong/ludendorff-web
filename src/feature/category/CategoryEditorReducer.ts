@@ -1,4 +1,4 @@
-import { Department } from "./Department";
+import { Category } from "./Category";
 import { newId } from "../../shared/utils";
 
 export enum ActionType {
@@ -9,41 +9,40 @@ export enum ActionType {
 
 type Action = {
   type: ActionType,
-  payload?: Department
+  payload?: Category,
 }
 type State = {
-  department?: Department,
+  category?: Category,
   isCreate: boolean,
   isOpen: boolean
 }
-
 export const initialState: State = {
-  department: { departmentId: newId(), count: 0 },
+  category: { categoryId: newId(), subcategories: [], count: 0 },
   isCreate: true,
-  isOpen: false
+  isOpen: false,
 }
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
 
   switch (type) {
     case ActionType.CREATE:
       return {
-        department: undefined,
+        category: undefined,
         isCreate: true,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.UPDATE:
       return {
-        department: payload,
+        category: payload,
         isCreate: false,
-        isOpen: true
+        isOpen: true,
       }
     case ActionType.DISMISS:
       return {
-        ...state,
+        isCreate: false,
         isOpen: false,
-        department: payload
+        category: undefined
       }
     default:
       return state;

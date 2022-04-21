@@ -17,7 +17,7 @@ import {
 } from "../../shared/const";
 import { ActionType, initialState, reducer } from "./AssetEditorReducer";
 import AssetEditor from "./AssetEditor";
-import TypeScreen from "../type/TypeScreen";
+import CategoryScreen from "../category/CategoryScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
@@ -165,7 +165,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         isCreate={state.isCreate}
         asset={state.asset}
         onDismiss={onAssetEditorDismiss}/>
-      <TypeScreen
+      <CategoryScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>
       <ConfirmationDialog

@@ -16,23 +16,14 @@ import {
   FormGroup,
   FormLabel,
   Grid,
-  IconButton,
-  InputAdornment,
   TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query } from "firebase/firestore";
 import { Permission, User, UserRepository } from "./User";
-import { Department, DepartmentCore, minimize } from "../department/Department";
-import DepartmentPicker from "../department/DepartmentPicker";
-import { departmentCollection, departmentName } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
-import { firestore } from "../..";
-import { usePagination } from "use-pagination-firestore";
-import { ExpandMoreRounded } from "@mui/icons-material";
 
 type UserEditorProps = {
   isOpen: boolean,
@@ -60,13 +51,7 @@ const UserEditor = (props: UserEditorProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors }, control, reset, watch } = useForm<FormValues>();
   const [isWritePending, setWritePending] = useState<boolean>(false);
-  const [isPickerOpen, setPickerOpen] = useState(false);
-  const [department, setDepartment] = useState<DepartmentCore | undefined>(props.user?.department);
   const isAdminChecked = watch('permissionAdmin');
-
-  useEffect(() => {
-    setDepartment(props.user?.department);
-  }, [props.user])
 
   useEffect(() => {
     const hasPermission = (permission: Permission) => {
@@ -94,12 +79,6 @@ const UserEditor = (props: UserEditorProps) => {
     props.onDismiss();
   }
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Department>(
-    query(collection(firestore, departmentCollection), orderBy(departmentName)), {
-      limit: 15
-    }
-  )
-
   const onSubmit = (data: FormValues) => {
     setWritePending(true);
 
@@ -119,7 +98,6 @@ const UserEditor = (props: UserEditorProps) => {
 
     const user: User = {
       userId: props.user !== undefined ? props.user?.userId : newId(),
-      department: department,
       disabled: props.user !== undefined ? props.user?.disabled : false,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -148,198 +126,165 @@ const UserEditor = (props: UserEditorProps) => {
     }
   }
 
-  const onPickerView = () => setPickerOpen(true);
-  const onPickerDismiss = () => setPickerOpen(false);
-
-  const onDepartmentSelected = (department: Department) => {
-    setDepartment(minimize(department))
-    onPickerDismiss()
-  }
-
   return (
-    <>
-      <Dialog
-        fullScreen={isMobile}
-        fullWidth={true}
-        maxWidth={isMobile ? "xs" : "md"}
-        open={props.isOpen}
-        onClose={onDismiss}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_user")}</DialogTitle>
-          <DialogContent dividers={true}>
-            <Container sx={{ py: 1 }}>
-              <Grid
-                container
-                direction={isMobile ? "column" : "row"}
-                alignItems="stretch"
-                justifyContent="center"
-                spacing={isMobile ? 0 : 4}>
-                <Grid item xs={6} sx={{ maxWidth: '100%' }}>
-                  <TextField
-                    autoFocus
-                    disabled={isWritePending}
-                    id="lastName"
-                    type="text"
-                    label={t("field.last_name")}
-                    defaultValue={props.user?.lastName}
-                    error={errors.lastName !== undefined}
-                    helperText={errors.lastName?.message !== undefined ? t(errors.lastName?.message) : undefined}
-                    {...register("lastName", { required: "feedback.empty_last_name" })} />
+    <Dialog
+      fullScreen={isMobile}
+      fullWidth={true}
+      maxWidth={isMobile ? "xs" : "md"}
+      open={props.isOpen}
+      onClose={onDismiss}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>{t("dialog.details_user")}</DialogTitle>
+        <DialogContent dividers={true}>
+          <Container sx={{ py: 1 }}>
+            <Grid
+              container
+              direction={isMobile ? "column" : "row"}
+              alignItems="stretch"
+              justifyContent="center"
+              spacing={isMobile ? 0 : 4}>
+              <Grid item xs={6} sx={{ maxWidth: '100%' }}>
+                <TextField
+                  autoFocus
+                  disabled={isWritePending}
+                  id="lastName"
+                  type="text"
+                  label={t("field.last_name")}
+                  defaultValue={props.user?.lastName}
+                  error={errors.lastName !== undefined}
+                  helperText={errors.lastName?.message !== undefined ? t(errors.lastName?.message) : undefined}
+                  {...register("lastName", { required: "feedback.empty_last_name" })} />
 
-                  <TextField
-                    disabled={isWritePending}
-                    id="firstName"
-                    type="text"
-                    label={t("field.first_name")}
-                    defaultValue={props.user?.firstName}
-                    error={errors.firstName !== undefined}
-                    helperText={errors.firstName?.message !== undefined ? t(errors.firstName?.message) : undefined}
-                    {...register("firstName", { required: "feedback.empty_first_name" })} />
+                <TextField
+                  disabled={isWritePending}
+                  id="firstName"
+                  type="text"
+                  label={t("field.first_name")}
+                  defaultValue={props.user?.firstName}
+                  error={errors.firstName !== undefined}
+                  helperText={errors.firstName?.message !== undefined ? t(errors.firstName?.message) : undefined}
+                  {...register("firstName", { required: "feedback.empty_first_name" })} />
 
-                  <TextField
-                    disabled={isWritePending}
-                    id="email"
-                    type="text"
-                    label={t("field.email")}
-                    defaultValue={props.user?.email}
-                    error={errors.email !== undefined}
-                    helperText={errors.email?.message !== undefined ? t(errors.email?.message) : undefined}
-                    {...register("email", { required: "feedback.empty_email" })} />
+                <TextField
+                  disabled={isWritePending}
+                  id="email"
+                  type="text"
+                  label={t("field.email")}
+                  defaultValue={props.user?.email}
+                  error={errors.email !== undefined}
+                  helperText={errors.email?.message !== undefined ? t(errors.email?.message) : undefined}
+                  {...register("email", { required: "feedback.empty_email" })} />
 
-                  <TextField
-                    disabled={isWritePending}
-                    id="position"
-                    type="text"
-                    label={t("field.position")}
-                    defaultValue={props.user?.position}
-                    error={errors.position !== undefined}
-                    helperText={errors.position?.message !== undefined ? t(errors.position?.message) : undefined}
-                    {...register("position", { required: "feedback.empty_position" })} />
+                <TextField
+                  disabled={isWritePending}
+                  id="position"
+                  type="text"
+                  label={t("field.position")}
+                  defaultValue={props.user?.position}
+                  error={errors.position !== undefined}
+                  helperText={errors.position?.message !== undefined ? t(errors.position?.message) : undefined}
+                  {...register("position", { required: "feedback.empty_position" })} />
 
-                  <TextField
-                    value={department !== undefined ? department?.name : t("field.not_set")}
-                    label={t("field.department")}
-                    InputProps={{
-                      readOnly: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={onPickerView} edge="end">
-                            <ExpandMoreRounded/>
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}/>
-                </Grid>
-                <Grid item xs={6} sx={{ maxWidth: '100%' }}>
-                  <FormControl
-                    component="fieldset"
-                    fullWidth>
-                    <FormLabel component="legend">
-                      <Typography variant="body2">{t("field.permissions")}</Typography>
-                    </FormLabel>
-                    <FormGroup>
-                      <FormControlLabel
-                        label={t("permission.read")}
-                        control={
-                          <Controller
-                            name="permissionRead"
-                            control={control}
-                            render={({ field: { ref, value, onChange } }) => (
-                              <Checkbox
-                                checked={value}
-                                onChange={onChange}
-                                inputRef={ref}
-                                disabled={isWritePending}/>
-                            )}/>
-                        }/>
-                      <FormControlLabel
-                        label={t("permission.write")}
-                        control={
-                          <Controller
-                            name="permissionWrite"
-                            control={control}
-                            render={({ field: { ref, value, onChange } }) => (
-                              <Checkbox
-                                checked={value}
-                                onChange={onChange}
-                                inputRef={ref}
-                                disabled={isWritePending}/>
-                            )}/>
-                        }/>
-                      <FormControlLabel
-                        label={t("permission.delete")}
-                        control={
-                          <Controller
-                            name="permissionDelete"
-                            control={control}
-                            render={({ field: { ref, value, onChange } }) => (
-                              <Checkbox
-                                checked={value}
-                                onChange={onChange}
-                                inputRef={ref}
-                                disabled={isWritePending}/>
-                            )}/>
-                        }/>
-                      <FormControlLabel
-                        label={t("permission.manage_users")}
-                        control={
-                          <Controller
-                            name="permissionManageUsers"
-                            control={control}
-                            render={({ field: { ref, value, onChange } }) => (
-                              <Checkbox
-                                checked={value}
-                                onChange={onChange}
-                                inputRef={ref}
-                                disabled={isWritePending}/>
-                            )}/>
-                        }/>
-                      <FormControlLabel
-                        label={t("permission.administrative")}
-                        control={
-                          <Controller
-                            name="permissionAdmin"
-                            control={control}
-                            render={({ field: { ref, value, onChange } }) => (
-                              <Checkbox
-                                checked={value}
-                                onChange={onChange}
-                                inputRef={ref}
-                                disabled={isWritePending}/>
-                            )}/>
-                      }/>
-                    </FormGroup>
-                  </FormControl>
-                  <Fade in={isAdminChecked}>
-                    <Alert severity="warning">{t("info.user_editor_admin_permission")}</Alert>
-                  </Fade>
-                </Grid>
               </Grid>
-            </Container>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="primary"
-              onClick={onDismiss}
-              disabled={isWritePending}>{t("button.cancel")}</Button>
-            <Button
-              color="primary"
-              type="submit"
-              disabled={isWritePending}>{t("button.save")}</Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-      <DepartmentPicker
-        isOpen={isPickerOpen}
-        departments={items}
-        isLoading={isLoading}
-        onDismiss={onPickerDismiss}
-        onSelectItem={onDepartmentSelected}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}/>
-    </>
+              <Grid item xs={6} sx={{ maxWidth: '100%' }}>
+                <FormControl
+                  component="fieldset"
+                  fullWidth>
+                  <FormLabel component="legend">
+                    <Typography variant="body2">{t("field.permissions")}</Typography>
+                  </FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      label={t("permission.read")}
+                      control={
+                        <Controller
+                          name="permissionRead"
+                          control={control}
+                          render={({ field: { ref, value, onChange } }) => (
+                            <Checkbox
+                              checked={value}
+                              onChange={onChange}
+                              inputRef={ref}
+                              disabled={isWritePending}/>
+                          )}/>
+                      }/>
+                    <FormControlLabel
+                      label={t("permission.write")}
+                      control={
+                        <Controller
+                          name="permissionWrite"
+                          control={control}
+                          render={({ field: { ref, value, onChange } }) => (
+                            <Checkbox
+                              checked={value}
+                              onChange={onChange}
+                              inputRef={ref}
+                              disabled={isWritePending}/>
+                          )}/>
+                      }/>
+                    <FormControlLabel
+                      label={t("permission.delete")}
+                      control={
+                        <Controller
+                          name="permissionDelete"
+                          control={control}
+                          render={({ field: { ref, value, onChange } }) => (
+                            <Checkbox
+                              checked={value}
+                              onChange={onChange}
+                              inputRef={ref}
+                              disabled={isWritePending}/>
+                          )}/>
+                      }/>
+                    <FormControlLabel
+                      label={t("permission.manage_users")}
+                      control={
+                        <Controller
+                          name="permissionManageUsers"
+                          control={control}
+                          render={({ field: { ref, value, onChange } }) => (
+                            <Checkbox
+                              checked={value}
+                              onChange={onChange}
+                              inputRef={ref}
+                              disabled={isWritePending}/>
+                          )}/>
+                      }/>
+                    <FormControlLabel
+                      label={t("permission.administrative")}
+                      control={
+                        <Controller
+                          name="permissionAdmin"
+                          control={control}
+                          render={({ field: { ref, value, onChange } }) => (
+                            <Checkbox
+                              checked={value}
+                              onChange={onChange}
+                              inputRef={ref}
+                              disabled={isWritePending}/>
+                          )}/>
+                    }/>
+                  </FormGroup>
+                </FormControl>
+                <Fade in={isAdminChecked}>
+                  <Alert severity="warning">{t("info.user_editor_admin_permission")}</Alert>
+                </Fade>
+              </Grid>
+            </Grid>
+          </Container>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="primary"
+            onClick={onDismiss}
+            disabled={isWritePending}>{t("button.cancel")}</Button>
+          <Button
+            color="primary"
+            type="submit"
+            disabled={isWritePending}>{t("button.save")}</Button>
+        </DialogActions>
+      </form>
+    </Dialog>
   );
 }
 

@@ -21,10 +21,10 @@ import { useSnackbar } from "notistack";
 import { collection, doc, orderBy, query, getDoc } from "firebase/firestore";
 
 import { Asset, AssetRepository } from "./Asset";
-import { minimize, Type, TypeCore } from "../type/Type";
-import TypePicker from "../type/TypePicker";
+import { minimize, Category, CategoryCore } from "../category/Category";
+import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { assetCollection, typeCollection, typeName } from "../../shared/const";
+import { assetCollection, typeCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
@@ -52,7 +52,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
-  const [type, setType] = useState<TypeCore | undefined>(props.asset?.type);
+  const [type, setType] = useState<CategoryCore | undefined>(props.asset?.type);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
   const [isWriting, setWriting] = useState(false);
@@ -85,8 +85,8 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Type>(
-    query(collection(firestore, typeCollection), orderBy(typeName, "asc")),
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
+    query(collection(firestore, typeCollection), orderBy(categoryName, "asc")),
     { limit: 15 }
   );
 
@@ -132,9 +132,9 @@ const AssetEditor = (props: AssetEditorProps) => {
     }
   }
 
-  const onTypeChanged = (newType: Type) => {
-    if (props.asset?.type !== undefined && props.asset?.type?.typeId !== newType.typeId)
-      previousTypeId = props.asset?.type?.typeId;
+  const onTypeChanged = (newType: Category) => {
+    if (props.asset?.type !== undefined && props.asset?.type?.categoryId !== newType.categoryId)
+      previousTypeId = props.asset?.type?.categoryId;
 
     setType(minimize(newType));
     onPickerDismiss();
@@ -201,8 +201,8 @@ const AssetEditor = (props: AssetEditorProps) => {
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_asset_description" }}}/>
                   <TextField
-                    value={type?.typeName !== undefined ? type?.typeName : t("field.not_set")}
-                    label={t("field.type")}
+                    value={type?.categoryName !== undefined ? type?.categoryName : t("field.not_set")}
+                    label={t("field.category")}
                     disabled={isWriting}
                     InputProps={{
                       readOnly: true,
@@ -314,7 +314,7 @@ const AssetEditor = (props: AssetEditorProps) => {
           </DialogActions>
         </form>
       </Dialog>
-      <TypePicker
+      <CategoryPicker
         isOpen={isPickerOpen}
         types={items}
         isLoading={isLoading}

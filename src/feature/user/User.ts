@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { auth, firestore } from "../../index";
-import { Department, DepartmentCore } from "../department/Department";
-import { departmentCollection, departmentManager, departmentManagerId, userCollection, } from "../../shared/const";
+import { userCollection, } from "../../shared/const";
 import { getIdToken, onAuthStateChanged } from "firebase/auth";
 import { SERVER_URL } from "../../shared/utils";
 
@@ -56,7 +55,6 @@ export type User = {
   imageUrl?: string,
   permissions: number[],
   position?: string,
-  department?: DepartmentCore,
   deviceToken?: string,
   disabled: boolean,
   setupCompleted: boolean,
@@ -86,17 +84,6 @@ export class UserRepository {
     let batch = writeBatch(firestore);
     batch.set(doc(firestore, userCollection, user.userId),
       user);
-
-    if (user.department !== undefined) {
-      let docs = await getDocs(query(collection(firestore, departmentCollection),
-        where(departmentManagerId, '==', user.userId)));
-
-      docs.forEach((doc) => {
-        let department = doc.data() as Department;
-        if (department.departmentId !== user.department?.departmentId)
-          batch.update(doc.ref, departmentManager, null);
-      })
-    }
 
     await batch.commit()
   }

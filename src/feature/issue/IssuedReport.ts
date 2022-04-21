@@ -1,6 +1,6 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
-import { issuedCollection, items as itemsCollection } from "../../shared/const";
+import { issuedCollection, issuedItems as itemsCollection } from "../../shared/const";
 import { getIdTokenRefreshed } from "../user/User";
 import axios from "axios";
 import { SERVER_URL } from "../../shared/utils";

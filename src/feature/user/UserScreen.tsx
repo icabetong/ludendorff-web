@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
@@ -14,7 +14,6 @@ import UserList from "./UserList";
 import { ActionType, initialState, reducer } from "./UserEditorReducer";
 import { lastName, userCollection } from "../../shared/const";
 import UserEditor from "./UserEditor";
-import DepartmentScreen from "../department/DepartmentScreen";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
@@ -104,20 +103,6 @@ const UserScreen = (props: UserScreenProps) => {
       payload: user
     })
   }
-  const [isDepartmentOpen, setDepartmentOpen] = useState(false);
-
-  const onDepartmentView = () => {
-    setDepartmentOpen(true)
-  }
-  const onDepartmentDismiss = () => {
-    setDepartmentOpen(false)
-  }
-
-  const menuItems = [
-    <MenuItem
-      key={0}
-      onClick={onDepartmentView}>{t("navigation.departments")}</MenuItem>
-  ]
 
   return (
     <Box sx={{width: '100%'}}>
@@ -126,7 +111,6 @@ const UserScreen = (props: UserScreenProps) => {
         indexName="users">
         <AdaptiveHeader
           title={t("navigation.users")}
-          menuItems={menuItems}
           actionText={canManageUsers ? t("button.create_user") : undefined}
           onActionEvent={onUserEditorView}
           onDrawerTriggered={props.onDrawerToggle}
@@ -147,7 +131,6 @@ const UserScreen = (props: UserScreenProps) => {
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClick}
                 onRemoveInvoke={onRemoveInvoke}
-                onDepartmentInvoke={onDepartmentView}
                 onModificationInvoke={onModificationInvoke}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
@@ -188,9 +171,6 @@ const UserScreen = (props: UserScreenProps) => {
         summary="dialog.user_remove_summary"
         onDismiss={onRemoveDismiss}
         onConfirm={onRemoveConfirmed}/>
-      <DepartmentScreen
-        isOpen={isDepartmentOpen}
-        onDismiss={onDepartmentDismiss}/>
     </Box>
   );
 }

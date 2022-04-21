@@ -1,31 +1,31 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
-import { DeleteOutlineRounded, LocalOfferOutlined, } from "@mui/icons-material";
+import { DeleteOutlineRounded, CategoryRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
 import EmptyStateComponent from "../state/EmptyStates";
 
-import { Type, TypesRepository } from "./Type";
+import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
-type TypeListProps = {
-  types: Type[],
-  onItemSelect: (category: Type) => void
+type CategoryListProps = {
+  types: Category[],
+  onItemSelect: (category: Category) => void
 }
 
-const TypeList = (props: TypeListProps) => {
+const CategoryList = (props: CategoryListProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [type, setType] = useState<Type | undefined>(undefined);
+  const [type, setType] = useState<Category | undefined>(undefined);
 
-  const onRemoveInvoke = (category: Type) => setType(category);
+  const onRemoveInvoke = (category: Category) => setType(category);
   const onRemoveDismiss = () => setType(undefined);
 
   const onCategoryRemove = () => {
     if (type !== undefined) {
-      TypesRepository.remove(type)
+      CategoryRepository.remove(type)
         .then(() => enqueueSnackbar(t("feedback.type_removed")))
         .catch(() => enqueueSnackbar(t("feedback.type_remove_error")))
         .finally(onRemoveDismiss)
@@ -37,10 +37,10 @@ const TypeList = (props: TypeListProps) => {
       {props.types.length > 0
         ? <List sx={{ minHeight: '100%' }}>
           {
-            props.types.map((category: Type) => {
+            props.types.map((category: Category) => {
               return (
                 <TypeItem
-                  key={category.typeId}
+                  key={category.categoryId}
                   type={category}
                   onItemSelect={props.onItemSelect}
                   onItemRemove={onRemoveInvoke}/>
@@ -49,14 +49,14 @@ const TypeList = (props: TypeListProps) => {
           }
         </List>
         : <EmptyStateComponent
-          icon={LocalOfferOutlined}
-          title={t("empty.type")}
-          subtitle={t("empty.type_summary")}/>
+          icon={CategoryRounded}
+          title={t("empty.category")}
+          subtitle={t("empty.category_summary")}/>
       }
       <ConfirmationDialog
         isOpen={type !== undefined}
-        title="dialog.type_remove"
-        summary="dialog.type_remove_summary"
+        title="dialog.category_remove"
+        summary="dialog.category_remove_summary"
         onDismiss={onRemoveDismiss}
         onConfirm={onCategoryRemove}/>
     </>
@@ -64,9 +64,9 @@ const TypeList = (props: TypeListProps) => {
 }
 
 type TypeItemProps = {
-  type: Type,
-  onItemSelect: (type: Type) => void,
-  onItemRemove: (type: Type) => void,
+  type: Category,
+  onItemSelect: (type: Category) => void,
+  onItemRemove: (type: Category) => void,
 }
 
 const TypeItem = (props: TypeItemProps) => {
@@ -87,10 +87,10 @@ const TypeItem = (props: TypeItemProps) => {
   return (
     <ListItem
       button
-      key={props.type.typeId}
+      key={props.type.categoryId}
       onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
-        primary={props.type.typeName}
+        primary={props.type.categoryName}
         secondary={t("template.count", { count: props.type.count })}/>
       {canDelete &&
         <ListItemSecondaryAction>
@@ -106,4 +106,4 @@ const TypeItem = (props: TypeItemProps) => {
   )
 }
 
-export default TypeList;
+export default CategoryList;

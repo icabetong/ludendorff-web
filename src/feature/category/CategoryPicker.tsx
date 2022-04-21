@@ -10,20 +10,20 @@ import { useTheme } from "@mui/material/styles";
 
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { Type } from "./Type";
-import TypeList from "./TypeList";
+import { Category } from "./Category";
+import CategoryList from "./CategoryList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 
-type TypePickerProps = PaginationControllerProps & {
+type CategoryPickerProps = PaginationControllerProps & {
   isOpen: boolean,
-  types: Type[],
+  types: Category[],
   isLoading: boolean,
   onDismiss: () => void,
-  onSelectItem: (type: Type) => void
+  onSelectItem: (type: Category) => void
 }
-const TypePicker = (props: TypePickerProps) => {
+const CategoryPicker = (props: CategoryPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -37,7 +37,7 @@ const TypePicker = (props: TypePickerProps) => {
       maxWidth="xs"
       open={props.isOpen}
       onClose={props.onDismiss}>
-      <DialogTitle>{t("dialog.select_type")}</DialogTitle>
+      <DialogTitle>{t("dialog.select_category")}</DialogTitle>
       <DialogContent
         dividers={true}
         sx={{
@@ -48,7 +48,7 @@ const TypePicker = (props: TypePickerProps) => {
         {canRead
           ? !props.isLoading
             ? <>
-              <TypeList
+              <CategoryList
                 types={props.types}
                 onItemSelect={props.onSelectItem}/>
               {props.canForward && props.types.length > 0 && props.types.length === limit
@@ -72,4 +72,4 @@ const TypePicker = (props: TypePickerProps) => {
   )
 }
 
-export default TypePicker;
+export default CategoryPicker;

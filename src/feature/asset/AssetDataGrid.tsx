@@ -7,13 +7,13 @@ import { connectHits } from "react-instantsearch-dom";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
 import { Button } from "@mui/material";
-import { DeleteOutlineRounded, LocalOfferRounded } from "@mui/icons-material";
+import { DeleteOutlineRounded, CategoryRounded } from "@mui/icons-material";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
 import {
   assetClassification,
   assetDescription, assetRemarks,
   assetStockNumber,
-  assetType,
+  assetCategory,
   assetUnitOfMeasure, assetUnitValue
 } from "../../shared/const";
 import { currencyFormatter } from "../../shared/utils";
@@ -33,12 +33,12 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
     { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
     {
-      field: assetType,
-      headerName: t("field.type"),
+      field: assetCategory,
+      headerName: t("field.category"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
-        return asset.type?.typeName === undefined ? t("unknown") : asset.type?.typeName;
+        return asset.type?.categoryName === undefined ? t("unknown") : asset.type?.categoryName;
       }
     },
     {
@@ -93,9 +93,9 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
               key="types"
               color="primary"
               size="small"
-              startIcon={<LocalOfferRounded fontSize="small"/>}
+              startIcon={<CategoryRounded fontSize="small"/>}
               onClick={props.onTypesInvoke}>
-              {t("navigation.types")}
+              {t("navigation.categories")}
             </Button>
           ]
         },

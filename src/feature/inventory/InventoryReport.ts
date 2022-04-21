@@ -1,7 +1,7 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
 import { firestore } from "../..";
-import { inventoryCollection, items as itemsCollection } from "../../shared/const";
-import { TypeCore } from "../type/Type";
+import { inventoryCollection, inventoryItems as itemsCollection } from "../../shared/const";
+import { CategoryCore } from "../category/Category";
 import { getIdTokenRefreshed } from "../user/User";
 import axios from "axios";
 import { SERVER_URL } from "../../shared/utils";
@@ -20,7 +20,7 @@ export type InventoryReportItem = {
   stockNumber: string,
   article?: string,
   description?: string,
-  type?: TypeCore,
+  type?: CategoryCore,
   unitOfMeasure?: string,
   unitValue: number,
   balancePerCard: number,
