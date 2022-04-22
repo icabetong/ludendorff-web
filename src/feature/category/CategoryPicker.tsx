@@ -49,7 +49,7 @@ const CategoryPicker = (props: CategoryPickerProps) => {
           ? !props.isLoading
             ? <>
               <CategoryList
-                types={props.types}
+                categories={props.types}
                 onItemSelect={props.onSelectItem}/>
               {props.canForward && props.types.length > 0 && props.types.length === limit
                 && <PaginationController

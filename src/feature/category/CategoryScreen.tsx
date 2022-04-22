@@ -15,7 +15,7 @@ import CategoryList from "./CategoryList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Provider } from "../../components/Search";
-import { typeCollection, categoryName } from "../../shared/const";
+import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
@@ -34,10 +34,10 @@ const CategoryScreen = (props: CategoryScreenProps) => {
   const [search, setSearch] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { canRead, canWrite } = usePermissions();
-  const { limit } = useQueryLimit('typeQueryLimit');
+  const { limit } = useQueryLimit('categoryQueryLimit');
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, typeCollection), orderBy(categoryName, "asc")),
+    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")),
     { limit: limit }
   );
 
@@ -67,11 +67,11 @@ const CategoryScreen = (props: CategoryScreenProps) => {
           }}>
           { canRead
             ? !isLoading
-              ? <Box>
+              ? <Box sx={{ height: '100%' }}>
                   { search
                     ? <CategorySearchList onItemSelect={onEditorUpdate}/>
                     : <>
-                      <CategoryList types={items} onItemSelect={onEditorUpdate}/>
+                      <CategoryList categories={items} onItemSelect={onEditorUpdate}/>
                       { isEnd && items.length > 0 && items.length === limit &&
                         <PaginationController
                           canBack={isStart}

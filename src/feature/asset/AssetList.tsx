@@ -36,7 +36,7 @@ const AssetItem = (props: AssetItemProps) => {
       onClick={() => props.onItemSelect(props.asset)}>
       <ListItemText
         primary={props.asset.description}
-        secondary={props.asset.type?.categoryName}/>
+        secondary={props.asset.category?.categoryName}/>
     </ListItem>
   )
 }

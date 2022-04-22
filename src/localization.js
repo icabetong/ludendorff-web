@@ -39,7 +39,6 @@ const resources = {
         category_name: "Category Name",
         stock_number: "Stock Number",
         asset_description: "Description",
-        classification: "Classification",
         unit_of_measure: "Unit of Measure",
         unit_value: "Unit Value",
         department_name: "Department Name",
@@ -92,6 +91,9 @@ const resources = {
         ris_no: "RIS No.",
         value: "Value",
         filename: "Filename",
+        subcategories: "Subcategories",
+        subcategory: "Subcategory",
+        subcategory_name: "Subcategory Name",
       },
       placeholder: {
         none: "None",
@@ -232,6 +234,7 @@ const resources = {
         password_change_error: "Error updating password",
         avatar_change_error: "Error updating user profile picture",
         stock_number_already_exists: "The stock number you entered already exists",
+        subcategory_already_exists: "Subcategory already exists"
       },
       error: {
         no_permissions_header: "Insufficient Permissions",
@@ -283,6 +286,7 @@ const resources = {
         duplicate_title: "Duplicate Record",
         duplicate_summary: "You can create duplicated copy of the records in the database, to avoid manual input.",
         details_category: "Category Details",
+        details_subcategory: "Subcategory Details",
         details_asset: "Asset Details",
         details_user: "User Details",
         details_department: "Department Details",
@@ -307,7 +311,8 @@ const resources = {
         full_name: "{{first}} {{last}}",
         count: "Count: {{count}}",
         as_of_year_month: "As of {{yearMonth}}",
-        inventory_entity: "For which, {{name}}, {{position}}, Central Luzon State University, is accountable, having assumed such accountability on {{date}}"
+        inventory_entity: "For which, {{name}}, {{position}}, Central Luzon State University, is accountable, having assumed such accountability on {{date}}",
+        subcategories_include: "Subcategories include: {{includes}}"
       },
       empty: {
         asset: "No Assets Added",

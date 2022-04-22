@@ -68,9 +68,9 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
     if (asset) {
       let item: InventoryReportItem = {
         stockNumber: asset.stockNumber,
-        article: asset.classification,
+        article: asset.subcategory,
         description: asset.description,
-        type: asset.type,
+        type: asset.category,
         unitOfMeasure: asset.unitOfMeasure,
         unitValue: asset.unitValue,
         remarks: asset.remarks,

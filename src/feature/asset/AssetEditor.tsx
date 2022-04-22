@@ -12,7 +12,9 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  TextField, Tooltip,
+  MenuItem,
+  TextField,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,11 +26,11 @@ import { Asset, AssetRepository } from "./Asset";
 import { minimize, Category, CategoryCore } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { assetCollection, typeCollection, categoryName } from "../../shared/const";
+import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
-import { ExpandMoreRounded } from "@mui/icons-material";
+import { ArrowDropDownOutlined } from "@mui/icons-material";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -40,7 +42,7 @@ type AssetEditorProps = {
 export type FormValues = {
   stockNumber: string,
   description: string,
-  classification: string,
+  subcategory: string,
   unitOfMeasure: string,
   unitValue: number,
   remarks?: string,
@@ -51,28 +53,44 @@ const AssetEditor = (props: AssetEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
-  const [type, setType] = useState<CategoryCore | undefined>(props.asset?.type);
+  const { handleSubmit, formState: { errors }, control, reset, setValue } = useForm<FormValues>();
+  const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
+  const [subcategories, setSubcategories] = useState<string[]>([]);
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
   const [isWriting, setWriting] = useState(false);
 
   useEffect(() => {
-    setType(props.asset?.type)
-  }, [props.asset])
+    const onFetchSubcategories = async () => {
+      if (props.asset?.category) {
+        let reference = doc(firestore, categoryCollection, props.asset?.category.categoryId);
+        let snapshot = await getDoc(reference);
+        return snapshot.data() as Category;
+      }
+      return null;
+    }
+
+    setCategory(props.asset?.category);
+    onFetchSubcategories()
+      .then((data) => {
+        if (data) setSubcategories(data.subcategories);
+      }).catch((err) => {
+      if (isDev) console.log(err);
+    });
+  }, [props.asset]);
 
   useEffect(() => {
     if (props.isOpen) {
       reset({
         stockNumber: props.asset ? props.asset.stockNumber : "",
         description: props.asset?.description ? props.asset.description : "",
-        classification: props.asset?.classification ? props.asset.classification : "",
+        subcategory: props.asset?.subcategory ? props.asset.subcategory : "",
         unitOfMeasure: props.asset?.unitOfMeasure ? props.asset.unitOfMeasure : "",
         unitValue: props.asset?.unitValue ? props.asset.unitValue : 0,
         remarks: props.asset?.remarks ? props.asset.remarks : ""
       })
     }
-  }, [props.isOpen, props.asset, reset])
+  }, [props.isOpen, props.asset, reset]);
 
   const onDismiss = () => {
     setWriting(false);
@@ -86,7 +104,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, typeCollection), orderBy(categoryName, "asc")),
+    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")),
     { limit: 15 }
   );
 
@@ -99,7 +117,7 @@ const AssetEditor = (props: AssetEditorProps) => {
     const asset: Asset = {
       ...data,
       stockNumber: props.asset ? props.asset?.stockNumber : data.stockNumber,
-      type: type !== undefined ? type : undefined,
+      category: category !== undefined ? category : undefined,
       unitValue: parseFloat(`${data.unitValue}`)
     }
 
@@ -133,10 +151,16 @@ const AssetEditor = (props: AssetEditorProps) => {
   }
 
   const onTypeChanged = (newType: Category) => {
-    if (props.asset?.type !== undefined && props.asset?.type?.categoryId !== newType.categoryId)
-      previousTypeId = props.asset?.type?.categoryId;
+    if (props.asset?.category !== undefined && props.asset?.category?.categoryId !== newType.categoryId)
+      previousTypeId = props.asset?.category?.categoryId;
 
-    setType(minimize(newType));
+    setCategory(minimize(newType));
+    if (newType.subcategories.length > 0) {
+      setSubcategories(newType.subcategories);
+      if (newType !== category) {
+        setValue("subcategory", newType.subcategories[0]);
+      }
+    }
     onPickerDismiss();
   }
 
@@ -201,7 +225,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_asset_description" }}}/>
                   <TextField
-                    value={type?.categoryName !== undefined ? type?.categoryName : t("field.not_set")}
+                    value={category?.categoryName !== undefined ? category?.categoryName : t("field.not_set")}
                     label={t("field.category")}
                     disabled={isWriting}
                     InputProps={{
@@ -209,26 +233,30 @@ const AssetEditor = (props: AssetEditorProps) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={onPickerView} edge="end">
-                            <ExpandMoreRounded/>
+                            <ArrowDropDownOutlined/>
                           </IconButton>
                         </InputAdornment>
                       )
                     }}/>
-                  <Controller
-                    control={control}
-                    name="classification"
-                    render={({ field: { ref, ...inputProps }}) => (
-                      <TextField
-                        {...inputProps}
-                        type="text"
-                        inputRef={ref}
-                        label={t("field.classification")}
-                        error={errors.classification !== undefined}
-                        disabled={isWriting}
-                        helperText={errors.classification?.message !== undefined ? t(errors.classification.message) : undefined}
-                        placeholder={t('placeholder.classification')}/>
-                    )}
-                    rules={{ required: { value: true, message: "feedback.empty_classification" }}}/>
+                  { category &&
+                    <Controller
+                      control={control}
+                      name="subcategory"
+                      render={({ field: { ref, ...inputProps } }) => (
+                        <TextField
+                          select
+                          {...inputProps}
+                          inputRef={ref}
+                          label={t("field.subcategory")}
+                          disabled={isWriting}>
+                          {subcategories.map((subcategory) => {
+                            return <MenuItem key={subcategory} value={subcategory}>{subcategory}</MenuItem>
+                          })
+                          }
+                        </TextField>
+                      )}
+                      rules={{ required: { value: true, message: "feedback.empty_subcategory" }}}/>
+                  }
                 </Grid>
                 <Grid
                   item

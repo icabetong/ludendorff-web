@@ -18,7 +18,6 @@ const ProfileInfoList = (props: ProfileInfoListProps) => {
 
   const info = [
     { icon: WorkOutlineRounded, name: 'field.position', info: props.user?.position },
-    { icon: DomainOutlined, name: 'field.department', info: props.user?.department?.name }
   ]
 
   return (

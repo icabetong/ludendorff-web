@@ -57,7 +57,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
-        return asset.type?.categoryName === undefined ? t("unknown") : asset.type?.categoryName;
+        return asset.category?.categoryName === undefined ? t("unknown") : asset.category?.categoryName;
       }
     },
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 2 },

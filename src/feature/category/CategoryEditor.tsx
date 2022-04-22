@@ -1,4 +1,4 @@
-import React, { useEffect, } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -8,19 +8,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
+  Divider,
+  FormLabel,
   TextField,
-  useTheme,
-  useMediaQuery
+  Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { Category, CategoryRepository } from "./Category";
 import { isDev, newId } from "../../shared/utils";
+import SubcategoryEditor from "./SubcategoryEditor";
+import { ActionType, initialState, reducer } from "./SubcategoryEditorReducer";
+import { AddRounded } from "@mui/icons-material";
+import SubcategoryList from "./SubcategoryList";
 
 type FormData = {
   categoryName?: string
@@ -35,12 +35,38 @@ type CategoryEditorProps = {
 
 const CategoryEditor = (props: CategoryEditorProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { enqueueSnackbar } = useSnackbar();
   const [isWritePending, setWritePending] = React.useState(false);
-  const [subcategories, setSubcategories] = React.useState<string[]>([]);
+  const [subcategories, setSubcategories] = React.useState<string[]>(props.category ? props.category.subcategories : []);
   const { handleSubmit, formState: { errors }, control, setValue } = useForm<FormData>();
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
+  const onEditorUpdate = (subcategory: string) => dispatch({ type: ActionType.UPDATE, payload: subcategory });
+  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
+  const onEditorCommit = (subcategory: string) => {
+    let lowerCased = subcategory.toLowerCase();
+    let result = subcategories.find(str => str.toLowerCase() === lowerCased);
+    if (result) {
+      enqueueSnackbar(t("feedback.subcategory_already_exists"))
+      return;
+    }
+    setSubcategories((prev) => prev.concat(subcategory));
+    onEditorDismiss();
+  }
+  const onSubcategoryRemove = (subcategory: string) => {
+    let lowerCased = subcategory.toLowerCase();
+    let index = subcategories.findIndex(str => str.toLowerCase() === lowerCased);
+    if (index >= 0) {
+      // tested in Edge 100/Chrome 100
+      // need to add 1 in index in order for
+      // splice to work
+      let sub = subcategories.splice(index + 1, 1);
+      setSubcategories(sub);
+      enqueueSnackbar(t("feedback.subcategory_removed"));
+    }
+  }
 
   useEffect(() => {
     if (props.isOpen) {
@@ -82,57 +108,63 @@ const CategoryEditor = (props: CategoryEditorProps) => {
   }
 
   return (
-    <Dialog
-      fullWidth={true}
-      maxWidth="xs"
-      open={props.isOpen}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>{t("dialog.details_category")}</DialogTitle>
-        <DialogContent>
-          <Container disableGutters>
-            <Controller
-              control={control}
-              name="categoryName"
-              render={({ field: { ref, ...inputProps } }) => (
-                <TextField
-                  {...inputProps}
-                  type="text"
-                  inputRef={ref}
-                  label={t("field.category_name")}
-                  error={errors.categoryName !== undefined}
-                  helperText={errors.categoryName?.message && t(errors.categoryName.message)}
-                  disabled={isWritePending}/>
-              )}
-              rules={{ required: { value: true, message: "feedback.empty_category_name" }}}/>
-            <List>
-              { subcategories.map((string) => {
-                return (
-                  <ListItem>
-                    <ListItemText primary={string}/>
-                  </ListItem>
-                )
-              })
-              }
-              <Button fullWidth>{t("button.add")}</Button>
-            </List>
-          </Container>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="primary"
-            onClick={onDismiss}
-            disabled={isWritePending}>
-            {t("button.cancel")}
-          </Button>
-          <LoadingButton
-            color="primary"
-            type="submit"
-            loading={isWritePending}>
-            {t("button.save")}
-          </LoadingButton>
-        </DialogActions>
-      </form>
-    </Dialog>
+    <>
+      <Dialog
+        fullWidth={true}
+        maxWidth="xs"
+        open={props.isOpen}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle>{t("dialog.details_category")}</DialogTitle>
+          <DialogContent>
+            <Container disableGutters>
+              <Controller
+                control={control}
+                name="categoryName"
+                render={({ field: { ref, ...inputProps } }) => (
+                  <TextField
+                    {...inputProps}
+                    type="text"
+                    inputRef={ref}
+                    label={t("field.category_name")}
+                    error={errors.categoryName !== undefined}
+                    helperText={errors.categoryName?.message && t(errors.categoryName.message)}
+                    disabled={isWritePending}/>
+                )}
+                rules={{ required: { value: true, message: "feedback.empty_category_name" }}}/>
+              <Divider sx={{ my: 1 }}/>
+              <FormLabel>
+                <Typography variant="body2">{t("field.subcategories")}</Typography>
+              </FormLabel>
+              <SubcategoryList
+                subcategories={subcategories}
+                onItemSelect={onEditorUpdate}
+                onItemRemove={onSubcategoryRemove}/>
+              <Button onClick={onEditorCreate} startIcon={<AddRounded/>} fullWidth>{t("button.add")}</Button>
+            </Container>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="primary"
+              onClick={onDismiss}
+              disabled={isWritePending}>
+              {t("button.cancel")}
+            </Button>
+            <LoadingButton
+              color="primary"
+              type="submit"
+              loading={isWritePending}>
+              {t("button.save")}
+            </LoadingButton>
+          </DialogActions>
+        </form>
+      </Dialog>
+      <SubcategoryEditor
+        subcategory={state.subcategory}
+        isOpen={state.isOpen}
+        isCreate={state.isCreate}
+        onSubmit={onEditorCommit}
+        onDismiss={onEditorDismiss}/>
+    </>
   )
 }
 

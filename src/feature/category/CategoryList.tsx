@@ -11,35 +11,35 @@ import { usePermissions } from "../auth/AuthProvider";
 import ConfirmationDialog from "../shared/ConfirmationDialog";
 
 type CategoryListProps = {
-  types: Category[],
+  categories: Category[],
   onItemSelect: (category: Category) => void
 }
 
 const CategoryList = (props: CategoryListProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [type, setType] = useState<Category | undefined>(undefined);
+  const [category, setCategory] = useState<Category | undefined>(undefined);
 
-  const onRemoveInvoke = (category: Category) => setType(category);
-  const onRemoveDismiss = () => setType(undefined);
+  const onRemoveInvoke = (category: Category) => setCategory(category);
+  const onRemoveDismiss = () => setCategory(undefined);
 
   const onCategoryRemove = () => {
-    if (type !== undefined) {
-      CategoryRepository.remove(type)
-        .then(() => enqueueSnackbar(t("feedback.type_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.type_remove_error")))
+    if (category !== undefined) {
+      CategoryRepository.remove(category)
+        .then(() => enqueueSnackbar(t("feedback.category_removed")))
+        .catch(() => enqueueSnackbar(t("feedback.category_remove_error")))
         .finally(onRemoveDismiss)
     }
   }
 
   return (
     <>
-      {props.types.length > 0
+      {props.categories.length > 0
         ? <List sx={{ minHeight: '100%' }}>
           {
-            props.types.map((category: Category) => {
+            props.categories.map((category: Category) => {
               return (
-                <TypeItem
+                <CategoryListItem
                   key={category.categoryId}
                   type={category}
                   onItemSelect={props.onItemSelect}
@@ -49,12 +49,12 @@ const CategoryList = (props: CategoryListProps) => {
           }
         </List>
         : <EmptyStateComponent
-          icon={CategoryRounded}
-          title={t("empty.category")}
-          subtitle={t("empty.category_summary")}/>
+            icon={CategoryRounded}
+            title={t("empty.category")}
+            subtitle={t("empty.category_summary")}/>
       }
       <ConfirmationDialog
-        isOpen={type !== undefined}
+        isOpen={category !== undefined}
         title="dialog.category_remove"
         summary="dialog.category_remove_summary"
         onDismiss={onRemoveDismiss}
@@ -63,13 +63,13 @@ const CategoryList = (props: CategoryListProps) => {
   );
 }
 
-type TypeItemProps = {
+type CategoryListItemProps = {
   type: Category,
-  onItemSelect: (type: Category) => void,
-  onItemRemove: (type: Category) => void,
+  onItemSelect: (category: Category) => void,
+  onItemRemove: (category: Category) => void,
 }
 
-const TypeItem = (props: TypeItemProps) => {
+const CategoryListItem = (props: CategoryListItemProps) => {
   const { t } = useTranslation();
   const { canDelete } = usePermissions();
 
@@ -84,6 +84,16 @@ const TypeItem = (props: TypeItemProps) => {
     </IconButton>
   );
 
+  const getSecondaryListText = (subcategories: string[]) => {
+     if (subcategories.length > 1) {
+      return t("template.subcategories_include", { includes: subcategories.join(", ") });
+    } else if (subcategories.length === 1) {
+       return subcategories[0];
+     } else {
+       return "";
+     }
+  }
+
   return (
     <ListItem
       button
@@ -91,7 +101,7 @@ const TypeItem = (props: TypeItemProps) => {
       onClick={() => props.onItemSelect(props.type)}>
       <ListItemText
         primary={props.type.categoryName}
-        secondary={t("template.count", { count: props.type.count })}/>
+        secondary={getSecondaryListText(props.type.subcategories)}/>
       {canDelete &&
         <ListItemSecondaryAction>
           {props.type.count > 0

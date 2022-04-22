@@ -10,7 +10,7 @@ import { Button } from "@mui/material";
 import { DeleteOutlineRounded, CategoryRounded } from "@mui/icons-material";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
 import {
-  assetClassification,
+  assetSubcategory,
   assetDescription, assetRemarks,
   assetStockNumber,
   assetCategory,
@@ -38,12 +38,12 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
-        return asset.type?.categoryName === undefined ? t("unknown") : asset.type?.categoryName;
+        return asset.category?.categoryName === undefined ? t("unknown") : asset.category?.categoryName;
       }
     },
     {
-      field: assetClassification,
-      headerName: t("field.classification"),
+      field: assetSubcategory,
+      headerName: t("field.subcategory"),
       flex: 1,
     },
     {

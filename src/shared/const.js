@@ -1,5 +1,5 @@
 export const assetCollection = "assets";
-export const typeCollection = "types";
+export const categoryCollection = "categories";
 export const userCollection = "users";
 export const departmentCollection = "departments";
 export const inventoryCollection = "inventories";
@@ -13,13 +13,13 @@ export const categoryCount = "count";
 
 export const assetStockNumber = "stockNumber";
 export const assetDescription = "description";
-export const assetClassification = "classification";
+export const assetSubcategory = "subcategory";
 export const assetUnitOfMeasure = "unitOfMeasure";
 export const assetUnitValue = "unitValue";
 export const assetRemarks = "remarks";
 export const dateCreated = "dateCreated";
 export const assetStatus = "status";
-export const assetCategory = "type";
+export const assetCategory = "category";
 export const assetCategoryId = `${ assetCategory }.${ categoryId }`
 export const assetCategoryName = `${ assetCategory }.${ categoryName }`
 
