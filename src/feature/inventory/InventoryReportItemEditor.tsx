@@ -8,10 +8,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
+  Grid,
   IconButton,
   InputAdornment,
-  TextField
+  TextField,
+  useTheme,
+  useMediaQuery
 } from "@mui/material";
 import { Asset } from "../asset/Asset";
 import { useState, useEffect } from "react";
@@ -23,6 +25,7 @@ import { assetCollection, assetStockNumber } from "../../shared/const";
 import { ExpandMoreRounded } from "@mui/icons-material";
 
 export type FormValues = {
+  unitValue: number,
   balancePerCard: number,
   onHandCount: number,
   supplier: string,
@@ -38,7 +41,9 @@ type InventoryReportItemEditorProps = {
 
 export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
+  const theme = useTheme();
+  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+  const { handleSubmit, formState: { errors }, reset, control, setValue } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
 
@@ -70,7 +75,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         stockNumber: asset.stockNumber,
         article: asset.subcategory,
         description: asset.description,
-        type: asset.category,
+        category: asset.category,
         unitOfMeasure: asset.unitOfMeasure,
         unitValue: asset.unitValue,
         remarks: asset.remarks,
@@ -88,75 +93,120 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
     }
   }
 
+  const onAssetPicked = (asset: Asset) => {
+    setAsset(asset);
+    setValue("unitValue", asset.unitValue);
+  }
+
   return (
     <>
       <Dialog
         fullWidth={true}
-        maxWidth="xs"
+        maxWidth={smBreakpoint ? "xs" : "sm"}
         open={props.isOpen}
         onClose={onDismiss}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_inventory_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <TextField
-                value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
-                label={t("field.asset")}
-                InputProps={{
-                  readOnly: true,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={onPickerInvoke} edge="end">
-                        <ExpandMoreRounded/>
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}/>
-              <Divider sx={{ my: 2 }}/>
-              <Controller
-                name="balancePerCard"
-                control={control}
-                render={({ field: { ref, ...inputProps }}) => (
+              <Grid
+                container
+                direction={smBreakpoint ? "column" : "row"}
+                alignItems="stretch"
+                justifyContent="center"
+                spacing={smBreakpoint ? 0 : 4}>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
                   <TextField
-                    {...inputProps}
-                    autoFocus
-                    type="number"
-                    inputRef={ref}
-                    label={t("field.balance_per_card")}
-                    error={errors.balancePerCard !== undefined}
-                    helperText={errors.balancePerCard?.message && t(errors.balancePerCard?.message)}
-                    disabled={!props.item ? !asset : false}
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
-                )}
-                rules={{ required: { value: true, message: "feedback.empty_balance_per_card" }}}/>
-              <Controller
-                name="onHandCount"
-                control={control}
-                render={({ field: { ref, ...inputProps } }) => (
-                  <TextField
-                    {...inputProps}
-                    type="number"
-                    inputRef={ref}
-                    label={t("field.on_hand_count")}
-                    error={errors.onHandCount !== undefined}
-                    helperText={errors.onHandCount?.message && t(errors.onHandCount?.message)}
-                    disabled={!props.item ? !asset : false}
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
-                )}
-                rules={{ required: { value: true, message: "feedback.empty_on_hand_count" }}}/>
-              <Controller
-                name="supplier"
-                control={control}
-                render={({ field: { ref, ...inputProps }}) => (
-                  <TextField
-                    {...inputProps}
-                    type="text"
-                    inputRef={ref}
-                    label={t("field.supplier")}
-                    error={errors.supplier !== undefined}
-                    helperText={errors.supplier?.message && t(errors.supplier?.message)}
-                    disabled={!asset}/>
-                )}/>
+                    value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
+                    label={t("field.asset")}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={onPickerInvoke} edge="end">
+                            <ExpandMoreRounded/>
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}/>
+                  <Controller
+                    name="unitValue"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        inputRef={ref}
+                        label={t("field.unit_value")}
+                        error={errors.unitValue !== undefined}
+                        disabled={!props.item ? !asset : false}
+                        helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
+                        inputProps={{
+                          inputMode: 'numeric',
+                          pattern: '[0-9]*',
+                          min: 0,
+                          step: 0.01,
+                          type: "number"
+                        }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">₱</InputAdornment>
+                          )
+                        }}/>
+                    )}/>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
+                  <Controller
+                    name="balancePerCard"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        autoFocus
+                        type="number"
+                        inputRef={ref}
+                        label={t("field.balance_per_card")}
+                        error={errors.balancePerCard !== undefined}
+                        helperText={errors.balancePerCard?.message && t(errors.balancePerCard?.message)}
+                        disabled={!props.item ? !asset : false}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_balance_per_card" }}}/>
+                  <Controller
+                    name="onHandCount"
+                    control={control}
+                    render={({ field: { ref, ...inputProps } }) => (
+                      <TextField
+                        {...inputProps}
+                        type="number"
+                        inputRef={ref}
+                        label={t("field.on_hand_count")}
+                        error={errors.onHandCount !== undefined}
+                        helperText={errors.onHandCount?.message && t(errors.onHandCount?.message)}
+                        disabled={!props.item ? !asset : false}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                    )}
+                    rules={{ required: { value: true, message: "feedback.empty_on_hand_count" }}}/>
+                  <Controller
+                    name="supplier"
+                    control={control}
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <TextField
+                        {...inputProps}
+                        type="text"
+                        inputRef={ref}
+                        label={t("field.supplier")}
+                        error={errors.supplier !== undefined}
+                        helperText={errors.supplier?.message && t(errors.supplier?.message)}
+                        disabled={!asset}/>
+                    )}/>
+                </Grid>
+              </Grid>
             </Container>
           </DialogContent>
           <DialogActions>
@@ -178,7 +228,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         onBackward={getPrev}
         onForward={getNext}
         onDismiss={onPickerDismiss}
-        onSelectItem={setAsset}/>
+        onSelectItem={onAssetPicked}/>
     </>
   );
 }

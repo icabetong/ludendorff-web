@@ -25,8 +25,6 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { t } = useTranslation();
   const columns = [
     { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
-    { field: entityName, headerName: t("field.entity_name"), flex: 1 },
-    { field: entityPosition, headerName: t("field.entity_position"), flex: 1 },
     { field: yearMonth, headerName: t("field.year_month"), flex: 1 },
     {
       field: accountabilityDate,

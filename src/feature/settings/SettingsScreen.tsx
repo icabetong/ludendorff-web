@@ -1,12 +1,13 @@
 import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, IconButton, Menu, MenuItem, Switch } from "@mui/material";
-import { ChevronRightRounded, PaletteOutlined, TableChartOutlined, } from "@mui/icons-material";
+import { ChevronRightRounded, ManageAccountsOutlined, PaletteOutlined, TableChartOutlined, } from "@mui/icons-material";
 
 import { PreferenceContext } from "./Preference";
 import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
+import EntityEditor from "../entity/EntityEditor";
 
 type SettingsScreenProps = {
   onDrawerToggle: () => void,
@@ -14,7 +15,11 @@ type SettingsScreenProps = {
 
 const SettingsScreen = (props: SettingsScreenProps) => {
   const { t } = useTranslation();
+  const [isEntityEditorOpen, setEntityEditorOpen] = useState(false);
   const userPreferences = useContext(PreferenceContext);
+
+  const onEntityEditorInvoke = () => setEntityEditorOpen(true);
+  const onEntityEditorDismiss = () => setEntityEditorOpen(false);
 
   const [densityMenuAnchor, setDensityMenuAnchor] = useState<null | HTMLElement>(null);
   const onDensityMenuView = (e: React.MouseEvent<HTMLElement>) => {
@@ -85,6 +90,19 @@ const SettingsScreen = (props: SettingsScreenProps) => {
           </MenuItem>
         </Menu>
       </>
+    },
+    {
+      key: 'preference:entity',
+      title: t("settings.configure_entity"),
+      summary: t("settings.configure_entity_summary"),
+      icon: ManageAccountsOutlined,
+      action: (
+        <IconButton
+          size="large"
+          onClick={onEntityEditorInvoke}>
+          <ChevronRightRounded/>
+        </IconButton>
+      )
     }
   ]
 
@@ -94,6 +112,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
         title={t("navigation.settings")}
         onDrawerTriggered={props.onDrawerToggle}/>
       <SettingsList preferences={preferences}/>
+      <EntityEditor isOpen={isEntityEditorOpen} onDismiss={onEntityEditorDismiss}/>
     </Box>
   );
 }

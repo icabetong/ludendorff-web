@@ -20,7 +20,7 @@ export type InventoryReportItem = {
   stockNumber: string,
   article?: string,
   description?: string,
-  type?: CategoryCore,
+  category?: CategoryCore,
   unitOfMeasure?: string,
   unitValue: number,
   balancePerCard: number,

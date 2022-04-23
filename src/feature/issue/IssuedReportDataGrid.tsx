@@ -26,7 +26,6 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
 
   const columns = [
     { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
-    { field: entityName, headerName: t("field.entity_name"), flex: 1 },
     { field: serialNumber, headerName: t("field.serial_number"), flex: 1 },
     {
       field: date,

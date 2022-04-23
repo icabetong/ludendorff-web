@@ -27,6 +27,7 @@ import { IssuedReportItemEditor } from "./IssuedReportItemEditor";
 import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import IssuedReportItemDataGrid from "./IssuedReportItemDataGrid";
 import { GridSelectionModel } from "@mui/x-data-grid";
+import { useEntity } from "../entity/UseEntity";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,
@@ -45,6 +46,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const { entity } = useEntity();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
   const [date, setDate] = useState<Date | null>(new Date());
@@ -191,18 +193,10 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                     rules={{ required: { value: true, message: "feedback.empty_serial_number" }}}/>
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <Controller
-                    name="entityName"
-                    control={control}
-                    render={({ field: { ref, ...inputProps }}) => (
-                      <TextField
-                        {...inputProps}
-                        inputRef={ref}
-                        label={t("field.entity_name")}
-                        error={errors.entityName !== undefined}
-                        helperText={errors.entityName?.message && t(errors.entityName?.message)}/>
-                    )}
-                    rules={{ required: { value: true, message: "feedback.empty_entity_name" }}}/>
+                  <TextField
+                    label={t("field.entity")}
+                    value={t("template.entity", { name: entity?.entityName, position: entity?.entityPosition })}
+                    disabled={isWriting}/>
                   <LocalizationProvider dateAdapter={DateAdapter}>
                     <Box>
                       <DatePicker

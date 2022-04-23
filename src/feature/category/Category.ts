@@ -13,7 +13,6 @@ export type Category = {
 export type CategoryCore = {
   categoryId: string,
   categoryName?: string,
-  subCollectionName?: string
 }
 
 export const minimize = (category: Category): CategoryCore => {

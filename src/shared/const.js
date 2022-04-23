@@ -17,29 +17,17 @@ export const assetSubcategory = "subcategory";
 export const assetUnitOfMeasure = "unitOfMeasure";
 export const assetUnitValue = "unitValue";
 export const assetRemarks = "remarks";
-export const dateCreated = "dateCreated";
-export const assetStatus = "status";
 export const assetCategory = "category";
-export const assetCategoryId = `${ assetCategory }.${ categoryId }`
-export const assetCategoryName = `${ assetCategory }.${ categoryName }`
+export const assetCategoryId = `${ assetCategory }.${ categoryId }`;
+export const assetCategoryName = `${ assetCategory }.${ categoryName }`;
 
 export const userId = "userId";
-export const departmentId = "departmentId";
-export const departmentName = "name";
-export const departmentManager = "manager";
-export const departmentManagerId = `${ departmentManager }.${ userId }`;
-export const departmentManagerName = `${ departmentManager }.name`;
-export const departmentCount = "count";
-
 export const firstName = "firstName";
 export const lastName = "lastName";
 export const email = "email";
 export const imageUrl = "imageUrl";
 export const permissions = "permissions";
 export const position = "position";
-export const department = "department";
-export const userDepartmentId = `${ department }.${ departmentId }`;
-export const userDepartmentName = `${ department }.${ departmentName }`;
 
 export const inventoryReportId = "inventoryReportId"
 export const fundCluster = "fundCluster"
