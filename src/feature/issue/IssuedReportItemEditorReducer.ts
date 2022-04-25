@@ -1,4 +1,5 @@
 import { IssuedReportItem } from "./IssuedReport";
+import { newId } from "../../shared/utils";
 
 export enum ActionType {
   CREATE = "create",
@@ -16,7 +17,7 @@ type State = {
   isOpen: boolean,
 }
 export const initialState: State = {
-  item: { stockNumber: "", unitCost: 0, quantityIssued: 0, },
+  item: { issuedReportItemId: newId(), stockNumber: "", unitCost: 0, quantityIssued: 0, },
   isCreate: true,
   isOpen: false,
 }

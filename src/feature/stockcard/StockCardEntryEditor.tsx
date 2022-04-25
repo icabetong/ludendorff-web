@@ -43,8 +43,6 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
         requestedQuantity: props.entry?.requestedQuantity ? props.entry?.requestedQuantity : 0,
         issueQuantity: props.entry?.issueQuantity ? props.entry?.issueQuantity : 0,
         issueOffice: props.entry?.issueOffice,
-        balanceQuantity: props.entry?.balanceQuantity ? props.entry?.balanceQuantity : 0,
-        balanceTotalPrice: props.entry?.balanceTotalPrice ? props.entry?.balanceTotalPrice : 0,
       })
     }
   }, [props.isOpen, props.entry, reset])
@@ -65,8 +63,6 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
       receiptQuantity: parseInt(`${data.receiptQuantity}`),
       requestedQuantity: parseInt(`${data.requestedQuantity}`),
       issueQuantity: parseInt(`${data.issueQuantity}`),
-      balanceQuantity: parseInt(`${data.balanceQuantity}`),
-      balanceTotalPrice: parseFloat(`${data.balanceTotalPrice}`)
     }
     props.onSubmit(entry);
   }

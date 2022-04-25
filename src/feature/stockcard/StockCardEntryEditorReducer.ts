@@ -22,8 +22,6 @@ export const initialState: State = {
     receiptQuantity: 0,
     requestedQuantity: 0,
     issueQuantity: 0,
-    balanceQuantity: 0,
-    balanceTotalPrice: 0
   },
   isCreate: true,
   isOpen: false,

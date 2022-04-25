@@ -2,14 +2,14 @@ import { makeStyles } from "@mui/styles";
 import { Box, Theme } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
-import { StockCardEntry } from "./StockCard";
+import { StockCard, StockCardEntry } from "./StockCard";
 import {
   DataGrid,
   GridRowParams,
   GridSelectionModel,
   GridValueGetterParams,
-  GridActionsCellItem,
-  GridLoadingOverlay
+  GridLoadingOverlay,
+  GridActionsCellItem
 } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,9 @@ import {
 import { formatDate } from "../../shared/utils";
 import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import { EditRounded } from "@mui/icons-material";
+import { QueryStatsRounded } from "@mui/icons-material";
+import { Balances, Entry } from "../shared/types/Balances";
+import { currencyFormatter} from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -38,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
   entries: StockCardEntry[],
+  balances: Balances,
+  stockCard?: StockCard,
+  onSourceSelect: (entry: StockCardEntry) => void,
   onCheckedRowsChanged: (model: GridSelectionModel) => void,
 }
 const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
@@ -50,31 +55,70 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
     {
       field: date,
       headerName: t("field.date"),
+      type: 'dateTime',
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         const formatted = formatDate(params.row.date);
         return t(formatted)
       }
     },
-    { field: reference, headerName: t("field.reference"), flex: 1 },
+    {
+      field: reference,
+      headerName: t("field.reference"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        return params.row.reference ? params.row.reference : t("unknown")
+      }
+    },
     { field: receiptQuantity, headerName: t("field.receipt_quantity"), flex: 1 },
     { field: requestedQuantity, headerName: t("field.requested_quantity"), flex: 1 },
     { field: issueQuantity, headerName: t("field.issue_quantity"), flex: 1 },
     { field: issueOffice, headerName: t("field.issue_office"), flex: 1 },
-    { field: balanceQuantity, headerName: t("field.balance_quantity"), flex: 1 },
-    { field: balanceTotalPrice, headerName: t("field.balance_total_price"), flex: 1 },
     {
-      field: 'actions',
-      type: 'actions',
+      field: balanceQuantity,
+      headerName: t("field.balance_quantity"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        let entry: Entry = props.balances[params.row.inventoryReportSourceId];
+        if (!entry) return 0;
+
+        let quantityEntry = entry.entries[params.row.stockCardEntryId];
+        return quantityEntry ? quantityEntry : 0;
+      }
+    },
+    {
+      field: balanceTotalPrice,
+      headerName: t("field.balance_total_price"),
+      flex: 1,
+      valueGetter: (params: GridValueGetterParams) => {
+        if (!props.stockCard?.stockNumber) return 0;
+        let unitPrice = props.stockCard ? props.stockCard.unitPrice : 0;
+
+        let entry: Entry = props.balances[params.row.inventoryReportSourceId];
+        if (!entry) return 0;
+
+        let quantityEntry = entry.entries[params.row.stockCardEntryId];
+        return currencyFormatter.format(unitPrice * quantityEntry);
+      }
+    },
+    {
+      field: "actions",
+      headerName: t("actions"),
+      type: "actions",
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<EditRounded/>}
-          label={t("button.edit")}
-          onClick={() => props.onItemSelected(params.row as StockCardEntry)}/>
+          showInMenu
+          icon={<QueryStatsRounded/>}
+          label={t("button.set_quantity_source")}
+          onClick={() => props.onSourceSelect(params.row as StockCardEntry)}/>
       ]
     }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardEntriesColumns', columns);
+
+  const onRowSelected = (params: GridRowParams) => {
+    props.onItemSelected(params.row as StockCardEntry);
+  }
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => {
     setHasChecked(Array.from(model).length > 0)
@@ -84,6 +128,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   return (
     <Box className={classes.dataGrid}>
       <DataGrid
+        disableSelectionOnClick
         checkboxSelection
         components={{
           Toolbar: EditorGridToolbar,
@@ -91,7 +136,6 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         }}
         componentsProps={{
           toolbar: {
-            onAddAction: props.onAddAction,
             onRemoveAction: hasChecked ? props.onRemoveAction : undefined
           }
         }}
@@ -101,6 +145,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         density={density}
         columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockCardEntryId}
+        onRowDoubleClick={onRowSelected}
         onSelectionModelChange={onCheckedRowsChanged}
         onStateChange={(v) => onDensityChanged(v.density.value)}
         onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>

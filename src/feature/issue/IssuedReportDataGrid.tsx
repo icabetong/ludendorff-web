@@ -4,7 +4,7 @@ import { DataGridProps } from "../shared/types/DataGridProps";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import useDensity from "../shared/hooks/useDensity";
-import { date, entityName, fundCluster, serialNumber } from "../../shared/const";
+import { date, fundCluster, serialNumber } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { ExcelIcon } from "../../components/CustomIcons";
@@ -32,7 +32,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
       headerName: t("field.date"),
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
-        const formatted = formatDate(params.row.accountabilityDate);
+        const formatted = formatDate(params.row.date);
         return t(formatted)
       }
     },

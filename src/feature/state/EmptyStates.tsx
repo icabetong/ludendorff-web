@@ -17,6 +17,7 @@ const EmptyStateComponent = (props: EmptyStateComponentPropsType) => {
       justifyContent="center"
       sx={{
         height: '100%',
+        flex: 1,
         padding: 4
       }}>
       <Grid item>

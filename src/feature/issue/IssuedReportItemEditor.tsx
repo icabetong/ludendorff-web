@@ -17,11 +17,10 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  useTheme,
-  useMediaQuery, Grid,
 } from "@mui/material";
 import AssetPicker from "../asset/AssetPicker";
 import { ArrowDropDown } from "@mui/icons-material";
+import { newId } from "../../shared/utils";
 
 export type FormValues = {
   unitCost: number,
@@ -39,8 +38,6 @@ type IssuedReportItemEditorProps = {
 
 export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, reset, control, setValue } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
@@ -48,6 +45,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   useEffect(() => {
     if (props.isOpen) {
       reset({
+        unitCost: props.item?.unitCost ? props.item?.unitCost : 0,
         quantityIssued: props.item?.quantityIssued ? props.item?.quantityIssued : 0,
         responsibilityCenter: props.item?.responsibilityCenter ? props.item?.responsibilityCenter : ""
       })
@@ -56,6 +54,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
 
   const onDismiss = () => {
     props.onDismiss();
+    setAsset(undefined);
   }
 
   const onPickerInvoke = () => setOpen(true);
@@ -71,6 +70,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
     if (asset) {
       let item: IssuedReportItem = {
         ...data,
+        issuedReportItemId: props.item ? props.item.issuedReportItemId : newId(),
         stockNumber: asset.stockNumber,
         description: asset.description,
         unitOfMeasure: asset.unitOfMeasure,
@@ -86,6 +86,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
       }
       props.onSubmit(item);
     }
+    onDismiss()
   }
 
   const onAssetPicked = (asset: Asset) => {
@@ -97,89 +98,78 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
     <>
       <Dialog
         fullWidth={true}
-        maxWidth={smBreakpoint ? "xs" : "sm"}
+        maxWidth="xs"
         open={props.isOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_issued_item")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
-              <Grid
-                container
-                direction={smBreakpoint ? "column" : "row"}
-                alignItems="stretch"
-                justifyContent="center"
-                spacing={smBreakpoint ? 0 :4 }>
-                <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
+              <TextField
+                value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
+                label={t("field.asset")}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={onPickerInvoke} edge="end">
+                        <ArrowDropDown/>
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}/>
+              <Controller
+                name="unitCost"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
                   <TextField
-                    value={!props.item ? asset?.description ? asset?.description : t("field.not_set") : props.item.description }
-                    label={t("field.asset")}
+                    {...inputProps}
+                    inputRef={ref}
+                    label={t("field.unit_cost")}
+                    error={errors.unitCost !== undefined}
+                    disabled={!props.item ? !asset : false}
+                    helperText={errors.unitCost?.message !== undefined ? t(errors.unitCost.message) : undefined}
+                    inputProps={{
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*',
+                      min: 0,
+                      step: 0.01,
+                      type: "number"
+                    }}
                     InputProps={{
-                      readOnly: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={onPickerInvoke} edge="end">
-                            <ArrowDropDown/>
-                          </IconButton>
-                        </InputAdornment>
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
                       )
                     }}/>
-                  <Controller
-                    name="unitCost"
-                    control={control}
-                    render={({ field: { ref, ...inputProps }}) => (
-                      <TextField
-                        {...inputProps}
-                        inputRef={ref}
-                        label={t("field.unit_cost")}
-                        error={errors.unitCost !== undefined}
-                        disabled={!props.item ? !asset : false}
-                        helperText={errors.unitCost?.message !== undefined ? t(errors.unitCost.message) : undefined}
-                        inputProps={{
-                          inputMode: 'numeric',
-                          pattern: '[0-9]*',
-                          min: 0,
-                          step: 0.01,
-                          type: "number"
-                        }}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">₱</InputAdornment>
-                          )
-                        }}/>
-                    )}/>
-                </Grid>
-                <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
-                  <Controller
-                    name="quantityIssued"
-                    control={control}
-                    render={({ field: { ref, ...inputProps }}) => (
-                      <TextField
-                        {...inputProps}
-                        autoFocus
-                        type="number"
-                        inputRef={ref}
-                        label={t("field.quantity_issued")}
-                        error={errors.quantityIssued !== undefined}
-                        helperText={errors.quantityIssued?.message && t(errors.quantityIssued?.message)}
-                        disabled={!props.item ? !asset : false}/>
-                    )}
-                    rules={{ required: { value: true, message: 'feedback.empty_quantity_issued' }}}/>
-                  <Controller
-                    name="responsibilityCenter"
-                    control={control}
-                    render={({ field: { ref, ...inputProps }}) => (
-                      <TextField
-                        {...inputProps}
-                        type="text"
-                        inputRef={ref}
-                        label={t("field.responsibility_center")}
-                        error={errors.responsibilityCenter !== undefined}
-                        helperText={errors.responsibilityCenter?.message && t(errors.responsibilityCenter?.message)}
-                        disabled={!props.item ? !asset : false}/>
-                    )}
-                    rules={{ required: { value: true, message: "feedback.empty_responsibility_center" }}}/>
-                </Grid>
-              </Grid>
+                )}/>
+              <Controller
+                name="quantityIssued"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    autoFocus
+                    type="number"
+                    inputRef={ref}
+                    label={t("field.quantity_issued")}
+                    error={errors.quantityIssued !== undefined}
+                    helperText={errors.quantityIssued?.message && t(errors.quantityIssued?.message)}
+                    disabled={!props.item ? !asset : false}/>
+                )}
+                rules={{ required: { value: true, message: 'feedback.empty_quantity_issued' }}}/>
+              <Controller
+                name="responsibilityCenter"
+                control={control}
+                render={({ field: { ref, ...inputProps }}) => (
+                  <TextField
+                    {...inputProps}
+                    type="text"
+                    inputRef={ref}
+                    label={t("field.responsibility_center")}
+                    error={errors.responsibilityCenter !== undefined}
+                    helperText={errors.responsibilityCenter?.message && t(errors.responsibilityCenter?.message)}
+                    disabled={!props.item ? !asset : false}/>
+                )}
+                rules={{ required: { value: true, message: "feedback.empty_responsibility_center" }}}/>
             </Container>
           </DialogContent>
           <DialogActions>

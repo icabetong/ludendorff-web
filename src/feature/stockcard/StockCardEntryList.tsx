@@ -34,7 +34,7 @@ const StockCardEntryListItem = (props: StockCardEntryListItemProps) => {
     <ListItem button key={props.entry.stockCardEntryId} onClick={onListItemClick}>
       <ListItemText
         primary={props.entry.reference}
-        secondary={props.entry.balanceTotalPrice}/>
+        secondary={props.entry.issueOffice}/>
     </ListItem>
   )
 }

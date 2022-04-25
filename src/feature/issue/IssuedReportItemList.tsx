@@ -1,5 +1,5 @@
 import { IssuedReportItem } from "./IssuedReport";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 
 type IssuedReportItemListProps = {
   items?: IssuedReportItem[],
@@ -31,14 +31,13 @@ const IssuedReportItemListItem = (props: IssuedReportItemListItemProps) => {
     props.onItemSelected(props.item)
   }
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.item.stockNumber}
       onClick={onListItemClick}>
       <ListItemText
         primary={props.item.description}
-        secondary={props.item.responsibilityCenter}/>
-    </ListItem>
+        secondary={props.item.stockNumber}/>
+    </ListItemButton>
   )
 }
 

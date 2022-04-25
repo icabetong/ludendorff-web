@@ -1,8 +1,11 @@
+import { ReactNode } from "react";
 import { IssuedReport } from "./IssuedReport";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItemButton, ListItemText, ListItemSecondaryAction } from "@mui/material";
 
 type IssuedReportListProps = {
   reports: IssuedReport[],
+  checked?: IssuedReport,
+  secondaryAction?: JSX.Element | ReactNode,
   onItemSelect: (report: IssuedReport) => void,
   onItemRemove: (report: IssuedReport) => void
 }
@@ -15,6 +18,8 @@ const IssuedReportList = (props: IssuedReportListProps) => {
             <IssuedReportListItem
               key={report.issuedReportId}
               report={report}
+              active={Boolean(report === props.checked)}
+              secondaryAction={props.secondaryAction}
               onItemSelect={props.onItemSelect}/>
           )
         })
@@ -25,19 +30,25 @@ const IssuedReportList = (props: IssuedReportListProps) => {
 
 type IssuedReportListItemProps = {
   report: IssuedReport,
+  active?: boolean,
+  secondaryAction?: JSX.Element | ReactNode,
   onItemSelect: (report: IssuedReport) => void,
   onItemRemove?: (report: IssuedReport) => void,
 }
 const IssuedReportListItem = (props: IssuedReportListItemProps) => {
   return (
-    <ListItem
-      button
-      key={props.report.issuedReportId}
+    <ListItemButton
+      selected={props.active}
       onClick={() => props.onItemSelect(props.report)}>
       <ListItemText
         primary={props.report.fundCluster}
         secondary={props.report.serialNumber}/>
-    </ListItem>
+      { props.secondaryAction &&
+        <ListItemSecondaryAction>
+          {props.secondaryAction}
+        </ListItemSecondaryAction>
+      }
+    </ListItemButton>
   )
 }
 

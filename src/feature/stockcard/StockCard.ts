@@ -23,8 +23,7 @@ export type StockCardEntry = {
   requestedQuantity: number,
   issueQuantity: number,
   issueOffice?: string,
-  balanceQuantity: number,
-  balanceTotalPrice: number,
+  inventoryReportSourceId?: string,
 }
 
 export class StockCardRepository {

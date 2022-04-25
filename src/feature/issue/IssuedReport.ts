@@ -15,6 +15,7 @@ export type IssuedReport = {
 }
 
 export type IssuedReportItem = {
+  issuedReportItemId: string,
   stockNumber: string,
   description?: string,
   unitOfMeasure?: string,
@@ -69,9 +70,8 @@ export class IssuedReportRepository {
 
     batch.set(docReference, report);
     items.forEach((item) => {
-      batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.stockNumber), item);
+      batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.issuedReportItemId), item);
     });
-
     await batch.commit();
 
     let token = await getIdTokenRefreshed();

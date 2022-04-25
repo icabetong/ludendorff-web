@@ -151,6 +151,8 @@ const resources = {
         export_spreadsheet: "Export to Spreadsheet",
         download: "Download",
         filter: "Filter",
+        back: "Back",
+        set_quantity_source: "Set Quantity Source",
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -291,6 +293,8 @@ const resources = {
         select_category: "Select Category",
         select_asset: "Select Asset",
         select_user: "Select User",
+        select_issued_report: "Select Issued Report",
+        select_inventory_report: "Select Inventory Report",
         view_qr_code: "View QR-Code",
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
         finish_account_setup: "Finish Account Setup",

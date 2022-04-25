@@ -57,16 +57,13 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    setDate(props.report?.date ? props.report?.date?.toDate() : null);
-  }, [props.report]);
-
-  useEffect(() => {
     if (props.isOpen) {
       reset({
         fundCluster: props.report?.fundCluster,
         entityName: props.report?.entityName,
-        serialNumber: props.report?.serialNumber
-      })
+        serialNumber: props.report?.serialNumber,
+      });
+      setDate(props.report?.date ? props.report?.date.toDate() : null);
     }
   }, [props.isOpen, props.report, reset])
 
@@ -90,6 +87,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
 
   const onDismiss = () => {
     setWriting(false);
+    setItems([]);
     props.onDismiss();
   }
 
@@ -98,7 +96,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: ActionType.UPDATE, payload: item });
   const onEditorCommit = (item: IssuedReportItem) => {
     let currentItems = Array.from(items);
-    let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);
+    let index = currentItems.findIndex((i) => i.issuedReportItemId === item.issuedReportItemId);
     if (index < 0) {
       currentItems.push(item);
     } else {
@@ -123,10 +121,10 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
 
     setWriting(true);
     const issuedReport: IssuedReport = {
-      issuedReportId: props.report ? props.report.issuedReportId : newId(),
       ...data,
       items: items,
-      date: props.report ? props.report.date : Timestamp.fromDate(date),
+      issuedReportId: props.report ? props.report.issuedReportId : newId(),
+      date: Timestamp.fromDate(date),
     }
 
     if (props.isCreate) {
