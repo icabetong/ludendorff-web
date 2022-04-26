@@ -19,7 +19,7 @@ type State = {
 export const initialState: State = {
   entry: {
     stockCardEntryId: newId(),
-    receiptQuantity: 0,
+    receivedQuantity: 0,
     requestedQuantity: 0,
     issueQuantity: 0,
   },

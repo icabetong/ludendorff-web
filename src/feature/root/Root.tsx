@@ -41,6 +41,7 @@ import { auth } from "../../index";
 import IssuedReportScreen from "../issue/IssuedReportScreen";
 import StockCardScreen from "../stockcard/StockCardScreen";
 import FinishAccountDialog from "../auth/FinishAccountDialog";
+import { DialogProvider } from "../../components/DialogProvider";
 
 
 const AssetScreen = lazy(() => import('../asset/AssetScreen'));
@@ -294,20 +295,22 @@ const RootComponent = () => {
   } else if (status === AuthStatus.FETCHED) {
     if (user !== undefined) {
       return (
-        <SnackbarProvider
-          maxSnack={3}
-          autoHideDuration={3000}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: isXSDeviceWidth ? 'center' : 'right'
-          }}>
-          <>
-            <RootContainerComponent
-              onNavigate={onNavigate}
-              currentDestination={destination}/>
-            <FinishAccountDialog isOpen={!user.setupCompleted}/>
-          </>
-        </SnackbarProvider>
+        <DialogProvider>
+          <SnackbarProvider
+            maxSnack={3}
+            autoHideDuration={3000}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: isXSDeviceWidth ? 'center' : 'right'
+            }}>
+            <>
+              <RootContainerComponent
+                onNavigate={onNavigate}
+                currentDestination={destination}/>
+              <FinishAccountDialog isOpen={!user.setupCompleted}/>
+            </>
+          </SnackbarProvider>
+        </DialogProvider>
       )
     } else return <Redirect to="/auth"/>
   } else return <Redirect to="/error"/>

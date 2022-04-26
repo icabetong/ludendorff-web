@@ -20,13 +20,13 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     let dataUnsubscribe: Unsubscribe;
-    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser != null) {
         dataUnsubscribe = onSnapshot(doc(firestore, userCollection, firebaseUser.uid), (doc) => {
           setAuthState({ status: AuthStatus.FETCHED, user: doc.data() as User });
         })
       } else {
-        auth.signOut();
+        await auth.signOut();
         history.push("/auth");
       }
     });

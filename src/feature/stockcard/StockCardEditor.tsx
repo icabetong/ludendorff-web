@@ -34,6 +34,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../../index";
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { Balances } from "../shared/types/Balances";
+import { useDialog } from "../../components/DialogProvider";
 
 export type FormValues = {
   entityName?: string,
@@ -60,7 +61,9 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const [isFetching, setFetching] = useState(false);
   const [isWriting, setWriting] = useState(false);
   const [balances, setBalances] = useState<Balances>({  });
+  const [totalIssued, setTotalIssued] = useState<number>(0);
   const { enqueueSnackbar } = useSnackbar();
+  const show = useDialog();
 
   useEffect(() => {
     if (props.isOpen) {
@@ -157,6 +160,8 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const onQuantitySourceSelected = async (report: InventoryReport) => {
     if (stockCard === null)
       return;
+    if (entry === null)
+      return;
 
     // Find the source for the onHandCount (quantity) in the selected
     // Physical Reports of Inventories record.
@@ -164,8 +169,16 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       report.inventoryReportId, inventoryItems), where(assetStockNumber, "==", stockCard!.stockNumber));
     let snapshot = await getDocs(collectionQuery);
     let items = snapshot.docs.map((doc) => doc.data() as InventoryReportItem)
-    if (items.length > 0 && entry !== null) {
+    if (items.length > 0) {
       let inventoryReportItem: InventoryReportItem = items[0];
+      if (inventoryReportItem.onHandCount < entry.issueQuantity) {
+        await show({
+          title: t("dialog.issued_is_more_than_current"),
+          description: t("dialog.issued_is_more_than_current_summary"),
+          dismissButtonText: t("button.cancel")
+        });
+        return;
+      }
 
       // Locate the position of the entry that will be
       // updated with the new received quantity data
@@ -193,7 +206,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
           // Update the stock card entry for the new receive quantity and the new source id
           currentEntries[index] = {
             ...entry,
-            receiptQuantity: currentEntry.remaining,
+            receivedQuantity: currentEntry.remaining,
             inventoryReportSourceId: report.inventoryReportId
           };
           setEntries(currentEntries);
@@ -209,7 +222,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
           };
           currentEntries[index] = {
             ...entry,
-            receiptQuantity: inventoryReportItem.onHandCount,
+            receivedQuantity: inventoryReportItem.onHandCount,
             inventoryReportSourceId: report.inventoryReportId
           };
           setEntries(currentEntries);
@@ -217,6 +230,14 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         }
         setBalances(currentBalances);
       }
+    } else {
+      let r = await show({
+        title: t("dialog.stock_number_not_found_on_report"),
+        description: t("dialog.stock_number_not_found_on_report_summary"),
+        dismissButtonText: t("button.cancel")
+      });
+      console.log(r);
+      return;
     }
     onInventoryPickerDismiss();
   }
@@ -236,18 +257,21 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         setStockCard(stockCard);
       }
 
+      let total = 0;
       let arr: StockCardEntry[] = [];
       item.items.forEach((issuedItem) => {
         let entry: StockCardEntry = {
           stockCardEntryId: newId(),
-          receiptQuantity: 0,
+          receivedQuantity: 0,
           requestedQuantity: 0,
           issueQuantity: issuedItem.quantityIssued,
           issueOffice: issuedItem.responsibilityCenter
         }
         arr.push(entry);
+        total += entry.issueQuantity;
       });
 
+      setTotalIssued(total);
       setEntries(arr);
     }
   }
@@ -288,10 +312,17 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                         disabled={isWriting}/>
                     )}
                     rules={{ required: { value: true, message: 'feedback.empty_entity_name' }}}/>
+                  <TextField
+                    value={totalIssued}
+                    label={t("field.total_issued_quantity")}
+                    disabled={isWriting}
+                    InputProps={{
+                      readOnly: true,
+                    }}/>
                 </Grid>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
                   <TextField
-                    value={stockCard ? stockCard?.description : t("field.not_set")}
+                    value={stockCard?.description ? stockCard?.description : t("field.not_set")}
                     label={t("field.asset")}
                     disabled={isWriting}
                     InputProps={{
@@ -350,8 +381,10 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         isOpen={state.isOpen}
         isCreate={state.isCreate}
         entry={state.entry}
+        balances={balances}
+        stockCard={stockCard}
         onSubmit={onEditorCommit}
-        onDismiss={onEditorDismiss}/>
+        onDismiss={onEditorDismiss} />
     </>
   )
 }

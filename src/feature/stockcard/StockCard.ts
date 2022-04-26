@@ -19,7 +19,7 @@ export type StockCardEntry = {
   stockCardEntryId: string,
   date?: Timestamp,
   reference?: string,
-  receiptQuantity: number,
+  receivedQuantity: number,
   requestedQuantity: number,
   issueQuantity: number,
   issueOffice?: string,

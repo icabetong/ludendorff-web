@@ -19,7 +19,7 @@ import {
   date,
   issueOffice,
   issueQuantity,
-  receiptQuantity,
+  receivedQuantity,
   reference,
   requestedQuantity
 } from "../../shared/const";
@@ -28,7 +28,7 @@ import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { QueryStatsRounded } from "@mui/icons-material";
 import { Balances, Entry } from "../shared/types/Balances";
-import { currencyFormatter} from "../../shared/utils";
+import { currencyFormatter } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   dataGrid: {
@@ -70,7 +70,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         return params.row.reference ? params.row.reference : t("unknown")
       }
     },
-    { field: receiptQuantity, headerName: t("field.receipt_quantity"), flex: 1 },
+    { field: receivedQuantity, headerName: t("field.received_quantity"), flex: 1 },
     { field: requestedQuantity, headerName: t("field.requested_quantity"), flex: 1 },
     { field: issueQuantity, headerName: t("field.issue_quantity"), flex: 1 },
     { field: issueOffice, headerName: t("field.issue_office"), flex: 1 },

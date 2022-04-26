@@ -1,26 +1,38 @@
-import { StockCardEntry } from "./StockCard";
+import { StockCard, StockCardEntry } from "./StockCard";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  InputAdornment,
+  TextField
+} from "@mui/material";
 import DateAdapter from "@mui/lab/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import { useState, useEffect } from "react";
 import { Timestamp } from "firebase/firestore";
 import { newId } from "../../shared/utils";
+import { Balances, Entry } from "../shared/types/Balances";
+import { currencyFormatter } from "../../shared/utils";
 
 export type FormValues = {
   reference?: string,
-  receiptQuantity: number,
+  receivedQuantity: number,
   requestedQuantity: number,
   issueQuantity: number,
   issueOffice?: string,
-  balanceQuantity: number,
-  balanceTotalPrice: number,
 }
 
 type StockCardEntryEditorProps = {
   isOpen: boolean,
   isCreate: boolean,
+  balances: Balances,
+  stockCard?: StockCard,
   entry?: StockCardEntry,
   onSubmit: (item: StockCardEntry) => void,
   onDismiss: () => void,
@@ -39,7 +51,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
     if (props.isOpen) {
       reset({
         reference: props.entry?.reference ? props.entry?.reference : "",
-        receiptQuantity: props.entry ? props.entry?.receiptQuantity : 0,
+        receivedQuantity: props.entry ? props.entry?.receivedQuantity : 0,
         requestedQuantity: props.entry?.requestedQuantity ? props.entry?.requestedQuantity : 0,
         issueQuantity: props.entry?.issueQuantity ? props.entry?.issueQuantity : 0,
         issueOffice: props.entry?.issueOffice,
@@ -60,11 +72,34 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
       ...data,
       stockCardEntryId: props.entry ? props.entry.stockCardEntryId : newId(),
       date: props.entry?.date ? props.entry?.date : Timestamp.fromDate(date),
-      receiptQuantity: parseInt(`${data.receiptQuantity}`),
+      receivedQuantity: parseInt(`${data.receivedQuantity}`),
       requestedQuantity: parseInt(`${data.requestedQuantity}`),
       issueQuantity: parseInt(`${data.issueQuantity}`),
     }
     props.onSubmit(entry);
+  }
+
+  const getBalanceQuantity = () => {
+    if (!props.entry?.inventoryReportSourceId)
+      return 0;
+
+    let entry: Entry = props.balances[props.entry?.inventoryReportSourceId];
+    if (!entry) return 0;
+
+    let quantityEntry = entry.entries[props.entry?.stockCardEntryId];
+    return quantityEntry ? quantityEntry : 0;
+  }
+
+  const getBalanceTotalPrice = () => {
+    if (!props.stockCard?.stockNumber) return 0;
+    if (!props.entry?.inventoryReportSourceId) return 0;
+    let unitPrice = props.stockCard ? props.stockCard.unitPrice : 0;
+
+    let entry: Entry = props.balances[props.entry?.inventoryReportSourceId];
+    if (!entry) return 0;
+
+    let quantityEntry = entry.entries[props.entry?.stockCardEntryId];
+    return (unitPrice * quantityEntry).toFixed(2);
   }
 
   return (
@@ -103,19 +138,20 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
               )}
               rules={{ required: { value: true, message: "feedback.empty_reference" }}}/>
             <Controller
-              name="receiptQuantity"
+              name="receivedQuantity"
               control={control}
               render={({ field: { ref, ...inputProps }}) => (
                 <TextField
                   {...inputProps}
                   type="number"
                   inputRef={ref}
-                  label={t("field.receipt_quantity")}
-                  error={errors.receiptQuantity !== undefined}
-                  helperText={errors.receiptQuantity?.message && t(errors.receiptQuantity?.message)}
-                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                  label={t("field.received_quantity")}
+                  error={errors.receivedQuantity !== undefined}
+                  helperText={errors.receivedQuantity?.message && t(errors.receivedQuantity?.message)}
+                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
+                  InputProps={{ readOnly: true }}/>
               )}
-              rules={{ required: { value: true, message: "feedback.empty_receipt_quantity" }}}/>
+              rules={{ required: { value: true, message: "feedback.empty_received_quantity" }}}/>
             <Controller
               name="requestedQuantity"
               control={control}
@@ -141,7 +177,8 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
                   label={t("field.issue_quantity")}
                   error={errors.issueQuantity !== undefined}
                   helperText={errors.issueQuantity?.message && t(errors.issueQuantity?.message)}
-                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
+                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}
+                  InputProps={{ readOnly: true }}/>
               )}
               rules={{ required: { value: true, message: "feedback.empty_issue_quantity" }}}/>
             <Controller
@@ -154,36 +191,32 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
                   inputRef={ref}
                   label={t("field.issue_office")}
                   error={errors.issueOffice !== undefined}
-                  helperText={errors.issueOffice?.message && t(errors.issueOffice?.message)}/>
+                  helperText={errors.issueOffice?.message && t(errors.issueOffice?.message)}
+                  InputProps={{ readOnly: true }}/>
               )}
               rules={{ required: { value: true, message: "feedback.empty_issue_office" }}}/>
-            <Controller
-              name="balanceQuantity"
-              control={control}
-              render={({ field: { ref, ...inputProps }}) => (
-                <TextField
-                  {...inputProps}
-                  type="number"
-                  label={t("field.balance_quantity")}
-                  error={errors.balanceQuantity !== undefined}
-                  helperText={errors.balanceQuantity?.message && t(errors.balanceQuantity?.message)}
-                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
-              )}
-              rules={{ required: { value: true, message: "feedback.empty_balance_quantity" }}}/>
-            <Controller
-              name="balanceTotalPrice"
-              control={control}
-              render={({ field: { ref, ...inputProps }}) => (
-                <TextField
-                  {...inputProps}
-                  type="number"
-                  inputRef={ref}
-                  label={t("field.balance_total_price")}
-                  error={errors.balanceTotalPrice !== undefined}
-                  helperText={errors.balanceTotalPrice?.message && t(errors.balanceTotalPrice?.message)}
-                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*', min: 0 }}/>
-              )}
-              rules={{ required: { value: true, message: "feedback.empty_balance_total_price" }}}/>
+            <TextField
+              type="number"
+              label={t("field.balance_quantity")}
+              value={getBalanceQuantity()}
+              InputProps={{ readOnly: true }}/>
+            <TextField
+              type="number"
+              label={t("field.balance_total_price")}
+              value={getBalanceTotalPrice()}
+              inputProps={{
+                inputMode: 'numeric',
+                pattern: '[0-9]*',
+                min: 0,
+                step: 0.01,
+                type: "number",
+              }}
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start">₱</InputAdornment>
+                )
+              }}/>
           </Container>
         </DialogContent>
         <DialogActions>

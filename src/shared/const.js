@@ -59,7 +59,7 @@ export const entries = "entries"
 
 export const stockCardEntryId = "stockCardEntryId"
 export const reference = "reference"
-export const receiptQuantity = "receiptQuantity"
+export const receivedQuantity = "receivedQuantity"
 export const requestedQuantity = "requestedQuantity"
 export const issueQuantity = "issueQuantity"
 export const issueOffice = "issueOffice"

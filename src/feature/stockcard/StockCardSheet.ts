@@ -134,7 +134,7 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, sto
       return [
         formatDate(entry.date),
         entry.reference,
-        entry.receiptQuantity,
+        entry.receivedQuantity,
         entry.requestedQuantity,
         entry.issueQuantity,
         entry.issueOffice,
