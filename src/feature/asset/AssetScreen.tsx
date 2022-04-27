@@ -1,7 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Fab, LinearProgress, MenuItem, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, Fab, LinearProgress, MenuItem } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { AddRounded } from "@mui/icons-material";
@@ -32,17 +31,8 @@ import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
 import { useDialog } from "../../components/DialogProvider";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: '90%',
-    padding: '1.4em',
-    ...getDataGridTheme(theme)
-  },
-}));
-
 type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
@@ -113,7 +103,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   ];
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch
         searchClient={Provider}
         indexName="assets">
@@ -126,7 +116,7 @@ const AssetScreen = (props: AssetScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+            <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <AssetDataGrid
                 items={items}
                 size={limit}

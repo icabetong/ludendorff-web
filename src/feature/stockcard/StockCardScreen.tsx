@@ -1,5 +1,4 @@
-import makeStyles from "@mui/styles/makeStyles";
-import { Box, Fab, LinearProgress, Theme } from "@mui/material";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import { AddRounded } from "@mui/icons-material";
@@ -35,20 +34,8 @@ import { OrderByDirection } from "@firebase/firestore-types";
 import useSort from "../shared/hooks/useSort";
 import { useDialog } from "../../components/DialogProvider";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%',
-  },
-  wrapper: {
-    height: '90%',
-    padding: '1.4em',
-    ...getDataGridTheme(theme)
-  }
-}));
-
 type StockCardScreenProps = ScreenProps
 const StockCardScreen = (props: StockCardScreenProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
@@ -133,7 +120,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch searchClient={Provider} indexName="cards">
         <AdaptiveHeader
           title={t("navigation.stock_cards")}
@@ -143,7 +130,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <StockCardDataGrid
                 items={items}
                 size={limit}

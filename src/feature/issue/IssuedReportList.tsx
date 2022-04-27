@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { IssuedReport } from "./IssuedReport";
-import { List, ListItemButton, ListItemText, ListItemSecondaryAction } from "@mui/material";
+import { List, ListItemButton, ListItemText } from "@mui/material";
 
 type IssuedReportListProps = {
   reports: IssuedReport[],

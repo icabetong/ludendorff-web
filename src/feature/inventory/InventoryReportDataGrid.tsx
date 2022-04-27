@@ -3,7 +3,7 @@ import { InventoryReport } from "./InventoryReport";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DataGridProps } from "../shared/types/DataGridProps";
 import { useTranslation } from "react-i18next";
-import { accountabilityDate, entityName, entityPosition, fundCluster, yearMonth } from "../../shared/const";
+import { accountabilityDate, fundCluster, yearMonth } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { ExcelIcon } from "../../components/CustomIcons";

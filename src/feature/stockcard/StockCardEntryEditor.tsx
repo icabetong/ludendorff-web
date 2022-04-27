@@ -18,7 +18,6 @@ import { useState, useEffect } from "react";
 import { Timestamp } from "firebase/firestore";
 import { newId } from "../../shared/utils";
 import { Balances, Entry } from "../shared/types/Balances";
-import { currencyFormatter } from "../../shared/utils";
 
 export type FormValues = {
   reference?: string,

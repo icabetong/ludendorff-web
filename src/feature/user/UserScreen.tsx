@@ -14,7 +14,6 @@ import UserList from "./UserList";
 import { ActionType, initialState, reducer } from "./UserEditorReducer";
 import { lastName, userCollection } from "../../shared/const";
 import UserEditor from "./UserEditor";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";

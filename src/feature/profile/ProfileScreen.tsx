@@ -67,7 +67,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   ];
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <AdaptiveHeader
         title={t("navigation.profile")}
         menuItems={[
@@ -85,7 +85,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
 
       {status === AuthStatus.FETCHED
         ?
-        <Box sx={{ height: '80%', padding: 2 }}>
+        <Box sx={{ flex: 1, padding: 2 }}>
           <Grid
             container
             direction={isMobile ? "column" : "row"}

@@ -22,10 +22,7 @@
     "typeRoots": [
       "./node_modules/@types",
       "./typings"
-    ],
-    "paths": {
-      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
-    }
+    ]
   },
   "include": [
     "src"
@@ -33,6 +30,7 @@
   "exclude": [
     "src/localization.js",
     "src/shared/const.js",
-    "**/node_modules", "**/.*/"
+    "**/node_modules",
+    "**/.*/"
   ]
 }

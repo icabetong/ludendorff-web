@@ -1,5 +1,4 @@
-import { Box, Fab, LinearProgress, Theme } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { useReducer, useRef, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
 import { InstantSearch } from "react-instantsearch-dom";
@@ -35,17 +34,8 @@ import { OrderByDirection } from "@firebase/firestore-types";
 import useSort from "../shared/hooks/useSort";
 import { useDialog } from "../../components/DialogProvider";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: '90%',
-    padding: '1.4em',
-    ...getDataGridTheme(theme)
-  }
-}));
-
 type InventoryReportScreenProps = ScreenProps
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
@@ -133,7 +123,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch
         searchClient={Provider}
         indexName="inventories">
@@ -145,7 +135,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+            <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <InventoryReportDataGrid
                 items={items}
                 size={limit}

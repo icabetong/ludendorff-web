@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   LinearProgress,
   useMediaQuery,
   useTheme

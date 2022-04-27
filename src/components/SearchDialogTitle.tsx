@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Stack, IconButton, Typography, Box, Collapse } from "@mui/material";
 import { CloseRounded, SearchRounded } from "@mui/icons-material";

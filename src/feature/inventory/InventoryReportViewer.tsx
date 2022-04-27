@@ -9,13 +9,15 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid, List, ListItem, ListItemText,
+  Grid, 
+  List, 
+  ListItem, 
+  ListItemText,
   TextField, Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
 import { useEntity } from "../entity/UseEntity";
-import InventoryReportItemList from "./InventoryReportItemList";
 
 type InventoryReportViewerProps = {
   isOpen: boolean,

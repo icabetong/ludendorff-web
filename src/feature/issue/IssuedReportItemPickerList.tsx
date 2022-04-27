@@ -7,7 +7,7 @@ import {
   IssuedReportRepository
 } from "./IssuedReport";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { ArrowBackRounded, ChevronRightRounded } from "@mui/icons-material";
+import { ArrowBackRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import IssuedReportList from "./IssuedReportList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";

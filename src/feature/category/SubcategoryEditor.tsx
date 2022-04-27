@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
-import { Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 
 type FormValues = {
   subcategory: string

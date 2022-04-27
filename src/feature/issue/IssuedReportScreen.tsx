@@ -1,5 +1,4 @@
-import { Box, Fab, LinearProgress, Theme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { getDataGridTheme } from "../core/Core";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
@@ -32,20 +31,8 @@ import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
 import { useDialog } from "../../components/DialogProvider";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: '100%'
-  },
-  wrapper: {
-    height: '90%',
-    padding: '1.4em',
-    ...getDataGridTheme(theme)
-  }
-}));
-
 type IssuedReportScreenProps = ScreenProps
 const IssuedReportScreen = (props: IssuedReportScreenProps) => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
@@ -131,7 +118,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch searchClient={Provider} indexName="issued">
         <AdaptiveHeader
           title={t("navigation.issued")}
@@ -141,7 +128,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { xs: 'none', sm: 'block' }}}>
+            <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <IssuedReportDataGrid
                 items={items}
                 size={limit}
