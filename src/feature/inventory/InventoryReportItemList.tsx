@@ -12,6 +12,7 @@ const InventoryReportItemList = (props: InventoryReportItemListProps) => {
       {props.items && props.items.map((item: InventoryReportItem) => {
         return (
           <InventoryReportItemListItem
+            key={item.stockNumber}
             item={item}
             onItemSelected={props.onItemSelected}/>
         )

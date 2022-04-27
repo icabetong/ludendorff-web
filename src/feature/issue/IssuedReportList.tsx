@@ -4,8 +4,6 @@ import { List, ListItemButton, ListItemText, ListItemSecondaryAction } from "@mu
 
 type IssuedReportListProps = {
   reports: IssuedReport[],
-  checked?: IssuedReport,
-  secondaryAction?: JSX.Element | ReactNode,
   onItemSelect: (report: IssuedReport) => void,
   onItemRemove: (report: IssuedReport) => void
 }
@@ -18,8 +16,6 @@ const IssuedReportList = (props: IssuedReportListProps) => {
             <IssuedReportListItem
               key={report.issuedReportId}
               report={report}
-              active={Boolean(report === props.checked)}
-              secondaryAction={props.secondaryAction}
               onItemSelect={props.onItemSelect}/>
           )
         })
@@ -41,13 +37,8 @@ const IssuedReportListItem = (props: IssuedReportListItemProps) => {
       selected={props.active}
       onClick={() => props.onItemSelect(props.report)}>
       <ListItemText
-        primary={props.report.fundCluster}
-        secondary={props.report.serialNumber}/>
-      { props.secondaryAction &&
-        <ListItemSecondaryAction>
-          {props.secondaryAction}
-        </ListItemSecondaryAction>
-      }
+        primary={props.report.serialNumber}
+        secondary={props.report.fundCluster}/>
     </ListItemButton>
   )
 }

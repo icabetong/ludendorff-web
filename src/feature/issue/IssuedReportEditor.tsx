@@ -59,9 +59,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   useEffect(() => {
     if (props.isOpen) {
       reset({
-        fundCluster: props.report?.fundCluster,
-        entityName: props.report?.entityName,
-        serialNumber: props.report?.serialNumber,
+        fundCluster: props.report?.fundCluster ? props.report?.fundCluster : "",
+        serialNumber: props.report?.serialNumber ? props.report?.serialNumber : ""
       });
       setDate(props.report?.date ? props.report?.date.toDate() : null);
     }
@@ -157,8 +156,12 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
           <EditorAppBar title={t("dialog.details_issued")} loading={isWriting} onDismiss={props.onDismiss}/>
           <EditorContent>
             <Box>
-              <Grid container direction={smBreakpoint ? "column" : "row"} alignItems="stretch" justifyContent="center"
-                    spacing={smBreakpoint ? 0 : 4}>
+              <Grid
+                container
+                direction={smBreakpoint ? "column" : "row"}
+                alignItems="stretch"
+                justifyContent="center"
+                spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
                   <Controller
                     name="fundCluster"
@@ -194,7 +197,8 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
                   <TextField
                     label={t("field.entity")}
                     value={t("template.entity", { name: entity?.entityName, position: entity?.entityPosition })}
-                    disabled={isWriting}/>
+                    disabled={isWriting}
+                    InputProps={{ readOnly: true }}/>
                   <LocalizationProvider dateAdapter={DateAdapter}>
                     <Box>
                       <DatePicker

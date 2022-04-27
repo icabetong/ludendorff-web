@@ -1,68 +1,104 @@
 import { useState, useEffect } from "react";
-import { IssuedReportItem } from "./IssuedReport";
-import { List, ListItemButton, ListItemText } from "@mui/material";
+import {
+  GroupedIssuedReportItem,
+  groupIssuedReportItemsByStockNumber,
+  IssuedReport,
+  IssuedReportItem,
+  IssuedReportRepository
+} from "./IssuedReport";
+import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { ArrowBackRounded, ChevronRightRounded } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import IssuedReportList from "./IssuedReportList";
+import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import { isDev } from "../../shared/utils";
 
-type GroupedIssuedReportItemTemp = {
-  [key: string]: IssuedReportItem[]
-}
-
-type GroupedIssuedReportItem = {
-  stockNumber: string,
-  description?: string,
-  items: IssuedReportItem[]
-}
-
-type IssuedReportItemPickerListProps = {
-  items: IssuedReportItem[],
-  onItemSelect: (report: GroupedIssuedReportItem) => void
+type IssuedReportItemPickerListProps = PaginationControllerProps & {
+  reports: IssuedReport[],
+  limit: number,
+  onItemSelect: (report: IssuedReportItem[]) => void
 }
 const IssuedReportItemPickerList = (props: IssuedReportItemPickerListProps) => {
-  const [items, setItems] = useState<GroupedIssuedReportItem[]>([]);
+  const { t } = useTranslation();
+  const [report, setReport] = useState<IssuedReport | undefined>(undefined);
+  const [issuedItems, setIssuedItems] = useState<IssuedReportItem[]>([]);
+  const [items, setItems] = useState<GroupedIssuedReportItem>({});
 
   useEffect(() => {
-    let grouped = props.items.reduce((r, a) => {
-      r[a.stockNumber]  = [...r[a.stockNumber] || [], a];
-      return r;
-    }, {} as GroupedIssuedReportItemTemp);
+    const fetch = async () => {
+      return report ? await IssuedReportRepository.fetch(report.issuedReportId)
+        : [];
+    }
 
-    let current = Object.keys(grouped).map((key: string) => {
-      return {
-        stockNumber: key,
-        description: grouped[key][0] ? grouped[key][0].description : "",
-        items: grouped[key],
-      } as GroupedIssuedReportItem
-    });
-    setItems(current);
-  }, [props.items]);
+    fetch().then(data => setIssuedItems(data))
+      .catch((error) => {
+        if (isDev) console.log(error);
+      });
+  }, [report]);
+
+  useEffect(() => {
+    setItems(groupIssuedReportItemsByStockNumber(issuedItems));
+  }, [issuedItems]);
+
+  const onDeselectReport = () => setReport(undefined);
 
   return (
-    <List>
-      {
-        items.map((item) => {
-          return (
-            <IssuedReportItemPickerListItem
-              key={item.stockNumber}
-              item={item}
-              onItemSelect={props.onItemSelect}/>
-          )
-        })
+    <Box>
+      { report
+        ? <List>
+          <ListItemButton onClick={onDeselectReport}>
+            <ListItemIcon><ArrowBackRounded/></ListItemIcon>
+            <ListItemText primary={t("button.back")}/>
+          </ListItemButton>
+          {
+            Object.keys(items).map((stockNumber) => {
+              return (
+                <IssuedReportItemPickerListItem
+                  key={stockNumber}
+                  stockNumber={stockNumber}
+                  item={items[stockNumber]}
+                  onItemSelect={props.onItemSelect}/>
+              )
+            })
+          }
+        </List>
+        : <>
+          <IssuedReportList
+            reports={props.reports}
+            onItemSelect={setReport}
+            onItemRemove={() => {}}/>
+          {props.canBack && props.reports.length > 0 && props.reports.length === props.limit &&
+            <PaginationController
+              canBack={props.canBack}
+              canForward={props.canForward}
+              onBackward={props.onBackward}
+              onForward={props.onForward}/>
+          }
+        </>
       }
-    </List>
+    </Box>
   )
 }
 
 type IssuedReportItemPickerListItemProps = {
-  item: GroupedIssuedReportItem,
-  onItemSelect: (item: GroupedIssuedReportItem) => void,
+  stockNumber: string,
+  item: IssuedReportItem[],
+  onItemSelect: (item: IssuedReportItem[]) => void,
 }
 const IssuedReportItemPickerListItem = (props: IssuedReportItemPickerListItemProps) => {
+  const getDescription = () => {
+    if (props.item.length > 0) {
+      return props.item[0].description;
+    } else return undefined;
+  }
+
   return (
     <ListItemButton onClick={() => props.onItemSelect(props.item)}>
       <ListItemText
-        primary={props.item.stockNumber}
-        secondary={props.item.description}/>
+        primary={props.stockNumber}
+        secondary={getDescription()}/>
     </ListItemButton>
   )
 }
 
-export { GroupedIssuedReportItem, IssuedReportItemPickerList };
+export default IssuedReportItemPickerList;

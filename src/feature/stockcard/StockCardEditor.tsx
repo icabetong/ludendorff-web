@@ -26,8 +26,7 @@ import { useSnackbar } from "notistack";
 import { GridSelectionModel } from "@mui/x-data-grid";
 import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import StockCardEntryDataGrid from "./StockCardEntryDataGrid";
-import IssuedReportPicker from "../issue/IssuedReportPicker";
-import { GroupedIssuedReportItem } from "../issue/IssuedReportItemPickerList";
+import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
 import InventoryReportPicker from "../inventory/InventoryReportPicker";
 import { InventoryReport, InventoryReportItem } from "../inventory/InventoryReport";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -35,6 +34,7 @@ import { firestore } from "../../index";
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { Balances } from "../shared/types/Balances";
 import { useDialog } from "../../components/DialogProvider";
+import { IssuedReportItem } from "../issue/IssuedReport";
 
 export type FormValues = {
   entityName?: string,
@@ -231,35 +231,32 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         setBalances(currentBalances);
       }
     } else {
-      let r = await show({
+      await show({
         title: t("dialog.stock_number_not_found_on_report"),
         description: t("dialog.stock_number_not_found_on_report_summary"),
         dismissButtonText: t("button.cancel")
       });
-      console.log(r);
       return;
     }
     onInventoryPickerDismiss();
   }
 
-  const onParseData = (item: GroupedIssuedReportItem) => {
-    if (item) {
-      if (item.items.length > 0) {
-        let issuedReportItem = item.items[0];
-        let stockCard: StockCard = {
-          stockCardId: props.stockCard ? props.stockCard.stockCardId : newId(),
-          stockNumber: issuedReportItem.stockNumber,
-          description: issuedReportItem.description,
-          unitPrice: issuedReportItem.unitCost,
-          unitOfMeasure: issuedReportItem.unitOfMeasure,
-          entries: []
-        }
-        setStockCard(stockCard);
+  const onParseData = (items: IssuedReportItem[]) => {
+    if (items.length > 0) {
+      let issuedReportItem = items[0];
+      let stockCard: StockCard = {
+        stockCardId: props.stockCard ? props.stockCard.stockCardId : newId(),
+        stockNumber: issuedReportItem.stockNumber,
+        description: issuedReportItem.description,
+        unitPrice: issuedReportItem.unitCost,
+        unitOfMeasure: issuedReportItem.unitOfMeasure,
+        entries: []
       }
+      setStockCard(stockCard);
 
       let total = 0;
       let arr: StockCardEntry[] = [];
-      item.items.forEach((issuedItem) => {
+      items.forEach((issuedItem) => {
         let entry: StockCardEntry = {
           stockCardEntryId: newId(),
           receivedQuantity: 0,
@@ -368,7 +365,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
           </EditorContent>
         </EditorRoot>
       </Dialog>
-      <IssuedReportPicker
+      <IssuedReportItemPicker
         isOpen={isOpen}
         onItemSelected={onParseData}
         onDismiss={onPickerDismiss}/>

@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   LinearProgress,
   useMediaQuery,
   useTheme,
@@ -19,6 +20,10 @@ import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
+import SearchDialogTitle from "../../components/SearchDialogTitle";
+import { InstantSearch } from "react-instantsearch-dom";
+import { Provider } from "../../components/Search";
+import AssetSearchList from "./AssetSearchList";
 
 type AssetPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -32,6 +37,7 @@ const AssetPicker = (props: AssetPickerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
+  const [searchMode, setSearchMode] = useState(false);
   const { canRead } = usePermissions();
   const { limit } = useQueryLimit('assetQueryLimit');
 
@@ -41,49 +47,57 @@ const AssetPicker = (props: AssetPickerProps) => {
   }
 
   return (
-    <Dialog
-      fullScreen={smBreakpoint}
-      fullWidth={true}
-      maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("dialog.select_asset")}</DialogTitle>
-      <DialogContent
-        dividers={true}
-        sx={{
-          minHeight: '60vh',
-          paddingX: 0,
-          '& .MuiList-padding': { padding: 0 }
-        }}>
-        {canRead ?
-          !props.isLoading
-            ? props.assets.length > 0
-              ? <>
-                <AssetList
-                  assets={props.assets}
-                  onItemSelect={onSelect}/>
-                {props.canForward && props.assets.length > 0 && props.assets.length === limit &&
-                  <PaginationController
-                    canBack={props.canBack}
-                    canForward={props.canForward}
-                    onBackward={props.onBackward}
-                    onForward={props.onForward}/>
-                }
-              </>
-              : <EmptyStateComponent
-                icon={DesktopWindowsRounded}
-                title={t("empty.asset")}
-                subtitle={t("empty.asset_summary")}/>
-            : <LinearProgress/>
-          : <ErrorNoPermissionState/>
-        }
-      </DialogContent>
-      <DialogActions>
-        <Button
-          color="primary"
-          onClick={props.onDismiss}>{t("button.close")}</Button>
-      </DialogActions>
-    </Dialog>
+    <InstantSearch searchClient={Provider} indexName="assets">
+      <Dialog
+        fullWidth
+        fullScreen={smBreakpoint}
+        maxWidth="xs"
+        open={props.isOpen}
+        PaperProps={{ sx: { minHeight: '60vh' }}}>
+        <SearchDialogTitle
+          hasSearchFocus={searchMode}
+          onSearchFocusChanged={setSearchMode}>
+          {t("dialog.select_asset")}
+        </SearchDialogTitle>
+        <DialogContent
+          dividers={true}
+          sx={{
+            height: '100%',
+            paddingX: 0,
+            '& .MuiList-padding': { padding: 0 }
+          }}>
+          {canRead
+            ? searchMode
+              ? <AssetSearchList onItemSelect={onSelect}/>
+                : !props.isLoading
+                  ? props.assets.length > 0
+                    ? <>
+                      <AssetList
+                        assets={props.assets}
+                        onItemSelect={onSelect}/>
+                      {props.canForward && props.assets.length > 0 && props.assets.length === limit &&
+                        <PaginationController
+                          canBack={props.canBack}
+                          canForward={props.canForward}
+                          onBackward={props.onBackward}
+                          onForward={props.onForward}/>
+                      }
+                    </>
+                : <EmptyStateComponent
+                  icon={DesktopWindowsRounded}
+                  title={t("empty.asset")}
+                  subtitle={t("empty.asset_summary")}/>
+              : <LinearProgress/>
+            : <ErrorNoPermissionState/>
+          }
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="primary"
+            onClick={props.onDismiss}>{t("button.close")}</Button>
+        </DialogActions>
+      </Dialog>
+    </InstantSearch>
   );
 }
 

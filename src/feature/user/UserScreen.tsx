@@ -26,6 +26,8 @@ import { UserEmptyState } from "./UserEmptyState";
 import UserDataGrid from "./UserDataGrid";
 import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
+import { useDialog } from "../../components/DialogProvider";
+import { isDev } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -40,6 +42,7 @@ const UserScreen = (props: UserScreenProps) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const show = useDialog();
   const { canRead, canManageUsers } = usePermissions();
   const { limit, onLimitChanged } = useQueryLimit('userQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
@@ -65,28 +68,38 @@ const UserScreen = (props: UserScreenProps) => {
     onParseQuery(), { limit: limit }
   );
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [userModify, setUserModify] = useState<User | undefined>(undefined);
-  const [userRemove, setUserRemove] = useState<User | undefined>(undefined);
 
-  const onModificationInvoke = (user: User) => setUserModify(user);
-  const onModificationDismiss = () => setUserModify(undefined);
-  const onModificationConfirmed = () => {
-    if (userModify !== undefined) {
-      UserRepository.modify(userModify.userId, !userModify.disabled)
-        .then(() => enqueueSnackbar(t("feedback.user_modified")))
-        .catch(() => enqueueSnackbar(t("feedback.user_modify_error")))
-        .finally(onModificationDismiss)
+  const onModificationInvoke = async (user: User) => {
+    try {
+      let result = await show({
+        title: user?.disabled ? "dialog.user_enable" : "dialog.user_disable",
+        description: user?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"
+      });
+      if (result) {
+        await UserRepository.modify(user.userId, !user.disabled)
+        enqueueSnackbar(t("feedback.user_modified"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.user_modify_error"));
+      if (isDev) console.log(error);
     }
   }
 
-  const onRemoveInvoke = (user: User) => setUserRemove(user);
-  const onRemoveDismiss = () => setUserRemove(undefined);
-  const onRemoveConfirmed = () => {
-    if (userRemove !== undefined) {
-      UserRepository.remove(userRemove)
-        .then(() => enqueueSnackbar(t("feedback.user_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.user_remove_error")))
-        .finally(onRemoveDismiss)
+  const onUserRemove = async (user: User) => {
+    try {
+      let result = await show({
+        title: t("dialog.user_remove"),
+        description: t("dialog.user_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await UserRepository.remove(user);
+        enqueueSnackbar(t("feedback.user_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.user_remove_error"));
+      if (isDev) console.log(error);
     }
   }
 
@@ -130,7 +143,7 @@ const UserScreen = (props: UserScreenProps) => {
                 onForward={getNext}
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClick}
-                onRemoveInvoke={onRemoveInvoke}
+                onRemoveInvoke={onUserRemove}
                 onModificationInvoke={onModificationInvoke}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
@@ -159,18 +172,6 @@ const UserScreen = (props: UserScreenProps) => {
         isCreate={state.isCreate}
         user={state.user}
         onDismiss={onUserEditorDismiss}/>
-      <ConfirmationDialog
-        isOpen={userModify !== undefined}
-        title={userModify?.disabled ? "dialog.user_enable" : "dialog.user_disable"}
-        summary={userModify?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"}
-        onDismiss={onModificationDismiss}
-        onConfirm={onModificationConfirmed}/>
-      <ConfirmationDialog
-        isOpen={userRemove !== undefined}
-        title="dialog.user_remove"
-        summary="dialog.user_remove_summary"
-        onDismiss={onRemoveDismiss}
-        onConfirm={onRemoveConfirmed}/>
     </Box>
   );
 }

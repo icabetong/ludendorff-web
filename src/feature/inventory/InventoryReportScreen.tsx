@@ -21,7 +21,6 @@ import {
   inventoryCollection,
 } from "../../shared/const";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { isDev } from "../../shared/utils";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
@@ -34,6 +33,7 @@ import InventoryReportDataGrid from "./InventoryReportDataGrid";
 import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
 import { OrderByDirection } from "@firebase/firestore-types";
 import useSort from "../shared/hooks/useSort";
+import { useDialog } from "../../components/DialogProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -48,9 +48,9 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const show = useDialog();
   const { canRead, canWrite } = usePermissions();
   const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
-  const [report, setReport] = useState<InventoryReport | undefined>(undefined);
   const [toExport, setToExport] = useState<InventoryReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
@@ -79,17 +79,21 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
     }
   );
 
-  const onRemoveInvoke = (report: InventoryReport) => setReport(report);
-  const onRemoveDismiss = () => setReport(undefined);
-  const onReportRemove = () => {
-    if (report) {
-      InventoryReportRepository.remove(report)
-        .then(() => enqueueSnackbar(t("feedback.inventory_removed")))
-        .catch((error) => {
-          enqueueSnackbar(t("feedback.inventory_remove_error"))
-          if (isDev) console.log(error)
-        })
-        .finally(onRemoveDismiss)
+  const onInventoryReportRemove = async (report: InventoryReport) => {
+    try {
+      let result = await show({
+        title: t("dialog.inventory_remove"),
+        description: t("dialog.inventory_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await InventoryReportRepository.remove(report);
+        enqueueSnackbar(t("feedback.inventory_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.inventory_remove_error"));
+      if (isDev) console.log(error);
     }
   }
 
@@ -154,7 +158,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
-                onRemoveInvoke={onRemoveInvoke}
+                onRemoveInvoke={onInventoryReportRemove}
                 onPageSizeChanged={onLimitChanged}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
@@ -165,7 +169,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                   : <InventoryReportList
                       reports={items}
                       onItemSelect={onInventoryReportSelected}
-                      onItemRemove={onRemoveInvoke}/>
+                      onItemRemove={onInventoryReportRemove}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -184,12 +188,6 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         isCreate={state.isCreate}
         report={state.report}
         onDismiss={onInventoryEditorDismiss}/>
-      <ConfirmationDialog
-        isOpen={report !== undefined}
-        title="dialog.inventory_remove"
-        summary="dialog.inventory_remove_summary"
-        onConfirm={onReportRemove}
-        onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
         key="inventoryExport"
         isOpen={Boolean(toExport)}

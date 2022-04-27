@@ -18,7 +18,6 @@ import {
 import { ActionType, initialState, reducer } from "./AssetEditorReducer";
 import AssetEditor from "./AssetEditor";
 import CategoryScreen from "../category/CategoryScreen";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
@@ -31,6 +30,7 @@ import AssetDataGrid from "./AssetDataGrid";
 import { AssetEmptyState } from "./AssetEmptyState";
 import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
+import { useDialog } from "../../components/DialogProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
@@ -47,9 +47,9 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { canRead, canWrite } = usePermissions();
   const { limit, onLimitChanged } = useQueryLimit('assetQueryLimit');
-  const [asset, setAsset] = useState<Asset | null>(null);
   const [searchMode, setSearchMode] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('assetSort');
+  const show = useDialog();
 
   const onParseQuery = () => {
     let field = assetDescription;
@@ -71,17 +71,21 @@ const AssetScreen = (props: AssetScreenProps) => {
     onParseQuery(), { limit: limit }
   );
 
-  const onRemoveInvoke = (asset: Asset) => setAsset(asset);
-  const onRemoveDismiss = () => setAsset(null);
-  const onAssetRemove = () => {
-    if (asset !== null) {
-      AssetRepository.remove(asset)
-        .then(() => enqueueSnackbar(t("feedback.asset_removed")))
-        .catch((error) => {
-          enqueueSnackbar(t("feedback.asset_remove_error"))
-          if (isDev) console.log(error)
-        })
-        .finally(onRemoveDismiss)
+  const onAssetRemove = async (asset: Asset) => {
+    try {
+      let result = await show({
+        title: t("dialog.asset_remove"),
+        description: t("dialog.asset_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await AssetRepository.remove(asset);
+        enqueueSnackbar(t("feedback.asset_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.asset_remove_error"))
+      if (isDev) console.log(error)
     }
   }
 
@@ -134,7 +138,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onBackward={getPrev}
                 onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
-                onRemoveInvoke={onRemoveInvoke}
+                onRemoveInvoke={onAssetRemove}
                 onTypesInvoke={onCategoryListView}
                 onPageSizeChanged={onLimitChanged}
                 onSortMethodChanged={onSortMethodChange}/>
@@ -146,7 +150,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                   : <AssetList
                       assets={items}
                       onItemSelect={onAssetSelected}
-                      onItemRemove={onRemoveInvoke}/>
+                      onItemRemove={onAssetRemove}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -168,12 +172,6 @@ const AssetScreen = (props: AssetScreenProps) => {
       <CategoryScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>
-      <ConfirmationDialog
-        isOpen={Boolean(asset)}
-        title="dialog.asset_remove"
-        summary="dialog.asset_remove_summary"
-        onDismiss={onRemoveDismiss}
-        onConfirm={onAssetRemove}/>
     </Box>
   );
 }

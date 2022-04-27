@@ -8,7 +8,8 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
+import { useDialog } from "../../components/DialogProvider";
+import { isDev } from "../../shared/utils";
 
 type CategoryListProps = {
   categories: Category[],
@@ -18,17 +19,23 @@ type CategoryListProps = {
 const CategoryList = (props: CategoryListProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [category, setCategory] = useState<Category | undefined>(undefined);
+  const show = useDialog();
 
-  const onRemoveInvoke = (category: Category) => setCategory(category);
-  const onRemoveDismiss = () => setCategory(undefined);
-
-  const onCategoryRemove = () => {
-    if (category !== undefined) {
-      CategoryRepository.remove(category)
-        .then(() => enqueueSnackbar(t("feedback.category_removed")))
-        .catch(() => enqueueSnackbar(t("feedback.category_remove_error")))
-        .finally(onRemoveDismiss)
+  const onCategoryRemove = async (category: Category) => {
+    try {
+      let result = await show({
+        title: t("dialog.category_remove"),
+        description: t("dialog.category_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await CategoryRepository.remove(category);
+        enqueueSnackbar(t("feedback.category_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.category_remove_error"));
+      if (isDev) console.log(error);
     }
   }
 
@@ -43,7 +50,7 @@ const CategoryList = (props: CategoryListProps) => {
                   key={category.categoryId}
                   type={category}
                   onItemSelect={props.onItemSelect}
-                  onItemRemove={onRemoveInvoke}/>
+                  onItemRemove={onCategoryRemove}/>
               );
             })
           }
@@ -53,12 +60,6 @@ const CategoryList = (props: CategoryListProps) => {
             title={t("empty.category")}
             subtitle={t("empty.category_summary")}/>
       }
-      <ConfirmationDialog
-        isOpen={category !== undefined}
-        title="dialog.category_remove"
-        summary="dialog.category_remove_summary"
-        onDismiss={onRemoveDismiss}
-        onConfirm={onCategoryRemove}/>
     </>
   );
 }

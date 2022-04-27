@@ -19,7 +19,6 @@ import { Provider } from "../../components/Search";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import IssuedReportList from "./IssuedReportList";
 import IssuedReportEditor from "./IssuedReportEditor";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
@@ -31,6 +30,7 @@ import IssuedReportDataGrid from "./IssuedReportDataGrid";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
+import { useDialog } from "../../components/DialogProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -48,8 +48,8 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const show = useDialog();
   const { canRead, canWrite } = usePermissions();
-  const [report, setReport] = useState<IssuedReport | undefined>(undefined);
   const { limit, onLimitChanged } = useQueryLimit('issuedQueryLimit');
   const [toExport, setToExport] = useState<IssuedReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
@@ -77,17 +77,21 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
     onParseQuery(), { limit: limit }
   );
 
-  const onRemoveInvoke = (report: IssuedReport) => setReport(report);
-  const onRemoveDismiss = () => setReport(undefined);
-  const onReportRemove = () => {
-    if (report) {
-      IssuedReportRepository.remove(report)
-        .then(() => enqueueSnackbar(t("feedback.issued_report_removed")))
-        .catch((error) => {
-          enqueueSnackbar(t("feedback.issued_report_remove_error"));
-          if (isDev) console.log(error);
-        })
-        .finally(onRemoveDismiss)
+  const onIssuedReportRemove = async (report: IssuedReport) => {
+    try {
+      let result = await show({
+        title: t("dialog.issued_report_remove"),
+        description: t("dialog.issued_report_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await IssuedReportRepository.remove(report);
+        enqueueSnackbar(t("feedback.issued_report_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.issued_report_remove_error"));
+      if (isDev) console.log(error);
     }
   }
 
@@ -151,7 +155,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                 onPageSizeChanged={onLimitChanged}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
-                onRemoveInvoke={onRemoveInvoke}
+                onRemoveInvoke={onIssuedReportRemove}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
@@ -161,7 +165,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
                   : <IssuedReportList
                       reports={items}
                       onItemSelect={onIssuedReportSelected}
-                      onItemRemove={onRemoveInvoke}/>
+                      onItemRemove={onIssuedReportRemove}/>
                 : <LinearProgress/>
               }
               <Fab
@@ -180,12 +184,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         isCreate={state.isCreate}
         report={state.report}
         onDismiss={onIssuedEditorDismiss}/>
-      <ConfirmationDialog
-        isOpen={report !== undefined}
-        title="dialog.issued_report_remove"
-        summary="dialog.issued_report_remove_summary"
-        onConfirm={onReportRemove}
-        onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
         key="issuedExport"
         isOpen={Boolean(toExport)}

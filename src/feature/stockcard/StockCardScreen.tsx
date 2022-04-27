@@ -23,7 +23,6 @@ import { Provider } from "../../components/Search";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import StockCardList from "./StockCardList";
 import { StockCardEditor } from "./StockCardEditor";
-import ConfirmationDialog from "../shared/ConfirmationDialog";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { convertStockCardToWorkSheet } from "./StockCardSheet";
@@ -34,6 +33,7 @@ import StockCardDataGrid from "./StockCardDataGrid";
 import { StockCardEmptyState } from "./StockCardEmptyState";
 import { OrderByDirection } from "@firebase/firestore-types";
 import useSort from "../shared/hooks/useSort";
+import { useDialog } from "../../components/DialogProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -51,8 +51,8 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const show = useDialog();
   const { canRead, canWrite } = usePermissions();
-  const [stockCard, setStockCard] = useState<StockCard | null>(null);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const [toExport, setToExport] = useState<StockCard | undefined>(undefined);
@@ -80,17 +80,21 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     onParseQuery(), { limit: limit }
   )
 
-  const onRemoveInvoke = (stockCard: StockCard) => setStockCard(stockCard);
-  const onRemoveDismiss = () => setStockCard(null);
-  const onStockCardRemove = () => {
-    if (stockCard) {
-      StockCardRepository.remove(stockCard)
-        .then(() => enqueueSnackbar(t("feedback.stock_card_removed")))
-        .catch((error) => {
-          enqueueSnackbar(t("feedback.stock_card_remove_error"))
-          if (isDev) console.log(error)
-        })
-        .finally(onRemoveDismiss)
+  const onRemoveInvoke = async (stockCard: StockCard) => {
+    try {
+      let result = await show({
+        title: t("dialog.stock_card_remove"),
+        description: t("dialog.stock_card_remove_summary"),
+        confirmButtonText: t("button.delete"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await StockCardRepository.remove(stockCard);
+        enqueueSnackbar(t("feedback.stock_card_removed"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.stock_card_remove_error"));
+      if (isDev) console.log(error);
     }
   }
 
@@ -182,12 +186,6 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         isCreate={state.isCreate}
         stockCard={state.stockCard}
         onDismiss={onStockCardEditorDismiss}/>
-      <ConfirmationDialog
-        isOpen={stockCard !== null}
-        title="dialog.stock_card_remove"
-        summary="dialog.stock_card_remove_summary"
-        onConfirm={onStockCardRemove}
-        onDismiss={onRemoveDismiss}/>
       <ExportSpreadsheetDialog
         key="stockCardExport"
         isOpen={Boolean(toExport)}

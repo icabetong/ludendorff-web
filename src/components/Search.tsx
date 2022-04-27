@@ -70,6 +70,7 @@ const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
 
 
 type SearchBoxInputBaseProps = SearchBoxProvided & {
+  dontWatchFocus?: boolean,
   onFocusChanged?: (hasFocus: boolean) => void,
 }
 const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
@@ -77,15 +78,19 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
   const classes = useStyles();
   const onFocusGained = () => props.onFocusChanged?.(true)
   const onFocusLost = () => {
-    if (props.currentRefinement.match(/^ *$/) != null)
-      return props.onFocusChanged?.(false)
-    else return props.onFocusChanged?.(true)
+    if (!props.dontWatchFocus) {
+      if (props.currentRefinement.match(/^ *$/) != null)
+        return props.onFocusChanged?.(false)
+      else return props.onFocusChanged?.(true)
+    }
   }
 
   const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     props.refine(event.target.value)
-    if (event.target.value === '') {
-      props.onFocusChanged?.(false)
+    if (!props.dontWatchFocus) {
+      if (event.target.value === '') {
+        props.onFocusChanged?.(false)
+      }
     }
   }
 

@@ -24,6 +24,17 @@ export type IssuedReportItem = {
   responsibilityCenter?: string,
 }
 
+export type GroupedIssuedReportItem = {
+  [key: string]: IssuedReportItem[]
+}
+
+export function groupIssuedReportItemsByStockNumber(items: IssuedReportItem[]): GroupedIssuedReportItem {
+  return items.reduce((r, a) => {
+    r[a.stockNumber]  = [...r[a.stockNumber] || [], a];
+    return r;
+  }, {} as GroupedIssuedReportItem);
+}
+
 export class IssuedReportRepository {
   static async fetch(issuedId: string): Promise<IssuedReportItem[]> {
     let itemsRef = collection(firestore, issuedCollection, issuedId, itemsCollection);
