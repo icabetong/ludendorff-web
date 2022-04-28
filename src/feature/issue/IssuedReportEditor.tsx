@@ -108,7 +108,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const onCheckedRowsRemove = () => {
     let currentItems = Array.from(items);
     checked.forEach((id: string) => {
-      currentItems = currentItems.filter((i) => i.stockNumber !== id);
+      currentItems = currentItems.filter((i) => i.issuedReportItemId !== id);
     });
     setItems(currentItems);
   }
