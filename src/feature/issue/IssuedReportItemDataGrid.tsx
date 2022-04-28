@@ -1,5 +1,4 @@
-import { makeStyles } from "@mui/styles";
-import { Box, Theme } from "@mui/material";
+import { Box } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { IssuedReportItem } from "./IssuedReport";
@@ -24,14 +23,6 @@ import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { currencyFormatter } from "../../shared/utils";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  dataGrid: {
-    marginTop: theme.spacing(1),
-    height: '100%',
-    ...getEditorDataGridTheme(theme)
-  }
-}));
-
 type IssuedReportItemDataGridProps = EditorDataGridProps<IssuedReportItem> & {
   items: IssuedReportItem[],
   onCheckedRowsChanged: (model: GridSelectionModel) => void,
@@ -39,7 +30,6 @@ type IssuedReportItemDataGridProps = EditorDataGridProps<IssuedReportItem> & {
 
 const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const { density, onDensityChanged } = useDensity('issuedEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
@@ -77,7 +67,7 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   }
 
   return (
-    <Box className={classes.dataGrid}>
+    <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme)})}>
       <DataGrid
         checkboxSelection
         disableSelectionOnClick

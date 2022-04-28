@@ -1,5 +1,4 @@
-import { makeStyles } from "@mui/styles";
-import { Box, Theme } from "@mui/material";
+import { Box } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { StockCard, StockCardEntry } from "./StockCard";
@@ -30,14 +29,6 @@ import { QueryStatsRounded } from "@mui/icons-material";
 import { Balances, Entry } from "../shared/types/Balances";
 import { currencyFormatter } from "../../shared/utils";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  dataGrid: {
-    marginTop: theme.spacing(1),
-    height: '100%',
-    ...getEditorDataGridTheme(theme)
-  }
-}));
-
 type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
   entries: StockCardEntry[],
   balances: Balances,
@@ -47,7 +38,6 @@ type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
 }
 const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const { density, onDensityChanged } = useDensity('stockCardEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
@@ -126,7 +116,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   }
 
   return (
-    <Box className={classes.dataGrid}>
+    <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme)})}>
       <DataGrid
         disableSelectionOnClick
         checkboxSelection

@@ -18,8 +18,7 @@ import {
   onHandCount
 } from "../../shared/const";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@mui/styles";
-import { Box, Theme } from "@mui/material";
+import { Box } from "@mui/material";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import { useState } from "react";
@@ -29,14 +28,6 @@ import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { currencyFormatter } from "../../shared/utils";
 import { EditRounded } from "@mui/icons-material";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  dataGrid: {
-    marginTop: theme.spacing(1),
-    height: '100%',
-    ...getEditorDataGridTheme(theme)
-  }
-}));
-
 type InventoryReportItemDataGridProps = EditorDataGridProps<InventoryReportItem> & {
   items: InventoryReportItem[],
   onCheckedRowsChanged: (model: GridSelectionModel) => void,
@@ -44,7 +35,6 @@ type InventoryReportItemDataGridProps = EditorDataGridProps<InventoryReportItem>
 
 const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const { density, onDensityChanged } = useDensity('inventoryEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
 
@@ -100,7 +90,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
   }
 
   return (
-    <Box className={classes.dataGrid}>
+    <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme)})}>
       <DataGrid
         checkboxSelection
         components={{
