@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Box,
   Button,
   Container,
   Dialog,
@@ -36,11 +37,20 @@ type CategoryEditorProps = {
 const CategoryEditor = (props: CategoryEditorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [isWritePending, setWritePending] = React.useState(false);
-  const [subcategories, setSubcategories] = React.useState<string[]>(props.category ? props.category.subcategories : []);
+  const [isWritePending, setWritePending] = useState(false);
+  const [subcategories, setSubcategories] = useState<string[]>([]);
   const { handleSubmit, formState: { errors }, control, setValue } = useForm<FormData>();
-
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (props.isOpen) {
+      setValue("categoryName", props.category ? props.category?.categoryName : "");
+      if (props.category) {
+        setSubcategories(props.category?.subcategories);
+      }
+    }
+  }, [setValue, props.category, props.isOpen]);
+
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
   const onEditorUpdate = (subcategory: string) => dispatch({ type: ActionType.UPDATE, payload: subcategory });
@@ -57,25 +67,14 @@ const CategoryEditor = (props: CategoryEditorProps) => {
   }
   const onSubcategoryRemove = (subcategory: string) => {
     let lowerCased = subcategory.toLowerCase();
-    let index = subcategories.findIndex(str => str.toLowerCase() === lowerCased);
-    if (index >= 0) {
-      // tested in Edge 100/Chrome 100
-      // need to add 1 in index in order for
-      // splice to work
-      let sub = subcategories.splice(index + 1, 1);
-      setSubcategories(sub);
-      enqueueSnackbar(t("feedback.subcategory_removed"));
-    }
+    let sub = subcategories.filter((str) => str.toLowerCase() !== lowerCased);
+    setSubcategories(sub);
+    enqueueSnackbar(t("feedback.subcategory_removed"));
   }
-
-  useEffect(() => {
-    if (props.isOpen) {
-      setValue("categoryName", props.category ? props.category?.categoryName : "")
-    }
-  }, [setValue, props.category, props.isOpen])
 
   const onDismiss = () => {
     setWritePending(false);
+    setSubcategories([]);
     props.onDismiss();
   }
 
@@ -109,32 +108,37 @@ const CategoryEditor = (props: CategoryEditorProps) => {
 
   return (
     <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Dialog
         fullWidth={true}
         maxWidth="xs"
+        scroll="paper"
         open={props.isOpen}>
-        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_category")}</DialogTitle>
-          <DialogContent>
+          <DialogContent dividers={true}>
             <Container disableGutters>
-              <Controller
-                control={control}
-                name="categoryName"
-                render={({ field: { ref, ...inputProps } }) => (
-                  <TextField
-                    {...inputProps}
-                    type="text"
-                    inputRef={ref}
-                    label={t("field.category_name")}
-                    error={errors.categoryName !== undefined}
-                    helperText={errors.categoryName?.message && t(errors.categoryName.message)}
-                    disabled={isWritePending}/>
-                )}
-                rules={{ required: { value: true, message: "feedback.empty_category_name" }}}/>
+              <Box sx={{ mx: 2 }}>
+                <Controller
+                  control={control}
+                  name="categoryName"
+                  render={({ field: { ref, ...inputProps } }) => (
+                    <TextField
+                      {...inputProps}
+                      type="text"
+                      inputRef={ref}
+                      label={t("field.category_name")}
+                      error={errors.categoryName !== undefined}
+                      helperText={errors.categoryName?.message && t(errors.categoryName.message)}
+                      disabled={isWritePending}/>
+                  )}
+                  rules={{ required: { value: true, message: "feedback.empty_category_name" }}}/>
+              </Box>
               <Divider sx={{ my: 1 }}/>
-              <FormLabel>
-                <Typography variant="body2">{t("field.subcategories")}</Typography>
-              </FormLabel>
+              <Box sx={{ mx: 2 }}>
+                <FormLabel>
+                  <Typography variant="body2">{t("field.subcategories")}</Typography>
+                </FormLabel>
+              </Box>
               <SubcategoryList
                 subcategories={subcategories}
                 onItemSelect={onEditorUpdate}
@@ -156,8 +160,8 @@ const CategoryEditor = (props: CategoryEditorProps) => {
               {t("button.save")}
             </LoadingButton>
           </DialogActions>
-        </form>
       </Dialog>
+      </form>
       <SubcategoryEditor
         subcategory={state.subcategory}
         isOpen={state.isOpen}

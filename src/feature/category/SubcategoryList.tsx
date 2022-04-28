@@ -30,14 +30,17 @@ type SubcategoryListItemProps = {
   onItemRemove: (subcategory: string) => void,
 }
 const SubcategoryListItem = (props: SubcategoryListItemProps) => {
+  const onHandleItemSelect = () => props.onItemSelect(props.subcategory);
+  const onHandleItemRemove = () => props.onItemRemove(props.subcategory);
+
   return (
     <ListItem
       button
       key={props.subcategory}
-      onClick={() => props.onItemRemove(props.subcategory)}>
+      onClick={onHandleItemSelect}>
       <ListItemText>{props.subcategory}</ListItemText>
       <ListItemSecondaryAction>
-        <IconButton edge="end" onClick={() => props.onItemRemove(props.subcategory)}>
+        <IconButton edge="end" onClick={onHandleItemRemove}>
           <DeleteOutlineRounded/>
         </IconButton>
       </ListItemSecondaryAction>

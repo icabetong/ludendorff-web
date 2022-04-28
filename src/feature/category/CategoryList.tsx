@@ -86,11 +86,15 @@ const CategoryListItem = (props: CategoryListItemProps) => {
 
   const getSecondaryListText = (subcategories: string[]) => {
      if (subcategories.length > 1) {
-      return t("template.subcategories_include", { includes: subcategories.join(", ") });
+      if (subcategories.length > 5) {
+        let count = subcategories.length - 5;
+        let items = subcategories.slice(0, 5).join(", ");
+        return t("template.subcategories_include_over_10", { includes: items, count: count });
+      } else return t("template.subcategories_include", { includes: subcategories.join(", ") });
     } else if (subcategories.length === 1) {
        return subcategories[0];
      } else {
-       return "";
+       return t("empty.subcategories");
      }
   }
 

@@ -48,7 +48,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
   const onEditorUpdate = (type: Category) => dispatch({ type: ActionType.UPDATE, payload: type })
 
   return (
-    <InstantSearch searchClient={Provider} indexName="types">
+    <InstantSearch searchClient={Provider} indexName="categories">
       <Dialog
         fullScreen={true}
         open={props.isOpen}

@@ -190,6 +190,7 @@ const resources = {
         category_created: "Category created successfully",
         category_updated: "Category updated successfully",
         category_removed: "Category removed successfully",
+        subcategory_removed: "Subcategory removed successfully",
         user_created: "User created successfully",
         user_updated: "User updated successfully",
         user_removed: "User removed successfully",
@@ -314,6 +315,7 @@ const resources = {
         as_of_year_month: "As of {{yearMonth}}",
         inventory_entity: "For which, {{name}}, {{position}}, Central Luzon State University, is accountable, having assumed such accountability on {{date}}",
         subcategories_include: "Subcategories include: {{includes}}",
+        subcategories_include_over_10: "Subcategories include: {{includes}} and {{count}} more others",
         entity: "{{name}}, ({{position}})"
       },
       empty: {
@@ -330,7 +332,8 @@ const resources = {
         stock_card_header: "No Stock Cards Added",
         stock_card_summary: "There are no Stock Cards that are available on the database.",
         issued_reports_header: "No Issued Items Reports Available",
-        issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database."
+        issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database.",
+        subcategories: "No subcategories added",
       },
       document: {
         stock_card: "Stock Card",
