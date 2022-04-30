@@ -67,7 +67,10 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
 
   useEffect(() => {
     if (props.isOpen) {
-      setValue("entityName", props.stockCard ? props.stockCard?.entityName : "")
+      setValue("entityName", props.stockCard ? props.stockCard?.entityName : "");
+      if (props.stockCard?.balances) {
+        setBalances(props.stockCard?.balances)
+      }
     }
   }, [props.isOpen, props.stockCard, setValue])
 
@@ -135,6 +138,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       stockCardId: props.stockCard ? props.stockCard.stockCardId : newId(),
       unitPrice: props.stockCard ? props.stockCard.unitPrice : 0,
       entityName: values.entityName,
+      balances: balances,
       entries: entries
     }
 
@@ -250,6 +254,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         description: issuedReportItem.description,
         unitPrice: issuedReportItem.unitCost,
         unitOfMeasure: issuedReportItem.unitOfMeasure,
+        balances: {},
         entries: []
       }
       setStockCard(stockCard);

@@ -85,7 +85,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     }
   }
 
-  const onExportSpreadsheet = async (stockCard: StockCard) => {
+  const onExportSpreadsheet = (stockCard: StockCard) => {
     setToExport(stockCard);
   }
   const onExportDismiss = () => setToExport(undefined);
@@ -93,7 +93,11 @@ const StockCardScreen = (props: StockCardScreenProps) => {
     if (toExport) {
       setBackgroundWork(true);
       const workBook = new Excel.Workbook();
-      convertStockCardToWorkSheet(workBook, params.worksheetName, toExport);
+
+      let entries = await StockCardRepository.fetch(toExport.stockCardId);
+      let stockCard = toExport;
+      stockCard.entries = entries;
+      convertStockCardToWorkSheet(workBook, params.worksheetName, stockCard);
 
       const blob = await convertWorkbookToBlob(workBook)
       if (linkRef && linkRef.current) {

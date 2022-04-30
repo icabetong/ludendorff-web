@@ -17,7 +17,7 @@ type State = {
   isOpen: boolean
 }
 export const initialState: State = {
-  stockCard: { stockCardId: newId(), unitPrice: 0, entries: [] },
+  stockCard: { stockCardId: newId(), unitPrice: 0, entries: [], balances: {} },
   isCreate: true,
   isOpen: false,
 }

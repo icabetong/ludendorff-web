@@ -4,7 +4,6 @@ import { formatDate } from "../../shared/utils";
 import * as Excel from "exceljs";
 import { numToLetter } from "../../shared/spreadsheet";
 
-// TODO: fix the Excel generation to accommodate the new Stock Card logic
 const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, stockCard: StockCard) => {
   const workSheet = workBook.addWorksheet(stockCard.stockNumber);
   workSheet.columns = [
@@ -131,6 +130,16 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, sto
 
   workSheet.addRows([
     ...stockCard.entries.map((entry) => {
+      let sourceId = entry.inventoryReportSourceId;
+      let balanceQuantity = 0;
+      let balanceTotalPrice = 0;
+      if (sourceId) {
+        let balanceEntry = stockCard.balances[sourceId];
+        let innerEntry = balanceEntry.entries[entry.stockCardEntryId];
+        balanceQuantity = innerEntry;
+        balanceTotalPrice = innerEntry * stockCard.unitPrice;
+      }
+
       return [
         formatDate(entry.date),
         entry.reference,
@@ -138,7 +147,8 @@ const convertStockCardToWorkSheet = (workBook: Excel.Workbook, name: string, sto
         entry.requestedQuantity,
         entry.issueQuantity,
         entry.issueOffice,
-        ""
+        balanceQuantity,
+        balanceTotalPrice,
       ]
     })
   ])

@@ -4,6 +4,7 @@ import { entries as entriesCollection, stockCardCollection } from "../../shared/
 import axios from "axios";
 import { getIdTokenRefreshed } from "../user/User";
 import { SERVER_URL } from "../../shared/utils";
+import { Balances } from "../shared/types/Balances";
 
 export type StockCard = {
   stockCardId: string,
@@ -12,6 +13,7 @@ export type StockCard = {
   description?: string,
   unitPrice: number,
   unitOfMeasure?: string,
+  balances: Balances,
   entries: StockCardEntry[]
 }
 
