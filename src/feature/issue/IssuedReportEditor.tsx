@@ -124,6 +124,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       items: items,
       issuedReportId: props.report ? props.report.issuedReportId : newId(),
       date: Timestamp.fromDate(date),
+      entityName: entity?.entityName,
     }
 
     if (props.isCreate) {

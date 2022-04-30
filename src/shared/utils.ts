@@ -43,3 +43,9 @@ export const formatDate = (timestamp: Timestamp | undefined) => {
   const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' } as const;
   return timestamp !== undefined ? timestamp?.toDate().toLocaleDateString(['en-PH'], options) : "unknown";
 }
+
+export function chunck<T>(arr: T[], size: number) {
+  return Array.from({ length: Math.ceil(arr.length / size )}, function(v, i) {
+    return arr.slice(i * size, i * size + size);
+  });
+}

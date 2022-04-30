@@ -94,6 +94,10 @@ const resources = {
         subcategory_name: "Subcategory Name",
         entity: "Entity",
         total_issued_quantity: "Total Issued Quantity",
+        recapitulation: "Recapitulation",
+        total_cost: "Total Cost",
+        uacs_object_code: "UACS Object Code",
+        posted_by: "Posted by:",
       },
       placeholder: {
         none: "None",
