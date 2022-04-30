@@ -45,12 +45,9 @@ const CategoryEditor = (props: CategoryEditorProps) => {
   useEffect(() => {
     if (props.isOpen) {
       setValue("categoryName", props.category ? props.category?.categoryName : "");
-      if (props.category) {
-        setSubcategories(props.category?.subcategories);
-      }
+      setSubcategories(props.category ? props.category.subcategories : []);
     }
   }, [setValue, props.category, props.isOpen]);
-
 
   const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
   const onEditorUpdate = (subcategory: string) => dispatch({ type: ActionType.UPDATE, payload: subcategory });
@@ -74,7 +71,6 @@ const CategoryEditor = (props: CategoryEditorProps) => {
 
   const onDismiss = () => {
     setWritePending(false);
-    setSubcategories([]);
     props.onDismiss();
   }
 

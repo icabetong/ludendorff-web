@@ -76,7 +76,6 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
 
   const onDismiss = () => {
     setWriting(false);
-    setEntries([]);
     props.onDismiss();
   }
 

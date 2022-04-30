@@ -86,7 +86,6 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
 
   const onDismiss = () => {
     setWriting(false);
-    setItems([]);
     props.onDismiss();
   }
 

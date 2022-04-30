@@ -48,7 +48,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const { entity } = useEntity();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
-  const [yearMonth, setYearMonth] = useState<Date | null>(new Date());
+  const [yearMonth, setYearMonth] = useState<string | null>(null);
   const [date, setDate] = useState<Date | null>(new Date());
   const [items, setItems] = useState<InventoryReportItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
@@ -59,18 +59,15 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const onDismiss = () => {
     setWriting(false);
     props.onDismiss();
-    reset();
   }
-
-  useEffect(() => {
-    setDate(props.report?.accountabilityDate ? props.report?.accountabilityDate?.toDate() : null)
-  }, [props.report])
 
   useEffect(() => {
     if (props.isOpen) {
       reset({
         fundCluster: props.report?.fundCluster ? props.report?.fundCluster : "",
-      })
+      });
+      setDate(props.report?.accountabilityDate ? props.report?.accountabilityDate?.toDate() : null);
+      setYearMonth(props.report?.yearMonth ? props.report?.yearMonth : null);
     }
   }, [props.isOpen, props.report, reset])
 
@@ -131,7 +128,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       inventoryReportId: props.report ? props.report.inventoryReportId : newId(),
       ...data,
       items: items,
-      yearMonth: format(yearMonth, "MMMM yyyy"),
+      yearMonth: yearMonth,
       accountabilityDate: Timestamp.fromDate(date)
     }
 
