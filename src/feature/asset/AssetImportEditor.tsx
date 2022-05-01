@@ -261,7 +261,7 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
         </form>
       </Dialog>
       <CategoryPicker
-        types={items}
+        categories={items}
         isOpen={isPickerOpen}
         isLoading={isLoading}
         canBack={isStart}

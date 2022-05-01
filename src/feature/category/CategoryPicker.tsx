@@ -15,10 +15,9 @@ import CategoryList from "./CategoryList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 
-// TODO: Rename the 'types' to 'categories'
 type CategoryPickerProps = PaginationControllerProps & {
   isOpen: boolean,
-  types: Category[],
+  categories: Category[],
   isLoading: boolean,
   onDismiss: () => void,
   onSelectItem: (type: Category) => void
@@ -49,9 +48,9 @@ const CategoryPicker = (props: CategoryPickerProps) => {
           ? !props.isLoading
             ? <>
               <CategoryList
-                categories={props.types}
+                categories={props.categories}
                 onItemSelect={props.onSelectItem}/>
-              {props.canForward && props.types.length > 0 && props.types.length === limit
+              {props.canForward && props.categories.length > 0 && props.categories.length === limit
                 && <PaginationController
                   canBack={props.canBack}
                   canForward={props.canForward}

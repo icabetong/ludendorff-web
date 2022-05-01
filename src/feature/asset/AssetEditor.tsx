@@ -31,6 +31,7 @@ import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -59,6 +60,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
   const [isWriting, setWriting] = useState(false);
+  const { limit } = useQueryLimit('categoryQueryLimit');
 
   useEffect(() => {
     const onFetchSubcategories = async () => {
@@ -103,10 +105,9 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-  // TODO: add the useQueryLimit for Categories
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
     query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")),
-    { limit: 15 }
+    { limit: limit }
   );
 
   let previousTypeId: string | undefined = undefined;
@@ -151,16 +152,15 @@ const AssetEditor = (props: AssetEditorProps) => {
     }
   }
 
-  // TODO: Rename function name and parameter name
-  const onTypeChanged = (newType: Category) => {
-    if (props.asset?.category !== undefined && props.asset?.category?.categoryId !== newType.categoryId)
+  const onCategoryChanged = (newCategory: Category) => {
+    if (props.asset?.category !== undefined && props.asset?.category?.categoryId !== newCategory.categoryId)
       previousTypeId = props.asset?.category?.categoryId;
 
-    setCategory(minimize(newType));
-    if (newType.subcategories.length > 0) {
-      setSubcategories(newType.subcategories);
-      if (newType !== category) {
-        setValue("subcategory", newType.subcategories[0]);
+    setCategory(minimize(newCategory));
+    if (newCategory.subcategories.length > 0) {
+      setSubcategories(newCategory.subcategories);
+      if (newCategory !== category) {
+        setValue("subcategory", newCategory.subcategories[0]);
       }
     }
     onPickerDismiss();
@@ -346,10 +346,10 @@ const AssetEditor = (props: AssetEditorProps) => {
       </Dialog>
       <CategoryPicker
         isOpen={isPickerOpen}
-        types={items}
+        categories={items}
         isLoading={isLoading}
         onDismiss={onPickerDismiss}
-        onSelectItem={onTypeChanged}
+        onSelectItem={onCategoryChanged}
         canBack={isStart}
         canForward={isEnd}
         onBackward={getPrev}

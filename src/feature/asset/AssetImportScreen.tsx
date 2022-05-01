@@ -146,7 +146,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
         }
       }
       setAssets(assets);
-    }
+    } else enqueueSnackbar(t("feedback.workbook_empty_worksheet"));
   }
 
   const onInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,7 +231,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
         onSubmit={onAssetEditorCommit}
         onDismiss={onAssetEditorDismiss}/>
       <CategoryPicker
-        types={items}
+        categories={items}
         isOpen={isPickerOpen}
         isLoading={isLoading}
         canBack={isStart}

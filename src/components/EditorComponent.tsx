@@ -134,8 +134,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props}/>;
 });
 
-// TODO: Properly rename this type
-type GridEditorComponentProps = {
+type EditorGridToolbarProps = {
   onAddAction: () => void,
   onRemoveAction: () => void,
   onSelectAction: () => void,
@@ -147,21 +146,21 @@ const EditorGridToolbar = () => {
   return (
     <GridToolbarContainer>
       {props && props.toolbar &&
-        (props.toolbar as GridEditorComponentProps).onAddAction &&
+        (props.toolbar as EditorGridToolbarProps).onAddAction &&
         <Button
           size="small"
           startIcon={<AddRounded/>}
-          onClick={(props.toolbar as GridEditorComponentProps).onAddAction}>
+          onClick={(props.toolbar as EditorGridToolbarProps).onAddAction}>
           {t("button.add")}
         </Button>
       }
       {
         props && props.toolbar &&
-        (props.toolbar as GridEditorComponentProps).onRemoveAction &&
+        (props.toolbar as EditorGridToolbarProps).onRemoveAction &&
         <Button
           size="small"
           startIcon={<DeleteOutlineRounded/>}
-          onClick={(props.toolbar as GridEditorComponentProps).onRemoveAction}>
+          onClick={(props.toolbar as EditorGridToolbarProps).onRemoveAction}>
           {t("button.delete")}
         </Button>
       }
