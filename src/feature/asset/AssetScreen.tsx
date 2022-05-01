@@ -30,6 +30,7 @@ import { AssetEmptyState } from "./AssetEmptyState";
 import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
 import { useDialog } from "../../components/DialogProvider";
+import AssetImportScreen from "./AssetImportScreen";
 
 type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
@@ -38,8 +39,12 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const { limit, onLimitChanged } = useQueryLimit('assetQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
+  const [importMode, setImportMode] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('assetSort');
   const show = useDialog();
+
+  const onImportInvoke = () => setImportMode(true);
+  const onImportDismiss = () => setImportMode(false);
 
   const onParseQuery = () => {
     let field = assetDescription;
@@ -130,6 +135,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onItemSelect={onDataGridRowDoubleClicked}
                 onRemoveInvoke={onAssetRemove}
                 onTypesInvoke={onCategoryListView}
+                onImportsInvoke={onImportInvoke}
                 onPageSizeChanged={onLimitChanged}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
@@ -159,6 +165,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         isCreate={state.isCreate}
         asset={state.asset}
         onDismiss={onAssetEditorDismiss}/>
+      <AssetImportScreen isOpen={importMode} onDismiss={onImportDismiss}/>
       <CategoryScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>

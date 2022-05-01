@@ -98,6 +98,8 @@ const resources = {
         total_cost: "Total Cost",
         uacs_object_code: "UACS Object Code",
         posted_by: "Posted by:",
+        spreadsheet_file: "Spreadsheet file",
+        worksheet_name: "Worksheet name"
       },
       placeholder: {
         none: "None",
@@ -152,12 +154,14 @@ const resources = {
         create_stock_card: "Create Stock Card",
         create_report: "Create Report",
         view_qr_code: "View QR Code",
-        generate_report: "Generate PDF",
         export_spreadsheet: "Export to Spreadsheet",
         download: "Download",
         filter: "Filter",
         back: "Back",
         set_quantity_source: "Set Quantity Source",
+        import: "Import",
+        choose_file: "Choose File",
+        set_category: "Set Category",
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -191,6 +195,8 @@ const resources = {
         asset_created: "Asset created successfully",
         asset_updated: "Asset updated successfully",
         asset_removed: "Asset removed successfully",
+        asset_imported: "Assets imported successfully",
+        asset_saved: "Asset saved successfully",
         category_created: "Category created successfully",
         category_updated: "Category updated successfully",
         category_removed: "Category removed successfully",
@@ -210,6 +216,7 @@ const resources = {
         asset_create_error: "Error creating asset",
         asset_update_error: "Error updating asset",
         asset_remove_error: "Error removing asset",
+        asset_import_error: "Error importing assets",
         category_create_error: "Error creating category",
         category_update_error: "Error updating category",
         category_remove_error: "Error removing category",
@@ -249,7 +256,8 @@ const resources = {
         category_count_not_zero: "There are assets with this category",
         department_count_not_zero: "There are users who are in this department",
         native_app_available: "You are currently using Ludendorff in a mobile environment; consider installing the native app to access more features of the system.",
-        stock_number_cannot_be_changed: "The Asset's stock number cannot be changed once entered"
+        stock_number_cannot_be_changed: "The Asset's stock number cannot be changed once entered",
+        import_requirements_asset_spreadsheet: "Ludendorff requires the spreadsheet file to contain a total of seven (7) columns with the exact order of data as the following: (Stock Number, Description, Category, Subcategory, Unit of Measure, Unit Value and Remarks (optional))."
       },
       settings: {
         dark_theme: "Dark Theme",
@@ -301,6 +309,7 @@ const resources = {
         select_user: "Select User",
         select_issued_report: "Select Issued Report",
         select_inventory_report: "Select Inventory Report",
+        import_assets: "Import Assets",
         view_qr_code: "View QR-Code",
         view_qr_code_summary: "To save the code, right-click the image then select \"Save Image\".",
         view_inventory_report: "View Inventory Report",

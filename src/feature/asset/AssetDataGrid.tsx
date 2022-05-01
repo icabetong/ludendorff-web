@@ -7,7 +7,7 @@ import { connectHits } from "react-instantsearch-dom";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
 import { Button } from "@mui/material";
-import { DeleteOutlineRounded, CategoryRounded } from "@mui/icons-material";
+import { DeleteOutlineRounded, CategoryRounded, UploadRounded } from "@mui/icons-material";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
 import {
   assetSubcategory,
@@ -25,6 +25,7 @@ type AssetDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
   onItemSelect: (params: GridRowParams) => void,
   onRemoveInvoke: (asset: Asset) => void,
   onTypesInvoke: () => void,
+  onImportsInvoke: () => void,
 }
 
 const AssetDataGridCore = (props: AssetDataGridProps) => {
@@ -96,6 +97,14 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
               startIcon={<CategoryRounded fontSize="small"/>}
               onClick={props.onTypesInvoke}>
               {t("navigation.categories")}
+            </Button>,
+            <Button
+              key="imports"
+              color="primary"
+              size="small"
+              startIcon={<UploadRounded/>}
+              onClick={props.onImportsInvoke}>
+              {t("button.import")}
             </Button>
           ]
         },

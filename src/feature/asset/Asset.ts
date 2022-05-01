@@ -16,6 +16,21 @@ export type Asset = {
 
 export class AssetRepository {
 
+  static async createFromArray(assets: Asset[]): Promise<void> {
+    let batch = writeBatch(firestore);
+    assets.forEach((asset) => {
+      batch.set(doc(firestore, assetCollection, asset.stockNumber), asset);
+
+      let id = asset.category?.categoryId;
+      if (id) {
+        batch.update(doc(firestore, categoryCollection, id),
+          categoryCollection, increment(1));
+      }
+    });
+
+    return await batch.commit();
+  }
+
   static async create(asset: Asset): Promise<void> {
     let batch = writeBatch(firestore);
 

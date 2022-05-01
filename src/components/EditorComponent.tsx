@@ -49,7 +49,7 @@ const EditorAppBar = (props: EditorAppBarProps) => {
           variant="contained"
           size="large"
           onClick={props.onConfirm}
-          type="submit"
+          type={props.onConfirm ? "button" : "submit"}
           startIcon={<SaveRounded/>}>
           {t("button.save")}
         </LoadingButton>
@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type EditorRootProps = {
   children: JSX.Element | ReactNode
-  onSubmit: () => void,
+  onSubmit?: () => void,
 }
 const EditorRoot = (props: EditorRootProps) => {
   const classes = useStyles();
@@ -134,6 +134,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props}/>;
 });
 
+// TODO: Properly rename this type
 type GridEditorComponentProps = {
   onAddAction: () => void,
   onRemoveAction: () => void,

@@ -21,7 +21,6 @@ import DateAdapter from '@mui/lab/AdapterDateFns';
 import { ActionType, initialState, reducer } from "./InventoryReportItemEditorReducer";
 import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
 import { isDev, newId } from "../../shared/utils";
-import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
@@ -153,11 +152,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
 
   return (
     <>
-      <Dialog
-        fullScreen={true}
-        open={props.isOpen}
-        onClose={onDismiss}
-        TransitionComponent={Transition}>
+      <Dialog open={props.isOpen} TransitionComponent={Transition} fullScreen>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_inventory")} loading={isWriting} onDismiss={onDismiss}/>
           <EditorContent>

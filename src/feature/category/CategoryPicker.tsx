@@ -15,7 +15,7 @@ import CategoryList from "./CategoryList";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 
-
+// TODO: Rename the 'types' to 'categories'
 type CategoryPickerProps = PaginationControllerProps & {
   isOpen: boolean,
   types: Category[],
