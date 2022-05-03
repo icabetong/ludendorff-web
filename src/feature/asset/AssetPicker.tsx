@@ -9,13 +9,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { DesktopWindowsRounded } from "@mui/icons-material";
 
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
@@ -23,6 +21,7 @@ import SearchDialogTitle from "../../components/SearchDialogTitle";
 import { InstantSearch } from "react-instantsearch-dom";
 import { Provider } from "../../components/Search";
 import AssetSearchList from "./AssetSearchList";
+import { AssetEmptyState } from "./AssetEmptyState";
 
 type AssetPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -82,10 +81,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                           onForward={props.onForward}/>
                       }
                     </>
-                : <EmptyStateComponent
-                  icon={DesktopWindowsRounded}
-                  title={t("empty.asset")}
-                  subtitle={t("empty.asset_summary")}/>
+                : <AssetEmptyState/>
               : <LinearProgress/>
             : <ErrorNoPermissionState/>
           }

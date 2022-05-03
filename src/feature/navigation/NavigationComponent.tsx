@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  DesktopWindowsRounded,
+  DevicesOtherRounded,
   Inventory2Outlined,
   LocalAtmOutlined,
   PeopleOutlineRounded,
@@ -57,7 +57,7 @@ type NavigationItemPropsType = {
 }
 
 const destinations: NavigationItemType[] = [
-  { icon: DesktopWindowsRounded, title: "navigation.assets", destination: Destination.ASSETS },
+  { icon: DevicesOtherRounded, title: "navigation.assets", destination: Destination.ASSETS },
   { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
   { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
   { icon: LocalAtmOutlined, title: "navigation.stock_cards", destination: Destination.STOCK_CARD },

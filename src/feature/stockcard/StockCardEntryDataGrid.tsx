@@ -25,7 +25,7 @@ import {
 import { formatDate } from "../../shared/utils";
 import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import { QueryStatsRounded } from "@mui/icons-material";
+import { AddchartRounded } from "@mui/icons-material";
 import { Balances, Entry } from "../shared/types/Balances";
 import { currencyFormatter } from "../../shared/utils";
 
@@ -98,7 +98,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
           showInMenu
-          icon={<QueryStatsRounded/>}
+          icon={<AddchartRounded/>}
           label={t("button.set_quantity_source")}
           onClick={() => props.onSourceSelect(params.row as StockCardEntry)}/>
       ]

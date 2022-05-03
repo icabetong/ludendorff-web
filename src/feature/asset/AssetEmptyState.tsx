@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
-import { DesktopWindowsRounded } from "@mui/icons-material";
+import { DevicesOtherRounded } from "@mui/icons-material";
 import GridEmptyRow from "../../components/datagrid/GridEmptyRows";
 
 const AssetEmptyState = () => {
@@ -8,7 +8,7 @@ const AssetEmptyState = () => {
 
   return (
     <EmptyStateComponent
-      icon={DesktopWindowsRounded}
+      icon={DevicesOtherRounded}
       title={t("empty.asset")}
       subtitle={t("empty.asset_summary")}/>
   );
