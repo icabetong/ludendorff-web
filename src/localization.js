@@ -258,6 +258,7 @@ const resources = {
         department_count_not_zero: "There are users who are in this department",
         native_app_available: "You are currently using Ludendorff in a mobile environment; consider installing the native app to access more features of the system.",
         stock_number_cannot_be_changed: "The Asset's stock number cannot be changed once entered",
+        stock_number_exists: "This stock number already exists in the database, if you don't change it, the current one will be replaced by this one.",
         import_requirements_asset_spreadsheet: "Ludendorff requires the spreadsheet file to contain a total of seven (7) columns with the exact order of data as the following: (Stock Number, Description, Category, Subcategory, Unit of Measure, Unit Value and Remarks (optional))."
       },
       settings: {

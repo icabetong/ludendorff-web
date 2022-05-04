@@ -1,22 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Box, Button, Dialog, TextField, Stack } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  TextField,
+  Stack
+} from "@mui/material";
 import { FolderRounded } from "@mui/icons-material";
-import { query, collection, where, getDocs, orderBy } from "firebase/firestore";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { query, collection, doc, where, getDocs, orderBy, getDoc } from "firebase/firestore";
 import * as Excel from "exceljs";
-import AssetImportDataGrid from "./AssetImportDataGrid";
-import { Asset, AssetRepository } from "./Asset";
-import { firestore } from "../../index";
-import { categoryCollection, categoryName } from "../../shared/const";
-import { Category, CategoryCore, minimize } from "../category/Category";
-import { isDev } from "../../shared/utils";
-import CategoryPicker from "../category/CategoryPicker";
-import { usePagination } from "use-pagination-firestore";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
-import AssetImportEditor from "./AssetImportEditor";
-import { useDialog } from "../../components/DialogProvider";
 import { useSnackbar } from "notistack";
+import { usePagination } from "use-pagination-firestore";
+import { AssetRepository } from "./Asset";
+import AssetImportDataGrid from "./AssetImportDataGrid";
+import { AssetImport } from "./AssetImport";
+import AssetImportEditor from "./AssetImportEditor";
+import { Category, CategoryCore, minimize } from "../category/Category";
+import CategoryPicker from "../category/CategoryPicker";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { useDialog } from "../../components/DialogProvider";
+import { firestore } from "../../index";
+import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
+import { isDev } from "../../shared/utils";
 
 type AssetImportScreenProps = {
   isOpen: boolean,
@@ -30,10 +38,34 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
   const show = useDialog();
   const [name, setName] = useState<String>("");
   const [isWorking, setWorking] = useState(false);
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [asset, setAsset] = useState<Asset | undefined>(undefined);
+  const [assets, setAssets] = useState<AssetImport[]>([]);
+  const [importedAssets, setImportedAssets] = useState<AssetImport[]>([]);
+  const [asset, setAsset] = useState<AssetImport | undefined>(undefined);
   const [checked, setChecked] = useState<string[]>([]);
   const [isPickerOpen, setPickerOpen] = useState(false);
+
+  useEffect(() => {
+    async function verify(stockNumber: string) {
+      let snapshot = await getDoc(doc(firestore, assetCollection, stockNumber));
+      return snapshot.exists();
+    }
+    async function check() {
+      let current: AssetImport[] = [];
+      for (let asset of assets) {
+        let currentAsset = asset;
+        let status = await verify(asset.stockNumber);
+        currentAsset.status = status ? "exists" : "absent";
+        current.push(asset);
+      }
+      return current;
+    }
+
+    check()
+      .then((data) => setImportedAssets(data))
+      .catch(error => {
+        if (isDev) console.log(error)
+      }).finally(() => setWorking(false));
+  }, [assets]);
 
   const onSubmit = async () => {
     try {
@@ -86,9 +118,11 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
     }
   );
 
-  const onAssetEditorCommit = (asset: Asset) => {
+  const onAssetEditorCommit = (asset: AssetImport, previousStockNumber: string | undefined) => {
+    if (!previousStockNumber) return;
+
     let currentAssets = Array.from(assets);
-    let index = currentAssets.findIndex(a => asset.stockNumber === a.stockNumber);
+    let index = currentAssets.findIndex(a => a.stockNumber === previousStockNumber);
     if (index >= 0) {
       currentAssets[index] = asset;
       setAssets(currentAssets);
@@ -96,8 +130,8 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
     onAssetEditorDismiss();
   }
   const onAssetEditorDismiss = () => setAsset(undefined);
-  const onAssetSelect = (asset: Asset) => setAsset(asset);
-  const onAssetRemove = (asset: Asset) => {
+  const onAssetSelect = (asset: AssetImport) => setAsset(asset);
+  const onAssetRemove = (asset: AssetImport) => {
     let currentAssets = assets;
     currentAssets = currentAssets.filter((a) => {
       return asset.stockNumber !== a.stockNumber
@@ -133,14 +167,15 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
             category = minimize(snapshot.docs[0].data() as Category);
           }
 
-          let asset: Asset = {
+          let asset: AssetImport = {
             stockNumber: sheet.getCell(row, 1).text,
             description: sheet.getCell(row, 2).text,
             category: category ? category : undefined,
             subcategory: sheet.getCell(row, 4).text,
             unitOfMeasure: sheet.getCell(row, 5).text,
             unitValue: parseFloat(sheet.getCell(row, 6).text),
-            remarks: sheet.getCell(row, 7).text
+            remarks: sheet.getCell(row, 7).text,
+            status: "absent",
           }
           assets.push(asset);
         }
@@ -167,8 +202,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
           }
           setWorking(true);
           onParseWorkbook(workbook, buffer as Buffer)
-            .catch((error) => { if (isDev) console.log(error) })
-            .finally(() => setWorking(false))
+            .catch((error) => { if (isDev) console.log(error) });
         }
       }
     }
@@ -214,7 +248,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
               </Stack>
             </Box>
             <AssetImportDataGrid
-              assets={assets}
+              assets={importedAssets}
               isLoading={isWorking}
               onItemSelect={onAssetSelect}
               onItemRemove={onAssetRemove}

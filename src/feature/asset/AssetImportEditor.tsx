@@ -20,7 +20,7 @@ import { useSnackbar } from "notistack";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
 import { query, collection, orderBy, doc, getDoc } from "firebase/firestore";
 import { usePagination } from "use-pagination-firestore";
-import { Asset } from "./Asset";
+import { AssetImport } from "./AssetImport";
 import { Category, CategoryCore, minimize } from "../category/Category";
 import { firestore } from "../../index";
 import { categoryCollection, categoryName } from "../../shared/const";
@@ -30,8 +30,8 @@ import { isDev } from "../../shared/utils";
 
 type AssetImportEditorProps = {
   isOpen: boolean,
-  asset?: Asset,
-  onSubmit: (asset: Asset) => void,
+  asset?: AssetImport,
+  onSubmit: (asset: AssetImport, previousStockNumber: string | undefined) => void,
   onDismiss: () => void,
 }
 type FormValues = {
@@ -53,6 +53,7 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
   const [subcategories, setSubcategories] = useState<string[]>([]);
+  const currentStockNumber = props.asset?.stockNumber;
 
   useEffect(() => {
     const onFetchSubcategories = async () => {
@@ -112,15 +113,16 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
       return;
     }
 
-    const asset: Asset = {
+    const asset: AssetImport = {
       ...data,
-      stockNumber: props.asset ? props.asset?.stockNumber : data.stockNumber,
+      stockNumber: data.stockNumber,
       category: category !== undefined ? category : undefined,
-      unitValue: parseFloat(`${data.unitValue}`)
+      unitValue: parseFloat(`${data.unitValue}`),
+      status: props.asset ? props.asset?.status : "absent",
     }
 
     enqueueSnackbar(t("feedback.asset_saved"));
-    props.onSubmit(asset);
+    props.onSubmit(asset, currentStockNumber);
   }
 
   return (

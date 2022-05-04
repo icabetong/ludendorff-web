@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, InputBase, TextField, Theme } from "@mui/material";
+import { Box, InputBase, TextField } from "@mui/material";
 import { SearchRounded } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
 import { connectHighlight, connectSearchBox } from "react-instantsearch-dom";

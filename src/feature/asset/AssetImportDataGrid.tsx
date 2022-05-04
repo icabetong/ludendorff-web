@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Button, Chip } from "@mui/material";
+import { Box, Button, Chip, Tooltip } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -11,7 +11,7 @@ import {
   GridValueGetterParams
 } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, CategoryRounded, WarningRounded } from "@mui/icons-material";
-import { Asset } from "./Asset";
+import { AssetImport } from "./AssetImport";
 import useDensity from "../shared/hooks/useDensity";
 import {
   assetSubcategory,
@@ -27,11 +27,12 @@ import { ImporterGridToolbar } from "../../components/ImporterComponent";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { Category } from "../category/Category";
 
+
 type AssetImportDataGridProps = {
-  assets: Asset[],
+  assets: AssetImport[],
   isLoading?: boolean,
-  onItemSelect: (asset: Asset) => void,
-  onItemRemove: (asset: Asset) => void,
+  onItemSelect: (asset: AssetImport) => void,
+  onItemRemove: (asset: AssetImport) => void,
   onItemsChecked: (ids: string[]) => void,
   onRemovedChecked: () => void,
   onBulkCategoryPick: () => void,
@@ -47,9 +48,28 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
     {
       field: assetStockNumber,
       headerName: t("field.stock_number"),
-      flex: 1
+      flex: 1.5,
+      renderCell: (params: GridRenderCellParams<string>) => {
+        let asset = params.row as AssetImport;
+        if (asset.status === 'exists')
+          return (
+            <Tooltip title={t("info.stock_number_exists")}>
+              <Box
+                sx={{
+                  color: (theme) => theme.palette.warning.main,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center'}}>
+                <WarningRounded/>
+                <Box component="span" sx={{ marginLeft: 2 }}>{params.value}</Box>
+              </Box>
+            </Tooltip>
+          )
+        else return <span>{params.value}</span>
+      }
     },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
+    { field: assetDescription, headerName: t("field.asset_description"), flex: 2 },
     {
       field: assetCategory,
       headerName: t("field.category"),
@@ -106,7 +126,7 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
           showInMenu
           icon={<DeleteOutlineRounded/>}
           label={t("button.delete")}
-          onClick={() => props.onItemRemove(params.row as Asset)}/>
+          onClick={() => props.onItemRemove(params.row as AssetImport)}/>
       ],
     }
   ];
@@ -117,7 +137,7 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
     props.onItemsChecked(model.map((id: GridRowId) => `${id}`));
   }
 
-  const onRowDoubleClick = (params: GridRowParams) => props.onItemSelect(params.row as Asset);
+  const onRowDoubleClick = (params: GridRowParams) => props.onItemSelect(params.row as AssetImport);
 
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme) })}>
