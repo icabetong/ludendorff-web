@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import { AppBar, Box, Button, IconButton, Menu, Slide, Theme, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Menu, Slide, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   AddRounded,
@@ -9,7 +9,6 @@ import {
   SaveRounded
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@mui/styles";
 import {
   GridToolbarColumnsButton,
   GridToolbarContainer,
@@ -84,29 +83,16 @@ const EditorAppBar = (props: EditorAppBarProps) => {
   )
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-  },
-  content: {
-    flex: '1',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(2)
-  }
-}));
-
 type EditorRootProps = {
   children: JSX.Element | ReactNode
   onSubmit?: () => void,
 }
 const EditorRoot = (props: EditorRootProps) => {
-  const classes = useStyles();
-
   return (
-    <Box component="form" onSubmit={props.onSubmit} className={classes.root}>
+    <Box
+      component="form"
+      onSubmit={props.onSubmit}
+      sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {props.children}
     </Box>
   )
@@ -116,10 +102,8 @@ type EditorContentProps = {
   children: JSX.Element | ReactNode
 }
 const EditorContent = (props: EditorContentProps) => {
-  const classes = useStyles();
-
   return (
-    <Box className={classes.content}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 2 }}>
       {props.children}
     </Box>
   )
