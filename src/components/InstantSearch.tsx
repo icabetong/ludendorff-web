@@ -1,64 +1,28 @@
+import React, { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, InputBase, TextField, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { SearchRounded } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
 import { connectHighlight, connectSearchBox } from "react-instantsearch-dom";
 import { HighlightProps, SearchBoxProvided } from "react-instantsearch-core";
-import React, { ChangeEvent } from "react";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  highlightResult: {
-    color: theme.palette.primary.main
-  },
-  searchContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    position: 'relative',
-    padding: theme.spacing('4px', 1),
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.divider,
-    marginLeft: 0,
-    marginRight: theme.spacing(2),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  },
-  searchIconWrapper: {
-    padding: theme.spacing(0, 1),
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  searchInput: {
-    flexGrow: 1,
-    color: 'inherit',
-    transition: theme.transitions.create('width'),
-    [theme.breakpoints.up('sm')]: {
-      width: '18ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  }
-}))
 
 const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
-  const classes = useStyles();
   const parsedHit = highlight({
     highlightProperty: '_highlightResult',
     attribute,
     hit
-  })
+  });
 
   return (
     <span>
       {parsedHit.map((part, index) =>
         part.isHighlighted ? (
-          <span className={classes.highlightResult} key={index}>{part.value}</span>
+          <Box
+            key={index}
+            component="span"
+            sx={{ color: (theme) => theme.palette.primary.main }}>
+            {part.value}
+          </Box>
         ) : (
           <span key={index}>{part.value}</span>
         ))
@@ -74,7 +38,6 @@ type SearchBoxInputBaseProps = SearchBoxProvided & {
 }
 const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const onFocusGained = () => props.onFocusChanged?.(true)
   const onFocusLost = () => {
     if (!props.dontWatchFocus) {
@@ -94,18 +57,52 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
   }
 
   return (
-    <Box className={classes.searchContainer}>
-      <Box className={classes.searchIconWrapper}>
+    <Box
+      sx={(theme) => (
+        {
+          display: 'flex',
+          flexDirection: 'row',
+          position: 'relative',
+          padding: theme.spacing('4px', 1),
+          borderRadius: theme.shape.borderRadius,
+          backgroundColor: theme.palette.divider,
+          marginLeft: 0,
+          marginRight: theme.spacing(2),
+          width: '100%',
+          [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(1),
+            width: 'auto',
+          }
+        }
+      )}>
+      <Box
+        sx={{
+          padding: (theme) => theme.spacing(0, 1),
+          pointerEvents: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
         <SearchRounded/>
       </Box>
       <InputBase
-        className={classes.searchInput}
         id="search"
         placeholder={t("field.search")}
         value={props.currentRefinement}
         onFocus={onFocusGained}
         onBlur={onFocusLost}
-        onChange={onQueryChanged}/>
+        onChange={onQueryChanged}
+        sx={(theme) => ({
+            flexGrow: 1,
+            color: 'inherit',
+            transition: theme.transitions.create('width'),
+            [theme.breakpoints.up('sm')]: {
+              width: '18ch',
+              '&:focus': {
+                width: '20ch'
+              }
+            }
+        })}/>
     </Box>
 
   );
