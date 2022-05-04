@@ -1,4 +1,4 @@
-import { InventoryReportItem } from "./InventoryReport";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -12,14 +12,16 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import { Asset } from "../asset/Asset";
-import { useState, useEffect } from "react";
-import AssetPicker from "../asset/AssetPicker";
-import { usePagination } from "use-pagination-firestore";
+import { ExpandMoreRounded } from "@mui/icons-material";
 import { collection, orderBy, query } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
+import { InventoryReportItem } from "./InventoryReport";
+import { Asset } from "../asset/Asset";
+import AssetPicker from "../asset/AssetPicker";
 import { firestore } from "../../index";
 import { assetCollection, assetStockNumber } from "../../shared/const";
-import { ExpandMoreRounded } from "@mui/icons-material";
+
+import CurrencyFormatCustom from "../../components/CurrencyFormatCustom";
 
 export type FormValues = {
   unitValue: number,
@@ -129,17 +131,9 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
                     error={errors.unitValue !== undefined}
                     disabled={!props.item ? !asset : false}
                     helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
-                    inputProps={{
-                      inputMode: 'numeric',
-                      pattern: '[0-9]*',
-                      min: 0,
-                      step: 0.01,
-                      type: "number"
-                    }}
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">₱</InputAdornment>
-                      )
+                      startAdornment: <InputAdornment position="start">₱</InputAdornment>,
+                      inputComponent: CurrencyFormatCustom as any,
                     }}/>
                 )}/>
               <Controller

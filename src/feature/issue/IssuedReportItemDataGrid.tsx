@@ -35,7 +35,7 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   const { density, onDensityChanged } = useDensity('issuedEditorDensity');
 
   useEffect(() => {
-    setItems(items);
+    setItems(props.items);
   }, [props.items]);
 
   const columns = [

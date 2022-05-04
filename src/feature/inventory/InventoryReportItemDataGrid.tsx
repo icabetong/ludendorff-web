@@ -40,7 +40,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
   const { density, onDensityChanged } = useDensity('inventoryEditorDensity');
 
   useEffect(() => {
-    setItems(items);
+    setItems(props.items);
   }, [props.items]);
 
   const columns = [

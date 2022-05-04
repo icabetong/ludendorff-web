@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import { AppBar, Box, Button, IconButton, Menu, Slide, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Menu, Slide, TextField, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   AddRounded,

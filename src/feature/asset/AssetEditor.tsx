@@ -32,6 +32,7 @@ import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
+import CurrencyFormatCustom from "../../components/CurrencyFormatCustom";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -122,7 +123,6 @@ const AssetEditor = (props: AssetEditorProps) => {
       category: category !== undefined ? category : undefined,
       unitValue: parseFloat(`${data.unitValue}`)
     }
-
 
     if (props.isCreate) {
       let reference = doc(firestore, assetCollection, data.stockNumber);
@@ -290,17 +290,9 @@ const AssetEditor = (props: AssetEditorProps) => {
                         error={errors.unitValue !== undefined}
                         disabled={isWriting}
                         helperText={errors.unitValue?.message !== undefined ? t(errors.unitValue.message) : undefined}
-                        inputProps={{
-                          inputMode: 'numeric',
-                          pattern: '[0-9]*',
-                          min: 0,
-                          step: 0.01,
-                          type: "number",
-                        }}
                         InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">₱</InputAdornment>
-                          )
+                          startAdornment: <InputAdornment position="start">₱</InputAdornment>,
+                          inputComponent: CurrencyFormatCustom as any
                         }}/>
                     )}
                     rules={{ required: { value: true, message: "feedback.empty_unit_value" }}}/>

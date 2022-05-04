@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
 import {
@@ -42,6 +42,10 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   const [entries, setEntries] = useState<StockCardEntry[]>(props.entries);
   const [hasChecked, setHasChecked] = useState(false);
   const { density, onDensityChanged } = useDensity('stockCardEditorDensity');
+
+  useEffect(() => {
+    setEntries(props.entries);
+  }, [props.entries]);
 
   const columns = [
     {
