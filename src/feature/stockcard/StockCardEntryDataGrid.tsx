@@ -1,7 +1,6 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
-import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
-import { StockCard, StockCardEntry } from "./StockCard";
 import {
   DataGrid,
   GridRowParams,
@@ -10,8 +9,10 @@ import {
   GridLoadingOverlay,
   GridActionsCellItem
 } from "@mui/x-data-grid";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { AddchartRounded } from "@mui/icons-material";
+import { StockCard, StockCardEntry } from "./StockCard";
+import { getEditorDataGridTheme } from "../core/Core";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
 import {
   balanceQuantity,
   balanceTotalPrice,
@@ -22,10 +23,10 @@ import {
   reference,
   requestedQuantity
 } from "../../shared/const";
-import { formatDate } from "../../shared/utils";
+import { escapeRegExp, formatDate } from "../../shared/utils";
 import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import { AddchartRounded } from "@mui/icons-material";
+
 import { Balances, Entry } from "../shared/types/Balances";
 import { currencyFormatter } from "../../shared/utils";
 
@@ -38,8 +39,9 @@ type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
 }
 const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   const { t } = useTranslation();
-  const { density, onDensityChanged } = useDensity('stockCardEditorDensity');
+  const [entries, setEntries] = useState<StockCardEntry[]>(props.entries);
   const [hasChecked, setHasChecked] = useState(false);
+  const { density, onDensityChanged } = useDensity('stockCardEditorDensity');
 
   const columns = [
     {
@@ -106,6 +108,21 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardEntriesColumns', columns);
 
+  const onSearchChanged = (query: string) => {
+    if (query.length > 0) {
+      const searchRegEx = new RegExp(escapeRegExp(query));
+      let currentItems = entries.filter((row: StockCardEntry) => {
+        return Object.keys(row).some((field: any) => {
+          const value = row[field as keyof StockCardEntry];
+          if (value) return searchRegEx.test(value.toString());
+          else return false;
+        })
+      });
+
+      setEntries(currentItems);
+    } else setEntries(props.entries);
+  }
+
   const onRowSelected = (params: GridRowParams) => {
     props.onItemSelected(params.row as StockCardEntry);
   }
@@ -126,12 +143,13 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         }}
         componentsProps={{
           toolbar: {
-            onRemoveAction: hasChecked ? props.onRemoveAction : undefined
+            onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
+            onSearchChanged: onSearchChanged
           }
         }}
         loading={props.isLoading}
         columns={columns}
-        rows={props.entries}
+        rows={entries}
         density={density}
         columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockCardEntryId}

@@ -1,7 +1,6 @@
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
-import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
-import { IssuedReportItem } from "./IssuedReport";
 import {
   DataGrid,
   GridLoadingOverlay,
@@ -9,8 +8,12 @@ import {
   GridSelectionModel,
   GridValueGetterParams
 } from "@mui/x-data-grid";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { IssuedReportItem } from "./IssuedReport";
+import { getEditorDataGridTheme } from "../core/Core";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
+import useDensity from "../shared/hooks/useDensity";
+import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
+import { currencyFormatter, escapeRegExp } from "../../shared/utils";
 import {
   assetDescription,
   assetStockNumber,
@@ -19,9 +22,6 @@ import {
   responsibilityCenter,
   unitCost,
 } from "../../shared/const";
-import useDensity from "../shared/hooks/useDensity";
-import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import { currencyFormatter } from "../../shared/utils";
 
 type IssuedReportItemDataGridProps = EditorDataGridProps<IssuedReportItem> & {
   items: IssuedReportItem[],
@@ -30,8 +30,13 @@ type IssuedReportItemDataGridProps = EditorDataGridProps<IssuedReportItem> & {
 
 const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   const { t } = useTranslation();
-  const { density, onDensityChanged } = useDensity('issuedEditorDensity');
   const [hasChecked, setHasChecked] = useState(false);
+  const [items, setItems] = useState<IssuedReportItem[]>(props.items);
+  const { density, onDensityChanged } = useDensity('issuedEditorDensity');
+
+  useEffect(() => {
+    setItems(items);
+  }, [props.items]);
 
   const columns = [
     { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
@@ -57,6 +62,21 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedReportItemColumns', columns);
 
+  const onSearchChanged = (query: string) => {
+    if (query.length > 0) {
+      const searchRegEx = new RegExp(escapeRegExp(query));
+      let currentItems = items.filter((row: IssuedReportItem) => {
+        return Object.keys(row).some((field: any) => {
+          const value = row[field as keyof IssuedReportItem];
+          if (value) return searchRegEx.test(value.toString());
+          else return false;
+        });
+      });
+
+      setItems(currentItems);
+    } else setItems(props.items);
+  }
+
   const onRowSelected = (params: GridRowParams) => {
     props.onItemSelected(params.row as IssuedReportItem)
   }
@@ -79,11 +99,12 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
           toolbar: {
             onAddAction: props.onAddAction,
             onRemoveAction: hasChecked ? props.onRemoveAction : undefined,
+            onSearchChanged: onSearchChanged
           }
         }}
         loading={props.isLoading}
         columns={columns}
-        rows={props.items}
+        rows={items}
         density={density}
         columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.issuedReportItemId}

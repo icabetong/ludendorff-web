@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from "react";
-import { AppBar, Box, Button, IconButton, Menu, Slide, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Menu, Slide, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   AddRounded,
@@ -122,35 +122,49 @@ type EditorGridToolbarProps = {
   onAddAction: () => void,
   onRemoveAction: () => void,
   onSelectAction: () => void,
+  onSearchChanged: (query: string) => void
 }
 const EditorGridToolbar = () => {
   const { t } = useTranslation();
-  const props = useGridRootProps().componentsProps;
+  const componentsProps = useGridRootProps().componentsProps;
+  const props: EditorGridToolbarProps | undefined = componentsProps?.toolbar;
+
+  const onHandleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
+    props && props.onSearchChanged(e.target.value);
+  }
 
   return (
     <GridToolbarContainer>
-      {props && props.toolbar &&
-        (props.toolbar as EditorGridToolbarProps).onAddAction &&
-        <Button
-          size="small"
-          startIcon={<AddRounded/>}
-          onClick={(props.toolbar as EditorGridToolbarProps).onAddAction}>
-          {t("button.add")}
-        </Button>
-      }
-      {
-        props && props.toolbar &&
-        (props.toolbar as EditorGridToolbarProps).onRemoveAction &&
-        <Button
-          size="small"
-          startIcon={<DeleteOutlineRounded/>}
-          onClick={(props.toolbar as EditorGridToolbarProps).onRemoveAction}>
-          {t("button.delete")}
-        </Button>
-      }
-      <GridToolbarColumnsButton/>
-      <GridToolbarDensitySelector/>
-      <GridToolbarFilterButton/>
+      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row' }}>
+        {props && props.onAddAction &&
+          <Button
+            size="small"
+            startIcon={<AddRounded/>}
+            onClick={props.onAddAction}>
+            {t("button.add")}
+          </Button>
+        }
+        {
+          props && props.onRemoveAction &&
+          <Button
+            size="small"
+            startIcon={<DeleteOutlineRounded/>}
+            onClick={props.onRemoveAction}>
+            {t("button.delete")}
+          </Button>
+        }
+        <GridToolbarColumnsButton/>
+        <GridToolbarDensitySelector/>
+        <GridToolbarFilterButton/>
+        <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'row' }}>
+          <Box sx={{ flex: 1 }}/>
+          <TextField
+            size="small"
+            placeholder={t("placeholder.search_entries")}
+            sx={{ flex: 1, margin: 0 }}
+            onChange={onHandleSearchField}/>
+        </Box>
+      </Box>
     </GridToolbarContainer>
   )
 }

@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Box, InputBase, TextField, Theme } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
-import { SearchOutlined, SearchRounded } from "@mui/icons-material";
+import { SearchRounded } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
-import { connectHighlight, connectSearchBox, connectStateResults } from "react-instantsearch-dom";
-import { HighlightProps, SearchBoxProvided, StateResultsProvided } from "react-instantsearch-core";
-import EmptyStateComponent from "../feature/state/EmptyStates";
+import { connectHighlight, connectSearchBox } from "react-instantsearch-dom";
+import { HighlightProps, SearchBoxProvided } from "react-instantsearch-core";
 import React, { ChangeEvent } from "react";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -142,35 +141,6 @@ const SearchBoxCore = (props: SearchBoxProps) => {
   );
 }
 
-type EmptySearchStateProps = {
-  query: string | undefined
-}
-const EmptySearchState = (props: EmptySearchStateProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <EmptyStateComponent
-      icon={SearchOutlined}
-      title={t("empty.search")}
-      subtitle={t("empty.search_summary", { query: props.query })}/>
-  );
-}
-
-interface ResultsProps extends StateResultsProvided {
-  children?: React.ReactNode | React.ReactNode[]
-}
-
-const ResultsComponent: React.FC<ResultsProps> = ({ children, searchResults, searchState }) => {
-  return (
-    <>
-      {searchResults && searchResults.nbHits !== 0
-        ? children
-        : <EmptySearchState query={searchState.query}/>
-      }
-    </>
-  )
-}
-export const Results = connectStateResults(ResultsComponent)
 export const Highlight = connectHighlight(CustomHighlight)
 export const SearchBox = connectSearchBox<SearchBoxProps>(SearchBoxCore);
 export const SearchBoxInputBase = connectSearchBox<SearchBoxInputBaseProps>(SearchBoxInputBaseCore)

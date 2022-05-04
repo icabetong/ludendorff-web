@@ -112,7 +112,8 @@ const resources = {
         remarks: 'example: "Common Supplies"',
         search: 'Type anything',
         entity_name: 'example: "John Doe"',
-        entity_position: 'example: "Instructor II"'
+        entity_position: 'example: "Instructor II"',
+        search_entries: "Search for entries"
       },
       permission: {
         read: "Read",

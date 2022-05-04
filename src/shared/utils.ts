@@ -49,3 +49,7 @@ export function chunck<T>(arr: T[], size: number) {
     return arr.slice(i * size, i * size + size);
   });
 }
+
+export function escapeRegExp(value: string): string {
+  return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
