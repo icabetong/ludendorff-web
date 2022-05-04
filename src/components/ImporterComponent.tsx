@@ -2,7 +2,8 @@ import React from "react";
 import {
   GridToolbarColumnsButton,
   GridToolbarContainer,
-  GridToolbarDensitySelector, GridToolbarFilterButton,
+  GridToolbarDensitySelector,
+  GridToolbarFilterButton,
   useGridRootProps
 } from "@mui/x-data-grid";
 

@@ -1,7 +1,5 @@
 import { Timestamp } from "@firebase/firestore-types";
 
-const assert = require('assert');
-
 export type OperatingSystem = 'Linux' | 'Android' | 'Windows' | 'macOS' | 'iOS' | 'unknown';
 export function getHostOperatingSystem(): OperatingSystem {
   let userAgent = window.navigator.userAgent,
@@ -35,7 +33,6 @@ export const newId = (): string => {
   for (let i = 0; i < 20; i++) {
     id += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-  assert(id.length === 20);
   return id;
 }
 

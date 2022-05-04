@@ -104,7 +104,7 @@ const AssetScreen = (props: AssetScreenProps) => {
   const menuItems = [
     <MenuItem
       key={0}
-      onClick={onCategoryListView}>{t("navigation.types")}</MenuItem>
+      onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
   ];
 
   return (
