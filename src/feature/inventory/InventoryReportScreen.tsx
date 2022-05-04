@@ -2,7 +2,7 @@ import { Box, Fab, LinearProgress } from "@mui/material";
 import { useReducer, useRef, useState } from "react";
 import { getDataGridTheme } from "../core/Core";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { useTranslation } from "react-i18next";
 import { AddRounded } from "@mui/icons-material";
 import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";

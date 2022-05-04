@@ -20,7 +20,7 @@ import CategoryScreen from "../category/CategoryScreen";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { isDev } from "../../shared/utils";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";

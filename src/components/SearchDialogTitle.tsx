@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Stack, IconButton, Typography, Box, Collapse } from "@mui/material";
 import { CloseRounded, SearchRounded } from "@mui/icons-material";
-import { SearchBoxInputBase } from "./Search";
+import { SearchBoxInputBase } from "./InstantSearch";
 
 type CustomDialogTitleProps = {
   children: React.ReactNode,

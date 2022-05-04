@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { AddRounded, CloseRounded, SearchRounded } from "@mui/icons-material";
-import { SearchBoxInputBase } from "./Search";
+import { SearchBoxInputBase } from "./InstantSearch";
 import React from "react";
 
 type DialogToolbarProps = {

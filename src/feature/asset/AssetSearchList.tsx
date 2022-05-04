@@ -3,7 +3,7 @@ import { List, ListItemButton, ListItemText } from "@mui/material";
 import { HitsProvided } from "react-instantsearch-core";
 import { connectHits } from "react-instantsearch-dom";
 import { assetDescription, assetStockNumber } from "../../shared/const";
-import { Highlight } from "../../components/Search";
+import { Highlight } from "../../components/InstantSearch";
 
 type AssetSearchListProps = HitsProvided<Asset> & {
   onItemSelect: (asset: Asset) => void

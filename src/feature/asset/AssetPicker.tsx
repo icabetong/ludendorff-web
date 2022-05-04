@@ -19,7 +19,7 @@ import { PaginationController, PaginationControllerProps } from "../../component
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import SearchDialogTitle from "../../components/SearchDialogTitle";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";
 

@@ -14,7 +14,7 @@ import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import IssuedReportList from "./IssuedReportList";
 import IssuedReportEditor from "./IssuedReportEditor";

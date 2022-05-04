@@ -22,7 +22,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import InventoryReportPickerList from "./InventoryReportPickerList";
 import InventoryReportViewer from "./InventoryReportViewer";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import SearchDialogTitle from "../../components/SearchDialogTitle";
 import InventoryReportSearchList from "./InventoryReportSearchList";
 

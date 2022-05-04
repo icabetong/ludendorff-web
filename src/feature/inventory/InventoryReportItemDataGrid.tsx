@@ -92,7 +92,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
   const onSearchChanged = (query: string) => {
     if (query.length > 0) {
       const searchRegEx = new RegExp(escapeRegExp(query));
-      let currentItems = items.filter((row: InventoryReportItem) => {
+      let currentItems = props.items.filter((row: InventoryReportItem) => {
         return Object.keys(row).some((field: any) => {
           const value = row[field as keyof InventoryReportItem];
           if (value) return searchRegEx.test(value.toString());

@@ -1,14 +1,24 @@
 import React, { ReactNode, useState } from "react";
-import { AppBar, Box, Button, IconButton, Menu, Slide, TextField, Toolbar, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  Slide,
+  Toolbar,
+  Typography
+} from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import {
   AddRounded,
   CloseRounded,
   DeleteOutlineRounded,
   MoreVert,
-  SaveRounded
+  SaveRounded,
+  SearchRounded,
 } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
 import {
   GridToolbarColumnsButton,
   GridToolbarContainer,
@@ -17,6 +27,7 @@ import {
   useGridRootProps
 } from "@mui/x-data-grid";
 import { LoadingButton } from "@mui/lab";
+import { Search, SearchIconWrapper, SearchInputBase } from "./Search";
 
 type EditorAppBarProps = {
   title?: string,
@@ -158,11 +169,13 @@ const EditorGridToolbar = () => {
         <GridToolbarFilterButton/>
         <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'row' }}>
           <Box sx={{ flex: 1 }}/>
-          <TextField
-            size="small"
-            placeholder={t("placeholder.search_entries")}
-            sx={{ flex: 1, margin: 0 }}
-            onChange={onHandleSearchField}/>
+          <Search>
+            <SearchIconWrapper><SearchRounded/></SearchIconWrapper>
+            <SearchInputBase
+              placeholder={t("placeholder.search_entries")}
+              onChange={onHandleSearchField}
+              inputProps={{ 'aria-label': t("field.search") }}/>
+          </Search>
         </Box>
       </Box>
     </GridToolbarContainer>

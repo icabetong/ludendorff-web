@@ -65,7 +65,7 @@ const IssuedReportItemDataGrid = (props: IssuedReportItemDataGridProps) => {
   const onSearchChanged = (query: string) => {
     if (query.length > 0) {
       const searchRegEx = new RegExp(escapeRegExp(query));
-      let currentItems = items.filter((row: IssuedReportItem) => {
+      let currentItems = props.items.filter((row: IssuedReportItem) => {
         return Object.keys(row).some((field: any) => {
           const value = row[field as keyof IssuedReportItem];
           if (value) return searchRegEx.test(value.toString());

@@ -17,7 +17,7 @@ import UserEditor from "./UserEditor";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";

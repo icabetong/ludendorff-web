@@ -14,7 +14,7 @@ import { ActionType, initialState, reducer } from "./CategoryEditorReducer";
 import CategoryList from "./CategoryList";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";

@@ -1,6 +1,6 @@
 import { Category } from "./Category";
 import { List, ListItemButton, ListItemText } from "@mui/material";
-import { Highlight } from "../../components/Search";
+import { Highlight } from "../../components/InstantSearch";
 import { categoryName } from "../../shared/const";
 import { HitsProvided } from "react-instantsearch-core";
 import { connectHits } from "react-instantsearch-dom";

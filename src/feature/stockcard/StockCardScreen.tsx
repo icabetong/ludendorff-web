@@ -18,7 +18,7 @@ import {
 } from "../../shared/const";
 import { ActionType, initialState, reducer } from "./StockCardEditorReducer";
 import { isDev } from "../../shared/utils";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import StockCardList from "./StockCardList";
 import { StockCardEditor } from "./StockCardEditor";

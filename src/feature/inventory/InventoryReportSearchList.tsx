@@ -1,7 +1,7 @@
 import { HitsProvided } from "react-instantsearch-core";
 import { InventoryReport } from "./InventoryReport";
 import { List, ListItemButton, ListItemText } from "@mui/material";
-import { Highlight } from "../../components/Search";
+import { Highlight } from "../../components/InstantSearch";
 import { fundCluster, yearMonth } from "../../shared/const";
 import { connectHits } from "react-instantsearch-dom";
 

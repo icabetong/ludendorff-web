@@ -21,7 +21,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/Search";
+import { Provider } from "../../components/InstantSearch";
 import SearchDialogTitle from "../../components/SearchDialogTitle";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
 

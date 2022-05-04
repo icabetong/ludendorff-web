@@ -115,7 +115,7 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
   const onSearchChanged = (query: string) => {
     if (query.length > 0) {
       const searchRegEx = new RegExp(escapeRegExp(query));
-      let currentItems = entries.filter((row: StockCardEntry) => {
+      let currentItems = props.entries.filter((row: StockCardEntry) => {
         return Object.keys(row).some((field: any) => {
           const value = row[field as keyof StockCardEntry];
           if (value) return searchRegEx.test(value.toString());

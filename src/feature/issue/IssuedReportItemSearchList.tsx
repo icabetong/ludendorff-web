@@ -9,7 +9,7 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/mate
 import { ArrowBackRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next"
 import { HitsProvided } from "react-instantsearch-core";
-import { Highlight } from "../../components/Search";
+import { Highlight } from "../../components/InstantSearch";
 import { fundCluster, serialNumber } from "../../shared/const";
 import { connectHits } from "react-instantsearch-dom";
 

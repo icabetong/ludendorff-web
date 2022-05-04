@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { AddRounded, MenuRounded, MoreVert } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { SearchBox, SearchBoxInputBase } from "./Search";
+import { SearchBox, SearchBoxInputBase } from "./InstantSearch";
 
 type AdaptiveHeaderProps = CoreHeaderProps & MediumScreenHeaderProps & LargeScreenHeaderProps;
 type CoreHeaderProps = {
