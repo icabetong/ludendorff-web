@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { Route, Router, Switch } from 'react-router-dom';
+import { useContext } from "react";
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import AuthComponent from '../auth/AuthComponent'
+import AuthComponent from '../auth/AuthComponent';
+import { AuthProvider } from '../auth/AuthProvider';
 import RootComponent from '../root/Root';
-import history from "../navigation/History";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { PreferenceContext } from "../settings/Preference";
 
@@ -123,28 +123,22 @@ const baseTheme = (mode: PaletteMode) => createTheme({
   }
 })
 
-export const CoreComponent = () => {
+export const Ludendorff = () => {
   const userPreferences = useContext(PreferenceContext);
 
   return <>
     {/* https://stackoverflow.com/questions/60909608/material-ui-theme-does-not-change-back */}
     <ThemeProvider theme={baseTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
       <CssBaseline/>
-      <Router history={history}>
-        <Switch>
-          <Route
-            path="/"
-            component={RootComponent}
-            exact/>
-          <Route
-            path="/auth"
-            component={AuthComponent}/>
-          <Route
-            path="*"
-            component={ErrorNotFoundState}
-            exact/>
-        </Switch>
-      </Router>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<RootComponent/>}/>
+            <Route path="/login" element={<AuthComponent/>}/>
+            <Route path="*" element={<ErrorNotFoundState/>}/>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   </>;
 }

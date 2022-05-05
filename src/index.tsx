@@ -1,11 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 
-import { AuthProvider } from './feature/auth/AuthProvider';
-import { CoreComponent } from './feature/core/Core';
+import { Ludendorff } from './feature/core/Core';
 import { PreferenceProvider } from './feature/settings/Preference';
 import * as serviceWorker from "./serviceWorkerRegistration";
 
@@ -26,15 +25,14 @@ const auth = getAuth(firebaseApp);
 const firestore = initializeFirestore(firebaseApp, { ignoreUndefinedProperties: true });
 export { firebaseApp, auth, firestore };
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <PreferenceProvider>
-        <CoreComponent/>
-      </PreferenceProvider>
-    </AuthProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <PreferenceProvider>
+      <Ludendorff/>
+    </PreferenceProvider>
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

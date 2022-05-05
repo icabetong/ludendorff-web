@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { useForm, Controller } from "react-hook-form";
-import { RouteComponentProps } from "react-router";
-import { withRouter } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -26,8 +25,9 @@ type FormData = {
   password: string
 }
 
-const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }) => {
+const AuthComponent = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { handleSubmit, formState: { errors }, control, reset } = useForm<FormData>();
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [error, setError] = useState<AuthError | undefined>(undefined);
@@ -41,14 +41,9 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
   const onSubmit = (data: FormData) => {
     setIsAuthenticating(true)
     signInWithEmailAndPassword(auth, data.email, data.password)
-      .then(() => {
-        setIsAuthenticating(false);
-        history.push('/');
-      })
-      .catch((error: AuthError) => {
-        setError(error);
-        setIsAuthenticating(false);
-      })
+      .then(() => navigate('/'))
+      .catch((error: AuthError) => setError(error))
+      .finally(() => setIsAuthenticating(false));
   }
 
   return (
@@ -154,4 +149,4 @@ const AuthComponent: React.FunctionComponent<RouteComponentProps> = ({ history }
   );
 }
 
-export default withRouter(AuthComponent)
+export default AuthComponent;

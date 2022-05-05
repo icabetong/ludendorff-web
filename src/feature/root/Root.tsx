@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect } from "react-router";
-import { withRouter, } from "react-router-dom";
+import { Navigate, useLocation } from "react-router";
 import {
   AppBar,
   Box,
@@ -280,6 +279,7 @@ const RootContainerComponent = (props: RootContainerComponentPropsType) => {
 const RootComponent = () => {
   const { status, user } = useAuthState();
   const theme = useTheme();
+  const location = useLocation();
   const isXSDeviceWidth = useMediaQuery(theme.breakpoints.down('sm'));
   const [destination, setDestination] = useState<Destination>(() => {
     const previousDestination = localStorage.getItem('tab');
@@ -312,7 +312,7 @@ const RootComponent = () => {
           </SnackbarProvider>
         </DialogProvider>
       )
-    } else return <Redirect to="/auth"/>
-  } else return <Redirect to="/error"/>
+    } else return <Navigate to="/login" state={{ from: location }} replace/>
+  } else return <Navigate to="/error" state={{ from: location }} replace/>
 }
-export default withRouter(RootComponent);
+export default RootComponent;

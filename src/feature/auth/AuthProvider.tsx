@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, Unsubscribe } from 'firebase/auth';
 import { doc, onSnapshot } from "firebase/firestore";
-import history from "../navigation/History";
 import { hasPermission, Permission, User } from "../user/User";
 import { userCollection } from "../../shared/const";
 import { auth, firestore } from '../../index';
@@ -15,7 +15,11 @@ export type AuthState = {
 
 export const AuthContext = React.createContext<AuthState>({ status: AuthStatus.PENDING })
 
-export const AuthProvider: React.FC = ({ children }) => {
+type AuthProviderProps = {
+  children: React.ReactNode
+}
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const navigate = useNavigate();
   const [authState, setAuthState] = useState<AuthState>({ status: AuthStatus.PENDING });
 
   useEffect(() => {
@@ -27,7 +31,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         })
       } else {
         await auth.signOut();
-        history.push("/auth");
+        navigate("/login");
       }
     });
     return () => {
