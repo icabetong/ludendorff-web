@@ -32,7 +32,7 @@ import { AccountCircleOutlined, ArrowDropDown, ExitToAppRounded, SettingsOutline
 import { ReactComponent as Logo } from "../../shared/brand.svg";
 
 import { signOut } from "firebase/auth";
-import { AuthStatus, useAuthState } from "../auth/AuthProvider";
+import { useAuthState } from "../auth/AuthProvider";
 import { Destination, NavigationComponent, TopNavigationComponent } from "../navigation/NavigationComponent";
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { ContentLoadingStateComponent, MainLoadingStateComponent } from "../state/LoadingStates";
@@ -290,9 +290,9 @@ const RootComponent = () => {
     setDestination(newDestination)
   }
 
-  if (status === AuthStatus.PENDING) {
+  if (status === "pending") {
     return <MainLoadingStateComponent/>
-  } else if (status === AuthStatus.FETCHED) {
+  } else if (status === "fetched") {
     if (user !== undefined) {
       return (
         <DialogProvider>

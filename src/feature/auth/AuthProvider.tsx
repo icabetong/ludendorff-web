@@ -6,28 +6,26 @@ import { hasPermission, Permission, User } from "../user/User";
 import { userCollection } from "../../shared/const";
 import { auth, firestore } from '../../index';
 
-export enum AuthStatus { FETCHED, PENDING }
-
 export type AuthState = {
-  status: AuthStatus,
+  status: "fetched" | "pending",
   user?: User
 }
 
-export const AuthContext = React.createContext<AuthState>({ status: AuthStatus.PENDING })
+export const AuthContext = React.createContext<AuthState>({ status: "pending" })
 
 type AuthProviderProps = {
   children: React.ReactNode
 }
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
-  const [authState, setAuthState] = useState<AuthState>({ status: AuthStatus.PENDING });
+  const [authState, setAuthState] = useState<AuthState>({ status: "pending" });
 
   useEffect(() => {
     let dataUnsubscribe: Unsubscribe;
     const authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser != null) {
         dataUnsubscribe = onSnapshot(doc(firestore, userCollection, firebaseUser.uid), (doc) => {
-          setAuthState({ status: AuthStatus.FETCHED, user: doc.data() as User });
+          setAuthState({ status: "fetched", user: doc.data() as User });
         })
       } else {
         await auth.signOut();
@@ -39,7 +37,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         dataUnsubscribe();
       authUnsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   return (
     <AuthContext.Provider value={authState}>
@@ -63,7 +61,7 @@ type PermissionHook = {
 export function usePermissions(): PermissionHook {
   const { status, user } = useAuthState();
 
-  if (status === AuthStatus.FETCHED && user !== undefined)
+  if (status === "fetched" && user !== undefined)
     return {
       canRead: hasPermission(user, Permission.READ),
       canWrite: hasPermission(user, Permission.WRITE),

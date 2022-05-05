@@ -5,7 +5,6 @@ import { getAuth } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';
 
 import { Ludendorff } from './feature/core/Core';
-import { PreferenceProvider } from './feature/settings/Preference';
 import * as serviceWorker from "./serviceWorkerRegistration";
 
 import './index.css';
@@ -29,9 +28,7 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <PreferenceProvider>
-      <Ludendorff/>
-    </PreferenceProvider>
+    <Ludendorff/>
   </React.StrictMode>
 );
 

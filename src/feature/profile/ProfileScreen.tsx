@@ -18,7 +18,7 @@ import ProfileActionList from "./ProfileActionList";
 import ChangeNamePrompt from "./actions/ChangeName";
 import ChangePasswordPrompt from "./actions/ChangePassword";
 import RequestResetPrompt from "./actions/RequestReset";
-import { AuthStatus, useAuthState } from "../auth/AuthProvider";
+import { useAuthState } from "../auth/AuthProvider";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import { auth } from "../../index";
@@ -83,7 +83,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         accept="image/*"
         hidden/>
 
-      {status === AuthStatus.FETCHED
+      {status === "fetched"
         ?
         <Box sx={{ flex: 1, padding: 2 }}>
           <Grid
