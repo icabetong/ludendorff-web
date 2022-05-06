@@ -1,14 +1,15 @@
 import { useTranslation } from "react-i18next";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-
-const QRCode = require('qrcode.react');
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Typography
+} from '@mui/material';
+import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
 
 type QrCodeViewComponentPropsType = {
   assetId?: string,
@@ -27,22 +28,18 @@ const QrCodeViewComponent = (props: QrCodeViewComponentPropsType) => {
       onClose={props.onClose}>
       <DialogTitle>{t("dialog.view_qr_code")}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          <Typography>{t("dialog.view_qr_code_summary")}</Typography>
-        </DialogContentText>
+        <DialogContentText>{t("dialog.view_qr_code_summary")}</DialogContentText>
         <Grid
           container
           direction="row"
           alignItems="center"
           justifyContent="center">
-          <QRCode value={`clsu://ludendorff/${props.assetId}`}/>
+          <QRCodeCanvas value={`clsu://ludendorff/${props.assetId}`}/>
         </Grid>
       </DialogContent>
 
       <DialogActions>
-        <Button
-          color="primary"
-          onClick={props.onClose}>{t("button.close")}</Button>
+        <Button onClick={props.onClose}>{t("button.close")}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -14,16 +14,22 @@ const useDensity = (key: string) => {
   });
 
   useEffect(() => {
+    if (preferences.overrideDensity) {
+      setDensity(preferences.density);
+    }
+  }, [preferences]);
+
+  useEffect(() => {
     let componentDensity = localStorage.getItem(key);
 
-    if (componentDensity) {
-      setDensity(componentDensity)
-    } else if (preferences.density) {
-      setDensity(preferences.density)
+    if (preferences.overrideDensity) {
+      setDensity(preferences.density);
+    } else if (componentDensity) {
+      setDensity(componentDensity);
     } else {
-      setDensity('standard')
+      setDensity('standard');
     }
-  }, [key, preferences.density]);
+  }, [key, preferences.density, preferences.overrideDensity]);
 
   const onDensityChanged = (gridDensity: GridDensity | string) => {
     setDensity(gridDensity);

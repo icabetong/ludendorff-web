@@ -1,13 +1,16 @@
 import React, { useContext, useEffect, useState, } from "react";
 import { GridDensity } from "@mui/x-data-grid";
+import { isDev } from "../../shared/utils";
 
 type Preferences = {
   theme: string,
+  overrideDensity: boolean,
   density: GridDensity
 }
 
 const defaultPreferences: Preferences = {
   theme: 'light',
+  overrideDensity: false,
   density: 'standard'
 }
 
@@ -30,20 +33,22 @@ export const PreferenceProvider = ({ children }: PreferenceProviderProps) => {
 
   useEffect(() => {
     onPreferenceFetch()
-      .then(() => {
-      })
-      .catch((e) => {
+      .then((preferences) =>
+        setPreferences(JSON.parse(preferences !== null ? preferences : JSON.stringify(defaultPreferences)))
+      ).catch((error) => {
+        if (isDev) console.log(error)
       });
   }, [])
 
   const onPreferenceFetch = async () => {
     const userPreferences = localStorage.getItem("preferences")
-    setPreferences(JSON.parse(userPreferences !== null ? userPreferences : JSON.stringify(defaultPreferences)));
+    return userPreferences;
   }
 
   const onPreferenceChanged = async (pref: Preferences) => {
     localStorage.setItem("preferences", JSON.stringify(pref));
-    await onPreferenceFetch();
+    let preferences = await onPreferenceFetch();
+    setPreferences(JSON.parse(preferences !== null ? preferences : JSON.stringify(defaultPreferences)))
   }
 
   return (

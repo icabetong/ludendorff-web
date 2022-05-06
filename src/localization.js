@@ -264,6 +264,8 @@ const resources = {
       settings: {
         dark_theme: "Dark Theme",
         dark_theme_summary: "Make the interface darker and easier on the eyes.",
+        override_individual_density: "Override Individual Component Density",
+        override_individual_density_summary: "Use the global setting for table row density instead of their individual setting",
         table_row_density: "Table Row Density",
         table_row_density_summary: "Customize the size of the row paddings in the data table.",
         table_row_density_compact: "Compact",

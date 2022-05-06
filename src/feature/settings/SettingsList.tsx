@@ -1,16 +1,12 @@
 import React from "react";
-import makeStyles from '@mui/styles/makeStyles';
-import { List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Theme } from "@mui/material";
-
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText
+} from "@mui/material";
 import { Setting } from "./Settings";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  icon: {
-    width: '1.2em',
-    height: '1.2em',
-    color: theme.palette.text.primary
-  }
-}));
 
 type SettingsListProps = {
   preferences: Setting[]
@@ -20,7 +16,11 @@ const SettingsList = (props: SettingsListProps) => {
   return (
     <List>
       {props.preferences.map((preference: Setting) => {
-        return <SettingsItem key={preference.key} preference={preference}/>
+        return (
+          <SettingsItem
+            key={preference.key}
+            preference={preference}/>
+        )
       })
       }
     </List>
@@ -32,18 +32,15 @@ type SettingsItemProp = {
 }
 
 const SettingsItem = (props: SettingsItemProp) => {
-  const classes = useStyles();
-
   return (
     <ListItem key={props.preference.key}>
       {props.preference.icon &&
         <ListItemIcon>
-          {React.createElement(props.preference.icon,
-            { className: classes.icon })
-          }
+          {React.createElement(props.preference.icon)}
         </ListItemIcon>
       }
       <ListItemText
+        inset={!Boolean(props.preference.icon)}
         primary={props.preference.title}
         secondary={props.preference.summary}/>
       {props.preference.action &&

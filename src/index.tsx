@@ -9,6 +9,7 @@ import * as serviceWorker from "./serviceWorkerRegistration";
 
 import './index.css';
 import './localization';
+import { PreferenceProvider } from "./feature/settings/Preference";
 
 const config = {
   apiKey: process.env.REACT_APP_BACKEND_API_KEY,
@@ -28,7 +29,9 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <Ludendorff/>
+    <PreferenceProvider>
+      <Ludendorff/>
+    </PreferenceProvider>
   </React.StrictMode>
 );
 

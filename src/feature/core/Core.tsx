@@ -7,7 +7,7 @@ import AuthComponent from '../auth/AuthComponent';
 import { AuthProvider } from '../auth/AuthProvider';
 import RootComponent from '../root/Root';
 import { ErrorNotFoundState } from "../state/ErrorStates";
-import { PreferenceContext, PreferenceProvider } from "../settings/Preference";
+import { PreferenceContext } from "../settings/Preference";
 
 const white = '#ffffff';
 const main50 = '#e3f2fd';
@@ -216,19 +216,17 @@ export const Ludendorff = () => {
   const userPreferences = useContext(PreferenceContext);
 
   return (
-    <PreferenceProvider>
-      <ThemeProvider theme={getTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
-        <CssBaseline/>
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<RootComponent/>}/>
-              <Route path="/login" element={<AuthComponent/>}/>
-              <Route path="*" element={<ErrorNotFoundState/>}/>
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </ThemeProvider>
-    </PreferenceProvider>
+    <ThemeProvider theme={getTheme(userPreferences.preferences.theme === 'dark' ? 'dark' : 'light')}>
+      <CssBaseline/>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<RootComponent/>}/>
+            <Route path="/login" element={<AuthComponent/>}/>
+            <Route path="*" element={<ErrorNotFoundState/>}/>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

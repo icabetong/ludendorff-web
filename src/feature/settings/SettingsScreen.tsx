@@ -8,6 +8,7 @@ import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import EntityEditor from "../entity/EntityEditor";
+import useDensity from "../shared/hooks/useDensity";
 
 type SettingsScreenProps = {
   onDrawerToggle: () => void,
@@ -17,6 +18,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   const { t } = useTranslation();
   const [isEntityEditorOpen, setEntityEditorOpen] = useState(false);
   const userPreferences = useContext(PreferenceContext);
+  const { onDensityChanged } = useDensity('');
 
   const onEntityEditorInvoke = () => setEntityEditorOpen(true);
   const onEntityEditorDismiss = () => setEntityEditorOpen(false);
@@ -27,6 +29,13 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   }
   const onDensityMenuDismiss = () => {
     setDensityMenuAnchor(null)
+  }
+
+  const onOverrideDensityChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    userPreferences.setPreferences({
+      ...userPreferences.preferences,
+      overrideDensity: event.target.checked
+    })
   }
 
   const onDensityMenuItemClick = (density: string) => {
@@ -50,46 +59,64 @@ const SettingsScreen = (props: SettingsScreenProps) => {
       title: t("settings.dark_theme"),
       summary: t("settings.dark_theme_summary"),
       icon: PaletteOutlined,
-      action: <Switch
-        edge="end"
-        checked={userPreferences.preferences.theme === 'dark'}
-        onChange={onTriggerThemeChanged}/>
-    }, {
+      action: (
+        <Switch
+          edge="end"
+          checked={userPreferences.preferences.theme === 'dark'}
+          onChange={onTriggerThemeChanged}/>
+      )
+    },
+    {
+      key: 'preference:densityOverride',
+      title: t("settings.override_individual_density"),
+      summary: t("settings.override_individual_density_summary"),
+      action: (
+        <Switch
+          edge="end"
+          checked={userPreferences.preferences.overrideDensity}
+          onChange={onOverrideDensityChanged}
+        />
+      )
+    },
+    {
       key: 'preference:density',
       title: t("settings.table_row_density"),
       summary: t(`settings.table_row_density_${userPreferences.preferences.density}`),
       icon: TableChartOutlined,
-      action: <>
-        <IconButton
-          aria-controls="density-menu"
-          aria-haspopup="true"
-          onClick={onDensityMenuView}
-          size="large">
-          <ChevronRightRounded/>
-        </IconButton>
-        <Menu
-          keepMounted
-          id="density-menu"
-          anchorEl={densityMenuAnchor}
-          open={Boolean(densityMenuAnchor)}
-          onClose={onDensityMenuDismiss}>
-          <MenuItem
-            key="compact"
-            onClick={() => onDensityMenuItemClick("compact")}>
-            {t(`settings.table_row_density_compact`)}
-          </MenuItem>
-          <MenuItem
-            key="standard"
-            onClick={() => onDensityMenuItemClick("standard")}>
-            {t(`settings.table_row_density_standard`)}
-          </MenuItem>
-          <MenuItem
-            key="comfortable"
-            onClick={() => onDensityMenuItemClick("comfortable")}>
-            {t(`settings.table_row_density_comfortable`)}
-          </MenuItem>
-        </Menu>
-      </>
+      action: (
+        <>
+          <IconButton
+            size="large"
+            disabled={!userPreferences.preferences.overrideDensity}
+            aria-controls="density-menu"
+            aria-haspopup="true"
+            onClick={onDensityMenuView}>
+            <ChevronRightRounded/>
+          </IconButton>
+          <Menu
+            keepMounted
+            id="density-menu"
+            anchorEl={densityMenuAnchor}
+            open={Boolean(densityMenuAnchor)}
+            onClose={onDensityMenuDismiss}>
+            <MenuItem
+              key="compact"
+              onClick={() => onDensityMenuItemClick("compact")}>
+              {t(`settings.table_row_density_compact`)}
+            </MenuItem>
+            <MenuItem
+              key="standard"
+              onClick={() => onDensityMenuItemClick("standard")}>
+              {t(`settings.table_row_density_standard`)}
+            </MenuItem>
+            <MenuItem
+              key="comfortable"
+              onClick={() => onDensityMenuItemClick("comfortable")}>
+              {t(`settings.table_row_density_comfortable`)}
+            </MenuItem>
+          </Menu>
+        </>
+      )
     },
     {
       key: 'preference:entity',
