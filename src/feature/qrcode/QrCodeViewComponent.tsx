@@ -7,9 +7,8 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  Typography
 } from '@mui/material';
-import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 
 type QrCodeViewComponentPropsType = {
   assetId?: string,
