@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { useForm, Controller } from "react-hook-form";
 import {
   Alert,
   Box,
+  Button,
   Container,
   InputAdornment,
   Paper,
@@ -14,11 +15,15 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { AuthError, signInWithEmailAndPassword } from "firebase/auth";
+import { AuthError, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../index";
 import { LoadingButton } from "@mui/lab";
 import { LockOutlined, MailOutlineRounded } from "@mui/icons-material";
 import { ReactComponent as Logo } from "../../shared/icon.svg";
+import PasswordReset from "./PasswordReset";
+import SVGFeedbackDialog from "../../components/SVGFeedbackDialog";
+import { ReactComponent as EmailSent } from "../../shared/message_sent.svg";
+import { isDev } from "../../shared/utils";
 
 type FormData = {
   email: string,
@@ -28,15 +33,32 @@ type FormData = {
 const AuthComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { handleSubmit, formState: { errors }, control, reset } = useForm<FormData>();
+  const { handleSubmit, formState: { errors }, control, watch } = useForm<FormData>({
+    defaultValues: { email: "", password: "" }
+  });
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
+  const [requesting, setRequesting] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [working, setWorking] = useState(false);
   const [error, setError] = useState<AuthError | undefined>(undefined);
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    reset({ email: '', password: '' });
-  }, [reset]);
+  const onShowRequestPassword = () => setRequesting(true);
+  const onDismissRequestPassword = () => setRequesting(false);
+
+  const onResetPassword = async (email: string) => {
+    try {
+      setWorking(true);
+      await sendPasswordResetEmail(auth, email);
+      setRequesting(false);
+      setConfirm(true);
+    } catch (error) {
+      if (isDev) console.log(error);
+    } finally {
+      setWorking(false);
+    }
+  }
 
   const onSubmit = (data: FormData) => {
     setIsAuthenticating(true)
@@ -141,10 +163,28 @@ const AuthComponent = () => {
                 loading={isAuthenticating}>
                 {t("button.sign_in")}
               </LoadingButton>
+              <Button
+                fullWidth
+                onClick={onShowRequestPassword}
+                sx={{ marginTop: 2 }}>
+                {t("button.forgot_password")}
+              </Button>
             </Paper>
           </Container>
         </Stack>
       </Container>
+      <PasswordReset
+        isOpen={requesting}
+        email={watch('email')}
+        working={working}
+        onSubmit={onResetPassword}
+        onDismiss={onDismissRequestPassword}/>
+      <SVGFeedbackDialog
+        isOpen={confirm}
+        svgImage={EmailSent}
+        title={t("dialog.reset_email_sent")}
+        description={t("dialog.reset_email_sent_summary")}
+        onDismiss={() => setConfirm(false)}/>
     </Box>
   );
 }

@@ -12,7 +12,7 @@ import { PreferenceContext } from "../settings/Preference";
 const white = '#ffffff';
 const main50 = '#e3f2fd';
 const main200 = '#90caf9';
-const main400 = '#42a5f5';
+  const main400 = '#42a5f5';
 const main700 = '#1976d2';
 const main800 = '#1565c0';
 const gray50 = '#f9fafb';

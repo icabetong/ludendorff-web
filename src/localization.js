@@ -163,6 +163,8 @@ const resources = {
         import: "Import",
         choose_file: "Choose File",
         set_category: "Set Category",
+        forgot_password: "Forgot Password?",
+        send: "Send"
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -324,7 +326,9 @@ const resources = {
         issued_is_more_than_current: "Not Enough Quantity",
         issued_is_more_than_current_summary: "The requested issued quantity for the specified asset is more than what is specified in the quantity in the source inventory report.",
         stock_number_not_found_on_report: "Stock Number not Found",
-        stock_number_not_found_on_report_summary: "The requested stock number is not found on the specified inventory report. Select another one then try again."
+        stock_number_not_found_on_report_summary: "The requested stock number is not found on the specified inventory report. Select another one then try again.",
+        reset_email_sent: "Check your email",
+        reset_email_sent_summary: "An email has been sent to your email address. Follow the directions in the email to reset your password."
       },
       template: {
         full_name: "{{first}} {{last}}",
