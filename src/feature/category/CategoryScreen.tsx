@@ -79,7 +79,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
                           onBackward={getPrev}
                           onForward={getNext}/>
                       }
-                    </>
+                      </>
                   }
                 </Box>
               : <LinearProgress/>
