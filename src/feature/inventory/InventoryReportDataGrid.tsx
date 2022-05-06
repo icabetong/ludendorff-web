@@ -55,14 +55,16 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { density, onDensityChanged } = useDensity('inventoryDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
 
+  const hideFooter = props.isSearching || (props.canForward && props.items.length > 0 && props.items.length <= props.size)
   return (
     <DataGrid
-      hideFooterPagination={props.isSearching}
+      hideFooter={hideFooter}
+      hideFooterPagination={hideFooter}
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: InventoryReportDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: props.canForward && props.items.length > 0 && props.items.length === props.size ? DataGridPaginationController : null,
+        Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
       }}
       componentsProps={{
         pagination: {

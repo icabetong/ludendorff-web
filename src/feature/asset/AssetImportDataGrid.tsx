@@ -43,7 +43,6 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
   const { t } = useTranslation();
   const { density, onDensityChanged } = useDensity('assetDensity');
   const [hasChecked, setHasChecked] = useState(false);
-
   const columns = [
     {
       field: assetStockNumber,

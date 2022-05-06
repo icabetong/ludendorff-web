@@ -14,12 +14,6 @@ const useDensity = (key: string) => {
   });
 
   useEffect(() => {
-    if (preferences.overrideDensity) {
-      setDensity(preferences.density);
-    }
-  }, [preferences]);
-
-  useEffect(() => {
     let componentDensity = localStorage.getItem(key);
 
     if (preferences.overrideDensity) {
@@ -29,9 +23,12 @@ const useDensity = (key: string) => {
     } else {
       setDensity('standard');
     }
-  }, [key, preferences.density, preferences.overrideDensity]);
+  }, [key, preferences, preferences.density, preferences.overrideDensity]);
 
   const onDensityChanged = (gridDensity: GridDensity | string) => {
+    if (preferences.overrideDensity)
+      return;
+
     setDensity(gridDensity);
     localStorage.setItem(key, gridDensity);
   }

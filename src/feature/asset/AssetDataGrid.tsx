@@ -78,14 +78,16 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { density, onDensityChanged } = useDensity('assetDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
+  const hideFooter = props.isSearching || (props.canForward && props.items.length > 0 && props.items.length <= props.size)
   return (
     <DataGrid
-      hideFooterPagination={props.isSearching}
+      hideFooter={hideFooter}
+      hideFooterPagination={hideFooter}
       components={{
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: props.canForward && props.items.length > 0 && props.items.length === props.size ? DataGridPaginationController : null,
+        Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
       }}
       componentsProps={{
         toolbar: {
