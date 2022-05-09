@@ -188,6 +188,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
               onClick={onDismiss}>{t("button.cancel")}</Button>
             <Button
               color="primary"
+              variant="contained"
               type="submit">{t("button.save")}</Button>
           </DialogActions>
         </form>

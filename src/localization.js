@@ -99,7 +99,8 @@ const resources = {
         uacs_object_code: "UACS Object Code",
         posted_by: "Posted by:",
         spreadsheet_file: "Spreadsheet file",
-        worksheet_name: "Worksheet name"
+        worksheet_name: "Worksheet name",
+        duplicate_items: "Duplicate Items",
       },
       placeholder: {
         none: "None",
@@ -328,7 +329,9 @@ const resources = {
         stock_number_not_found_on_report: "Stock Number not Found",
         stock_number_not_found_on_report_summary: "The requested stock number is not found on the specified inventory report. Select another one then try again.",
         reset_email_sent: "Check your email",
-        reset_email_sent_summary: "An email has been sent to your email address. Follow the directions in the email to reset your password."
+        reset_email_sent_summary: "An email has been sent to your email address. Follow the directions in the email to reset your password.",
+        duplicate_asset_items: "Duplicate Items",
+        duplicate_asset_items_summary: "There are duplicate items found on the data read from the selected spreadsheet file. Resolve these conflicts first to continue."
       },
       template: {
         full_name: "{{first}} {{last}}",

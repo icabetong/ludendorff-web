@@ -225,6 +225,7 @@ export const StockCardEntryEditor = (props: StockCardEntryEditorProps) => {
             {t("button.cancel")}
           </Button>
           <Button
+            variant="contained"
             color="primary"
             type="submit">
             {t("button.save")}

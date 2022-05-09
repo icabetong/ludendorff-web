@@ -101,6 +101,13 @@ const getTheme = (mode: PaletteMode) => createTheme({
         }
       }
     },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          backgroundColor: mode === 'dark' ? gray600 : gray100
+        }
+      }
+    },
     MuiTextField: {
       defaultProps: {
         fullWidth: true,

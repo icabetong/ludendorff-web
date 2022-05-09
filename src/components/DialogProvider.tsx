@@ -26,7 +26,7 @@ const ProvidedDialog = (props: DialogProps) => {
           </Button>
         }
         { props.confirmButtonText &&
-          <Button onClick={props.onConfirm}>
+          <Button variant="contained" onClick={props.onConfirm}>
             {props.confirmButtonText}
           </Button>
         }

@@ -329,6 +329,7 @@ const AssetEditor = (props: AssetEditorProps) => {
             </Button>
             <LoadingButton
               loading={isWriting}
+              variant="contained"
               color="primary"
               type="submit">
               {t("button.save")}

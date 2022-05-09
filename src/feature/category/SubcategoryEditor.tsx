@@ -49,7 +49,7 @@ const SubcategoryEditor = (props: SubcategoryEditorProps) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={props.onDismiss}>{t("button.cancel")}</Button>
-          <Button type="submit">{t("button.save")}</Button>
+          <Button variant="contained" type="submit">{t("button.save")}</Button>
         </DialogActions>
       </form>
     </Dialog>

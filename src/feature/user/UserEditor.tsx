@@ -281,6 +281,7 @@ const UserEditor = (props: UserEditorProps) => {
           <Button
             color="primary"
             type="submit"
+            variant="contained"
             disabled={isWritePending}>{t("button.save")}</Button>
         </DialogActions>
       </form>

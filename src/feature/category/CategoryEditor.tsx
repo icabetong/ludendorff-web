@@ -152,6 +152,7 @@ const CategoryEditor = (props: CategoryEditorProps) => {
             <LoadingButton
               color="primary"
               type="submit"
+              variant="contained"
               loading={isWritePending}>
               {t("button.save")}
             </LoadingButton>
