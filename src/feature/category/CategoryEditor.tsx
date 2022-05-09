@@ -104,12 +104,12 @@ const CategoryEditor = (props: CategoryEditorProps) => {
 
   return (
     <>
-    <form onSubmit={handleSubmit(onSubmit)}>
       <Dialog
         fullWidth={true}
         maxWidth="xs"
         scroll="paper"
         open={props.isOpen}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{t("dialog.details_category")}</DialogTitle>
           <DialogContent dividers={true}>
             <Container disableGutters>
@@ -157,8 +157,9 @@ const CategoryEditor = (props: CategoryEditorProps) => {
               {t("button.save")}
             </LoadingButton>
           </DialogActions>
+        </form>
       </Dialog>
-      </form>
+
       <SubcategoryEditor
         subcategory={state.subcategory}
         isOpen={state.isOpen}

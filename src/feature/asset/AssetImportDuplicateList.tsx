@@ -1,3 +1,4 @@
+import React from "react";
 import { IconButton, List, ListItem, ListSubheader, ListItemText, ListItemSecondaryAction } from "@mui/material";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { AssetImport } from "./AssetImport";
@@ -16,8 +17,8 @@ const AssetImportDuplicateList = (props: AssetImportDuplicateListProps) => {
       {
         Array.from(Object.keys(props.assets).map((stockNumber) => {
           return (
-            <>
-              <ListSubheader key={stockNumber}>{stockNumber}</ListSubheader>
+            <React.Fragment key={stockNumber}>
+              <ListSubheader>{stockNumber}</ListSubheader>
               {
                 props.assets[stockNumber].map((item) => {
                   const key = newId()
@@ -31,7 +32,7 @@ const AssetImportDuplicateList = (props: AssetImportDuplicateListProps) => {
                   )
                 })
               }
-            </>
+            </React.Fragment>
           )
         }))
       }

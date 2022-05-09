@@ -246,6 +246,7 @@ const resources = {
         avatar_change_error: "Error updating user profile picture",
         stock_number_already_exists: "The stock number you entered already exists",
         subcategory_already_exists: "Subcategory already exists",
+        duplicate_items_exists: "Duplicate items still exists",
       },
       error: {
         no_permissions_header: "Insufficient Permissions",

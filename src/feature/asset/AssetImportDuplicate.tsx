@@ -57,6 +57,11 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
   }
 
   const onContinue = () => {
+    if (Object.values(duplicates).some((arr) => arr.length > 1)) {
+      enqueueSnackbar(t("feedback.duplicate_items_exists"))
+      return;
+    }
+
     props.onContinue(duplicates);
   }
 
