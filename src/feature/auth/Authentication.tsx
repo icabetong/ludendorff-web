@@ -30,7 +30,7 @@ type FormData = {
   password: string
 }
 
-const AuthComponent = () => {
+const Authentication = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { handleSubmit, formState: { errors }, control, watch } = useForm<FormData>({
@@ -189,4 +189,4 @@ const AuthComponent = () => {
   );
 }
 
-export default AuthComponent;
+export default Authentication;

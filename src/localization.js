@@ -114,7 +114,7 @@ const resources = {
         search: 'Type anything',
         entity_name: 'example: "John Doe"',
         entity_position: 'example: "Instructor II"',
-        search_entries: "Search for entries"
+        search_entries: "GridSearch for entries"
       },
       permission: {
         read: "Read",
@@ -150,6 +150,7 @@ const resources = {
         sign_in: "Log in",
         sign_out: "Log out",
         go_to_home: "Go to Home",
+        account_settings: "Account",
         request_asset: "Request Asset",
         create_asset: "Create Asset",
         create_user: "Create User",
@@ -280,7 +281,7 @@ const resources = {
       },
       dialog: {
         sign_out: "Log out?",
-        sign_out_message: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+        sign_out_summary: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
         asset_remove: "Remove asset?",
         asset_remove_summary: "Do you want to remove this asset? Once finished, this action cannot be undone.",
         category_remove: "Remove category?",

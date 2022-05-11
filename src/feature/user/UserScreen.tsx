@@ -117,7 +117,7 @@ const UserScreen = (props: UserScreenProps) => {
   }
 
   return (
-    <Box sx={{width: '100%'}}>
+    <Box sx={{ width: '100%', height: '100%', }}>
       <InstantSearch
         searchClient={Provider}
         indexName="users">

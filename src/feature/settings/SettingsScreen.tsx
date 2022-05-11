@@ -8,7 +8,6 @@ import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import EntityEditor from "../entity/EntityEditor";
-import useDensity from "../shared/hooks/useDensity";
 
 type SettingsScreenProps = {
   onDrawerToggle: () => void,
@@ -18,7 +17,6 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   const { t } = useTranslation();
   const [isEntityEditorOpen, setEntityEditorOpen] = useState(false);
   const userPreferences = useContext(PreferenceContext);
-  const { onDensityChanged } = useDensity('');
 
   const onEntityEditorInvoke = () => setEntityEditorOpen(true);
   const onEntityEditorDismiss = () => setEntityEditorOpen(false);
@@ -134,7 +132,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   ]
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%' }}>
       <AdaptiveHeader
         title={t("navigation.settings")}
         onDrawerTriggered={props.onDrawerToggle}/>

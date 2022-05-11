@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, InputBase, TextField } from "@mui/material";
+import { Box, InputBase } from "@mui/material";
 import { SearchRounded } from "@mui/icons-material";
 import algoliasearch from "algoliasearch/lite";
 import { connectHighlight, connectSearchBox } from "react-instantsearch-dom";
@@ -49,6 +49,7 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
 
   const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     props.refine(event.target.value)
+    console.log("SSSS")
     if (!props.dontWatchFocus) {
       if (event.target.value === '') {
         props.onFocusChanged?.(false)
@@ -64,7 +65,7 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
           flexDirection: 'row',
           position: 'relative',
           padding: theme.spacing('4px', 1),
-          borderRadius: theme.shape.borderRadius,
+          borderRadius: 2,
           backgroundColor: theme.palette.divider,
           marginLeft: 0,
           marginRight: theme.spacing(2),
@@ -107,38 +108,7 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
 
   );
 }
-type SearchBoxProps = SearchBoxProvided & {
-  onFocusChanged?: (hasFocus: boolean) => void,
-}
-const SearchBoxCore = (props: SearchBoxProps) => {
-  const { t } = useTranslation();
-  const onFocusGained = () => props.onFocusChanged?.(true)
-  const onFocusLost = () => {
-    if (props.currentRefinement.match(/^ *$/) != null)
-      return props.onFocusChanged?.(false)
-    else return props.onFocusChanged?.(true)
-  }
-
-  const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    props.refine(event.target.value)
-    if (event.target.value === '') {
-      props.onFocusChanged?.(false)
-    }
-  }
-
-  return (
-    <TextField
-      id="search"
-      size="small"
-      label={t("field.search")}
-      value={props.currentRefinement}
-      onFocus={onFocusGained}
-      onBlur={onFocusLost}
-      onChange={onQueryChanged}/>
-  );
-}
 
 export const Highlight = connectHighlight(CustomHighlight)
-export const SearchBox = connectSearchBox<SearchBoxProps>(SearchBoxCore);
 export const SearchBoxInputBase = connectSearchBox<SearchBoxInputBaseProps>(SearchBoxInputBaseCore)
 export const Provider = algoliasearch("H1BMXJXRBE", "ecfcef9a59b7ec023817ef3041de6416");

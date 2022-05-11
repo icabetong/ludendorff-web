@@ -27,7 +27,7 @@ import {
   useGridRootProps
 } from "@mui/x-data-grid";
 import { LoadingButton } from "@mui/lab";
-import { Search, SearchIconWrapper, SearchInputBase } from "./Search";
+import { GridSearch, SearchIconWrapper, SearchInputBase } from "./datagrid/GridSearch";
 
 type EditorAppBarProps = {
   title?: string,
@@ -169,13 +169,13 @@ const EditorGridToolbar = () => {
         <GridToolbarFilterButton/>
         <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'row' }}>
           <Box sx={{ flex: 1 }}/>
-          <Search>
+          <GridSearch>
             <SearchIconWrapper><SearchRounded/></SearchIconWrapper>
             <SearchInputBase
               placeholder={t("placeholder.search_entries")}
               onChange={onHandleSearchField}
               inputProps={{ 'aria-label': t("field.search") }}/>
-          </Search>
+          </GridSearch>
         </Box>
       </Box>
     </GridToolbarContainer>

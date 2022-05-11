@@ -3,11 +3,11 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { CssBaseline, PaletteMode, Theme } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import AuthComponent from '../auth/AuthComponent';
+import Authentication from '../auth/Authentication';
 import { AuthProvider } from '../auth/AuthProvider';
-import RootComponent from '../root/Root';
 import { ErrorNotFoundState } from "../state/ErrorStates";
 import { PreferenceContext } from "../settings/Preference";
+import AppRoot from "../main/AppRoot";
 
 const white = '#ffffff';
 const main50 = '#e3f2fd';
@@ -228,8 +228,8 @@ export const Ludendorff = () => {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<RootComponent/>}/>
-            <Route path="/login" element={<AuthComponent/>}/>
+            <Route path="/" element={<AppRoot/>}/>
+            <Route path="/login" element={<Authentication/>}/>
             <Route path="*" element={<ErrorNotFoundState/>}/>
           </Routes>
         </AuthProvider>

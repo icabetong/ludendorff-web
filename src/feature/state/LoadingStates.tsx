@@ -2,7 +2,7 @@ import { useTheme } from "@mui/material/styles";
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 import { Box, CircularProgress, LinearProgress } from "@mui/material";
 
-export const MainLoadingStateComponent = () => {
+export const MainLoadingState = () => {
   const theme = useTheme();
 
   return (
@@ -33,7 +33,7 @@ export const MainLoadingStateComponent = () => {
   )
 }
 
-export const ContentLoadingStateComponent = () => {
+export const PageLoadingState = () => {
   return (
     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <CircularProgress/>

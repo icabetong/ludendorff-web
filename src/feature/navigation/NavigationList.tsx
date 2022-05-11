@@ -1,7 +1,7 @@
 import React, { ComponentClass, FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, SxProps, Theme, lighten, darken } from "@mui/material";
-import { Destination } from "./NavigationComponent";
+import { Destination } from "./NavigationContainer";
 
 type NavigationListProps = {
   navigationKey?: string,

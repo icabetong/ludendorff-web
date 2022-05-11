@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM, { createRoot } from 'react-dom/client';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore } from 'firebase/firestore';

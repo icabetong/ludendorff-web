@@ -1,8 +1,8 @@
 import { InputBase } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
-import { gray200, gray300 } from "../feature/core/Core";
+import { gray200, gray300 } from "../../feature/core/Core";
 
-export const Search = styled('div')(({ theme }) => ({
+export const GridSearch = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.15) : gray200,
