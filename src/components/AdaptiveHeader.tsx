@@ -91,7 +91,8 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
               transformOrigin={anchorProperties}
               open={isOpen}
               onClose={() => setAnchor(null)}
-              onMouseLeave={() => setAnchor(null)}>
+              onMouseLeave={() => setAnchor(null)}
+              PaperProps={{ sx: { width: 180 }}}>
               {props.menuItems &&
                 props.menuItems.map((menuItem) => {
                   return menuItem

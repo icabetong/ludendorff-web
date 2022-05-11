@@ -64,8 +64,7 @@ const DestinationContainer = (props: DestinationContainerProps) => {
     <Box sx={{ display: 'flex' }}>
       <Box
         component="nav"
-        sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }}
-        aria-label="mailbox folders">
+        sx={{ width: { lg: drawerWidth }, flexShrink: { lg: 0 } }}>
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Drawer
           container={container}
@@ -94,6 +93,7 @@ const DestinationContainer = (props: DestinationContainerProps) => {
           open={menuOpen}
           anchorEl={anchorElement}
           onClose={onMenuDismiss}
+          PaperProps={{ sx: { width: 240 } }}
           anchorOrigin={{
             vertical: 'center',
             horizontal: 'right',

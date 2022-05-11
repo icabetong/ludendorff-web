@@ -1,9 +1,9 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
-import { Box, Fab, LinearProgress, MenuItem } from "@mui/material";
+import { Box, Fab, LinearProgress, ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
-import { AddRounded } from "@mui/icons-material";
+import { AddRounded, CategoryRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
 import { OrderByDirection } from "@firebase/firestore-types";
@@ -104,7 +104,10 @@ const AssetScreen = (props: AssetScreenProps) => {
   const menuItems = [
     <MenuItem
       key={0}
-      onClick={onCategoryListView}>{t("navigation.categories")}</MenuItem>
+      onClick={onCategoryListView}>
+      <ListItemIcon><CategoryRounded/></ListItemIcon>
+      <ListItemText>{t("navigation.categories")}</ListItemText>
+    </MenuItem>
   ];
 
   return (
