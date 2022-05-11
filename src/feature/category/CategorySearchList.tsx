@@ -1,10 +1,9 @@
-import { Category } from "./Category";
-import { List, ListItemButton, ListItemText } from "@mui/material";
-import { Highlight } from "../../components/InstantSearch";
-import { categoryName } from "../../shared/const";
-import { HitsProvided } from "react-instantsearch-core";
-import { connectHits } from "react-instantsearch-dom";
 import { useTranslation } from "react-i18next";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
+import { List, ListItemButton, ListItemText } from "@mui/material";
+import { Category } from "./Category";
+import Highlight from "../search/Highlight";
+import { categoryName } from "../../shared/const";
 
 type CategorySearchListProps = HitsProvided<Category> & {
   onItemSelect: (type: Category) => void,

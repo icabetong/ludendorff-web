@@ -1,42 +1,14 @@
-import React, { ChangeEvent } from "react";
+import { SearchBoxProvided, connectSearchBox } from "react-instantsearch-core";
 import { useTranslation } from "react-i18next";
+import React, { ChangeEvent } from "react";
 import { Box, InputBase } from "@mui/material";
 import { SearchRounded } from "@mui/icons-material";
-import algoliasearch from "algoliasearch/lite";
-import { connectHighlight, connectSearchBox } from "react-instantsearch-dom";
-import { HighlightProps, SearchBoxProvided } from "react-instantsearch-core";
-
-const CustomHighlight = ({ highlight, attribute, hit }: HighlightProps) => {
-  const parsedHit = highlight({
-    highlightProperty: '_highlightResult',
-    attribute,
-    hit
-  });
-
-  return (
-    <span>
-      {parsedHit.map((part, index) =>
-        part.isHighlighted ? (
-          <Box
-            key={index}
-            component="span"
-            sx={{ color: (theme) => theme.palette.primary.main }}>
-            {part.value}
-          </Box>
-        ) : (
-          <span key={index}>{part.value}</span>
-        ))
-      }
-    </span>
-  )
-}
-
 
 type SearchBoxInputBaseProps = SearchBoxProvided & {
   dontWatchFocus?: boolean,
   onFocusChanged?: (hasFocus: boolean) => void,
 }
-const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
+const SearchBoxInputBase = (props: SearchBoxInputBaseProps) => {
   const { t } = useTranslation();
   const onFocusGained = () => props.onFocusChanged?.(true)
   const onFocusLost = () => {
@@ -94,21 +66,18 @@ const SearchBoxInputBaseCore = (props: SearchBoxInputBaseProps) => {
         onBlur={onFocusLost}
         onChange={onQueryChanged}
         sx={(theme) => ({
-            flexGrow: 1,
-            color: 'inherit',
-            transition: theme.transitions.create('width'),
-            [theme.breakpoints.up('sm')]: {
-              width: '18ch',
-              '&:focus': {
-                width: '20ch'
-              }
+          flexGrow: 1,
+          color: 'inherit',
+          transition: theme.transitions.create('width'),
+          [theme.breakpoints.up('sm')]: {
+            width: '18ch',
+            '&:focus': {
+              width: '20ch'
             }
+          }
         })}/>
     </Box>
 
   );
 }
-
-export const Highlight = connectHighlight(CustomHighlight)
-export const SearchBoxInputBase = connectSearchBox<SearchBoxInputBaseProps>(SearchBoxInputBaseCore)
-export const Provider = algoliasearch("H1BMXJXRBE", "ecfcef9a59b7ec023817ef3041de6416");
+export default connectSearchBox<SearchBoxInputBaseProps>(SearchBoxInputBase)

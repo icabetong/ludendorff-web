@@ -68,7 +68,7 @@ const EntityEditor = (props: EntityEditorProps) => {
           <Button onClick={props.onDismiss}>
             {t("button.cancel")}
           </Button>
-          <LoadingButton type="submit" loading={isWriting}>
+          <LoadingButton variant="contained" type="submit" loading={isWriting}>
             {t("button.save")}
           </LoadingButton>
         </DialogActions>

@@ -1,8 +1,5 @@
-export enum ActionType {
-  CREATE = "create",
-  UPDATE = "update",
-  DISMISS = "dismiss"
-}
+import ActionType from "../shared/types/ActionType";
+
 type Action = {
   type: ActionType,
   payload?: string
@@ -22,19 +19,19 @@ export const initialState: State = {
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action;
   switch(type) {
-    case ActionType.CREATE:
+    case "create":
       return {
         subcategory: "",
         isCreate: true,
         isOpen: true
       }
-    case ActionType.UPDATE:
+    case "update":
       return {
         subcategory: payload,
         isCreate: false,
         isOpen: true
       }
-    case ActionType.DISMISS:
+    case "dismiss":
       return {
         ...state,
         isOpen: false,

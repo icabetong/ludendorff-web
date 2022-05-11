@@ -15,13 +15,13 @@ import {
   Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { Category, CategoryRepository } from "./Category";
-import { isDev, newId } from "../../shared/utils";
 import SubcategoryEditor from "./SubcategoryEditor";
-import { ActionType, initialState, reducer } from "./SubcategoryEditorReducer";
-import { AddRounded } from "@mui/icons-material";
+import { initialState, reducer } from "./SubcategoryEditorReducer";
 import SubcategoryList from "./SubcategoryList";
+import { isDev, newId } from "../../shared/utils";
 
 type FormData = {
   categoryName?: string
@@ -49,9 +49,9 @@ const CategoryEditor = (props: CategoryEditorProps) => {
     }
   }, [setValue, props.category, props.isOpen]);
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
-  const onEditorUpdate = (subcategory: string) => dispatch({ type: ActionType.UPDATE, payload: subcategory });
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
+  const onEditorCreate = () => dispatch({ type: "create" });
+  const onEditorUpdate = (subcategory: string) => dispatch({ type: "update", payload: subcategory });
+  const onEditorDismiss = () => dispatch({ type: "dismiss" });
   const onEditorCommit = (subcategory: string) => {
     let lowerCased = subcategory.toLowerCase();
     let result = subcategories.find(str => str.toLowerCase() === lowerCased);

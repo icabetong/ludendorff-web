@@ -1,38 +1,38 @@
-import { Box, Fab, LinearProgress } from "@mui/material";
-import { getDataGridTheme } from "../core/Core";
-import { useTranslation } from "react-i18next";
-import { AddRounded } from "@mui/icons-material";
-import { InstantSearch } from "react-instantsearch-dom";
-import { StockCard, StockCardRepository } from "./StockCard";
-import { GridRowParams } from "@mui/x-data-grid";
-import { ScreenProps } from "../shared/types/ScreenProps";
-import { useSnackbar } from "notistack";
-import { usePermissions } from "../auth/AuthProvider";
 import React, { useReducer, useRef, useState } from "react";
-import { usePagination } from "use-pagination-firestore";
+import { useTranslation } from "react-i18next";
+import { InstantSearch } from "react-instantsearch-core";
+import { Box, Fab, LinearProgress } from "@mui/material";
+import { GridRowParams } from "@mui/x-data-grid";
+import { AddRounded } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
-import { firestore } from "../../index";
+import { OrderByDirection } from "@firebase/firestore-types";
+import { usePagination } from "use-pagination-firestore";
+import * as Excel from "exceljs";
+import { StockCard, StockCardRepository } from "./StockCard";
+import StockCardDataGrid from "./StockCardDataGrid";
+import { StockCardEditor } from "./StockCardEditor";
+import { initialState, reducer } from "./StockCardEditorReducer";
+import { StockCardEmptyState } from "./StockCardEmptyState";
+import StockCardList from "./StockCardList";
+import { convertStockCardToWorkSheet } from "./StockCardSheet";
+import { usePermissions } from "../auth/AuthProvider";
+import { getDataGridTheme } from "../core/Core";
+import Client from "../search/Client";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import useSort from "../shared/hooks/useSort";
+import { ScreenProps } from "../shared/types/ScreenProps";
+import { useDialog } from "../../components/DialogProvider";
+import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
 import {
   entityName,
   stockCardCollection
 } from "../../shared/const";
-import { ActionType, initialState, reducer } from "./StockCardEditorReducer";
 import { isDev } from "../../shared/utils";
-import { Provider } from "../../components/InstantSearch";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
-import StockCardList from "./StockCardList";
-import { StockCardEditor } from "./StockCardEditor";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
-import { convertStockCardToWorkSheet } from "./StockCardSheet";
-import * as Excel from "exceljs";
-import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
-import StockCardDataGrid from "./StockCardDataGrid";
-import { StockCardEmptyState } from "./StockCardEmptyState";
-import { OrderByDirection } from "@firebase/firestore-types";
-import useSort from "../shared/hooks/useSort";
-import { useDialog } from "../../components/DialogProvider";
+import { firestore } from "../../index";
 
 type StockCardScreenProps = ScreenProps
 const StockCardScreen = (props: StockCardScreenProps) => {
@@ -111,25 +111,25 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const onStockCardEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+  const onStockCardEditorDismiss = () => dispatch({ type: "dismiss" })
   const onDataGridRowDoubleClicked = (params: GridRowParams) => {
     onStockCardSelected(params.row as StockCard)
   }
 
   const onStockCardSelected = (stockCard: StockCard) => {
     dispatch({
-      type: ActionType.UPDATE,
+      type: "update",
       payload: stockCard,
     })
   }
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <InstantSearch searchClient={Provider} indexName="cards">
+      <InstantSearch searchClient={Client} indexName="cards">
         <AdaptiveHeader
           title={t("navigation.stock_cards")}
           actionText={canWrite ? t("button.create_stock_card") : undefined}
-          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onActionEvent={() => dispatch({ type: "create" })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
         {canRead
@@ -164,7 +164,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
               <Fab
                 color="primary"
                 aria-label={t("button.add")}
-                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                onClick={() => dispatch({ type: "create" })}>
                 <AddRounded/>
               </Fab>
             </Box>

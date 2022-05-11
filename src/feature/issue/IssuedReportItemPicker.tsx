@@ -21,7 +21,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
+import Client from "../search/Client";
 import SearchDialogTitle from "../../components/SearchDialogTitle";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
 
@@ -49,7 +49,7 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
   )
 
   return (
-    <InstantSearch searchClient={Provider} indexName="issued">
+    <InstantSearch searchClient={Client} indexName="issued">
       <Dialog
         fullWidth
         fullScreen={smBreakpoint}

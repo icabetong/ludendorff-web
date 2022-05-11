@@ -1,11 +1,6 @@
 import { IssuedReportItem } from "./IssuedReport";
+import ActionType from "../shared/types/ActionType";
 import { newId } from "../../shared/utils";
-
-export enum ActionType {
-  CREATE = "create",
-  UPDATE = "update",
-  DISMISS = "dismiss"
-}
 
 type Action = {
   type: ActionType,
@@ -26,19 +21,19 @@ export const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case ActionType.CREATE:
+    case "create":
       return {
         item: undefined,
         isCreate: true,
         isOpen: true,
       }
-    case ActionType.UPDATE:
+    case "update":
       return {
         item: payload,
         isCreate: false,
         isOpen: true
       }
-    case ActionType.DISMISS:
+    case "dismiss":
       return {
         ...state,
         isOpen: false,

@@ -1,5 +1,6 @@
-import { IssuedReport, IssuedReportItem, IssuedReportRepository } from "./IssuedReport";
+import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Button,
@@ -13,21 +14,21 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { useSnackbar } from "notistack";
-import { useForm, Controller } from "react-hook-form";
-import { useEffect, useReducer, useState } from "react";
-import { isDev, newId } from "../../shared/utils";
-import { ActionType, initialState, reducer } from "./IssuedReportItemEditorReducer";
-import { Timestamp } from "firebase/firestore";
-import DateAdapter from "@mui/lab/AdapterDateFns";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
-import IssuedReportItemList from "./IssuedReportItemList";
-import { AddRounded } from "@mui/icons-material";
-import { IssuedReportItemEditor } from "./IssuedReportItemEditor";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
-import IssuedReportItemDataGrid from "./IssuedReportItemDataGrid";
 import { GridSelectionModel } from "@mui/x-data-grid";
+import { DatePicker, LocalizationProvider } from "@mui/lab";
+import DateAdapter from "@mui/lab/AdapterDateFns";
+import { AddRounded } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import { Timestamp } from "firebase/firestore";
+
+import { IssuedReport, IssuedReportItem, IssuedReportRepository } from "./IssuedReport";
+import IssuedReportItemDataGrid from "./IssuedReportItemDataGrid";
+import { IssuedReportItemEditor } from "./IssuedReportItemEditor";
+import { initialState, reducer } from "./IssuedReportItemEditorReducer";
+import IssuedReportItemList from "./IssuedReportItemList";
 import { useEntity } from "../entity/UseEntity";
+import { isDev, newId } from "../../shared/utils";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,
@@ -89,9 +90,9 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
     props.onDismiss();
   }
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
-  const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: ActionType.UPDATE, payload: item });
+  const onEditorCreate = () => dispatch({ type: "create" });
+  const onEditorDismiss = () => dispatch({ type: "dismiss" });
+  const onEditorUpdate = (item: IssuedReportItem) => dispatch({ type: "update", payload: item });
   const onEditorCommit = (item: IssuedReportItem) => {
     let currentItems = Array.from(items);
     let index = currentItems.findIndex((i) => i.issuedReportItemId === item.issuedReportItemId);

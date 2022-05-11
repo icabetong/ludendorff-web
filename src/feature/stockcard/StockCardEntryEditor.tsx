@@ -15,9 +15,9 @@ import {
 import DateAdapter from "@mui/lab/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import { Timestamp } from "firebase/firestore";
-import { newId } from "../../shared/utils";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { Balances, Entry } from "../shared/types/Balances";
+import { newId } from "../../shared/utils";
 
 export type FormValues = {
   reference?: string,

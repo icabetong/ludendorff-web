@@ -11,13 +11,13 @@ import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
-import { ActionType, initialState, reducer } from "./UserEditorReducer";
+import { initialState, reducer } from "./UserEditorReducer";
 import { lastName, userCollection } from "../../shared/const";
 import UserEditor from "./UserEditor";
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
+import Client from "../search/Client";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import AdaptiveHeader from "../../components/AdaptiveHeader";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
@@ -106,12 +106,12 @@ const UserScreen = (props: UserScreenProps) => {
     onUserSelected(params.row as User)
   }
 
-  const onUserEditorView = () => dispatch({ type: ActionType.CREATE })
-  const onUserEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+  const onUserEditorView = () => dispatch({ type: "create" })
+  const onUserEditorDismiss = () => dispatch({ type: "dismiss" })
 
   const onUserSelected = (user: User) => {
     dispatch({
-      type: ActionType.UPDATE,
+      type: "update",
       payload: user
     })
   }
@@ -119,7 +119,7 @@ const UserScreen = (props: UserScreenProps) => {
   return (
     <Box sx={{ width: '100%', height: '100%', }}>
       <InstantSearch
-        searchClient={Provider}
+        searchClient={Client}
         indexName="users">
         <AdaptiveHeader
           title={t("navigation.users")}
@@ -158,7 +158,7 @@ const UserScreen = (props: UserScreenProps) => {
               <Fab
                 color="primary"
                 aria-label={t("button.add")}
-                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                onClick={() => dispatch({ type: "create" })}>
                 <AddRounded/>
               </Fab>
             </Box>

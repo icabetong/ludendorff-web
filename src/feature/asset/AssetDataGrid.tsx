@@ -1,9 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Asset } from "./Asset";
 import { DataGridProps } from "../shared/types/DataGridProps";
-import { HitsProvided } from "react-instantsearch-core";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
 import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import { connectHits } from "react-instantsearch-dom";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
 import { Button } from "@mui/material";

@@ -6,23 +6,23 @@ import {
   DialogContent,
   LinearProgress
 } from "@mui/material";
-import { InstantSearch } from "react-instantsearch-dom";
+import { InstantSearch } from "react-instantsearch-core";
 import { collection, orderBy, query } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
 import { Category } from "./Category";
 import CategoryEditor from "./CategoryEditor";
-import { ActionType, initialState, reducer } from "./CategoryEditorReducer";
+import { initialState, reducer } from "./CategoryEditorReducer";
 import CategoryList from "./CategoryList";
+import CategorySearchList from "./CategorySearchList";
 import { usePermissions } from "../auth/AuthProvider";
+import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { Provider } from "../../components/InstantSearch";
 import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
-import { usePagination } from "use-pagination-firestore";
 import { PaginationController } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import DialogToolbar from "../../components/DialogToolbar";
 import { Transition } from "../../components/EditorComponent";
-import CategorySearchList from "./CategorySearchList";
 
 type CategoryScreenProps = {
   isOpen: boolean,
@@ -43,12 +43,12 @@ const CategoryScreen = (props: CategoryScreenProps) => {
 
   const onSearchInvoked = () => setSearch(!search);
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-  const onEditorUpdate = (type: Category) => dispatch({ type: ActionType.UPDATE, payload: type })
+  const onEditorCreate = () => dispatch({ type: "create" })
+  const onEditorDismiss = () => dispatch({ type: "dismiss" })
+  const onEditorUpdate = (type: Category) => dispatch({ type: "update", payload: type })
 
   return (
-    <InstantSearch searchClient={Provider} indexName="categories">
+    <InstantSearch searchClient={Client} indexName="categories">
       <Dialog
         fullScreen={true}
         open={props.isOpen}

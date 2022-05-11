@@ -1,38 +1,38 @@
-import { Box, Fab, LinearProgress } from "@mui/material";
 import { useReducer, useRef, useState } from "react";
-import { getDataGridTheme } from "../core/Core";
-import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
 import { useTranslation } from "react-i18next";
-import { AddRounded } from "@mui/icons-material";
-import { ActionType, initialState, reducer, } from "./InventoryReportEditorReducer";
+import { InstantSearch } from "react-instantsearch-core";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
+import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { usePermissions } from "../auth/AuthProvider";
-import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
-import { usePagination } from "use-pagination-firestore";
 import { collection, orderBy, query } from "firebase/firestore";
-import { firestore } from "../../index";
+import { OrderByDirection } from "@firebase/firestore-types";
+import { usePagination } from "use-pagination-firestore";
+import * as Excel from "exceljs";
+import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
+import { initialState, reducer, } from "./InventoryReportEditorReducer";
+import InventoryReportDataGrid from "./InventoryReportDataGrid";
+import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
 import InventoryReportList from "./InventoryReportList";
 import InventoryReportEditor from "./InventoryReportEditor";
+import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
+import { usePermissions } from "../auth/AuthProvider";
+import { getDataGridTheme } from "../core/Core";
+import Client from "../search/Client";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
+import { ScreenProps } from "../shared/types/ScreenProps";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { useDialog } from "../../components/DialogProvider";
 import {
   fundCluster,
   inventoryCollection,
 } from "../../shared/const";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { isDev } from "../../shared/utils";
-import { ScreenProps } from "../shared/types/ScreenProps";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
-import * as Excel from "exceljs";
-import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
-import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
-import InventoryReportDataGrid from "./InventoryReportDataGrid";
-import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
-import { OrderByDirection } from "@firebase/firestore-types";
 import useSort from "../shared/hooks/useSort";
-import { useDialog } from "../../components/DialogProvider";
+import { firestore } from "../../index";
 
 type InventoryReportScreenProps = ScreenProps
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
@@ -110,14 +110,14 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState)
-  const onInventoryEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+  const onInventoryEditorDismiss = () => dispatch({ type: "dismiss" })
   const onDataGridRowDoubleClicked = (params: GridRowParams) => {
     onInventoryReportSelected(params.row as InventoryReport)
   }
 
   const onInventoryReportSelected = (report: InventoryReport) => {
     dispatch({
-      type: ActionType.UPDATE,
+      type: "update",
       payload: report
     })
   }
@@ -125,12 +125,12 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch
-        searchClient={Provider}
+        searchClient={Client}
         indexName="inventories">
         <AdaptiveHeader
           title={t("navigation.inventories")}
           actionText={canWrite ? t("button.create_report") : undefined}
-          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onActionEvent={() => dispatch({ type: "create" })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
         {canRead
@@ -165,7 +165,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
               <Fab
                 color="primary"
                 aria-label={t("button.add")}
-                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                onClick={() => dispatch({ type: "create" })}>
                 <AddRounded/>
               </Fab>
             </Box>

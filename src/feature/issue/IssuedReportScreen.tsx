@@ -1,35 +1,35 @@
-import { Box, Fab, LinearProgress } from "@mui/material";
-import { getDataGridTheme } from "../core/Core";
-import { useTranslation } from "react-i18next";
-import { useSnackbar } from "notistack";
-import { usePermissions } from "../auth/AuthProvider";
 import { useReducer, useRef, useState } from "react";
-import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
-import { usePagination } from "use-pagination-firestore";
-import { fundCluster, issuedCollection } from "../../shared/const";
-import { collection, orderBy, query } from "firebase/firestore";
-import { firestore } from "../../index";
-import { isDev } from "../../shared/utils";
+import { useTranslation } from "react-i18next";
+import { InstantSearch } from "react-instantsearch-dom";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
-import { ActionType, initialState, reducer } from "./IssuedReportEditorReducer";
-import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
-import IssuedReportList from "./IssuedReportList";
-import IssuedReportEditor from "./IssuedReportEditor";
-import { ScreenProps } from "../shared/types/ScreenProps";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import { useSnackbar } from "notistack";
+import { collection, orderBy, query } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
+import { OrderByDirection } from "@firebase/firestore-types";
 import * as Excel from "exceljs";
-import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
-import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
+import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
+import IssuedReportEditor from "./IssuedReportEditor";
+import { initialState, reducer } from "./IssuedReportEditorReducer";
+import IssuedReportList from "./IssuedReportList";
 import IssuedReportDataGrid from "./IssuedReportDataGrid";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
+import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
+import { getDataGridTheme } from "../core/Core";
+import { usePermissions } from "../auth/AuthProvider";
+import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
+import Client from "../search/Client";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
 import useSort from "../shared/hooks/useSort";
-import { OrderByDirection } from "@firebase/firestore-types";
+import { ScreenProps } from "../shared/types/ScreenProps";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
 import { useDialog } from "../../components/DialogProvider";
+import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
+import { fundCluster, issuedCollection } from "../../shared/const";
+import { isDev } from "../../shared/utils";
+import { firestore } from "../../index";
 
 type IssuedReportScreenProps = ScreenProps
 const IssuedReportScreen = (props: IssuedReportScreenProps) => {
@@ -105,25 +105,25 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const onIssuedEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+  const onIssuedEditorDismiss = () => dispatch({ type: "dismiss" })
   const onDataGridRowDoubleClicked = (params: GridRowParams) => {
     onIssuedReportSelected(params.row as IssuedReport)
   }
 
   const onIssuedReportSelected = (report: IssuedReport) => {
     dispatch({
-      type: ActionType.UPDATE,
+      type: "update",
       payload: report,
     })
   }
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <InstantSearch searchClient={Provider} indexName="issued">
+      <InstantSearch searchClient={Client} indexName="issued">
         <AdaptiveHeader
           title={t("navigation.issued")}
           actionText={canWrite ? t("button.create_report") : undefined}
-          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onActionEvent={() => dispatch({ type: "create" })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
         {canRead
@@ -158,7 +158,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
               <Fab
                 color="primary"
                 aria-label={t("button.add")}
-                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                onClick={() => dispatch({ type: "create" })}>
                 <AddRounded/>
               </Fab>
             </Box>

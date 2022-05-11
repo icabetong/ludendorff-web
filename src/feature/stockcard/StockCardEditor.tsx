@@ -1,7 +1,6 @@
-import { StockCard, StockCardEntry, StockCardRepository } from "./StockCard";
+import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
-import { useEffect, useReducer, useState } from "react";
 import {
   Box,
   Button,
@@ -17,24 +16,25 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import StockCardEntryList from "./StockCardEntryList";
-import { AddRounded, ArrowDropDown } from "@mui/icons-material";
-import { ActionType, initialState, reducer } from "./StockCardEntryEditorReducer";
-import { StockCardEntryEditor } from "./StockCardEntryEditor";
-import { isDev, newId } from "../../shared/utils";
-import { useSnackbar } from "notistack";
 import { GridSelectionModel } from "@mui/x-data-grid";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { AddRounded, ArrowDropDown } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { StockCard, StockCardEntry, StockCardRepository } from "./StockCard";
+import { StockCardEntryEditor } from "./StockCardEntryEditor";
+import { initialState, reducer } from "./StockCardEntryEditorReducer";
 import StockCardEntryDataGrid from "./StockCardEntryDataGrid";
-import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
+import StockCardEntryList from "./StockCardEntryList";
 import InventoryReportPicker from "../inventory/InventoryReportPicker";
 import { InventoryReport, InventoryReportItem } from "../inventory/InventoryReport";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { firestore } from "../../index";
-import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
+import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
+import { IssuedReportItem } from "../issue/IssuedReport";
 import { Balances } from "../shared/types/Balances";
 import { useDialog } from "../../components/DialogProvider";
-import { IssuedReportItem } from "../issue/IssuedReport";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
+import { isDev, newId } from "../../shared/utils";
+import { firestore } from "../../index";
 
 export type FormValues = {
   entityName?: string,
@@ -97,9 +97,9 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       .finally(() => setFetching(false));
   }, [props.stockCard]);
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE });
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS });
-  const onEditorUpdate = (entry: StockCardEntry) => dispatch({ type: ActionType.UPDATE, payload: entry });
+  const onEditorCreate = () => dispatch({ type: "create" });
+  const onEditorDismiss = () => dispatch({ type: "dismiss" });
+  const onEditorUpdate = (entry: StockCardEntry) => dispatch({ type: "update", payload: entry });
   const onEditorCommit = (entry: StockCardEntry) => {
     let currentEntries = Array.from(entries);
     let index = currentEntries.findIndex((i) => i.stockCardEntryId === entry.stockCardEntryId);

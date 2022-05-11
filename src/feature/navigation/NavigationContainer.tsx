@@ -21,15 +21,7 @@ import { useAuthState } from "../auth/AuthProvider";
 import { NavigationList, NavigationListItem } from "./NavigationList";
 import { getHostOperatingSystem } from "../../shared/utils";
 
-export enum Destination {
-  ASSETS = 1,
-  INVENTORY,
-  ISSUED,
-  STOCK_CARD,
-  USERS,
-  PROFILE,
-  SETTINGS
-}
+export type Destination = "assets" | "inventories" | "issued" | "stockCards" | "users" | "account" | "settings";
 
 type NavigationItemType = {
   icon: string | FunctionComponent<any> | ComponentClass<any, any>,
@@ -44,11 +36,11 @@ type NavigationContainerProps = {
 }
 
 const destinations: NavigationItemType[] = [
-  { icon: DevicesOtherRounded, title: "navigation.assets", destination: Destination.ASSETS },
-  { icon: Inventory2Outlined, title: "navigation.inventories", destination: Destination.INVENTORY },
-  { icon: UploadFileOutlined, title: "navigation.issued", destination: Destination.ISSUED },
-  { icon: LocalAtmOutlined, title: "navigation.stock_cards", destination: Destination.STOCK_CARD },
-  { icon: PeopleOutlineRounded, title: "navigation.users", destination: Destination.USERS },
+  { icon: DevicesOtherRounded, title: "navigation.assets", destination: "assets" },
+  { icon: Inventory2Outlined, title: "navigation.inventories", destination: "inventories" },
+  { icon: UploadFileOutlined, title: "navigation.issued", destination: "issued" },
+  { icon: LocalAtmOutlined, title: "navigation.stock_cards", destination: "stockCards" },
+  { icon: PeopleOutlineRounded, title: "navigation.users", destination: "users" },
 ]
 
 export const NavigationContainer = (props: NavigationContainerProps) => {
@@ -122,10 +114,10 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
         }
         <Box sx={{ mb: 1 }}>
           <NavigationListItem
-            itemKey={Destination.SETTINGS}
+            itemKey="settings"
             icon={SettingsOutlined}
             title="navigation.settings"
-            onNavigate={() => props.onNavigate(Destination.SETTINGS)}/>
+            onNavigate={() => props.onNavigate("settings")}/>
         </Box>
       </NavigationList>
     </Box>

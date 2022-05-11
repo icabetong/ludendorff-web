@@ -1,20 +1,20 @@
-import { HitsProvided } from "react-instantsearch-core";
-import { StockCard } from "./StockCard";
-import { DataGridProps } from "../shared/types/DataGridProps";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import useDensity from "../shared/hooks/useDensity";
-import { assetDescription, assetStockNumber, assetUnitOfMeasure, entityName, unitPrice } from "../../shared/const";
-import { currencyFormatter } from "../../shared/utils";
+import { HitsProvided, connectHits} from "react-instantsearch-core";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DeleteOutlineRounded } from "@mui/icons-material";
-import { ExcelIcon } from "../../components/CustomIcons";
+import { StockCard } from "./StockCard";
+import { StockCardDataGridEmptyState } from "./StockCardEmptyState";
+import { DataGridProps } from "../shared/types/DataGridProps";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
+import { ExcelIcon } from "../../components/CustomIcons";
+import { DataGridPaginationController } from "../../components/PaginationController";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
-import { connectHits } from "react-instantsearch-dom";
-import React from "react";
-import { StockCardEmptyState } from "./StockCardEmptyState";
-import { DataGridPaginationController } from "../../components/PaginationController";
+import { assetDescription, assetStockNumber, assetUnitOfMeasure, entityName, unitPrice } from "../../shared/const";
+import { currencyFormatter } from "../../shared/utils";
+
 
 type StockCardDataGridProps = HitsProvided<StockCard> & DataGridProps<StockCard> & {
   onItemSelect: (params: GridRowParams) => void,
@@ -61,7 +61,7 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
       hideFooterPagination={hideFooter}
       components={{
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: StockCardEmptyState,
+        NoRowsOverlay: StockCardDataGridEmptyState,
         Toolbar: GridToolbar,
         Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
       }}

@@ -31,7 +31,6 @@
     "react-hook-form": "7.30.0",
     "react-i18next": "11.16.8",
     "react-instantsearch-dom": "6.24.3",
-    "react-instantsearch-hooks-web": "^6.24.3",
     "react-lazy-load-image-component": "1.5.4",
     "react-number-format": "4.9.3",
     "react-router": "6.3.0",

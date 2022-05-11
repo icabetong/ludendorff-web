@@ -15,8 +15,11 @@ const AppRoot = () => {
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { status, user } = useAuthState();
   const [destination, setDestination] = useState<Destination>(() => {
-    const previousDestination = localStorage.getItem('tab');
-    return previousDestination ? parseInt(previousDestination) : Destination.ASSETS;
+    const prev = localStorage.getItem('tab');
+    if (prev)
+      return prev as Destination;
+
+    return "assets";
   });
 
   const onNavigate = (destination: Destination) => setDestination(destination);

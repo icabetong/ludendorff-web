@@ -1,6 +1,6 @@
-import { InventoryReport, InventoryReportItem, InventoryReportRepository } from "./InventoryReport";
+import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSnackbar } from "notistack";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Button,
@@ -14,20 +14,20 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { useEffect, useReducer, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterDateFns';
-import { ActionType, initialState, reducer } from "./InventoryReportItemEditorReducer";
-import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
-import { isDev, newId } from "../../shared/utils";
-import { Timestamp } from "firebase/firestore";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
-import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
-import InventoryReportItemList from "./InventoryReportItemList";
 import { AddRounded } from "@mui/icons-material";
 import { GridRowId, GridSelectionModel } from "@mui/x-data-grid";
+import { useSnackbar } from "notistack";
+import { Timestamp } from "firebase/firestore";
+import { InventoryReport, InventoryReportItem, InventoryReportRepository } from "./InventoryReport";
+import { InventoryReportItemEditor } from "./InventoryReportItemEditor";
+import { initialState, reducer } from "./InventoryReportItemEditorReducer";
+import InventoryReportItemList from "./InventoryReportItemList";
+import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
 import { useEntity } from "../entity/UseEntity";
+import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { isDev, newId } from "../../shared/utils";
 
 type InventoryReportEditorProps = {
   isOpen: boolean,
@@ -88,9 +88,9 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       .finally(() => setFetching(false));
   }, [props.report]);
 
-  const onEditorCreate = () => dispatch({ type: ActionType.CREATE })
-  const onEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
-  const onEditorUpdate = (item: InventoryReportItem) => dispatch({ type: ActionType.UPDATE, payload: item })
+  const onEditorCreate = () => dispatch({ type: "create" })
+  const onEditorDismiss = () => dispatch({ type: "dismiss" })
+  const onEditorUpdate = (item: InventoryReportItem) => dispatch({ type: "update", payload: item })
   const onEditorCommit = (item: InventoryReportItem) => {
     let currentItems: InventoryReportItem[] = [...items];
     let index = currentItems.findIndex((i) => i.stockNumber === item.stockNumber);

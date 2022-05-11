@@ -1,36 +1,36 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { InstantSearch } from "react-instantsearch-core";
 import { Box, Fab, LinearProgress, MenuItem } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
-import { useSnackbar } from "notistack";
 import { AddRounded } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
+import { OrderByDirection } from "@firebase/firestore-types";
+import { usePagination } from "use-pagination-firestore";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
+import AssetDataGrid from "./AssetDataGrid";
+import AssetEditor from "./AssetEditor";
+import { initialState, reducer } from "./AssetEditorReducer";
+import { AssetEmptyState } from "./AssetEmptyState";
+import AssetImportScreen from "./AssetImportScreen";
 import AssetList from "./AssetList";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
+import CategoryScreen from "../category/CategoryScreen";
 import { getDataGridTheme } from "../core/Core";
+import Client from "../search/Client";
+import useQueryLimit from "../shared/hooks/useQueryLimit";
+import useSort from "../shared/hooks/useSort";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { useDialog } from "../../components/DialogProvider";
+import { isDev } from "../../shared/utils";
+import { ScreenProps } from "../shared/types/ScreenProps";
 import {
   assetCollection,
   assetDescription,
 } from "../../shared/const";
-import { ActionType, initialState, reducer } from "./AssetEditorReducer";
-import AssetEditor from "./AssetEditor";
-import CategoryScreen from "../category/CategoryScreen";
 import { firestore } from "../../index";
-import { usePagination } from "use-pagination-firestore";
-import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
-import { isDev } from "../../shared/utils";
-import { ScreenProps } from "../shared/types/ScreenProps";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
-import AssetDataGrid from "./AssetDataGrid";
-import { AssetEmptyState } from "./AssetEmptyState";
-import useSort from "../shared/hooks/useSort";
-import { OrderByDirection } from "@firebase/firestore-types";
-import { useDialog } from "../../components/DialogProvider";
-import AssetImportScreen from "./AssetImportScreen";
 
 type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
@@ -85,14 +85,14 @@ const AssetScreen = (props: AssetScreenProps) => {
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const onAssetEditorDismiss = () => dispatch({ type: ActionType.DISMISS })
+  const onAssetEditorDismiss = () => dispatch({ type: "dismiss" })
   const onDataGridRowDoubleClicked = (params: GridRowParams) => {
     onAssetSelected(params.row as Asset);
   }
 
   const onAssetSelected = (asset: Asset) => {
     dispatch({
-      type: ActionType.UPDATE,
+      type: "update",
       payload: asset
     })
   }
@@ -110,13 +110,13 @@ const AssetScreen = (props: AssetScreenProps) => {
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch
-        searchClient={Provider}
+        searchClient={Client}
         indexName="assets">
         <AdaptiveHeader
           title={t("navigation.assets")}
           actionText={canWrite ? t("button.create_asset") : undefined}
           menuItems={menuItems}
-          onActionEvent={() => dispatch({ type: ActionType.CREATE })}
+          onActionEvent={() => dispatch({ type: "create" })}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
         {canRead
@@ -152,7 +152,7 @@ const AssetScreen = (props: AssetScreenProps) => {
               <Fab
                 color="primary"
                 aria-label={t("button.add")}
-                onClick={() => dispatch({ type: ActionType.CREATE })}>
+                onClick={() => dispatch({ type: "create" })}>
                 <AddRounded/>
               </Fab>
             </Box>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   GroupedIssuedReportItem,
   groupIssuedReportItemsByStockNumber,
@@ -7,11 +8,9 @@ import {
 } from "./IssuedReport";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { ArrowBackRounded } from "@mui/icons-material";
-import { useTranslation } from "react-i18next"
-import { HitsProvided } from "react-instantsearch-core";
-import { Highlight } from "../../components/InstantSearch";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
+import Highlight from "../search/Highlight";
 import { fundCluster, serialNumber } from "../../shared/const";
-import { connectHits } from "react-instantsearch-dom";
 
 type IssuedReportSearchListProps = HitsProvided<IssuedReport> & {
   onItemSelect: (report: IssuedReportItem[]) => void

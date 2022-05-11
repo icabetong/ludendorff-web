@@ -1,19 +1,18 @@
-import { HitsProvided } from "react-instantsearch-core";
-import { IssuedReport } from "./IssuedReport";
-import { DataGridProps } from "../shared/types/DataGridProps";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
-import useDensity from "../shared/hooks/useDensity";
-import { date, fundCluster, serialNumber } from "../../shared/const";
-import { formatDate } from "../../shared/utils";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DeleteOutlineRounded } from "@mui/icons-material";
-import { ExcelIcon } from "../../components/CustomIcons";
+import { IssuedReport } from "./IssuedReport";
+import { IssuedReportDataGridEmptyState } from "./IssuedReportEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
+import { DataGridProps } from "../shared/types/DataGridProps";
+import { ExcelIcon } from "../../components/CustomIcons";
+import { DataGridPaginationController } from "../../components/PaginationController";
 import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
 import GridToolbar from "../../components/datagrid/GridToolbar";
-import { connectHits } from "react-instantsearch-dom";
-import { IssuedReportDataGridEmptyState } from "./IssuedReportEmptyState";
-import { DataGridPaginationController } from "../../components/PaginationController";
+import { date, fundCluster, serialNumber } from "../../shared/const";
+import { formatDate } from "../../shared/utils";
 
 type IssuedReportDataGridProps = HitsProvided<IssuedReport> & DataGridProps<IssuedReport> & {
   onItemSelect: (params: GridRowParams) => void,

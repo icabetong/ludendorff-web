@@ -103,7 +103,7 @@ const DestinationContainer = (props: DestinationContainerProps) => {
             horizontal: 'left',
           }}>
           <MenuItem
-            onClick={() => onNavigateThenDismiss(Destination.PROFILE)}>
+            onClick={() => onNavigateThenDismiss("account")}>
             <ListItemIcon>
               <AccountCircleRounded/>
             </ListItemIcon>

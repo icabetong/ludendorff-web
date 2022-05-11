@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { InstantSearch } from "react-instantsearch-core";
 import {
   Button,
   Dialog,
@@ -18,8 +19,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import SearchDialogTitle from "../../components/SearchDialogTitle";
-import { InstantSearch } from "react-instantsearch-dom";
-import { Provider } from "../../components/InstantSearch";
+import Client from "../search/Client";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";
 
@@ -45,7 +45,7 @@ const AssetPicker = (props: AssetPickerProps) => {
   }
 
   return (
-    <InstantSearch searchClient={Provider} indexName="assets">
+    <InstantSearch searchClient={Client} indexName="assets">
       <Dialog
         fullWidth
         fullScreen={smBreakpoint}

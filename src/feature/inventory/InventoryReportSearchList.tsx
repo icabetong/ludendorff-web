@@ -1,9 +1,8 @@
-import { HitsProvided } from "react-instantsearch-core";
-import { InventoryReport } from "./InventoryReport";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
 import { List, ListItemButton, ListItemText } from "@mui/material";
-import { Highlight } from "../../components/InstantSearch";
+import { InventoryReport } from "./InventoryReport";
+import Highlight from "../search/Highlight";
 import { fundCluster, yearMonth } from "../../shared/const";
-import { connectHits } from "react-instantsearch-dom";
 
 type InventoryReportSearchListProps = HitsProvided<InventoryReport> & {
   onItemSelect: (report: InventoryReport) => void,

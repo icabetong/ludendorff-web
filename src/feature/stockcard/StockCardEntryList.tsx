@@ -1,5 +1,5 @@
-import { StockCardEntry } from "./StockCard";
 import { ListItem, ListItemText } from "@mui/material";
+import { StockCardEntry } from "./StockCard";
 
 type StockCardEntryListProps = {
   entries?: StockCardEntry[],

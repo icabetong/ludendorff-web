@@ -15,19 +15,19 @@ type ContentSwitcherProps = {
 }
 const ContentSwitcher = (props: ContentSwitcherProps) => {
   switch (props.destination) {
-    case Destination.ASSETS:
+    case "assets":
       return <AssetScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.INVENTORY:
+    case "inventories":
       return <InventoryReportScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.ISSUED:
+    case "issued":
       return <IssuedReportScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.STOCK_CARD:
+    case "stockCards":
       return <StockCardScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.USERS:
+    case "users":
       return <UserScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.PROFILE:
+    case "account":
       return <ProfileScreen onDrawerToggle={props.onDrawerToggle}/>
-    case Destination.SETTINGS:
+    case "settings":
       return <SettingsScreen onDrawerToggle={props.onDrawerToggle}/>
     default:
       return <ErrorNotFoundState/>
