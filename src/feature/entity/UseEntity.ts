@@ -3,11 +3,11 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { Entity, EntityRepository } from "./Entity";
 import { firestore } from "../../index";
 
-type UseEntityValues = {
+export type UseEntityValues = {
   entity: Entity,
   onEntityChanged: (entity: Entity) => void,
 }
-const useEntity = () => {
+export const useEntity = () => {
   const [entity, setEntity] = useState<Entity | null>(null);
 
   useEffect(() => {
@@ -26,5 +26,3 @@ const useEntity = () => {
 
   return { entity, onEntityChanged }
 }
-
-export { useEntity, UseEntityValues }

@@ -9,14 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 
-type SVGFeedbackDialogProps = {
+type DialogSVGFeedbackProps = {
   svgImage: ElementType,
   title: string,
   description?: string,
   isOpen: boolean,
   onDismiss: () => void
 }
-const SVGFeedbackDialog = (props: SVGFeedbackDialogProps) => {
+export const DialogSVGFeedback = (props: DialogSVGFeedbackProps) => {
   const { t } = useTranslation();
 
   return (
@@ -44,5 +44,3 @@ const SVGFeedbackDialog = (props: SVGFeedbackDialogProps) => {
     </Dialog>
   )
 }
-
-export default SVGFeedbackDialog;

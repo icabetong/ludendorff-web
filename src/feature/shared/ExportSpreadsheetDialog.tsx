@@ -16,7 +16,7 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { spreadsheetFileExtension } from "../../shared/spreadsheet";
 
-type ExportParameters = {
+export type ExportParameters = {
   fileName: string,
   worksheetName: string,
 }
@@ -33,7 +33,7 @@ type ExportSpreadsheetDialogProps = {
   onSubmit: (params: ExportParameters) => void,
 }
 
-const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
+export const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
   const { t } = useTranslation();
   const { handleSubmit, formState: { errors }, control, reset } = useForm<ExportParameters>();
 
@@ -105,5 +105,3 @@ const ExportSpreadsheetDialog = (props: ExportSpreadsheetDialogProps) => {
     </Dialog>
   )
 }
-
-export { ExportSpreadsheetDialog, ExportParameters }

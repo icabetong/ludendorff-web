@@ -30,8 +30,7 @@ import { InventoryReport, InventoryReportItem } from "../inventory/InventoryRepo
 import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
 import { IssuedReportItem } from "../issue/IssuedReport";
 import { Balances } from "../shared/types/Balances";
-import { useDialog } from "../../components/DialogProvider";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog } from "../../components";
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../../index";
@@ -283,7 +282,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         open={props.isOpen}
         fullScreen={true}
         onClose={onDismiss}
-        TransitionComponent={Transition}>
+        TransitionComponent={SlideUpTransition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar
             title={t("dialog.details_stock_card")}

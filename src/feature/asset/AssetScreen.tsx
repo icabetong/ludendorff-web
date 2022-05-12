@@ -22,8 +22,7 @@ import Client from "../search/Client";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import useSort from "../shared/hooks/useSort";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import { useDialog } from "../../components/DialogProvider";
+import { AdaptiveHeader, useDialog } from "../../components";
 import { isDev } from "../../shared/utils";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import {

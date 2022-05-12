@@ -1,17 +1,14 @@
-import { HitsProvided } from "react-instantsearch-core";
-import { User } from "./User";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
-import useDensity from "../shared/hooks/useDensity";
-import { email, firstName, lastName, position, userId } from "../../shared/const";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
-import GridToolbar from "../../components/datagrid/GridToolbar";
-import { connectHits } from "react-instantsearch-dom";
+import { User } from "./User";
 import { UserDataGridEmptyState } from "./UserEmptyState";
-import { DataGridPaginationController } from "../../components/PaginationController";
+import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
 import { DataGridProps } from "../shared/types/DataGridProps";
+import { GridLinearProgress, GridToolbar, DataGridPaginationController } from "../../components";
+import { email, firstName, lastName, position, userId } from "../../shared/const";
 
 type UserDataGridProps = HitsProvided<User> & DataGridProps<User> & {
   onItemSelect: (params: GridRowParams) => void,

@@ -7,7 +7,7 @@ import EmptyStateComponent from "../state/EmptyStates";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
-import { useDialog } from "../../components/DialogProvider";
+import { useDialog } from "../../components";
 import { isDev } from "../../shared/utils";
 
 type CategoryListProps = {

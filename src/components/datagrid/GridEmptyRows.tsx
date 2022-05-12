@@ -5,12 +5,10 @@ type GridEmptyRowsProps = {
   children?: JSX.Element | React.ReactNode
 }
 
-const GridEmptyRow = (props: GridEmptyRowsProps) => {
+export const GridEmptyRow = (props: GridEmptyRowsProps) => {
   return (
     <GridOverlay>
       {props.children}
     </GridOverlay>
   )
 }
-
-export default GridEmptyRow;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppBar, Box, Button, IconButton, Toolbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { AddRounded, CloseRounded, SearchRounded } from "@mui/icons-material";
-import SearchBoxInputBase from "../feature/search/SearchBox";
+import SearchBoxInputBase from "../../feature/search/SearchBox";
 import React from "react";
 
 type DialogToolbarProps = {
@@ -12,7 +12,7 @@ type DialogToolbarProps = {
   onDismiss?: () => void,
 }
 
-const DialogToolbar = (props: DialogToolbarProps) => {
+export const DialogToolbar = (props: DialogToolbarProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const mdBreakpoint = useMediaQuery(theme.breakpoints.up('sm'));
@@ -55,4 +55,3 @@ const DialogToolbar = (props: DialogToolbarProps) => {
     </AppBar>
   )
 }
-export default DialogToolbar;

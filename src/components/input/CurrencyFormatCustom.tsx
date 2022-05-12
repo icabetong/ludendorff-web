@@ -6,7 +6,7 @@ type CurrencyFormatCustomProps = {
   name: string;
 }
 
-const CurrencyFormatCustom = React.forwardRef<NumberFormat<any>, CurrencyFormatCustomProps>(
+export const CurrencyFormatCustom = React.forwardRef<NumberFormat<any>, CurrencyFormatCustomProps>(
   function CurrencyFormatCustom(props: PropsWithChildren<CurrencyFormatCustomProps>, ref: ForwardedRef<NumberFormat<any>>) {
     const { onChange, ...other } = props;
 
@@ -28,5 +28,3 @@ const CurrencyFormatCustom = React.forwardRef<NumberFormat<any>, CurrencyFormatC
     );
   }
 );
-
-export default CurrencyFormatCustom;

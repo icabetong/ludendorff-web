@@ -27,7 +27,7 @@ type MediumScreenHeaderProps = CoreHeaderProps & {
 }
 type LargeScreenHeaderProps = CoreHeaderProps
 
-const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
+export const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
   const { t } = useTranslation();
   const { title, menuItems, actionText, onActionEvent, onDrawerTriggered, onSearchFocusChanged } = props;
   const theme = useTheme();
@@ -105,6 +105,3 @@ const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
     </AppBar>
   )
 }
-
-
-export default AdaptiveHeader;

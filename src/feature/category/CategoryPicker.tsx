@@ -12,7 +12,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Category } from "./Category";
 import CategoryList from "./CategoryList";
-import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import { PaginationController, PaginationControllerProps } from "../../components";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type CategoryPickerProps = PaginationControllerProps & {

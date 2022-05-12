@@ -10,7 +10,7 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/mate
 import { ArrowBackRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import IssuedReportList from "./IssuedReportList";
-import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import { PaginationController, PaginationControllerProps } from "../../components";
 import { isDev } from "../../shared/utils";
 
 type IssuedReportItemPickerListProps = PaginationControllerProps & {

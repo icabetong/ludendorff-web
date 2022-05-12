@@ -23,7 +23,7 @@ import {
 import { currencyFormatter } from "../../shared/utils";
 
 import { getEditorDataGridTheme } from "../core/Core";
-import { ImporterGridToolbar } from "../../components/ImporterComponent";
+import { ImporterGridToolbar } from "../../components";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { Category } from "../category/Category";
 

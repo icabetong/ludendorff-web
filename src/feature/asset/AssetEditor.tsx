@@ -32,7 +32,7 @@ import { isDev } from "../../shared/utils";
 import { usePagination } from "use-pagination-firestore";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
-import CurrencyFormatCustom from "../../components/CurrencyFormatCustom";
+import { CurrencyFormatCustom } from "../../components";
 
 type AssetEditorProps = {
   isOpen: boolean,

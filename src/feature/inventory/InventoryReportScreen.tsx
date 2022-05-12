@@ -24,8 +24,7 @@ import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSprea
 import { ScreenProps } from "../shared/types/ScreenProps";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
-import { useDialog } from "../../components/DialogProvider";
+import { AdaptiveHeader, useDialog } from "../../components";
 import {
   fundCluster,
   inventoryCollection,

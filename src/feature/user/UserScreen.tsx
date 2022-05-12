@@ -19,13 +19,12 @@ import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
 import { ScreenProps } from "../shared/types/ScreenProps";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { AdaptiveHeader, useDialog } from "../../components";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { UserEmptyState } from "./UserEmptyState";
 import UserDataGrid from "./UserDataGrid";
 import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
-import { useDialog } from "../../components/DialogProvider";
 import { isDev } from "../../shared/utils";
 
 const useStyles = makeStyles((theme: Theme) => ({

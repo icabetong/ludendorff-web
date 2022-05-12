@@ -26,7 +26,7 @@ import { initialState, reducer } from "./InventoryReportItemEditorReducer";
 import InventoryReportItemList from "./InventoryReportItemList";
 import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
 import { useEntity } from "../entity/UseEntity";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition } from "../../components";
 import { isDev, newId } from "../../shared/utils";
 
 type InventoryReportEditorProps = {
@@ -152,7 +152,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
 
   return (
     <>
-      <Dialog open={props.isOpen} TransitionComponent={Transition} fullScreen>
+      <Dialog open={props.isOpen} TransitionComponent={SlideUpTransition} fullScreen>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_inventory")} loading={isWriting} onDismiss={onDismiss}/>
           <EditorContent>

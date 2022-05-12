@@ -1,19 +1,19 @@
-declare interface Navigator extends NavigatorUA {}
-declare interface WorkerNavigator extends NavigatorUA {}
+export declare interface Navigator extends NavigatorUA {}
+export declare interface WorkerNavigator extends NavigatorUA {}
 
 // https://wicg.github.io/ua-client-hints/#navigatorua
-declare interface NavigatorUA {
+export declare interface NavigatorUA {
   readonly userAgentData?: NavigatorUAData;
 }
 
 // https://wicg.github.io/ua-client-hints/#dictdef-navigatoruabrandversion
-interface NavigatorUABrandVersion {
+export interface NavigatorUABrandVersion {
   readonly brand: string;
   readonly version: string;
 }
 
 // https://wicg.github.io/ua-client-hints/#dictdef-uadatavalues
-interface UADataValues {
+export interface UADataValues {
   readonly brands?: NavigatorUABrandVersion[];
   readonly mobile?: boolean;
   readonly platform?: string;

@@ -20,8 +20,7 @@ import { Asset } from "../asset/Asset";
 import AssetPicker from "../asset/AssetPicker";
 import { firestore } from "../../index";
 import { assetCollection, assetStockNumber } from "../../shared/const";
-
-import CurrencyFormatCustom from "../../components/CurrencyFormatCustom";
+import { CurrencyFormatCustom } from "../../components";
 
 export type FormValues = {
   unitValue: number,

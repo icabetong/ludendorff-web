@@ -13,7 +13,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../index";
 import { Destination, NavigationContainer } from "../navigation/NavigationContainer";
 import ContentSwitcher from "./ContentSwitcher";
-import { useDialog } from "../../components/DialogProvider";
+import { useDialog } from "../../components";
 
 type DestinationContainerProps = {
   destination: Destination,

@@ -12,7 +12,7 @@ import {
 import { AddchartRounded } from "@mui/icons-material";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components/EditorComponent";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components";
 import {
   balanceQuantity,
   balanceTotalPrice,

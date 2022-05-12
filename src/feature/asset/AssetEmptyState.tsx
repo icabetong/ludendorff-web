@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
 import { DevicesOtherRounded } from "@mui/icons-material";
-import GridEmptyRow from "../../components/datagrid/GridEmptyRows";
+import { GridEmptyRow } from "../../components";
 
 const AssetEmptyState = () => {
   const { t } = useTranslation();

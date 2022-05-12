@@ -1,19 +1,15 @@
-import { HitsProvided } from "react-instantsearch-core";
-import { InventoryReport } from "./InventoryReport";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import { DataGridProps } from "../shared/types/DataGridProps";
 import { useTranslation } from "react-i18next";
-import { accountabilityDate, fundCluster, yearMonth } from "../../shared/const";
-import { formatDate } from "../../shared/utils";
+import { HitsProvided, connectHits } from "react-instantsearch-core";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DeleteOutlineRounded } from "@mui/icons-material";
-import { ExcelIcon } from "../../components/CustomIcons";
+import { InventoryReport } from "./InventoryReport";
+import { InventoryReportDataGridEmptyState } from "./InventoryReportEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
-import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
-import GridToolbar from "../../components/datagrid/GridToolbar";
-import { DataGridPaginationController } from "../../components/PaginationController";
-import { InventoryReportDataGridEmptyState } from "./InventoryReportEmptyState";
-import { connectHits } from "react-instantsearch-dom";
+import { DataGridProps } from "../shared/types/DataGridProps";
+import { DataGridPaginationController, ExcelIcon, GridLinearProgress, GridToolbar } from "../../components";
+import { accountabilityDate, fundCluster, yearMonth } from "../../shared/const";
+import { formatDate } from "../../shared/utils";
 
 type InventoryReportDataGridProps = HitsProvided<InventoryReport> & DataGridProps<InventoryReport> & {
   onItemSelect: (params: GridRowParams) => void,

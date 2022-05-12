@@ -1,7 +1,7 @@
-import GridEmptyRow from "../../components/datagrid/GridEmptyRows";
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
 import { PeopleOutlineRounded } from "@mui/icons-material";
+import { GridEmptyRow } from "../../components";
 
 const UserEmptyState = () => {
   const { t } = useTranslation();

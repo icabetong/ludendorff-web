@@ -19,10 +19,8 @@ import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { categoryCollection, categoryName } from "../../shared/const";
 import { firestore } from "../../index";
-import { PaginationController } from "../../components/PaginationController";
+import { DialogToolbar, PaginationController, SlideUpTransition } from "../../components";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
-import DialogToolbar from "../../components/DialogToolbar";
-import { Transition } from "../../components/EditorComponent";
 
 type CategoryScreenProps = {
   isOpen: boolean,
@@ -52,7 +50,7 @@ const CategoryScreen = (props: CategoryScreenProps) => {
       <Dialog
         fullScreen={true}
         open={props.isOpen}
-        TransitionComponent={Transition}>
+        TransitionComponent={SlideUpTransition}>
         <DialogToolbar
           title={t("navigation.categories")}
           onAdd={canWrite ? onEditorCreate : undefined}

@@ -16,9 +16,8 @@ import AssetList from "./AssetList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePermissions } from "../auth/AuthProvider";
-import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import { PaginationController, PaginationControllerProps, DialogSearchTitle } from "../../components";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
-import SearchDialogTitle from "../../components/SearchDialogTitle";
 import Client from "../search/Client";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";
@@ -52,11 +51,11 @@ const AssetPicker = (props: AssetPickerProps) => {
         maxWidth="xs"
         open={props.isOpen}
         PaperProps={{ sx: { minHeight: '60vh' }}}>
-        <SearchDialogTitle
+        <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
           {t("dialog.select_asset")}
-        </SearchDialogTitle>
+        </DialogSearchTitle>
         <DialogContent
           dividers={true}
           sx={{

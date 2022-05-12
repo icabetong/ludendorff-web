@@ -20,8 +20,7 @@ import AssetImportEditor from "./AssetImportEditor";
 import { Category, CategoryCore, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
-import { useDialog } from "../../components/DialogProvider";
+import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog } from "../../components";
 import { firestore } from "../../index";
 import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
 import { isDev } from "../../shared/utils";
@@ -233,7 +232,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
 
   return (
     <>
-      <Dialog open={props.isOpen} TransitionComponent={Transition} fullScreen>
+      <Dialog open={props.isOpen} TransitionComponent={SlideUpTransition} fullScreen>
         <EditorRoot>
           <EditorAppBar
             title={t("dialog.import_assets")}

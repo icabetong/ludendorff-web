@@ -6,7 +6,7 @@ import { ChevronRightRounded, ManageAccountsOutlined, PaletteOutlined, TableChar
 import { PreferenceContext } from "./Preference";
 import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { AdaptiveHeader } from "../../components";
 import EntityEditor from "../entity/EntityEditor";
 
 type SettingsScreenProps = {
@@ -25,9 +25,7 @@ const SettingsScreen = (props: SettingsScreenProps) => {
   const onDensityMenuView = (e: React.MouseEvent<HTMLElement>) => {
     setDensityMenuAnchor(e.currentTarget);
   }
-  const onDensityMenuDismiss = () => {
-    setDensityMenuAnchor(null)
-  }
+  const onDensityMenuDismiss = () => setDensityMenuAnchor(null)
 
   const onOverrideDensityChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     userPreferences.setPreferences({

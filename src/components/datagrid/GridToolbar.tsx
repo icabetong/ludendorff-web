@@ -13,7 +13,7 @@ type GridComponentProps = {
   onSearchFocusChanged: (focus: boolean) => void,
 }
 
-const GridToolbar = () => {
+export const GridToolbar = () => {
   const props = useGridRootProps().componentsProps;
 
   return (
@@ -35,5 +35,3 @@ const GridToolbar = () => {
     </GridToolbarContainer>
   );
 }
-
-export default GridToolbar;

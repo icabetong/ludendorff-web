@@ -15,7 +15,7 @@ import UserList from "./UserList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
-import { PaginationController, PaginationControllerProps } from "../../components/PaginationController";
+import { PaginationController, PaginationControllerProps } from "../../components";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type UserPickerProps = PaginationControllerProps & {

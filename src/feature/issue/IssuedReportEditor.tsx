@@ -28,7 +28,7 @@ import { initialState, reducer } from "./IssuedReportItemEditorReducer";
 import IssuedReportItemList from "./IssuedReportItemList";
 import { useEntity } from "../entity/UseEntity";
 import { isDev, newId } from "../../shared/utils";
-import { EditorAppBar, EditorContent, EditorRoot, Transition } from "../../components/EditorComponent";
+import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition } from "../../components";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,
@@ -152,7 +152,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         fullScreen={true}
         open={props.isOpen}
         onClose={props.onDismiss}
-        TransitionComponent={Transition}>
+        TransitionComponent={SlideUpTransition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar title={t("dialog.details_issued")} loading={isWriting} onDismiss={props.onDismiss}/>
           <EditorContent>

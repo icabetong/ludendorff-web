@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { LocalAtmOutlined } from "@mui/icons-material";
 import EmptyStateComponent from "../state/EmptyStates";
-import GridEmptyRow from "../../components/datagrid/GridEmptyRows";
+import { GridEmptyRow } from "../../components";
 
 const StockCardEmptyState = () => {
   const { t } = useTranslation();

@@ -16,15 +16,14 @@ import { firestore } from "../../index";
 import { fundCluster, inventoryCollection } from "../../shared/const";
 import { usePermissions } from "../auth/AuthProvider";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
-import { PaginationController } from "../../components/PaginationController";
+import { PaginationController, DialogSearchTitle } from "../../components";
 import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import InventoryReportPickerList from "./InventoryReportPickerList";
 import InventoryReportViewer from "./InventoryReportViewer";
+import InventoryReportSearchList from "./InventoryReportSearchList";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
-import SearchDialogTitle from "../../components/SearchDialogTitle";
-import InventoryReportSearchList from "./InventoryReportSearchList";
 
 type InventoryReportPickerProps = {
   isOpen: boolean,
@@ -54,11 +53,11 @@ const InventoryReportPicker = (props: InventoryReportPickerProps) => {
         maxWidth="xs"
         open={props.isOpen}
         PaperProps={{ sx: { minHeight: '60vh' }}}>
-        <SearchDialogTitle
+        <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
           {t("dialog.select_inventory_report")}
-        </SearchDialogTitle>
+        </DialogSearchTitle>
         <DialogContent
           dividers={true}
           sx={{

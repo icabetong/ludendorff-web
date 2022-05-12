@@ -20,12 +20,11 @@ import { usePermissions } from "../auth/AuthProvider";
 import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import AdaptiveHeader from "../../components/AdaptiveHeader";
+import { AdaptiveHeader, useDialog } from "../../components";
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import useSort from "../shared/hooks/useSort";
 import { ScreenProps } from "../shared/types/ScreenProps";
-import { useDialog } from "../../components/DialogProvider";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
 import {
   entityName,

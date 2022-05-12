@@ -1,7 +1,7 @@
-import GridEmptyRow from "../../components/datagrid/GridEmptyRows";
 import { useTranslation } from "react-i18next";
-import EmptyStateComponent from "../state/EmptyStates";
 import { Inventory2Outlined } from "@mui/icons-material";
+import EmptyStateComponent from "../state/EmptyStates";
+import { GridEmptyRow } from "../../components";
 
 const InventoryReportEmptyState = () => {
   const { t } = useTranslation();

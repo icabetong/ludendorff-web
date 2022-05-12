@@ -21,7 +21,7 @@ import { LoadingButton } from "@mui/lab";
 import { LockOutlined, MailOutlineRounded } from "@mui/icons-material";
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 import PasswordReset from "./PasswordReset";
-import SVGFeedbackDialog from "../../components/SVGFeedbackDialog";
+import { DialogSVGFeedback } from "../../components";
 import { ReactComponent as EmailSent } from "../../shared/message_sent.svg";
 import { isDev } from "../../shared/utils";
 
@@ -179,7 +179,7 @@ const Authentication = () => {
         working={working}
         onSubmit={onResetPassword}
         onDismiss={onDismissRequestPassword}/>
-      <SVGFeedbackDialog
+      <DialogSVGFeedback
         isOpen={confirm}
         svgImage={EmailSent}
         title={t("dialog.reset_email_sent")}

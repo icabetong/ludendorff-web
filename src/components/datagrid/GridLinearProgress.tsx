@@ -1,7 +1,7 @@
 import { GridOverlay } from "@mui/x-data-grid";
 import { Box, LinearProgress } from "@mui/material";
 
-const GridLinearProgress = () => {
+export const GridLinearProgress = () => {
   return (
     <GridOverlay>
       <Box sx={{ position: 'absolute', top: 0, width: '100%' }}>
@@ -10,5 +10,3 @@ const GridLinearProgress = () => {
     </GridOverlay>
   )
 }
-
-export default GridLinearProgress;

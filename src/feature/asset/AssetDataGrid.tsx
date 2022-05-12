@@ -1,13 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { Asset } from "./Asset";
-import { DataGridProps } from "../shared/types/DataGridProps";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import GridLinearProgress from "../../components/datagrid/GridLinearProgress";
-import GridToolbar from "../../components/datagrid/GridToolbar";
 import { Button } from "@mui/material";
+import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, CategoryRounded, UploadRounded } from "@mui/icons-material";
+import { Asset } from "./Asset";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
+import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
+import useDensity from "../shared/hooks/useDensity";
+import { DataGridProps } from "../shared/types/DataGridProps";
+import { GridLinearProgress, GridToolbar, DataGridPaginationController } from "../../components";
 import {
   assetSubcategory,
   assetDescription, assetRemarks,
@@ -16,9 +17,6 @@ import {
   assetUnitOfMeasure, assetUnitValue
 } from "../../shared/const";
 import { currencyFormatter } from "../../shared/utils";
-import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
-import useDensity from "../shared/hooks/useDensity";
-import { DataGridPaginationController } from "../../components/PaginationController";
 
 type AssetDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
   onItemSelect: (params: GridRowParams) => void,

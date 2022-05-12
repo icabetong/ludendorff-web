@@ -22,7 +22,7 @@ import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
-import SearchDialogTitle from "../../components/SearchDialogTitle";
+import { DialogSearchTitle } from "../../components";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
 
 type IssuedReportPickerProps = {
@@ -56,11 +56,11 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
         maxWidth="xs"
         open={props.isOpen}
         PaperProps={{ sx: { minHeight: '60vh' }}}>
-        <SearchDialogTitle
+        <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
           {t("dialog.select_issued_report")}
-        </SearchDialogTitle>
+        </DialogSearchTitle>
         <DialogContent
           dividers={true}
           sx={{

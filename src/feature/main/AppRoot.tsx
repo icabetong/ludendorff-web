@@ -6,7 +6,7 @@ import { useAuthState } from "../auth/AuthProvider";
 import { MainLoadingState } from "../state/LoadingStates";
 import { SnackbarProvider } from "notistack";
 import FinishAccountDialog from "../auth/FinishAccountDialog";
-import { DialogProvider } from "../../components/DialogProvider";
+import { DialogProvider } from "../../components";
 import DestinationContainer from "./DestinationContainer";
 
 const AppRoot = () => {
