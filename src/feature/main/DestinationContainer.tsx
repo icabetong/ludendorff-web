@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Box,
+  Divider,
   Drawer,
   Menu,
   MenuItem,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { ExitToAppRounded, AccountCircleRounded } from "@mui/icons-material";
+import { ExitToAppRounded, AccountCircleRounded, SettingsOutlined } from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { auth } from "../../index";
 import { Destination, NavigationContainer } from "../navigation/NavigationContainer";
@@ -109,6 +110,14 @@ const DestinationContainer = (props: DestinationContainerProps) => {
             </ListItemIcon>
             <ListItemText>{t("button.account_settings")}</ListItemText>
           </MenuItem>
+          <MenuItem
+            onClick={() => onNavigateThenDismiss("settings")}>
+            <ListItemIcon>
+              <SettingsOutlined/>
+            </ListItemIcon>
+            <ListItemText>{t("navigation.settings")}</ListItemText>
+          </MenuItem>
+          <Divider/>
           <MenuItem
             onClick={onSignOut}>
             <ListItemIcon>

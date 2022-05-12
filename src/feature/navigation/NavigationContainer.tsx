@@ -121,13 +121,6 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
             </Paper>
           </Box>
         }
-        <Box sx={{ mb: 1 }}>
-          <NavigationListItem
-            itemKey="settings"
-            icon={SettingsOutlined}
-            title="navigation.settings"
-            onNavigate={() => props.onNavigate("settings")}/>
-        </Box>
       </NavigationList>
     </Box>
   )

@@ -107,10 +107,9 @@ const CategoryEditor = (props: CategoryEditorProps) => {
       <Dialog
         fullWidth={true}
         maxWidth="xs"
-        scroll="paper"
         open={props.isOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_category")}</DialogTitle>
+          <DialogTitle>{t(props.isCreate ? "dialog.category_create" : "dialog.category_update")}</DialogTitle>
           <DialogContent dividers={true}>
             <Container disableGutters>
               <Box sx={{ mx: 2 }}>

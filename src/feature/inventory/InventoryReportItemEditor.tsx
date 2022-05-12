@@ -103,7 +103,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         open={props.isOpen}
         onClose={onDismiss}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_inventory_item")}</DialogTitle>
+          <DialogTitle>{t(props.isCreate ? "dialog.inventory_item_create" : "dialog.inventory_item_update")}</DialogTitle>
           <DialogContent>
             <Container disableGutters>
               <TextField

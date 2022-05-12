@@ -154,7 +154,10 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
     <>
       <Dialog open={props.isOpen} TransitionComponent={SlideUpTransition} fullScreen>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_inventory")} loading={isWriting} onDismiss={onDismiss}/>
+          <EditorAppBar
+            title={t(props.isCreate ? "dialog.inventory_create" : "dialog.inventory_update")}
+            loading={isWriting}
+            onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
               <Grid

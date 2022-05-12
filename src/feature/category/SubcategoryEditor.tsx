@@ -29,9 +29,9 @@ const SubcategoryEditor = (props: SubcategoryEditorProps) => {
   }, [setValue, props.subcategory, props.isOpen])
 
   return (
-    <Dialog open={props.isOpen} maxWidth="xs">
+    <Dialog open={props.isOpen} maxWidth="xs" fullWidth>
       <form onSubmit={handleSubmit(onSubmit)}>
-      <DialogTitle>{t("dialog.details_subcategory")}</DialogTitle>
+      <DialogTitle>{t(props.isCreate ? "dialog.subcategory_create" : "dialog.subcategory_update")}</DialogTitle>
         <DialogContent>
           <Controller
             name="subcategory"

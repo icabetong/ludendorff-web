@@ -192,7 +192,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         maxWidth={smBreakpoint ? "xs" : "md"}
         open={props.isOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_asset")}</DialogTitle>
+          <DialogTitle>{t(props.isCreate ? "dialog.asset_create" : "dialog.asset_update")}</DialogTitle>
           <DialogContent dividers={true}>
             <Container sx={{ py: 1 }}>
               <Grid

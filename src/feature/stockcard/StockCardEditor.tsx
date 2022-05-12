@@ -285,7 +285,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         TransitionComponent={SlideUpTransition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
           <EditorAppBar
-            title={t("dialog.details_stock_card")}
+            title={t(props.isCreate ? "dialog.stock_card_create" : "dialog.stock_card_update")}
             loading={isWriting}
             onDismiss={onDismiss}/>
           <EditorContent>

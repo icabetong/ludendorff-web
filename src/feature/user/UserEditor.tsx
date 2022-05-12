@@ -134,7 +134,7 @@ const UserEditor = (props: UserEditorProps) => {
       open={props.isOpen}
       onClose={onDismiss}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>{t("dialog.details_user")}</DialogTitle>
+        <DialogTitle>{t(props.isCreate ? "dialog.user_create" : "dialog.user_update")}</DialogTitle>
         <DialogContent dividers={true}>
           <Container sx={{ py: 1 }}>
             <Grid
