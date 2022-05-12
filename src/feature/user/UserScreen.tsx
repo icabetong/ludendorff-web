@@ -1,7 +1,6 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Fab, LinearProgress, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { AddRounded } from "@mui/icons-material";
@@ -27,18 +26,9 @@ import useSort from "../shared/hooks/useSort";
 import { OrderByDirection } from "@firebase/firestore-types";
 import { isDev } from "../../shared/utils";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    height: '90%',
-    padding: '1.4em',
-    ...getDataGridTheme(theme)
-  }
-}));
-
 type UserScreenProps = ScreenProps
 const UserScreen = (props: UserScreenProps) => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
   const { canRead, canManageUsers } = usePermissions();
@@ -116,7 +106,7 @@ const UserScreen = (props: UserScreenProps) => {
   }
 
   return (
-    <Box sx={{ width: '100%', height: '100%', }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <InstantSearch
         searchClient={Client}
         indexName="users">
@@ -128,7 +118,7 @@ const UserScreen = (props: UserScreenProps) => {
           onSearchFocusChanged={setSearchMode}/>
         {canRead || canManageUsers
           ? <>
-            <Box className={classes.wrapper} sx={{ display: { xs: "none", sm: "block" }}}>
+            <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: "none", sm: "block" }, ...getDataGridTheme(theme)})}>
               <UserDataGrid
                 items={items}
                 size={limit}
