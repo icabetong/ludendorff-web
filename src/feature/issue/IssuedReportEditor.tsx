@@ -154,7 +154,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         onClose={props.onDismiss}
         TransitionComponent={SlideUpTransition}>
         <EditorRoot onSubmit={handleSubmit(onSubmit)}>
-          <EditorAppBar title={t("dialog.details_issued")} loading={isWriting} onDismiss={props.onDismiss}/>
+          <EditorAppBar title={t(props.isCreate ? "dialog.issued_create" : "dialog.issued_update")} loading={isWriting} onDismiss={props.onDismiss}/>
           <EditorContent>
             <Box>
               <Grid

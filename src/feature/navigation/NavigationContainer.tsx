@@ -10,11 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  ChevronRightRounded,
   DevicesOtherRounded,
   Inventory2Outlined,
   LocalAtmOutlined,
   PeopleOutlineRounded,
-  SettingsOutlined,
   UploadFileOutlined
 } from "@mui/icons-material";
 import { useAuthState } from "../auth/AuthProvider";
@@ -109,7 +109,7 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
                 <ListItemText
                   primary={
                     <Typography noWrap sx={{ fontWeight: 500 }}>
-                      {t("template.full_name", { last: user.lastName, first: user.firstName })}
+                      {user.firstName}
                     </Typography>
                   }
                   secondary={
@@ -117,6 +117,7 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
                       {user.email}
                     </Typography>
                   }/>
+                <ChevronRightRounded/>
               </ListItemButton>
             </Paper>
           </Box>
