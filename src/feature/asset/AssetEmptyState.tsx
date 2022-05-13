@@ -9,7 +9,7 @@ const AssetEmptyState = () => {
   return (
     <EmptyStateComponent
       icon={DevicesOtherRounded}
-      title={t("empty.asset")}
+      title={t("empty.asset_header")}
       subtitle={t("empty.asset_summary")}/>
   );
 }

@@ -1,14 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
-import { DeleteOutlineRounded, CategoryRounded } from "@mui/icons-material";
+import { DeleteOutlineRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-
-import EmptyStateComponent from "../state/EmptyStates";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
 import { useDialog } from "../../components";
 import { isDev } from "../../shared/utils";
+import { CategoryEmptyState } from "./CategoryEmptyState";
 
 type CategoryListProps = {
   categories: Category[],
@@ -54,10 +53,7 @@ const CategoryList = (props: CategoryListProps) => {
             })
           }
         </List>
-        : <EmptyStateComponent
-            icon={CategoryRounded}
-            title={t("empty.category")}
-            subtitle={t("empty.category_summary")}/>
+        : <CategoryEmptyState/>
       }
     </>
   );

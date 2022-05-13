@@ -66,16 +66,7 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
           display: 'flex',
           flexDirection: 'column',
         }}>
-        <Toolbar>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingY: 1,
-            }}>
-          </Box>
-        </Toolbar>
+        <Toolbar/>
         <Box sx={{ flex: 1, marginTop: 2 }}>
           {
             destinations.map((item) => {

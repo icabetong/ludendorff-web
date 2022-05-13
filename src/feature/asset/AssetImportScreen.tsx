@@ -23,7 +23,7 @@ import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog } from "../../components";
 import { firestore } from "../../index";
 import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
-import { isDev } from "../../shared/utils";
+import { isDev, newId } from "../../shared/utils";
 import AssetImportDuplicate from "./AssetImportDuplicate";
 import { GroupedArray } from "../shared/types/GroupedArray";
 
@@ -170,6 +170,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
           }
 
           let asset: AssetImport = {
+            id: newId(),
             stockNumber: sheet.getCell(row, 1).text,
             description: sheet.getCell(row, 2).text,
             category: category ? category : undefined,

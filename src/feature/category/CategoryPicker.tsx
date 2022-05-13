@@ -52,10 +52,10 @@ const CategoryPicker = (props: CategoryPickerProps) => {
                 onItemSelect={props.onSelectItem}/>
               {props.canForward && props.categories.length > 0 && props.categories.length === limit
                 && <PaginationController
-                  canBack={props.canBack}
-                  canForward={props.canForward}
-                  onBackward={props.onBackward}
-                  onForward={props.onForward}/>
+                      canBack={props.canBack}
+                      canForward={props.canForward}
+                      onBackward={props.onBackward}
+                      onForward={props.onForward}/>
               }
             </>
             : <LinearProgress/>

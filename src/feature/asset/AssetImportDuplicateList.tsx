@@ -2,12 +2,11 @@ import React from "react";
 import { IconButton, List, ListItem, ListSubheader, ListItemText, ListItemSecondaryAction } from "@mui/material";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { AssetImport } from "./AssetImport";
-import { newId } from "../../shared/utils";
 import { GroupedArray } from "../shared/types/GroupedArray";
 
 type AssetImportDuplicateListProps = {
   assets: GroupedArray<AssetImport>,
-  selected?: AssetImport,
+  currentId?: string,
   onItemSelected: (asset: AssetImport) => void,
   onItemRemoved: (asset: AssetImport) => void,
 }
@@ -17,24 +16,25 @@ const AssetImportDuplicateList = (props: AssetImportDuplicateListProps) => {
       {
         Array.from(Object.keys(props.assets).map((stockNumber) => {
           return (
-            <React.Fragment key={stockNumber}>
-              <ListSubheader>{stockNumber}</ListSubheader>
-              {
-                props.assets[stockNumber].map((item) => {
-                  const key = newId()
-                  return (
-                    <AssetImportDuplicateListItem
-                      key={key}
-                      asset={item}
-                      active={item === props.selected}
-                      onItemSelected={props.onItemSelected}
-                      onItemRemoved={props.onItemRemoved}/>
-                  )
-                })
-              }
-            </React.Fragment>
+            props.assets[stockNumber].length > 1
+              ? <React.Fragment key={stockNumber}>
+                  <ListSubheader>{stockNumber}</ListSubheader>
+                  {
+                    props.assets[stockNumber].map((item) => {
+                      return (
+                        <AssetImportDuplicateListItem
+                          key={item.id}
+                          asset={item}
+                          active={item.id === props.currentId}
+                          onItemSelected={props.onItemSelected}
+                          onItemRemoved={props.onItemRemoved}/>
+                      )
+                    })
+                  }
+                </React.Fragment>
+              : <></>
           )
-        }))
+          }))
       }
     </List>
   )

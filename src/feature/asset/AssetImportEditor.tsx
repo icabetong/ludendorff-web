@@ -35,6 +35,7 @@ type AssetImportEditorProps = {
   onDismiss: () => void,
 }
 type FormValues = {
+  id: string,
   stockNumber: string,
   description: string,
   subcategory: string,
@@ -76,7 +77,6 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
 
   useEffect(() => {
     if (props.isOpen) {
-      console.log(props.asset?.subcategory);
       reset({
         stockNumber: props.asset ? props.asset.stockNumber : "",
         description: props.asset?.description ? props.asset.description : "",
@@ -142,6 +142,12 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
                   item
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
+                  <Controller
+                    control={control}
+                    name="id"
+                    render={({ field: { ref, ...inputProps }}) => (
+                      <input hidden ref={ref} {...inputProps}/>
+                    )}/>
                   <Controller
                     control={control}
                     name="stockNumber"

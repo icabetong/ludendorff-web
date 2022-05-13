@@ -9,7 +9,7 @@ const UserEmptyState = () => {
   return (
     <EmptyStateComponent
       icon={PeopleOutlineRounded}
-      title={t("empty.user")}
+      title={t("empty.user_header")}
       subtitle={t("empty.user_summary")}/>
   );
 }

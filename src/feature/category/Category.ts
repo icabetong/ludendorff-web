@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { firestore } from "../../index";
 
 import { assetCategory, assetCategoryId, assetCollection, categoryCollection, } from "../../shared/const";
@@ -23,6 +23,11 @@ export const minimize = (category: Category): CategoryCore => {
 }
 
 export class CategoryRepository {
+  static async fetch(categoryId: string): Promise<Category> {
+    let reference = doc(firestore, categoryCollection, categoryId);
+    let snapshot = await getDoc(reference);
+    return snapshot.data() as Category;
+  }
 
   static async create(category: Category): Promise<void> {
     return await setDoc(doc(firestore, categoryCollection, category.categoryId),

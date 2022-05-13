@@ -23,7 +23,7 @@ import { useSnackbar } from "notistack";
 import { collection, doc, orderBy, query, getDoc } from "firebase/firestore";
 
 import { Asset, AssetRepository } from "./Asset";
-import { minimize, Category, CategoryCore } from "../category/Category";
+import { minimize, Category, CategoryCore, CategoryRepository } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
 import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
@@ -64,22 +64,16 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { limit } = useQueryLimit('categoryQueryLimit');
 
   useEffect(() => {
-    const onFetchSubcategories = async () => {
-      if (props.asset?.category) {
-        let reference = doc(firestore, categoryCollection, props.asset?.category.categoryId);
-        let snapshot = await getDoc(reference);
-        return snapshot.data() as Category;
-      }
-      return null;
-    }
-
     setCategory(props.asset?.category);
-    onFetchSubcategories()
-      .then((data) => {
-        if (data) setSubcategories(data.subcategories);
-      }).catch((err) => {
-      if (isDev) console.log(err);
-    });
+    let categoryId = category?.categoryId;
+    if (categoryId) {
+      CategoryRepository.fetch(categoryId)
+        .then((data) => {
+          if (data) setSubcategories(data.subcategories);
+        }).catch((err) => {
+        if (isDev) console.log(err);
+      });
+    }
   }, [props.asset]);
 
   useEffect(() => {

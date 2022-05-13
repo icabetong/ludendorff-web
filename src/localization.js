@@ -355,13 +355,13 @@ const resources = {
         entity: "{{name}}, ({{position}})"
       },
       empty: {
-        asset: "No Assets Added",
+        asset_header: "No Assets Added",
         asset_summary: "There are no assets available.",
-        category: "No Categories Added",
+        category_header: "No Categories Added",
         category_summary: "There are no categories available that can be used to organize the assets.",
-        user: "No Users Added",
+        user_header: "No Users Added",
         user_summary: "There are no users available.",
-        search: "No Results",
+        search_header: "No Results",
         search_summary: "There are no items matched on your query \"{{query}}\"",
         inventory_header: "No Inventory Reports Available",
         inventory_summary: "There are no Physical Count of Inventories Reports that are available on the database.",
@@ -370,6 +370,8 @@ const resources = {
         issued_reports_header: "No Issued Items Reports Available",
         issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database.",
         subcategories: "No subcategories added",
+        no_duplicates_header: "No Duplicates Detected",
+        no_duplicates_summary: "There are no duplicate records detected"
       },
       document: {
         stock_card: "Stock Card",
