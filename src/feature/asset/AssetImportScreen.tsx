@@ -45,6 +45,9 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
   const [asset, setAsset] = useState<AssetImport | undefined>(undefined);
   const [checked, setChecked] = useState<string[]>([]);
   const [isPickerOpen, setPickerOpen] = useState(false);
+  const [stockNumbers, setStockNumbers] = useState<string[]>(() => {
+    return Array.from(new Set(importedAssets.map((asset) => asset.stockNumber)));
+  });
 
   useEffect(() => {
     async function verify(stockNumber: string) {
@@ -63,7 +66,10 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
     }
 
     check()
-      .then((data) => setImportedAssets(data))
+      .then((data) => {
+        setImportedAssets(data);
+        setStockNumbers(Array.from(new Set(data.map((asset) => asset.stockNumber))));
+      })
       .catch(error => {
         if (isDev) console.log(error)
       }).finally(() => setWorking(false));
@@ -288,6 +294,7 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
       <AssetImportDuplicate
         isOpen={duplicates.length > 0}
         assets={duplicates}
+        stockNumbers={stockNumbers}
         onContinue={onDuplicatesCleared}/>
       <CategoryPicker
         categories={items}

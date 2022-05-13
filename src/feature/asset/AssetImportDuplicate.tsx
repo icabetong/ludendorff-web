@@ -46,11 +46,12 @@ type FormValues = {
 type AssetImportDuplicateProps = {
   isOpen: boolean,
   assets: AssetImport[],
+  stockNumbers: string[],
   onContinue: (assets: GroupedArray<AssetImport>) => void,
 }
 const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
   const { t } = useTranslation();
-  const { handleSubmit, formState: { errors }, control, reset, watch } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, control, reset, watch, setError } = useForm<FormValues>();
   const { enqueueSnackbar } = useSnackbar();
   const [duplicates, setDuplicates] = useState<GroupedArray<AssetImport>>({});
   const [category, setCategory] = useState<CategoryCore | undefined>(undefined);
@@ -69,6 +70,19 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
   const onCategoryPickerSelect = (category: Category) => setCategory(minimize(category));
 
   useEffect(() => {
+    reset({
+      id: "",
+      status: "absent",
+      stockNumber: "",
+      description: "",
+      subcategory: "",
+      unitOfMeasure: "",
+      unitValue: 0,
+      remarks: "",
+    })
+  }, [reset]);
+
+  useEffect(() => {
     let grouped = groupBy(props.assets, "stockNumber");
     setDuplicates(Object.fromEntries(grouped));
   }, [props.assets]);
@@ -85,7 +99,12 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
     }
   }, [category]);
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
+    if (props.stockNumbers.includes(data.stockNumber)) {
+      setError('stockNumber', { type: 'focus', message: "feedback.stock_number_already_exists"});
+      return;
+    }
+    
     if (!category) {
       return;
     }
@@ -201,8 +220,10 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
                               type="text"
                               inputRef={ref}
                               label={t("field.stock_number")}
+                              helperText={errors.stockNumber?.message ? t(errors.stockNumber.message) : undefined}
                             />
-                          )}/>
+                          )}
+                          rules={{ required: { value: true, message: "feedback.empty_asset_stock_number" } }}/>
                         <Controller
                           name="description"
                           control={control}
@@ -211,8 +232,10 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
                               {...inputProps}
                               type="text"
                               inputRef={ref}
-                              label={t("field.asset_description")}/>
-                          )}/>
+                              label={t("field.asset_description")}
+                              helperText={errors.description?.message ? t(errors.description.message) : undefined}/>
+                          )}
+                          rules={{ required: { value: true, message: "feedback.empty_asset_description" }}}/>
                         <TextField
                           value={category?.categoryName ? category?.categoryName : t("field.not_set")}
                           label={t("field.category")}
@@ -259,8 +282,10 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
                               type="text"
                               inputRef={ref}
                               label={t("field.unit_of_measure")}
-                              error={errors.unitOfMeasure !== undefined}/>
-                          )}/>
+                              error={errors.unitOfMeasure !== undefined}
+                              helperText={errors.unitOfMeasure?.message ? t(errors.unitOfMeasure.message) : undefined }/>
+                          )}
+                          rules={{ required: { value: true, message: "feedback.empty_unit_of_measure" }}}/>
                         <Controller
                           control={control}
                           name="unitValue"

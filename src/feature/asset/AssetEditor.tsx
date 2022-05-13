@@ -200,7 +200,7 @@ const AssetEditor = (props: AssetEditorProps) => {
                   xs={6}
                   sx={{ maxWidth: '100%', pt: 0, pl: 0 }}>
                   { props.asset
-                    ? <Tooltip title={<>{t("info.stock_number_cannot_be_changed")}</>}>
+                    ?  <Tooltip title={<>{t("info.stock_number_cannot_be_changed")}</>}>
                         <span>{stockNumberField}</span>
                       </Tooltip>
                     : stockNumberField

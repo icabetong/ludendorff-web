@@ -27,6 +27,7 @@ import { categoryCollection, categoryName } from "../../shared/const";
 import useQueryLimit from "../shared/hooks/useQueryLimit";
 import CategoryPicker from "../category/CategoryPicker";
 import { isDev } from "../../shared/utils";
+import { useDialog } from "../../components";
 
 type AssetImportEditorProps = {
   isOpen: boolean,
@@ -113,6 +114,8 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
       return;
     }
 
+
+
     const asset: AssetImport = {
       ...data,
       stockNumber: data.stockNumber,
@@ -129,7 +132,7 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
     <>
       <Dialog open={props.isOpen} maxWidth={smBreakpoint ? "xs" : "md"} fullWidth>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogTitle>{t("dialog.details_asset")}</DialogTitle>
+          <DialogTitle>{t("dialog.asset_update")}</DialogTitle>
           <DialogContent dividers={true}>
             <Container sx={{ py: 1}}>
               <Grid
