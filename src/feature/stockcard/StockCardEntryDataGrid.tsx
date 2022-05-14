@@ -7,9 +7,7 @@ import {
   GridSelectionModel,
   GridValueGetterParams,
   GridLoadingOverlay,
-  GridActionsCellItem
 } from "@mui/x-data-grid";
-import { AddchartRounded } from "@mui/icons-material";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { getEditorDataGridTheme } from "../core/Core";
 import { EditorDataGridProps, EditorGridToolbar } from "../../components";
@@ -34,7 +32,6 @@ type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
   entries: StockCardEntry[],
   balances: Balances,
   stockCard?: StockCard,
-  onSourceSelect: (entry: StockCardEntry) => void,
   onCheckedRowsChanged: (model: GridSelectionModel) => void,
 }
 const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
@@ -97,18 +94,6 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
         return currencyFormatter.format(unitPrice * quantityEntry);
       }
     },
-    {
-      field: "actions",
-      headerName: t("actions"),
-      type: "actions",
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          showInMenu
-          icon={<AddchartRounded/>}
-          label={t("button.set_quantity_source")}
-          onClick={() => props.onSourceSelect(params.row as StockCardEntry)}/>
-      ]
-    }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardEntriesColumns', columns);
 

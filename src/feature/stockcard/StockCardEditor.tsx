@@ -368,7 +368,6 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                   onAddAction={onEditorCreate}
                   onRemoveAction={onCheckedRowsRemove}
                   onItemSelected={onEditorUpdate}
-                  onSourceSelect={onInventoryPickerInvoke}
                   onCheckedRowsChanged={onCheckedRowsChanged}/>
             }
           </EditorContent>
