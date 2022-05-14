@@ -185,10 +185,10 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
           <DialogTitle>{t("dialog.duplicate_asset_items")}</DialogTitle>
           <DialogContent>
             <DialogContentText>{t("dialog.duplicate_asset_items_summary")}</DialogContentText>
-            <Box sx={{ marginTop: 2 }}>
+            { hasDuplicate
+             ? <Box sx={{ marginTop: 2 }}>
               <Typography variant="body2">{t("field.duplicate_items")}</Typography>
-              { hasDuplicate
-                ? <Grid container>
+                 <Grid container>
                     <Grid item xs={6}>
                       <AssetImportDuplicateList
                         assets={duplicates}
@@ -324,12 +324,12 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
                       </Box>
                     </Grid>
                   </Grid>
-                : <EmptyStates
-                    icon={ContentCopyRounded}
-                    title={t("empty.no_duplicates_header")}
-                    subtitle={t("empty.no_duplicates_summary")}/>
-              }
-            </Box>
+              </Box>
+              : <EmptyStates
+                  icon={ContentCopyRounded}
+                  title={t("empty.no_duplicates_header")}
+                  subtitle={t("empty.no_duplicates_summary")}/>
+            }
           </DialogContent>
           <DialogActions>
             <Button

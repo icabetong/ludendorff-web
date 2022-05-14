@@ -101,6 +101,7 @@ const resources = {
         spreadsheet_file: "Spreadsheet file",
         worksheet_name: "Worksheet name",
         duplicate_items: "Duplicate Items",
+        inventory_report_source: "Inventory Report Source",
       },
       placeholder: {
         none: "None",
@@ -343,7 +344,9 @@ const resources = {
         reset_email_sent: "Check your email",
         reset_email_sent_summary: "An email has been sent to your email address. Follow the directions in the email to reset your password.",
         duplicate_asset_items: "Duplicate Items",
-        duplicate_asset_items_summary: "There are duplicate items found on the data read from the selected spreadsheet file. Resolve these conflicts first to continue."
+        duplicate_asset_items_summary: "There are duplicate items found on the data read from the selected spreadsheet file. Resolve these conflicts first to continue.",
+        data_missing: "Some data are missing",
+        data_missing_summary: "There are some fields or entries that have missing values. Are you sure you want to proceed saving this record?"
       },
       template: {
         full_name: "{{first}} {{last}}",

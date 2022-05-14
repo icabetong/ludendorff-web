@@ -40,7 +40,7 @@ export const AdaptiveHeader = (props: AdaptiveHeaderProps) => {
   return (
     <AppBar
       elevation={0}
-      color="transparent"
+      color={smBreakpoint ? "transparent" : "default"}
       position="sticky"
       sx={{
         paddingY: { lg: 2 }

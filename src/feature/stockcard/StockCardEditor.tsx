@@ -1,6 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -25,6 +24,7 @@ import { StockCardEntryEditor } from "./StockCardEntryEditor";
 import { initialState, reducer } from "./StockCardEntryEditorReducer";
 import StockCardEntryDataGrid from "./StockCardEntryDataGrid";
 import StockCardEntryList from "./StockCardEntryList";
+import { useEntity } from "../entity/UseEntity";
 import InventoryReportPicker from "../inventory/InventoryReportPicker";
 import { InventoryReport, InventoryReportItem } from "../inventory/InventoryReport";
 import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
@@ -34,10 +34,6 @@ import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog }
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../../index";
-
-export type FormValues = {
-  entityName?: string,
-}
 
 type StockCardEditorProps = {
   isOpen: boolean,
@@ -50,28 +46,26 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { handleSubmit, formState: { errors }, setValue, control } = useForm<FormValues>();
   const [stockCard, setStockCard] = useState<StockCard | undefined>(props.stockCard);
   const [isOpen, setOpen] = useState(false);
+  const [reportPickerOpen, setReportPickerOpen] = useState(false);
   const [entries, setEntries] = useState<StockCardEntry[]>([]);
-  const [entry, setEntry] = useState<StockCardEntry | null>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [checked, setChecked] = useState<string[]>([]);
   const [isFetching, setFetching] = useState(false);
   const [isWriting, setWriting] = useState(false);
+  const [sourceReport, setSourceReport] = useState<InventoryReport | undefined>(undefined);
   const [balances, setBalances] = useState<Balances>({  });
   const [totalIssued, setTotalIssued] = useState<number>(0);
+  const { entity } = useEntity();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
 
   useEffect(() => {
-    if (props.isOpen) {
-      setValue("entityName", props.stockCard ? props.stockCard?.entityName : "");
-      if (props.stockCard?.balances) {
-        setBalances(props.stockCard?.balances)
-      }
+    if (props.isOpen && props.stockCard?.balances) {
+      setBalances(props.stockCard?.balances);
     }
-  }, [props.isOpen, props.stockCard, setValue])
+  }, [props.isOpen, props.stockCard])
 
   const onDismiss = () => {
     setWriting(false);
@@ -114,8 +108,8 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
   const onPickerInvoke = () => setOpen(true);
   const onPickerDismiss = () => setOpen(false);
 
-  const onInventoryPickerInvoke = (entry: StockCardEntry) => setEntry(entry);
-  const onInventoryPickerDismiss = () => setEntry(null);
+  const onInventoryPickerInvoke = () => setReportPickerOpen(true);
+  const onInventoryPickerDismiss = () => setReportPickerOpen(false);
 
   const onCheckedRowsChanged = (model: GridSelectionModel) => setChecked(model.map((id) => `${id}`))
   const onCheckedRowsRemove = () => {
@@ -126,7 +120,17 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
     setEntries(currentEntries);
   }
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async () => {
+    if (entries.some((entry) => !entry.date || !entry.reference)) {
+      let result = await show({
+        title: t("dialog.data_missing"),
+        description: t("dialog.data_missing_summary"),
+        confirmButtonText: t("button.continue"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (!result) return;
+    }
+
     if (!stockCard && !props.stockCard) {
       return;
     }
@@ -135,7 +139,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       ...stockCard,
       stockCardId: props.stockCard ? props.stockCard.stockCardId : newId(),
       unitPrice: props.stockCard ? props.stockCard.unitPrice : 0,
-      entityName: values.entityName,
+      entityName: entity?.entityName,
       balances: balances,
       entries: entries
     }
@@ -159,37 +163,41 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
     }
   }
 
-  const onQuantitySourceSelected = async (report: InventoryReport) => {
-    if (stockCard === null)
-      return;
-    if (entry === null)
-      return;
+  const onSourceReportSelected = async (report: InventoryReport) => {
+    setSourceReport(report);
+    if (stockCard === null) return;
 
-    // Find the source for the onHandCount (quantity) in the selected
-    // Physical Reports of Inventories record.
     let collectionQuery = query(collection(firestore, inventoryCollection,
-      report.inventoryReportId, inventoryItems), where(assetStockNumber, "==", stockCard!.stockNumber));
+        report.inventoryReportId, inventoryItems), where(assetStockNumber, "==", stockCard!.stockNumber));
     let snapshot = await getDocs(collectionQuery);
     let items = snapshot.docs.map((doc) => doc.data() as InventoryReportItem)
-    if (items.length > 0) {
-      let inventoryReportItem: InventoryReportItem = items[0];
+    if (items.length < 1) {
+      await show({
+        title: t("dialog.stock_number_not_found_on_report"),
+        description: t("dialog.stock_number_not_found_on_report_summary"),
+        dismissButtonText: t("button.cancel")
+      });
+      return;
+    }
+
+    let inventoryReportItem: InventoryReportItem = items[0];
+    let current = Array.from(entries);
+    let currentBalances = balances;
+    for (let index = 0; index < current.length; index++) {
+      const entry: StockCardEntry = current[index];
       if (inventoryReportItem.onHandCount < entry.issueQuantity) {
         await show({
           title: t("dialog.issued_is_more_than_current"),
           description: t("dialog.issued_is_more_than_current_summary"),
           dismissButtonText: t("button.cancel")
         });
-        return;
+        break;
       }
 
-      // Locate the position of the entry that will be
-      // updated with the new received quantity data
-      let index = entries.findIndex((e) => e.stockCardEntryId === entry.stockCardEntryId);
-      let currentEntries = Array.from(entries);
       if (index >= 0) {
         // Get the current values of the balances from the state and the
         // appropriate entry from it using the report's inventoryReportId
-        let currentBalances = balances;
+
         let currentEntry = currentBalances[report.inventoryReportId];
         if (currentEntry) {
           // If the balance exists for the said inventoryReportId,
@@ -206,13 +214,11 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
           }
 
           // Update the stock card entry for the new receive quantity and the new source id
-          currentEntries[index] = {
+          current[index] = {
             ...entry,
             receivedQuantity: currentEntry.remaining,
             inventoryReportSourceId: report.inventoryReportId
           };
-          setEntries(currentEntries);
-          setEntry(null);
         } else {
           // Create a new record and subtract the onHandCount values of the report as this entry
           // is the first to use it as the source, do the same of the entry
@@ -222,24 +228,17 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
             },
             remaining: inventoryReportItem.onHandCount - entry.issueQuantity,
           };
-          currentEntries[index] = {
+          current[index] = {
             ...entry,
             receivedQuantity: inventoryReportItem.onHandCount,
             inventoryReportSourceId: report.inventoryReportId
           };
-          setEntries(currentEntries);
-          setEntry(null);
         }
         setBalances(currentBalances);
       }
-    } else {
-      await show({
-        title: t("dialog.stock_number_not_found_on_report"),
-        description: t("dialog.stock_number_not_found_on_report_summary"),
-        dismissButtonText: t("button.cancel")
-      });
-      return;
     }
+    setEntries(current);
+    setBalances(currentBalances);
     onInventoryPickerDismiss();
   }
 
@@ -283,10 +282,11 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         fullScreen={true}
         onClose={onDismiss}
         TransitionComponent={SlideUpTransition}>
-        <EditorRoot onSubmit={handleSubmit(onSubmit)}>
+        <EditorRoot>
           <EditorAppBar
             title={t(props.isCreate ? "dialog.stock_card_create" : "dialog.stock_card_update")}
             loading={isWriting}
+            onConfirm={onSubmit}
             onDismiss={onDismiss}/>
           <EditorContent>
             <Box>
@@ -297,21 +297,13 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                 justifyContent="center"
                 spacing={smBreakpoint ? 0 : 4}>
                 <Grid item xs={6} sx={{ maxWidth: "100%", pt: 0, pl: 0 }}>
-                  <Controller
-                    control={control}
-                    name="entityName"
-                    render={({ field: { ref, ...inputProps } }) => (
-                      <TextField
-                        {...inputProps}
-                        autoFocus
-                        type="text"
-                        inputRef={ref}
-                        label={t("field.entity_name")}
-                        error={errors.entityName !== undefined}
-                        helperText={errors.entityName?.message && t(errors.entityName?.message)}
-                        disabled={isWriting}/>
-                    )}
-                    rules={{ required: { value: true, message: 'feedback.empty_entity_name' }}}/>
+                  <TextField
+                    label={t("field.entity")}
+                    value={t("template.entity", { name: entity?.entityName, position: entity?.entityPosition })}
+                    disabled={isWriting}
+                    InputProps={{
+                      readOnly: true,
+                    }}/>
                   <TextField
                     value={totalIssued}
                     label={t("field.total_issued_quantity")}
@@ -330,6 +322,20 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton onClick={onPickerInvoke} edge="end">
+                            <ArrowDropDown/>
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}/>
+                  <TextField
+                    value={sourceReport ? sourceReport.fundCluster : t("field.not_set")}
+                    label={t("field.inventory_report_source")}
+                    disabled={isWriting}
+                    InputProps={{
+                      readOnly: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={onInventoryPickerInvoke} edge="end">
                             <ArrowDropDown/>
                           </IconButton>
                         </InputAdornment>
@@ -373,9 +379,9 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         onItemSelected={onParseData}
         onDismiss={onPickerDismiss}/>
       <InventoryReportPicker
-        isOpen={Boolean(entry)}
+        isOpen={reportPickerOpen}
         stockNumber={stockCard && stockCard.stockNumber}
-        onItemSelected={onQuantitySourceSelected}
+        onItemSelected={onSourceReportSelected}
         onDismiss={onInventoryPickerDismiss}/>
       <StockCardEntryEditor
         isOpen={state.isOpen}

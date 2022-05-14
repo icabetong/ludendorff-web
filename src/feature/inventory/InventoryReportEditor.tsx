@@ -188,7 +188,10 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
                   <TextField
                     label={t("field.entity")}
                     value={t("template.entity", { name: entity?.entityName, position: entity?.entityPosition })}
-                    disabled={isWriting}/>
+                    disabled={isWriting}
+                    InputProps={{
+                      readOnly: true,
+                    }}/>
                 </Grid>
                 <Grid
                   item

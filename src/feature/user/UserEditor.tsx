@@ -128,8 +128,7 @@ const UserEditor = (props: UserEditorProps) => {
 
   return (
     <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
+      fullWidth
       maxWidth={isMobile ? "xs" : "md"}
       open={props.isOpen}
       onClose={onDismiss}>
