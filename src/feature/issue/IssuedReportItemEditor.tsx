@@ -25,7 +25,7 @@ import { newId } from "../../shared/utils";
 export type FormValues = {
   unitCost: number,
   quantityIssued: number,
-  responsibilityCenter?: string,
+  responsibilityCenter: string,
 }
 
 type IssuedReportItemEditorProps = {
@@ -80,9 +80,10 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
       props.onSubmit(item);
     } else if (props.item) {
       let item: IssuedReportItem = {
-        ...data,
         ...props.item,
-        quantityIssued: parseInt(`${data.quantityIssued}`)
+        ...data,
+        issuedReportItemId: props.item ? props.item.issuedReportItemId : newId(),
+        quantityIssued: parseInt(`${data.quantityIssued}`),
       }
       props.onSubmit(item);
     }

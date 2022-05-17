@@ -260,7 +260,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       let arr: StockCardEntry[] = [];
       items.forEach((issuedItem) => {
         let entry: StockCardEntry = {
-          stockCardEntryId: newId(),
+          stockCardEntryId: issuedItem.issuedReportItemId,
           receivedQuantity: 0,
           requestedQuantity: 0,
           issueQuantity: issuedItem.quantityIssued,
@@ -270,6 +270,7 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
         total += entry.issueQuantity;
       });
 
+      console.log(arr);
       setTotalIssued(total);
       setEntries(arr);
     }

@@ -54,7 +54,7 @@ export class IssuedReportRepository {
 
     batch.set(docReference, report);
     items.forEach((item) => {
-      batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.stockNumber), item);
+      batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.issuedReportItemId), item);
     });
 
     await batch.commit();

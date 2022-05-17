@@ -126,6 +126,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       date: Timestamp.fromDate(date),
       entityName: entity?.entityName,
     }
+    console.log(issuedReport.items);
 
     if (props.isCreate) {
       IssuedReportRepository.create(issuedReport)
