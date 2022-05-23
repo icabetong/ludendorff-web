@@ -174,7 +174,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         maxWidth="xs">
         <DialogTitle>{t("dialog.sign_out")}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{t("dialog.sign_out_message")}</DialogContentText>
+          <DialogContentText>{t("dialog.sign_out_summary")}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
@@ -182,7 +182,8 @@ const ProfileScreen = (props: ProfileScreenProps) => {
             onClick={onSignOutDismiss}>{t("button.cancel")}</Button>
           <Button
             color="primary"
-            onClick={onEndSession}>{t("button.continue")}</Button>
+            variant="contained"
+            onClick={onEndSession}>{t("button.sign_out")}</Button>
         </DialogActions>
       </Dialog>
     </Box>

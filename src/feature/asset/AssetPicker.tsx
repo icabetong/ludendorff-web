@@ -17,7 +17,6 @@ import AssetList from "./AssetList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps, DialogSearchTitle } from "../../components";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
 import Client from "../search/Client";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";
@@ -36,7 +35,6 @@ const AssetPicker = (props: AssetPickerProps) => {
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const [searchMode, setSearchMode] = useState(false);
   const { canRead } = usePermissions();
-  const { limit } = useQueryLimit('assetQueryLimit');
 
   const onSelect = (asset: Asset) => {
     props.onSelectItem(asset);
@@ -72,7 +70,7 @@ const AssetPicker = (props: AssetPickerProps) => {
                       <AssetList
                         assets={props.assets}
                         onItemSelect={onSelect}/>
-                      {props.canForward && props.assets.length > 0 && props.assets.length === limit &&
+                      {props.canForward && props.assets.length > 0 && props.assets.length === 25 &&
                         <PaginationController
                           canBack={props.canBack}
                           canForward={props.canForward}

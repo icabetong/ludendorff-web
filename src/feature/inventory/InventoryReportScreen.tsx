@@ -1,13 +1,11 @@
 import { useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
-import { Box, Fab, LinearProgress } from "@mui/material";
+import { Alert, Box, Fab, LinearProgress, Snackbar } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query } from "firebase/firestore";
-import { OrderByDirection } from "@firebase/firestore-types";
-import { usePagination } from "use-pagination-firestore";
+import { collection, orderBy, query, limit } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
 import { initialState, reducer, } from "./InventoryReportEditorReducer";
@@ -19,15 +17,15 @@ import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
 import { usePermissions } from "../auth/AuthProvider";
 import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
+import usePagination from "../shared/hooks/usePagination";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
 import { ScreenProps } from "../shared/types/ScreenProps";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
 import { AdaptiveHeader, useDialog } from "../../components";
 import {
-  fundCluster,
   inventoryCollection,
+  inventoryReportId,
 } from "../../shared/const";
 import { isDev } from "../../shared/utils";
 import useSort from "../shared/hooks/useSort";
@@ -39,34 +37,16 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
   const { canRead, canWrite } = usePermissions();
-  const { limit, onLimitChanged } = useQueryLimit('inventoryQueryLimit');
   const [toExport, setToExport] = useState<InventoryReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const { sortMethod, onSortMethodChange } = useSort('inventorySort');
 
-  const onParseQuery = () => {
-    let field = fundCluster;
-    let direction: OrderByDirection = "asc";
-    if (sortMethod.length > 0) {
-      field = sortMethod[0].field;
-      switch(sortMethod[0].sort) {
-        case "asc":
-        case "desc":
-          direction = sortMethod[0].sort;
-          break;
-      }
-    }
-
-    return query(collection(firestore, inventoryCollection), orderBy(field, direction));
-  }
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
-    onParseQuery(), {
-      limit: limit
-    }
-  );
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<InventoryReport>(
+    query(collection(firestore, inventoryCollection), orderBy(inventoryReportId, "asc"), limit(25)),
+    inventoryReportId, 25
+  )
 
   const onInventoryReportRemove = async (report: InventoryReport) => {
     try {
@@ -137,18 +117,16 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <InventoryReportDataGrid
                 items={items}
-                size={limit}
                 isLoading={isLoading}
                 isSearching={searchMode}
-                canBack={isStart}
-                canForward={isEnd}
+                canBack={canBack}
+                canForward={canForward}
                 sortMethod={sortMethod}
-                onBackward={getPrev}
-                onForward={getNext}
+                onBackward={onBackward}
+                onForward={onForward}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
                 onRemoveInvoke={onInventoryReportRemove}
-                onPageSizeChanged={onLimitChanged}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
@@ -200,6 +178,11 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

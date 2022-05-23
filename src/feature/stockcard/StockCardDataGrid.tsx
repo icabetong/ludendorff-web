@@ -50,7 +50,7 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
 
-  const hideFooter = props.isSearching || (props.canForward && props.items.length > 0 && props.items.length <= props.size)
+  const hideFooter = props.isSearching
   return (
     <DataGrid
       hideFooter={hideFooter}
@@ -59,16 +59,14 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
+        Pagination: hideFooter ? null : DataGridPaginationController
       }}
       componentsProps={{
         pagination: {
-          size: props.size,
           canBack: props.canBack,
           canForward: props.canForward,
           onBackward: props.onBackward,
-          onForward: props.onForward,
-          onPageSizeChanged: props.onPageSizeChanged
+          onForward: props.onForward
         }
       }}
       sortingMode="server"

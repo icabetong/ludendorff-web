@@ -1,13 +1,11 @@
 import React, { useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
-import { Box, Fab, LinearProgress } from "@mui/material";
+import { Box, Fab, LinearProgress, Snackbar, Alert } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query } from "firebase/firestore";
-import { OrderByDirection } from "@firebase/firestore-types";
-import { usePagination } from "use-pagination-firestore";
+import { collection, orderBy, query, limit } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { StockCard, StockCardRepository } from "./StockCard";
 import StockCardDataGrid from "./StockCardDataGrid";
@@ -16,22 +14,22 @@ import { initialState, reducer } from "./StockCardEditorReducer";
 import { StockCardEmptyState } from "./StockCardEmptyState";
 import StockCardList from "./StockCardList";
 import { convertStockCardToWorkSheet } from "./StockCardSheet";
-import { usePermissions } from "../auth/AuthProvider";
 import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { AdaptiveHeader, useDialog } from "../../components";
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import usePagination from "../shared/hooks/usePagination";
 import useSort from "../shared/hooks/useSort";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
 import {
-  entityName,
+  stockCardId,
   stockCardCollection
 } from "../../shared/const";
 import { isDev } from "../../shared/utils";
 import { firestore } from "../../index";
+import { usePermissions } from "../auth/AuthProvider";
 
 type StockCardScreenProps = ScreenProps
 const StockCardScreen = (props: StockCardScreenProps) => {
@@ -42,28 +40,11 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const [toExport, setToExport] = useState<StockCard | undefined>(undefined);
-  const { limit, onLimitChanged } = useQueryLimit('stockCardQueryLimit');
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const { sortMethod, onSortMethodChange } = useSort('issuedSort');
 
-  const onParseQuery = () => {
-    let field = entityName;
-    let direction: OrderByDirection = "asc";
-    if (sortMethod.length > 0) {
-      field = sortMethod[0].field;
-      switch(sortMethod[0].sort) {
-        case "asc":
-        case "desc":
-          direction = sortMethod[0].sort;
-          break;
-      }
-    }
-
-    return query(collection(firestore, stockCardCollection), orderBy(field, direction));
-  }
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<StockCard>(
-    onParseQuery(), { limit: limit }
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<StockCard>(
+    query(collection(firestore, stockCardCollection), orderBy(stockCardId, "asc"), limit(25)), stockCardId, 25
   )
 
   const onRemoveInvoke = async (stockCard: StockCard) => {
@@ -136,15 +117,13 @@ const StockCardScreen = (props: StockCardScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <StockCardDataGrid
                 items={items}
-                size={limit}
-                canBack={isStart}
-                canForward={isEnd}
+                canBack={canBack}
+                canForward={canForward}
                 isLoading={isLoading}
                 isSearching={searchMode}
                 sortMethod={sortMethod}
-                onBackward={getPrev}
-                onForward={getNext}
-                onPageSizeChanged={onLimitChanged}
+                onBackward={onBackward}
+                onForward={onForward}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
                 onRemoveInvoke={onRemoveInvoke}
@@ -199,6 +178,11 @@ const StockCardScreen = (props: StockCardScreenProps) => {
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

@@ -1,4 +1,4 @@
-import { doc, increment, writeBatch } from "firebase/firestore";
+import { doc, increment, writeBatch, collection, getDocs } from "firebase/firestore";
 import { firestore } from "../../index";
 
 import { CategoryCore } from '../category/Category';
@@ -15,6 +15,11 @@ export type Asset = {
 }
 
 export class AssetRepository {
+
+  static async fetch(): Promise<Asset[]> {
+    let snapshot = await getDocs(collection(firestore, assetCollection));
+    return snapshot.docs.map((doc) => doc.data() as Asset);
+  }
 
   static async createFromArray(assets: Asset[]): Promise<void> {
     let batch = writeBatch(firestore);

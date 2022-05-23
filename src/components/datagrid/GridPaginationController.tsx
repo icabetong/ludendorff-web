@@ -1,49 +1,20 @@
-import { useTranslation } from "react-i18next";
-import { Box, Chip, Grow, IconButton, Stack, Typography } from "@mui/material";
-import { CheckRounded, ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
+import { IconButton, Stack } from "@mui/material";
+import { ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
 import { PaginationControllerProps } from "../data/PaginationController";
 
-export type DataGridPaginationControllerProps = PaginationControllerProps & {
-  size: number,
-  onPageSizeChanged: (size: number) => void,
-}
+export type DataGridPaginationControllerProps = PaginationControllerProps;
 
 export const DataGridPaginationController = (props: DataGridPaginationControllerProps) => {
-  const { t } = useTranslation();
-  const sizes = [15, 25, 50];
-  const { size, canBack, canForward, onBackward, onForward, onPageSizeChanged } = props;
+  const { canBack, canForward, onBackward, onForward } = props;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-      <Typography variant="body2" mr={2}>{t("field.rows_per_page")}</Typography>
-      <Stack direction="row" spacing={1}>
-        {sizes.map((s) => {
-          return (
-            s === size
-              ? <Grow key={s} in={s === size}>
-                <Chip
-                  variant="outlined"
-                  label={s}
-                  color={size === s ? "primary" : undefined}
-                  icon={size === s ? <CheckRounded/> : undefined}
-                  onClick={() => onPageSizeChanged(s)}/>
-              </Grow>
-              : <Chip
-                key={s}
-                variant="outlined"
-                label={s}
-                color={size === s ? "primary" : undefined}
-                icon={size === s ? <CheckRounded/> : undefined}
-                onClick={() => onPageSizeChanged(s)}/>
-          )
-        })}
-      </Stack>
+    <Stack direction="row" alignItems="center" justifyContent="center">
       <IconButton onClick={onBackward} disabled={canBack}>
         <ChevronLeftRounded/>
       </IconButton>
       <IconButton onClick={onForward} disabled={canForward}>
         <ChevronRightRounded/>
       </IconButton>
-    </Box>
+    </Stack>
   )
 }

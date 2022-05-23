@@ -21,6 +21,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { Permission, User, UserRepository } from "./User";
 import { isDev, newId } from "../../shared/utils";
@@ -277,11 +278,11 @@ const UserEditor = (props: UserEditorProps) => {
             color="primary"
             onClick={onDismiss}
             disabled={isWritePending}>{t("button.cancel")}</Button>
-          <Button
+          <LoadingButton
             color="primary"
             type="submit"
             variant="contained"
-            disabled={isWritePending}>{t("button.save")}</Button>
+            loading={isWritePending}>{t("button.save")}</LoadingButton>
         </DialogActions>
       </form>
     </Dialog>

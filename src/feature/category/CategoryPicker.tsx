@@ -13,7 +13,6 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Category } from "./Category";
 import CategoryList from "./CategoryList";
 import { PaginationController, PaginationControllerProps } from "../../components";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type CategoryPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -27,7 +26,6 @@ const CategoryPicker = (props: CategoryPickerProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
-  const { limit } = useQueryLimit('typeQueryLimit');
 
   return (
     <Dialog
@@ -50,7 +48,7 @@ const CategoryPicker = (props: CategoryPickerProps) => {
               <CategoryList
                 categories={props.categories}
                 onItemSelect={props.onSelectItem}/>
-              {props.canForward && props.categories.length > 0 && props.categories.length === limit
+              {props.canForward && props.categories.length > 0 && props.categories.length === 25
                 && <PaginationController
                       canBack={props.canBack}
                       canForward={props.canForward}

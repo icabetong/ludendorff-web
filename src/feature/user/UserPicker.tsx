@@ -16,7 +16,6 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
 import { PaginationController, PaginationControllerProps } from "../../components";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
 
 type UserPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -31,7 +30,6 @@ const UserPicker = (props: UserPickerProps) => {
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
-  const { limit } = useQueryLimit('userQueryLimit');
 
   const onSelect = (user: User) => {
     props.onSelectItem(user);
@@ -60,7 +58,7 @@ const UserPicker = (props: UserPickerProps) => {
                 <UserList
                   users={props.users}
                   onItemSelect={onSelect}/>
-                { props.canForward && props.users?.length > 0 && props.users.length === limit &&
+                { props.canForward && props.users?.length > 0 && props.users.length === 25 &&
                   <PaginationController
                     canBack={props.canBack}
                     canForward={props.canForward}

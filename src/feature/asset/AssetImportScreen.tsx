@@ -12,17 +12,16 @@ import { FolderRounded } from "@mui/icons-material";
 import { query, collection, doc, where, getDocs, orderBy, getDoc } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { useSnackbar } from "notistack";
-import { usePagination } from "use-pagination-firestore";
 import { AssetRepository } from "./Asset";
 import AssetImportDataGrid from "./AssetImportDataGrid";
 import { AssetImport } from "./AssetImport";
 import AssetImportEditor from "./AssetImportEditor";
 import { Category, CategoryCore, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import usePagination from "../shared/hooks/usePagination";
 import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog } from "../../components";
 import { firestore } from "../../index";
-import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
+import { assetCollection, categoryCollection, categoryId, categoryName } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import AssetImportDuplicate from "./AssetImportDuplicate";
 import { GroupedArray } from "../shared/types/GroupedArray";
@@ -35,7 +34,6 @@ type AssetImportScreenProps = {
 const AssetImportScreen = (props: AssetImportScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const { limit } = useQueryLimit('categoryQueryLimit');
   const show = useDialog();
   const [name, setName] = useState<String>("");
   const [isWorking, setWorking] = useState(false);
@@ -120,10 +118,8 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
     onCategoryPickerDismiss();
   }
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), {
-      limit: limit
-    }
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Category>(
+    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc")), categoryId, 25
   );
 
   const onAssetEditorCommit = (asset: AssetImport, previousStockNumber: string | undefined) => {
@@ -300,10 +296,10 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
         categories={items}
         isOpen={isPickerOpen}
         isLoading={isLoading}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
+        canBack={canBack}
+        canForward={canForward}
+        onBackward={onBackward}
+        onForward={onForward}
         onDismiss={onCategoryPickerDismiss}
         onSelectItem={onCategorySelected}/>
     </>

@@ -21,11 +21,10 @@ const SearchBoxInputBase = (props: SearchBoxInputBaseProps) => {
 
   const onQueryChanged = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     props.refine(event.target.value)
-    console.log("SSSS")
     if (!props.dontWatchFocus) {
       if (event.target.value === '') {
         props.onFocusChanged?.(false)
-      }
+      } else props.onFocusChanged?.(true)
     }
   }
 

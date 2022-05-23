@@ -18,16 +18,15 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { ArrowDropDownOutlined, ContentCopyRounded } from "@mui/icons-material";
-import { usePagination } from "use-pagination-firestore";
-import { query, collection, orderBy } from "firebase/firestore";
+import { query, collection, orderBy, limit } from "firebase/firestore";
 import { AssetImport } from "./AssetImport";
 import AssetImportDuplicateList from "./AssetImportDuplicateList";
 import { Category, CategoryCore, CategoryRepository, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import usePagination from "../shared/hooks/usePagination";
 import { GroupedArray } from "../shared/types/GroupedArray";
 import { CurrencyFormatCustom } from "../../components";
-import { categoryCollection, categoryName } from "../../shared/const";
+import { categoryCollection, categoryId, } from "../../shared/const";
 import { groupBy, isDev } from "../../shared/utils";
 import { firestore } from "../../index";
 import EmptyStates from "../state/EmptyStates";
@@ -57,12 +56,11 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
   const [category, setCategory] = useState<CategoryCore | undefined>(undefined);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
-  const { limit } = useQueryLimit('categoryQueryLimit');
   let hasDuplicate = Array.from(Object.values(duplicates)).every((item: AssetImport[]) => item.length > 1);
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")),
-    { limit: limit }
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Category>(
+    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)),
+    categoryId, 25
   );
 
   const onCategoryPickerInvoke = () => setOpen(true);
@@ -345,10 +343,10 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
         isOpen={open}
         categories={items}
         isLoading={isLoading}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
+        canBack={canBack}
+        canForward={canForward}
+        onBackward={onBackward}
+        onForward={onForward}
         onDismiss={onCategoryPickerDismiss}
         onSelectItem={onCategoryPickerSelect}/>
     </>

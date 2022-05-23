@@ -8,7 +8,11 @@ import { AssetDataGridEmptyState } from "./AssetEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
 import { DataGridProps } from "../shared/types/DataGridProps";
-import { GridLinearProgress, GridToolbar, DataGridPaginationController } from "../../components";
+import {
+  GridLinearProgress,
+  GridToolbar,
+  DataGridPaginationController
+} from "../../components";
 import {
   assetSubcategory,
   assetDescription, assetRemarks,
@@ -19,6 +23,7 @@ import {
 import { currencyFormatter } from "../../shared/utils";
 
 type AssetDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
+  onScroll?: () => void,
   onItemSelect: (params: GridRowParams) => void,
   onRemoveInvoke: (asset: Asset) => void,
   onTypesInvoke: () => void,
@@ -75,7 +80,7 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { density, onDensityChanged } = useDensity('assetDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
-  const hideFooter = props.isSearching || (props.canForward && props.items.length > 0 && props.items.length <= props.size)
+  const hideFooter = props.isSearching
   return (
     <DataGrid
       hideFooter={hideFooter}
@@ -84,7 +89,7 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: AssetDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
+        Pagination: hideFooter ? null : DataGridPaginationController
       }}
       componentsProps={{
         toolbar: {
@@ -108,12 +113,10 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
           ]
         },
         pagination: {
-          size: props.size,
           canBack: props.canBack,
           canForward: props.canForward,
           onBackward: props.onBackward,
           onForward: props.onForward,
-          onPageSizeChanged: props.onPageSizeChanged
         }
       }}
       sortingMode="server"

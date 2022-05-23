@@ -51,7 +51,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
 
-  const hideFooter = props.isSearching || (props.canForward && props.items.length > 0 && props.items.length <= props.size)
+  const hideFooter = props.isSearching
   return (
     <DataGrid
       hideFooter={hideFooter}
@@ -60,16 +60,14 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: props.canForward && props.items.length > 0 && props.items.length <= props.size ? DataGridPaginationController : null,
+        Pagination: hideFooter ? null : DataGridPaginationController,
       }}
       componentsProps={{
         pagination: {
-          size: props.size,
           canBack: props.canBack,
           canForward: props.canForward,
           onBackward: props.onBackward,
-          onForward: props.onForward,
-          onPageSizeChanged: props.onPageSizeChanged
+          onForward: props.onForward
         }
       }}
       sortingMode="server"

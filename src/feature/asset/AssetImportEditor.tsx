@@ -18,16 +18,14 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
-import { query, collection, orderBy, doc, getDoc } from "firebase/firestore";
-import { usePagination } from "use-pagination-firestore";
+import { query, collection, orderBy, doc, limit, getDoc } from "firebase/firestore";
 import { AssetImport } from "./AssetImport";
 import { Category, CategoryCore, minimize } from "../category/Category";
 import { firestore } from "../../index";
-import { categoryCollection, categoryName } from "../../shared/const";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import { categoryCollection, categoryId } from "../../shared/const";
+import usePagination from "../shared/hooks/usePagination";
 import CategoryPicker from "../category/CategoryPicker";
 import { isDev } from "../../shared/utils";
-import { useDialog } from "../../components";
 
 type AssetImportEditorProps = {
   isOpen: boolean,
@@ -51,7 +49,6 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { enqueueSnackbar } = useSnackbar();
   const { handleSubmit, formState: { errors }, control, reset, setValue } = useForm<FormValues>();
-  const { limit } = useQueryLimit('categoryQueryLimit');
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
   const [subcategories, setSubcategories] = useState<string[]>([]);
@@ -103,18 +100,14 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
     onPickerDismiss();
   }
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")), {
-      limit: limit
-    }
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Category>(
+    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)), categoryId, 25
   );
 
   const onSubmit = (data: FormValues) => {
     if (!data.stockNumber) {
       return;
     }
-
-
 
     const asset: AssetImport = {
       ...data,
@@ -275,10 +268,10 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
         categories={items}
         isOpen={isPickerOpen}
         isLoading={isLoading}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}
+        canBack={canBack}
+        canForward={canForward}
+        onBackward={onBackward}
+        onForward={onForward}
         onDismiss={onPickerDismiss}
         onSelectItem={onCategorySelected}/>
     </>

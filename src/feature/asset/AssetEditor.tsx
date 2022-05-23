@@ -20,18 +20,17 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
-import { collection, doc, orderBy, query, getDoc } from "firebase/firestore";
+import { collection, doc, orderBy, query, limit, getDoc } from "firebase/firestore";
 
 import { Asset, AssetRepository } from "./Asset";
 import { minimize, Category, CategoryCore, CategoryRepository } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
+import { assetCollection, categoryCollection, categoryId } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
-import { usePagination } from "use-pagination-firestore";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import usePagination from "../shared/hooks/usePagination";
 import { CurrencyFormatCustom } from "../../components";
 
 type AssetEditorProps = {
@@ -61,7 +60,6 @@ const AssetEditor = (props: AssetEditorProps) => {
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [isQRCodeOpen, setQRCodeOpen] = useState(false);
   const [isWriting, setWriting] = useState(false);
-  const { limit } = useQueryLimit('categoryQueryLimit');
 
   useEffect(() => {
     setCategory(props.asset?.category);
@@ -74,7 +72,7 @@ const AssetEditor = (props: AssetEditorProps) => {
         if (isDev) console.log(err);
       });
     }
-  }, [props.asset]);
+  }, [props.asset, category?.categoryId]);
 
   useEffect(() => {
     if (props.isOpen) {
@@ -100,9 +98,9 @@ const AssetEditor = (props: AssetEditorProps) => {
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
 
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryName, "asc")),
-    { limit: limit }
+  const { items, isLoading, error, canBack, onBackward, onForward } = usePagination<Category>(
+    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)),
+    categoryId, 25
   );
 
   let previousTypeId: string | undefined = undefined;
@@ -337,10 +335,10 @@ const AssetEditor = (props: AssetEditorProps) => {
         isLoading={isLoading}
         onDismiss={onPickerDismiss}
         onSelectItem={onCategoryChanged}
-        canBack={isStart}
-        canForward={isEnd}
-        onBackward={getPrev}
-        onForward={getNext}/>
+        canBack={canBack}
+        canForward={true}
+        onBackward={onBackward}
+        onForward={onForward}/>
       { props.asset &&
         <QrCodeViewComponent
           isOpened={isQRCodeOpen}

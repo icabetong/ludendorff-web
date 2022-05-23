@@ -1,29 +1,27 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Fab, LinearProgress, Theme } from "@mui/material";
+import { Alert, Box, Fab, LinearProgress, Snackbar } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
 import { AddRounded } from "@mui/icons-material";
-import { collection, orderBy, query } from "firebase/firestore";
+import { collection, orderBy, query, limit } from "firebase/firestore";
 import { getDataGridTheme } from "../core/Core";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
 import { initialState, reducer } from "./UserEditorReducer";
-import { lastName, userCollection } from "../../shared/const";
+import { userCollection, userId } from "../../shared/const";
 import UserEditor from "./UserEditor";
 import { firestore } from "../../index";
-import { usePagination } from "use-pagination-firestore";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { AdaptiveHeader, useDialog } from "../../components";
-import useQueryLimit from "../shared/hooks/useQueryLimit";
+import usePagination from "../shared/hooks/usePagination";
 import { UserEmptyState } from "./UserEmptyState";
 import UserDataGrid from "./UserDataGrid";
 import useSort from "../shared/hooks/useSort";
-import { OrderByDirection } from "@firebase/firestore-types";
 import { isDev } from "../../shared/utils";
 
 type UserScreenProps = ScreenProps
@@ -32,28 +30,11 @@ const UserScreen = (props: UserScreenProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
   const { canRead, canManageUsers } = usePermissions();
-  const { limit, onLimitChanged } = useQueryLimit('userQueryLimit');
   const [searchMode, setSearchMode] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('userSort');
 
-  const onParseQuery = () => {
-    let field = lastName;
-    let direction: OrderByDirection = "asc";
-    if (sortMethod.length > 0) {
-      field = sortMethod[0].field;
-      switch(sortMethod[0].sort) {
-        case "asc":
-        case "desc":
-          direction = sortMethod[0].sort;
-          break;
-      }
-    }
-
-    return query(collection(firestore, userCollection), orderBy(field, direction));
-  }
-
-  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
-    onParseQuery(), { limit: limit }
+  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<User>(
+    query(collection(firestore, userCollection), orderBy(userId, "asc"), limit(25)), userId, 25
   );
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -121,15 +102,13 @@ const UserScreen = (props: UserScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: "none", sm: "block" }, ...getDataGridTheme(theme)})}>
               <UserDataGrid
                 items={items}
-                size={limit}
-                canBack={isStart}
-                canForward={isEnd}
+                canBack={canBack}
+                canForward={canForward}
                 isLoading={isLoading}
                 isSearching={searchMode}
                 sortMethod={sortMethod}
-                onBackward={getPrev}
-                onForward={getNext}
-                onPageSizeChanged={onLimitChanged}
+                onBackward={onBackward}
+                onForward={onForward}
                 onItemSelect={onDataGridRowDoubleClick}
                 onRemoveInvoke={onUserRemove}
                 onModificationInvoke={onModificationInvoke}
@@ -160,6 +139,11 @@ const UserScreen = (props: UserScreenProps) => {
         isCreate={state.isCreate}
         user={state.user}
         onDismiss={onUserEditorDismiss}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
