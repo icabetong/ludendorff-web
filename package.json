@@ -69,8 +69,6 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.3.3",
-    "user-agent-data-types": "^0.2.0",
-    "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2"
+    "user-agent-data-types": "^0.2.0"
   }
 }
