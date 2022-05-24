@@ -8,7 +8,10 @@ import { StockCardDataGridEmptyState } from "./StockCardEmptyState";
 import { DataGridProps } from "../shared/types/DataGridProps";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
-import { DataGridPaginationController, ExcelIcon, GridLinearProgress, GridToolbar } from "../../components";
+import { GridLinearProgress } from "../../components/datagrid/GridLinearProgress";
+import { GridPaginationController } from "../../components/datagrid/GridPaginationController";
+import { GridToolbar } from "../../components/datagrid/GridToolbar";
+import { ExcelIcon } from "../../components/CustomIcons";
 import { assetDescription, assetStockNumber, assetUnitOfMeasure, entityName, unitPrice } from "../../shared/const";
 import { currencyFormatter } from "../../shared/utils";
 
@@ -78,7 +81,7 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: StockCardDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: hideFooter ? null : DataGridPaginationController
+        Pagination: hideFooter ? null : GridPaginationController
       }}
       componentsProps={{
         pagination: {

@@ -26,8 +26,12 @@ import { initialState, reducer } from "./InventoryReportItemEditorReducer";
 import InventoryReportItemList from "./InventoryReportItemList";
 import InventoryReportItemDataGrid from "./InventoryReportItemDataGrid";
 import { useEntity } from "../entity/UseEntity";
-import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition } from "../../components";
+import { EditorAppBar } from "../../components/editor/EditorAppBar";
+import { EditorContent } from "../../components/editor/EditorContent";
+import { EditorRoot } from "../../components/editor/EditorRoot";
+import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
 import { isDev, newId } from "../../shared/utils";
+import { format } from "date-fns";
 
 type InventoryReportEditorProps = {
   isOpen: boolean,
@@ -127,7 +131,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       inventoryReportId: props.report ? props.report.inventoryReportId : newId(),
       ...data,
       items: items,
-      yearMonth: yearMonth,
+      yearMonth: format(Date.parse(yearMonth), "MMMM yyyy"),
       accountabilityDate: Timestamp.fromDate(date)
     }
 

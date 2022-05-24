@@ -20,7 +20,9 @@ import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { categoryCollection, categoryId } from "../../shared/const";
 import { firestore } from "../../index";
-import { DialogToolbar, PaginationController, SlideUpTransition } from "../../components";
+import { DialogToolbar } from "../../components/dialog/DialogToolbar";
+import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
+import { PaginationController } from "../../components/data/PaginationController";
 import usePagination from "../shared/hooks/usePagination";
 
 type CategoryScreenProps = {

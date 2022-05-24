@@ -30,7 +30,11 @@ import { InventoryReport, InventoryReportItem } from "../inventory/InventoryRepo
 import IssuedReportItemPicker from "../issue/IssuedReportItemPicker";
 import { IssuedReportItem } from "../issue/IssuedReport";
 import { Balances } from "../shared/types/Balances";
-import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition, useDialog } from "../../components";
+import { useDialog } from "../../components/dialog/DialogProvider";
+import { EditorAppBar } from "../../components/editor/EditorAppBar";
+import { EditorContent } from "../../components/editor/EditorContent";
+import { EditorRoot } from "../../components/editor/EditorRoot";
+import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../../index";

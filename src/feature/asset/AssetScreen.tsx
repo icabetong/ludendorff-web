@@ -19,7 +19,8 @@ import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
 import useSort from "../shared/hooks/useSort";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { AdaptiveHeader, useDialog } from "../../components";
+import { AdaptiveHeader } from "../../components/AdaptiveHeader";
+import { useDialog } from "../../components/dialog/DialogProvider";
 import { isDev } from "../../shared/utils";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import {

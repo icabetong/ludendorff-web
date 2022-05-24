@@ -16,7 +16,8 @@ import AssetList from "./AssetList";
 
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { usePermissions } from "../auth/AuthProvider";
-import { PaginationController, PaginationControllerProps, DialogSearchTitle } from "../../components";
+import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
+import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 import Client from "../search/Client";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";

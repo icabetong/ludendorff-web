@@ -8,7 +8,7 @@ import {
 } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
 import { AddRounded, DeleteOutlineRounded, SearchRounded } from "@mui/icons-material";
-import { GridSearchBox, SearchIconWrapper, SearchInputBase } from "../datagrid";
+import { GridSearchBox, SearchIconWrapper, SearchInputBase } from "../datagrid/GridSearchBox";
 
 type EditorGridToolbarProps = {
   onAddAction: () => void,

@@ -2,11 +2,10 @@ import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, IconButton, Menu, MenuItem, Switch } from "@mui/material";
 import { ChevronRightRounded, ManageAccountsOutlined, PaletteOutlined, TableChartOutlined, } from "@mui/icons-material";
-
 import { PreferenceContext } from "./Preference";
 import { Setting } from "./Settings";
 import SettingsList from "../settings/SettingsList";
-import { AdaptiveHeader } from "../../components";
+import { AdaptiveHeader } from "../../components/AdaptiveHeader";
 import EntityEditor from "../entity/EntityEditor";
 
 type SettingsScreenProps = {

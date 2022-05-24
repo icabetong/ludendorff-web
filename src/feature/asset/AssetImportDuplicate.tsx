@@ -27,7 +27,7 @@ import { Category, CategoryCore, CategoryRepository, minimize } from "../categor
 import CategoryPicker from "../category/CategoryPicker";
 import usePagination from "../shared/hooks/usePagination";
 import { GroupedArray } from "../shared/types/GroupedArray";
-import { CurrencyFormatCustom } from "../../components";
+import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
 import { categoryCollection, categoryId, } from "../../shared/const";
 import { groupBy, isDev } from "../../shared/utils";
 import { firestore } from "../../index";

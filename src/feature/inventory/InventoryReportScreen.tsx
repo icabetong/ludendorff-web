@@ -22,7 +22,8 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import { AdaptiveHeader, useDialog } from "../../components";
+import { useDialog } from "../../components/dialog/DialogProvider";
+import { AdaptiveHeader } from "../../components/AdaptiveHeader";
 import {
   inventoryCollection,
   inventoryReportId,

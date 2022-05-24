@@ -9,8 +9,8 @@ import {
   limitToLast,
   startAfter,
   endAt,
-  getDocs,
   onSnapshot,
+  getDocs,
 } from "firebase/firestore";
 
 export type UsePaginationValue<T> = {
@@ -33,7 +33,6 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
   let canForward = items.length < queryLimit;
 
   useEffect(() => {
-    setLoading(true);
     let reference = queryRef;
     const unsubscribe = onSnapshot(reference, (snapshot) => {
       setItems(snapshot.docs.map((doc) => doc.data() as T));
@@ -48,7 +47,7 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
 
     setLoading(false);
     return () => unsubscribe();
-  }, [queryRef]);
+  }, []);
 
   const onUpdateState = (documents: QuerySnapshot) => {
     if (!documents.empty) {

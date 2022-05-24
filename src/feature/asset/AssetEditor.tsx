@@ -33,7 +33,7 @@ import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
 import usePagination from "../shared/hooks/usePagination";
-import { CurrencyFormatCustom } from "../../components";
+import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
 
 type AssetEditorProps = {
   isOpen: boolean,

@@ -7,7 +7,10 @@ import { IssuedReportDataGridEmptyState } from "./IssuedReportEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
 import { DataGridProps } from "../shared/types/DataGridProps";
-import { DataGridPaginationController, ExcelIcon, GridLinearProgress, GridToolbar } from "../../components";
+import { GridLinearProgress } from "../../components/datagrid/GridLinearProgress";
+import { GridPaginationController } from "../../components/datagrid/GridPaginationController";
+import { GridToolbar } from "../../components/datagrid/GridToolbar";
+import { ExcelIcon } from "../../components/CustomIcons";
 import { date, fundCluster, serialNumber } from "../../shared/const";
 import { formatDate } from "../../shared/utils";
 
@@ -71,7 +74,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: IssuedReportDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: hideFooter ? null : DataGridPaginationController,
+        Pagination: hideFooter ? null : GridPaginationController,
       }}
       componentsProps={{
         pagination: {

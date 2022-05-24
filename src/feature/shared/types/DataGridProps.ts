@@ -1,7 +1,7 @@
-import { DataGridPaginationControllerProps } from "../../../components";
+import { GridPaginationControllerProps } from "../../../components/datagrid/GridPaginationController";
 import { GridSortModel } from "@mui/x-data-grid";
 
-export type DataGridProps<T> = DataGridPaginationControllerProps & {
+export type DataGridProps<T> = GridPaginationControllerProps & {
   items: T[],
   isLoading?: boolean,
   isSearching?: boolean,

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { UploadFileOutlined } from "@mui/icons-material";
 import EmptyStateComponent from "../state/EmptyStates";
-import { GridEmptyRow } from "../../components";
+import { GridEmptyRows } from "../../components/datagrid/GridEmptyRows";
 
 const IssuedReportEmptyState = () => {
   const { t } = useTranslation();
@@ -15,9 +15,9 @@ const IssuedReportEmptyState = () => {
 }
 const IssuedReportDataGridEmptyState = () => {
   return (
-    <GridEmptyRow>
+    <GridEmptyRows>
       <IssuedReportEmptyState/>
-    </GridEmptyRow>
+    </GridEmptyRows>
   )
 }
 

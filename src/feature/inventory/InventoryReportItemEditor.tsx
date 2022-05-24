@@ -22,7 +22,7 @@ import AssetPicker from "../asset/AssetPicker";
 import usePagination from "../shared/hooks/usePagination";
 import { firestore } from "../../index";
 import { assetCollection, assetStockNumber } from "../../shared/const";
-import { CurrencyFormatCustom } from "../../components";
+import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
 
 export type FormValues = {
   unitValue: number,

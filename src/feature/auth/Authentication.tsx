@@ -21,7 +21,7 @@ import { LoadingButton } from "@mui/lab";
 import { LockOutlined, MailOutlineRounded } from "@mui/icons-material";
 import { ReactComponent as Logo } from "../../shared/icon.svg";
 import PasswordReset from "./PasswordReset";
-import { DialogSVGFeedback } from "../../components";
+import { DialogSVGFeedback } from "../../components/dialog/DialogSVGFeedback";
 import { ReactComponent as EmailSent } from "../../shared/message_sent.svg";
 import { isDev } from "../../shared/utils";
 

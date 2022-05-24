@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
 import { DevicesOtherRounded } from "@mui/icons-material";
-import { GridEmptyRow } from "../../components";
+import { GridEmptyRows } from "../../components/datagrid/GridEmptyRows";
 
 const AssetEmptyState = () => {
   const { t } = useTranslation();
@@ -16,9 +16,9 @@ const AssetEmptyState = () => {
 
 const AssetDataGridEmptyState = () => {
   return (
-    <GridEmptyRow>
+    <GridEmptyRows>
       <AssetEmptyState/>
-    </GridEmptyRow>
+    </GridEmptyRows>
   )
 }
 

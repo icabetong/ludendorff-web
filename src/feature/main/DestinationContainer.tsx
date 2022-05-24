@@ -14,7 +14,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../index";
 import { Destination, NavigationContainer } from "../navigation/NavigationContainer";
 import ContentSwitcher from "./ContentSwitcher";
-import { useDialog } from "../../components";
+import { useDialog } from "../../components/dialog/DialogProvider";
 
 type DestinationContainerProps = {
   destination: Destination,

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import EmptyStateComponent from "../state/EmptyStates";
 import { PeopleOutlineRounded } from "@mui/icons-material";
-import { GridEmptyRow } from "../../components";
+import { GridEmptyRows } from "../../components/datagrid/GridEmptyRows";
 
 const UserEmptyState = () => {
   const { t } = useTranslation();
@@ -15,9 +15,9 @@ const UserEmptyState = () => {
 }
 const UserDataGridEmptyState = () => {
   return (
-    <GridEmptyRow>
+    <GridEmptyRows>
       <UserEmptyState/>
-    </GridEmptyRow>
+    </GridEmptyRows>
   )
 }
 

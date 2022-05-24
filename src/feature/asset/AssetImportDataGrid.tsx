@@ -21,9 +21,8 @@ import {
   assetUnitOfMeasure, assetUnitValue
 } from "../../shared/const";
 import { currencyFormatter } from "../../shared/utils";
-
 import { getEditorDataGridTheme } from "../core/Core";
-import { ImporterGridToolbar } from "../../components";
+import { ImporterGridToolbar } from "../../components/importer/ImporterGridToolbar";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { Category } from "../category/Category";
 

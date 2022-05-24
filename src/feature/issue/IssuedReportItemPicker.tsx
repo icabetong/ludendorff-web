@@ -23,7 +23,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
 import usePagination from "../shared/hooks/usePagination";
-import { DialogSearchTitle } from "../../components";
+import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
 
 type IssuedReportPickerProps = {

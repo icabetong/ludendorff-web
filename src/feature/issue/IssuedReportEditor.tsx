@@ -28,7 +28,10 @@ import { initialState, reducer } from "./IssuedReportItemEditorReducer";
 import IssuedReportItemList from "./IssuedReportItemList";
 import { useEntity } from "../entity/UseEntity";
 import { isDev, newId } from "../../shared/utils";
-import { EditorAppBar, EditorContent, EditorRoot, SlideUpTransition } from "../../components";
+import { EditorAppBar } from "../../components/editor/EditorAppBar";
+import { EditorContent } from "../../components/editor/EditorContent";
+import { EditorRoot } from "../../components/editor/EditorRoot";
+import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,

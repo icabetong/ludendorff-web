@@ -14,7 +14,7 @@ import { InventoryReportItem } from "./InventoryReport";
 import { Asset } from "../asset/Asset";
 import { getEditorDataGridTheme } from "../core/Core";
 import useDensity from "../shared/hooks/useDensity";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/editor/EditorGridToolbar";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { currencyFormatter, escapeRegExp } from "../../shared/utils";
 import {

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { LocalAtmOutlined } from "@mui/icons-material";
 import EmptyStateComponent from "../state/EmptyStates";
-import { GridEmptyRow } from "../../components";
+import { GridEmptyRows } from "../../components/datagrid/GridEmptyRows";
 
 const StockCardEmptyState = () => {
   const { t } = useTranslation();
@@ -17,9 +17,9 @@ const StockCardEmptyState = () => {
 
 const StockCardDataGridEmptyState = () => {
   return (
-    <GridEmptyRow>
+    <GridEmptyRows>
       <StockCardEmptyState/>
-    </GridEmptyRow>
+    </GridEmptyRows>
   )
 }
 

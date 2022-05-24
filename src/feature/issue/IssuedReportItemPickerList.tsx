@@ -10,7 +10,7 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/mate
 import { ArrowBackRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import IssuedReportList from "./IssuedReportList";
-import { PaginationController, PaginationControllerProps } from "../../components";
+import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 import { isDev } from "../../shared/utils";
 
 type IssuedReportItemPickerListProps = PaginationControllerProps & {
@@ -89,7 +89,7 @@ const IssuedReportItemPickerListItem = (props: IssuedReportItemPickerListItemPro
   const getDescription = () => {
     if (props.item.length > 0) {
       return props.item[0].description;
-    } else return undefined;
+    } else return "";
   }
 
   return (

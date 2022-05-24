@@ -7,7 +7,9 @@ import { UserDataGridEmptyState } from "./UserEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
 import { DataGridProps } from "../shared/types/DataGridProps";
-import { GridLinearProgress, GridToolbar, DataGridPaginationController } from "../../components";
+import { GridLinearProgress } from "../../components/datagrid/GridLinearProgress";
+import { GridPaginationController } from "../../components/datagrid/GridPaginationController";
+import { GridToolbar } from "../../components/datagrid/GridToolbar";
 import { email, firstName, lastName, position, userId } from "../../shared/const";
 
 type UserDataGridProps = HitsProvided<User> & DataGridProps<User> & {
@@ -85,7 +87,7 @@ const UserDataGridCore = (props: UserDataGridProps) => {
         LoadingOverlay: GridLinearProgress,
         NoRowsOverlay: UserDataGridEmptyState,
         Toolbar: GridToolbar,
-        Pagination: hideFooter ? null : DataGridPaginationController,
+        Pagination: hideFooter ? null : GridPaginationController,
       }}
       componentsProps={{
         pagination: {

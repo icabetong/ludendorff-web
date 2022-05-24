@@ -10,7 +10,7 @@ import {
 } from "@mui/x-data-grid";
 import { IssuedReportItem } from "./IssuedReport";
 import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/editor/EditorGridToolbar";
 import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { currencyFormatter, escapeRegExp } from "../../shared/utils";

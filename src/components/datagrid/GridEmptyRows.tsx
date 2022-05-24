@@ -5,7 +5,7 @@ type GridEmptyRowsProps = {
   children?: JSX.Element | React.ReactNode
 }
 
-export const GridEmptyRow = (props: GridEmptyRowsProps) => {
+export const GridEmptyRows = (props: GridEmptyRowsProps) => {
   return (
     <GridOverlay>
       {props.children}

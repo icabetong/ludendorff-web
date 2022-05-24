@@ -15,7 +15,7 @@ import UserList from "./UserList";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import EmptyStateComponent from "../state/EmptyStates";
 import { usePermissions } from "../auth/AuthProvider";
-import { PaginationController, PaginationControllerProps } from "../../components";
+import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 
 type UserPickerProps = PaginationControllerProps & {
   isOpen: boolean,

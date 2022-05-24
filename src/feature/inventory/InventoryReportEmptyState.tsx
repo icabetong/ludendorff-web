@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Inventory2Outlined } from "@mui/icons-material";
 import EmptyStateComponent from "../state/EmptyStates";
-import { GridEmptyRow } from "../../components";
+import { GridEmptyRows } from "../../components/datagrid/GridEmptyRows";
 
 const InventoryReportEmptyState = () => {
   const { t } = useTranslation();
@@ -16,9 +16,9 @@ const InventoryReportEmptyState = () => {
 
 const InventoryReportDataGridEmptyState = () => {
   return (
-    <GridEmptyRow>
+    <GridEmptyRows>
       <InventoryReportEmptyState/>
-    </GridEmptyRow>
+    </GridEmptyRows>
   )
 }
 

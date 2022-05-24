@@ -10,7 +10,7 @@ import {
 } from "@mui/x-data-grid";
 import { StockCard, StockCardEntry } from "./StockCard";
 import { getEditorDataGridTheme } from "../core/Core";
-import { EditorDataGridProps, EditorGridToolbar } from "../../components";
+import { EditorDataGridProps, EditorGridToolbar } from "../../components/editor/EditorGridToolbar";
 import {
   balanceQuantity,
   balanceTotalPrice,

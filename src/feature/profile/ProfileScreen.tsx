@@ -20,7 +20,7 @@ import ChangePasswordPrompt from "./actions/ChangePassword";
 import RequestResetPrompt from "./actions/RequestReset";
 import { useAuthState } from "../auth/AuthProvider";
 import { ReactComponent as Avatar } from "../../shared/user.svg"
-import { AdaptiveHeader } from "../../components";
+import { AdaptiveHeader } from "../../components/AdaptiveHeader";
 import { auth } from "../../index";
 
 type ProfileScreenProps = {

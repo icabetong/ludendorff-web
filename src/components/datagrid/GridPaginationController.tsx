@@ -2,9 +2,9 @@ import { IconButton, Stack } from "@mui/material";
 import { ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
 import { PaginationControllerProps } from "../data/PaginationController";
 
-export type DataGridPaginationControllerProps = PaginationControllerProps;
+export type GridPaginationControllerProps = PaginationControllerProps;
 
-export const DataGridPaginationController = (props: DataGridPaginationControllerProps) => {
+export const GridPaginationController = (props: GridPaginationControllerProps) => {
   const { canBack, canForward, onBackward, onForward } = props;
 
   return (

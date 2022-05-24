@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
-import { useDialog } from "../../components";
+import { useDialog } from "../../components/dialog/DialogProvider";
 import { isDev } from "../../shared/utils";
 import { CategoryEmptyState } from "./CategoryEmptyState";
 

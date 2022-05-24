@@ -12,7 +12,7 @@ import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { Category } from "./Category";
 import CategoryList from "./CategoryList";
-import { PaginationController, PaginationControllerProps } from "../../components";
+import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 
 type CategoryPickerProps = PaginationControllerProps & {
   isOpen: boolean,
