@@ -20,9 +20,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "types": [
+      "./node_modules/user-agent-data-types"
+    ],
     "typeRoots": [
       "./node_modules/@types",
-      "./typings"
+      "./typings",
     ]
   },
   "include": [

@@ -1,14 +1,12 @@
 export const assetCollection = "assets";
 export const categoryCollection = "categories";
 export const userCollection = "users";
-export const departmentCollection = "departments";
 export const inventoryCollection = "inventories";
 export const issuedCollection = "issued";
 export const stockCardCollection = "cards";
 
 export const categoryId = "categoryId";
 export const categoryName = "categoryName";
-export const categorySubItems = "subcategories";
 export const categoryCount = "count";
 
 export const assetStockNumber = "stockNumber";
@@ -19,20 +17,16 @@ export const assetUnitValue = "unitValue";
 export const assetRemarks = "remarks";
 export const assetCategory = "category";
 export const assetCategoryId = `${ assetCategory }.${ categoryId }`;
-export const assetCategoryName = `${ assetCategory }.${ categoryName }`;
 
 export const userId = "userId";
 export const firstName = "firstName";
 export const lastName = "lastName";
 export const email = "email";
-export const imageUrl = "imageUrl";
-export const permissions = "permissions";
 export const position = "position";
 
 export const inventoryReportId = "inventoryReportId"
 export const fundCluster = "fundCluster"
 export const entityName = "entityName"
-export const entityPosition = "entityPosition"
 export const yearMonth = "yearMonth"
 export const accountabilityDate = "accountabilityDate"
 export const inventoryItems = "inventoryItems"
@@ -57,7 +51,6 @@ export const stockCardId = "stockCardId"
 export const unitPrice = "unitPrice"
 export const entries = "entries"
 
-export const stockCardEntryId = "stockCardEntryId"
 export const reference = "reference"
 export const receivedQuantity = "receivedQuantity"
 export const requestedQuantity = "requestedQuantity"

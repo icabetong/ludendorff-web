@@ -3,7 +3,7 @@ import { Timestamp } from "@firebase/firestore-types";
 export type OperatingSystem = 'Linux' | 'Android' | 'Windows' | 'macOS' | 'iOS' | 'unknown';
 export function getHostOperatingSystem(): OperatingSystem {
   let userAgent = window.navigator.userAgent,
-    platform = window.navigator?.userAgentData?.platform ?? window.navigator.platform,
+    platform = window.navigator?.userAgentData?.platform ?? window.navigator.platform, // eslint-disable-line
     macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
     windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
     iosPlatforms = ['iPhone', 'iPad', 'iPod'],
@@ -60,4 +60,4 @@ export function groupBy<T, K extends keyof T>(array: T[], key: K) {
     }
   })
   return map;
-};
+}
