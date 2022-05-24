@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -13,6 +14,7 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
+  Snackbar,
   TextField,
   Tooltip,
   useMediaQuery,
@@ -345,6 +347,11 @@ const AssetEditor = (props: AssetEditorProps) => {
           assetId={props.asset.stockNumber}
           onClose={onQRCodeDismiss}/>
       }
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

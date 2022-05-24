@@ -2,11 +2,13 @@ import { useState } from "react";
 import { IssuedReport, IssuedReportItem } from "./IssuedReport";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   LinearProgress,
+  Snackbar,
   useMediaQuery,
   useTheme
 } from "@mui/material";
@@ -91,6 +93,11 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
           <Button onClick={props.onDismiss}>{t("button.cancel")}</Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </InstantSearch>
   )
 }

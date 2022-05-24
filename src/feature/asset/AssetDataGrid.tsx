@@ -33,11 +33,22 @@ type AssetDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
 const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { t } = useTranslation();
   const columns = [
-    { field: assetStockNumber, headerName: t("field.stock_number"), flex: 1 },
-    { field: assetDescription, headerName: t("field.asset_description"), flex: 1.5 },
+    {
+      field: assetStockNumber,
+      headerName: t("field.stock_number"),
+      sortable: false,
+      flex: 1
+    },
+    {
+      field: assetDescription,
+      headerName: t("field.asset_description"),
+      sortable: false,
+      flex: 1.5
+    },
     {
       field: assetCategory,
       headerName: t("field.category"),
+      sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         let asset = params.row as Asset;
@@ -47,27 +58,32 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
     {
       field: assetSubcategory,
       headerName: t("field.subcategory"),
+      sortable: false,
       flex: 1,
     },
     {
       field: assetUnitOfMeasure,
       headerName: t("field.unit_of_measure"),
+      sortable: false,
       flex: 1
     },
     {
       field: assetUnitValue,
       headerName: t("field.unit_value"),
+      sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => currencyFormatter.format(params.value)
     },
     {
       field: assetRemarks,
       headerName: t("field.remarks"),
+      sortable: false,
       flex: 1
     },
     {
       field: "actions",
       type: "actions",
+      sortable: false,
       flex: 0.5,
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem

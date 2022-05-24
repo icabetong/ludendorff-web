@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Alert,
   Button,
   Container,
   Dialog,
@@ -10,6 +11,7 @@ import {
   DialogTitle,
   IconButton,
   InputAdornment,
+  Snackbar,
   TextField,
 } from "@mui/material";
 import { collection, orderBy, query, limit } from "firebase/firestore";
@@ -197,6 +199,11 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
         onForward={onForward}
         onDismiss={onPickerDismiss}
         onSelectItem={onAssetPicked}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }

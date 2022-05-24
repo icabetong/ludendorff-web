@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -10,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Snackbar,
   TextField,
   Typography,
   InputAdornment,
@@ -349,6 +351,11 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
         onForward={onForward}
         onDismiss={onCategoryPickerDismiss}
         onSelectItem={onCategoryPickerSelect}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }

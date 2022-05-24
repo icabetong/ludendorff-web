@@ -20,11 +20,22 @@ type InventoryReportDataGridProps = HitsProvided<InventoryReport> & DataGridProp
 const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { t } = useTranslation();
   const columns = [
-    { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
-    { field: yearMonth, headerName: t("field.year_month"), flex: 1 },
+    {
+      field: fundCluster,
+      headerName: t("field.fund_cluster"),
+      sortable: false,
+      flex: 1
+    },
+    {
+      field: yearMonth,
+      headerName: t("field.year_month"),
+      sortable: false,
+      flex: 1
+    },
     {
       field: accountabilityDate,
       headerName: t("field.accountability_date"),
+      sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         const formatted = formatDate(params.row.accountabilityDate);

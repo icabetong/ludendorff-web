@@ -6,7 +6,8 @@ import {
   Button,
   Dialog,
   TextField,
-  Stack
+  Stack,
+  Snackbar,
 } from "@mui/material";
 import { FolderRounded } from "@mui/icons-material";
 import { query, collection, doc, where, getDocs, orderBy, getDoc } from "firebase/firestore";
@@ -302,6 +303,11 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
         onForward={onForward}
         onDismiss={onCategoryPickerDismiss}
         onSelectItem={onCategorySelected}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }

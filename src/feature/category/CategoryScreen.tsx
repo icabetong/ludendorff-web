@@ -1,10 +1,12 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   Box,
   Dialog,
   DialogContent,
-  LinearProgress
+  LinearProgress,
+  Snackbar,
 } from "@mui/material";
 import { InstantSearch } from "react-instantsearch-core";
 import { collection, orderBy, query, limit } from "firebase/firestore";
@@ -88,6 +90,11 @@ const CategoryScreen = (props: CategoryScreenProps) => {
         isCreate={state.isCreate}
         category={state.category}
         onDismiss={onEditorDismiss}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </InstantSearch>
   )
 }

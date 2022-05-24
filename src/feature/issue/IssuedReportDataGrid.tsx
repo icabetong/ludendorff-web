@@ -21,11 +21,22 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
   const { density, onDensityChanged } = useDensity('issuedDensity');
 
   const columns = [
-    { field: fundCluster, headerName: t("field.fund_cluster"), flex: 1 },
-    { field: serialNumber, headerName: t("field.serial_number"), flex: 1 },
+    {
+      field: fundCluster,
+      headerName: t("field.fund_cluster"),
+      sortable: false,
+      flex: 1
+    },
+    {
+      field: serialNumber,
+      headerName: t("field.serial_number"),
+      sortable: false,
+      flex: 1
+    },
     {
       field: date,
       headerName: t("field.date"),
+      sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
         const formatted = formatDate(params.row.date);

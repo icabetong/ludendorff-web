@@ -20,10 +20,30 @@ const UserDataGridCore = (props: UserDataGridProps) => {
   const { density, onDensityChanged } = useDensity('userDensity');
 
   const columns = [
-    { field: userId, headerName: t("field.id"), hide: true },
-    { field: lastName, headerName: t("field.last_name"), flex: 1 },
-    { field: firstName, headerName: t("field.first_name"), flex: 1 },
-    { field: email, headerName: t("field.email"), flex: 1 },
+    {
+      field: userId,
+      headerName: t("field.id"),
+      sortable: false,
+      hide: true
+    },
+    {
+      field: lastName,
+      headerName: t("field.last_name"),
+      sortable: false,
+      flex: 1
+    },
+    {
+      field: firstName,
+      headerName: t("field.first_name"),
+      sortable: false,
+      flex: 1
+    },
+    {
+      field: email,
+      headerName: t("field.email"),
+      sortable: false,
+      flex: 1
+    },
     {
       field: position,
       headerName: t("field.position"),

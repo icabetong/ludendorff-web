@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Alert,
   Button,
   Container,
   Dialog,
@@ -11,6 +12,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Snackbar
 } from "@mui/material";
 import { ExpandMoreRounded } from "@mui/icons-material";
 import { collection, orderBy, query, limit } from "firebase/firestore";
@@ -203,6 +205,11 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         onForward={onForward}
         onDismiss={onPickerDismiss}
         onSelectItem={onAssetPicked}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

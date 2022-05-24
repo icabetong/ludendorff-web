@@ -6,7 +6,6 @@ import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query, limit } from "firebase/firestore";
-import { OrderByDirection } from "@firebase/firestore-types";
 import * as Excel from "exceljs";
 import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
 import IssuedReportEditor from "./IssuedReportEditor";
@@ -25,7 +24,7 @@ import useSort from "../shared/hooks/useSort";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { AdaptiveHeader, useDialog } from "../../components";
 import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/spreadsheet";
-import { fundCluster, issuedCollection, issuedReportId } from "../../shared/const";
+import { issuedCollection, issuedReportId } from "../../shared/const";
 import { isDev } from "../../shared/utils";
 import { firestore } from "../../index";
 
@@ -40,22 +39,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const { sortMethod, onSortMethodChange } = useSort('issuedSort');
-
-  const onParseQuery = () => {
-    let field = fundCluster;
-    let direction: OrderByDirection = "asc";
-    if (sortMethod.length > 0) {
-      field = sortMethod[0].field;
-      switch(sortMethod[0].sort) {
-        case "asc":
-        case "desc":
-          direction = sortMethod[0].sort;
-          break;
-      }
-    }
-
-    return query(collection(firestore, issuedCollection), orderBy(field, direction));
-  }
 
   const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<IssuedReport>(
     query(collection(firestore, issuedCollection), orderBy(issuedReportId, 'asc'), limit(25)),

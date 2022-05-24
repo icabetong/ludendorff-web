@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InventoryReport } from "./InventoryReport";
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   LinearProgress,
+  Snackbar,
   useMediaQuery,
   useTheme
 } from "@mui/material";
@@ -98,6 +100,11 @@ const InventoryReportPicker = (props: InventoryReportPickerProps) => {
         isOpen={Boolean(report)}
         report={report}
         onDismiss={() => setReport(null)}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </InstantSearch>
   )
 }

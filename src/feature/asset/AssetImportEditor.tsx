@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
+  Alert,
   Button,
   Container,
   Dialog,
@@ -12,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   MenuItem,
+  Snackbar,
   TextField,
   useTheme,
   useMediaQuery
@@ -274,6 +276,11 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
         onForward={onForward}
         onDismiss={onPickerDismiss}
         onSelectItem={onCategorySelected}/>
+      <Snackbar open={Boolean(error)}>
+        <Alert severity="error">
+          {error?.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
