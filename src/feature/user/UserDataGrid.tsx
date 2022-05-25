@@ -26,7 +26,6 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       field: userId,
       headerName: t("field.id"),
       sortable: false,
-      hide: true
     },
     {
       field: lastName,

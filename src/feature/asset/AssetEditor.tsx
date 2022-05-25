@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
-  Alert,
   Box,
   Button,
   Container,
@@ -14,7 +13,6 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
-  Snackbar,
   TextField,
   Tooltip,
   useMediaQuery,
@@ -22,17 +20,16 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
-import { collection, doc, orderBy, query, limit, getDoc } from "firebase/firestore";
-
+import { doc, getDoc } from "firebase/firestore";
 import { Asset, AssetRepository } from "./Asset";
-import { minimize, Category, CategoryCore, CategoryRepository } from "../category/Category";
+import { minimize, Category, CategoryCore } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
+import { useCategories } from "../category/CategoryProvider";
 import QrCodeViewComponent from "../qrcode/QrCodeViewComponent";
-import { assetCollection, categoryCollection, categoryId } from "../../shared/const";
+import { assetCollection } from "../../shared/const";
 import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
-import usePagination from "../shared/hooks/usePagination";
 import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
 
 type AssetEditorProps = {
@@ -55,6 +52,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const categories = useCategories();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, control, reset, setValue } = useForm<FormValues>();
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
@@ -65,16 +63,13 @@ const AssetEditor = (props: AssetEditorProps) => {
 
   useEffect(() => {
     setCategory(props.asset?.category);
-    let categoryId = category?.categoryId;
-    if (categoryId) {
-      CategoryRepository.fetch(categoryId)
-        .then((data) => {
-          if (data) setSubcategories(data.subcategories);
-        }).catch((err) => {
-        if (isDev) console.log(err);
-      });
+    const currentCategory = categories.find((category) => {
+      return props.asset?.category?.categoryId === category.categoryId;
+    });
+    if (currentCategory) {
+      setSubcategories(currentCategory.subcategories);
     }
-  }, [props.asset, category?.categoryId]);
+  }, [props.asset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (props.isOpen) {
@@ -99,11 +94,6 @@ const AssetEditor = (props: AssetEditorProps) => {
 
   const onQRCodeView = () => setQRCodeOpen(true);
   const onQRCodeDismiss = () => setQRCodeOpen(false);
-
-  const { items, isLoading, error, canBack, onBackward, onForward } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)),
-    categoryId, 25
-  );
 
   let previousTypeId: string | undefined = undefined;
   const onSubmit = async (data: FormValues) => {
@@ -333,25 +323,15 @@ const AssetEditor = (props: AssetEditorProps) => {
       </Dialog>
       <CategoryPicker
         isOpen={isPickerOpen}
-        categories={items}
-        isLoading={isLoading}
+        categories={categories}
         onDismiss={onPickerDismiss}
-        onSelectItem={onCategoryChanged}
-        canBack={canBack}
-        canForward={true}
-        onBackward={onBackward}
-        onForward={onForward}/>
+        onSelectItem={onCategoryChanged}/>
       { props.asset &&
         <QrCodeViewComponent
           isOpened={isQRCodeOpen}
           assetId={props.asset.stockNumber}
           onClose={onQRCodeDismiss}/>
       }
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 }

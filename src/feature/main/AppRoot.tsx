@@ -8,6 +8,7 @@ import { SnackbarProvider } from "notistack";
 import FinishAccountDialog from "../auth/FinishAccountDialog";
 import { DialogProvider } from "../../components/dialog/DialogProvider";
 import DestinationContainer from "./DestinationContainer";
+import { CategoryProvider } from "../category/CategoryProvider";
 
 const AppRoot = () => {
   const location = useLocation();
@@ -27,20 +28,22 @@ const AppRoot = () => {
   if (status === 'fetched') {
     if (user) {
       return (
-        <DialogProvider>
-          <SnackbarProvider
-            maxSnack={3}
-            autoHideDuration={3000}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: smBreakpoint ? 'center' : 'right'
-            }}>
-            <>
-              <DestinationContainer destination={destination} onNavigate={onNavigate}/>
-              <FinishAccountDialog isOpen={!user.setupCompleted}/>
-            </>
-          </SnackbarProvider>
-        </DialogProvider>
+        <CategoryProvider>
+          <DialogProvider>
+            <SnackbarProvider
+              maxSnack={3}
+              autoHideDuration={3000}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: smBreakpoint ? 'center' : 'right'
+              }}>
+              <>
+                <DestinationContainer destination={destination} onNavigate={onNavigate}/>
+                <FinishAccountDialog isOpen={!user.setupCompleted}/>
+              </>
+            </SnackbarProvider>
+          </DialogProvider>
+        </CategoryProvider>
       )
     } else return <Navigate to="/login" state={{ from: location }} replace/>
   } else if (status === 'pending') {

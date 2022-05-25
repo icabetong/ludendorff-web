@@ -360,6 +360,8 @@ const resources = {
       empty: {
         asset_header: "No Assets Added",
         asset_summary: "There are no assets available.",
+        asset_import_header: "No Data Available",
+        asset_import_summary: "Once the data from the spreadsheet is available to be imported, they will show up here.",
         category_header: "No Categories Added",
         category_summary: "There are no categories available that can be used to organize the assets.",
         user_header: "No Users Added",

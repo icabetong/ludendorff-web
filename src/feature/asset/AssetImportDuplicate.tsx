@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
-  Alert,
   Box,
   Button,
   Dialog,
@@ -11,7 +10,6 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
-  Snackbar,
   TextField,
   Typography,
   InputAdornment,
@@ -20,17 +18,14 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { ArrowDropDownOutlined, ContentCopyRounded } from "@mui/icons-material";
-import { query, collection, orderBy, limit } from "firebase/firestore";
 import { AssetImport } from "./AssetImport";
 import AssetImportDuplicateList from "./AssetImportDuplicateList";
 import { Category, CategoryCore, CategoryRepository, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
-import usePagination from "../shared/hooks/usePagination";
+import { useCategories } from "../category/CategoryProvider";
 import { GroupedArray } from "../shared/types/GroupedArray";
 import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
-import { categoryCollection, categoryId, } from "../../shared/const";
 import { groupBy, isDev } from "../../shared/utils";
-import { firestore } from "../../index";
 import EmptyStates from "../state/EmptyStates";
 
 type FormValues = {
@@ -54,16 +49,12 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
   const { t } = useTranslation();
   const { handleSubmit, formState: { errors }, control, reset, watch, setError } = useForm<FormValues>();
   const { enqueueSnackbar } = useSnackbar();
+  const categories = useCategories();
   const [duplicates, setDuplicates] = useState<GroupedArray<AssetImport>>({});
   const [category, setCategory] = useState<CategoryCore | undefined>(undefined);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   let hasDuplicate = Array.from(Object.values(duplicates)).every((item: AssetImport[]) => item.length > 1);
-
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)),
-    categoryId, 25
-  );
 
   const onCategoryPickerInvoke = () => setOpen(true);
   const onCategoryPickerDismiss = () => setOpen(false);
@@ -343,19 +334,9 @@ const AssetImportDuplicate = (props: AssetImportDuplicateProps) => {
       </Dialog>
       <CategoryPicker
         isOpen={open}
-        categories={items}
-        isLoading={isLoading}
-        canBack={canBack}
-        canForward={canForward}
-        onBackward={onBackward}
-        onForward={onForward}
+        categories={categories}
         onDismiss={onCategoryPickerDismiss}
         onSelectItem={onCategoryPickerSelect}/>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </>
   )
 }

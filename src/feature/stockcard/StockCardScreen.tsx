@@ -130,7 +130,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
                 onRemoveInvoke={onRemoveInvoke}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
-            <Box sx={{ display: { sx: 'block', sm: 'none' }}}>
+            <Box sx={{ display: { sx: 'block', sm: 'none' }, height: 'inherit' }}>
               {!isLoading
                 ? items.length < 1
                   ? <StockCardEmptyState/>

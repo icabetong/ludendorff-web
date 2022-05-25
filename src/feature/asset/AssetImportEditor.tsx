@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
-  Alert,
   Button,
   Container,
   Dialog,
@@ -13,21 +12,16 @@ import {
   InputAdornment,
   IconButton,
   MenuItem,
-  Snackbar,
   TextField,
   useTheme,
   useMediaQuery
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
-import { query, collection, orderBy, doc, limit, getDoc } from "firebase/firestore";
 import { AssetImport } from "./AssetImport";
 import { Category, CategoryCore, minimize } from "../category/Category";
-import { firestore } from "../../index";
-import { categoryCollection, categoryId } from "../../shared/const";
-import usePagination from "../shared/hooks/usePagination";
+import { useCategories } from "../category/CategoryProvider";
 import CategoryPicker from "../category/CategoryPicker";
-import { isDev } from "../../shared/utils";
 
 type AssetImportEditorProps = {
   isOpen: boolean,
@@ -50,6 +44,7 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
   const theme = useTheme();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { enqueueSnackbar } = useSnackbar();
+  const categories = useCategories();
   const { handleSubmit, formState: { errors }, control, reset, setValue } = useForm<FormValues>();
   const [isPickerOpen, setPickerOpen] = useState(false);
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
@@ -57,23 +52,12 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
   const currentStockNumber = props.asset?.stockNumber;
 
   useEffect(() => {
-    const onFetchSubcategories = async () => {
-      if (props.asset?.category) {
-        let reference = doc(firestore, categoryCollection, props.asset?.category.categoryId);
-        let snapshot = await getDoc(reference);
-        return snapshot.data() as Category;
-      }
-      return null;
-    }
-
     setCategory(props.asset?.category);
-    onFetchSubcategories()
-      .then((data) => {
-        if (data) setSubcategories(data.subcategories);
-      }).catch((err) => {
-      if (isDev) console.log(err);
-    });
-  }, [props.asset]);
+    const cat = categories.find((c: Category) => c.categoryId === props.asset?.category?.categoryId);
+    if (cat) {
+      setSubcategories(cat.subcategories);
+    }
+  }, [props.asset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (props.isOpen) {
@@ -101,10 +85,6 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
     }
     onPickerDismiss();
   }
-
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Category>(
-    query(collection(firestore, categoryCollection), orderBy(categoryId, "asc"), limit(25)), categoryId, 25
-  );
 
   const onSubmit = (data: FormValues) => {
     if (!data.stockNumber) {
@@ -267,20 +247,10 @@ const AssetImportEditor = (props: AssetImportEditorProps) => {
         </form>
       </Dialog>
       <CategoryPicker
-        categories={items}
+        categories={categories}
         isOpen={isPickerOpen}
-        isLoading={isLoading}
-        canBack={canBack}
-        canForward={canForward}
-        onBackward={onBackward}
-        onForward={onForward}
         onDismiss={onPickerDismiss}
         onSelectItem={onCategorySelected}/>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </>
   )
 }

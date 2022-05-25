@@ -120,7 +120,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onImportsInvoke={onImportInvoke}
                 onSortMethodChanged={onSortMethodChange}/>
             </Box>
-            <Box sx={{ display: { xs: 'block', sm: 'none' }}}>
+            <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 'inherit' }}>
               {!isLoading
                 ? items.length < 1
                   ? <AssetEmptyState/>

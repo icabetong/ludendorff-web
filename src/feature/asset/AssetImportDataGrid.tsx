@@ -25,6 +25,7 @@ import { getEditorDataGridTheme } from "../core/Core";
 import { ImporterGridToolbar } from "../../components/importer/ImporterGridToolbar";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import { Category } from "../category/Category";
+import { AssetImportDataGridEmptyState } from "./AssetImportEmptyState";
 
 
 type AssetImportDataGridProps = {
@@ -143,6 +144,7 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
         checkboxSelection
         disableSelectionOnClick
         components={{
+          NoRowsOverlay: AssetImportDataGridEmptyState,
           LoadingOverlay: GridLoadingOverlay,
           Toolbar: ImporterGridToolbar,
         }}
