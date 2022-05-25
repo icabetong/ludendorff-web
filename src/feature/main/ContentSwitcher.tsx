@@ -1,19 +1,21 @@
+import React, { lazy, Suspense } from "react";
 import { Destination } from "../navigation/NavigationContainer";
 import { ErrorNotFoundState } from "../state/ErrorStates";
-import React from "react";
-import AssetScreen from "../asset/AssetScreen";
-import InventoryReportScreen from "../inventory/InventoryReportScreen";
-import IssuedReportScreen from "../issue/IssuedReportScreen";
-import StockCardScreen from "../stockcard/StockCardScreen";
-import UserScreen from "../user/UserScreen";
-import ProfileScreen from "../profile/ProfileScreen";
-import SettingsScreen from "../settings/SettingsScreen";
+import { PageLoadingState } from "../state/LoadingStates";
+
+const AssetScreen = lazy(() => import("../asset/AssetScreen"));
+const InventoryReportScreen = lazy(() => import("../inventory/InventoryReportScreen"));
+const IssuedReportScreen = lazy(() => import("../issue/IssuedReportScreen"));
+const StockCardScreen = lazy(() => import("../stockcard/StockCardScreen"));
+const UserScreen = lazy(() => import("../user/UserScreen"));
+const ProfileScreen = lazy(() => import("../profile/ProfileScreen"));
+const SettingsScreen = lazy(() => import("../settings/SettingsScreen"));
 
 type ContentSwitcherProps = {
   destination: Destination,
   onDrawerToggle: () => void
 }
-const ContentSwitcher = (props: ContentSwitcherProps) => {
+const Pages = (props: ContentSwitcherProps) => {
   switch (props.destination) {
     case "assets":
       return <AssetScreen onDrawerToggle={props.onDrawerToggle}/>
@@ -32,6 +34,13 @@ const ContentSwitcher = (props: ContentSwitcherProps) => {
     default:
       return <ErrorNotFoundState/>
   }
+}
+const ContentSwitcher = (props: ContentSwitcherProps) => {
+  return (
+    <Suspense fallback={<PageLoadingState/>}>
+      <Pages {...props}/>
+    </Suspense>
+  )
 }
 
 export default ContentSwitcher;

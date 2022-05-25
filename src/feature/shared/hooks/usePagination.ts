@@ -29,7 +29,7 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
   const [start, setStart] = useState<T | null>(null);
   const [firstVisible, setFirstVisible] = useState<QueryDocumentSnapshot | null>(null);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
-  let canBack = items.some((i) => i[field] === start![field]);
+  let canBack = items.length > 0 && items.some((i) => i[field] === start![field]);
   let canForward = items.length < queryLimit;
 
   useEffect(() => {

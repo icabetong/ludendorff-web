@@ -35,7 +35,7 @@ export const MainLoadingState = () => {
 
 export const PageLoadingState = () => {
   return (
-    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <CircularProgress/>
     </Box>
   )
