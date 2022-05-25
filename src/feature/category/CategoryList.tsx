@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Tooltip } from "@mui/material";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-
 import { Category, CategoryRepository } from "./Category";
 import { usePermissions } from "../auth/AuthProvider";
 import { useDialog } from "../../components/dialog/DialogProvider";
@@ -37,30 +36,24 @@ const CategoryList = (props: CategoryListProps) => {
     }
   }
 
-  return (
-    <>
-      {props.categories.length > 0
-        ? <List sx={{ minHeight: '100%' }}>
-          {
-            props.categories.map((category: Category) => {
-              return (
-                <CategoryListItem
-                  key={category.categoryId}
-                  type={category}
-                  onItemSelect={props.onItemSelect}
-                  onItemRemove={onCategoryRemove}/>
-              );
-            })
-          }
-        </List>
-        : <CategoryEmptyState/>
-      }
-    </>
-  );
+  if (props.categories.length > 0) {
+    return (
+      <List sx={{ minHeight: '100%' }}>
+        { props.categories.map((category) => (
+            <CategoryListItem
+              category={category}
+              onItemSelect={props.onItemSelect}
+              onItemRemove={onCategoryRemove}/>
+          ))
+        }
+      </List>
+    )
+  } else return <CategoryEmptyState/>
+
 }
 
 type CategoryListItemProps = {
-  type: Category,
+  category: Category,
   onItemSelect: (category: Category) => void,
   onItemRemove: (category: Category) => void,
 }
@@ -72,9 +65,9 @@ const CategoryListItem = (props: CategoryListItemProps) => {
   const deleteButton = (
     <IconButton
       edge="end"
-      disabled={props.type.count > 0}
+      disabled={props.category.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.type)}
+      onClick={() => props.onItemRemove(props.category)}
       size="large">
       <DeleteOutlineRounded/>
     </IconButton>
@@ -97,14 +90,14 @@ const CategoryListItem = (props: CategoryListItemProps) => {
   return (
     <ListItem
       button
-      key={props.type.categoryId}
-      onClick={() => props.onItemSelect(props.type)}>
+      key={props.category.categoryId}
+      onClick={() => props.onItemSelect(props.category)}>
       <ListItemText
-        primary={props.type.categoryName}
-        secondary={getSecondaryListText(props.type.subcategories)}/>
+        primary={props.category.categoryName}
+        secondary={getSecondaryListText(props.category.subcategories)}/>
       {canDelete &&
         <ListItemSecondaryAction>
-          {props.type.count > 0
+          {props.category.count > 0
             ? <Tooltip title={<>{t("info.type_count_not_zero")}</>}>
               <span>{deleteButton}</span>
             </Tooltip>
