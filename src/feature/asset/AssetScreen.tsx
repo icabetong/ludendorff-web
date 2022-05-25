@@ -46,7 +46,6 @@ const AssetScreen = (props: AssetScreenProps) => {
     query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc"), limit(25)), assetStockNumber, 25
   );
 
-  console.log(canBack)
   const onAssetRemove = async (asset: Asset) => {
     try {
       let result = await show({
