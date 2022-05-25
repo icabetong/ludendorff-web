@@ -53,8 +53,9 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   }, [props.isOpen, props.item, reset])
 
   const onDismiss = () => {
-    props.onDismiss();
+    reset();
     setAsset(undefined);
+    props.onDismiss();
   }
 
   const onPickerInvoke = () => setOpen(true);

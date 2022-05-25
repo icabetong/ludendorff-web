@@ -62,8 +62,9 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
   )
 
   const onDismiss = () => {
-    props.onDismiss();
     reset();
+    setAsset(undefined);
+    props.onDismiss();
   }
 
   const onSubmit = (values: FormValues) => {
