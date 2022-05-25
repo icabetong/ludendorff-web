@@ -3,14 +3,18 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-
-import { usePermissions } from "../auth/AuthProvider";
-import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { InstantSearch } from "react-instantsearch-core";
 import { Category } from "./Category";
 import CategoryList from "./CategoryList";
+import { usePermissions } from "../auth/AuthProvider";
+import Client from "../search/Client";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
+import { useState } from "react";
+import CategorySearchList from "./CategorySearchList";
+import { CategoryEmptyState } from "./CategoryEmptyState";
 
 type CategoryPickerProps = {
   isOpen: boolean,
@@ -23,33 +27,42 @@ const CategoryPicker = (props: CategoryPickerProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { canRead } = usePermissions();
+  const [searchMode, setSearchMode] = useState(false);
 
   return (
-    <Dialog
-      fullScreen={isMobile}
-      fullWidth={true}
-      maxWidth="xs"
-      open={props.isOpen}
-      onClose={props.onDismiss}>
-      <DialogTitle>{t("dialog.select_category")}</DialogTitle>
-      <DialogContent
-        dividers={true}
-        sx={{
-          minHeight: '60vh',
-          paddingX: 0,
-          '& .MuiList-padding': { padding: 0 }
-        }}>
-        {canRead
-          ? <CategoryList categories={props.categories} onItemSelect={props.onSelectItem}/>
-          : <ErrorNoPermissionState/>
-        }
-      </DialogContent>
-      <DialogActions>
-        <Button
-          color="primary"
-          onClick={props.onDismiss}>{t("button.close")}</Button>
-      </DialogActions>
-    </Dialog>
+    <InstantSearch searchClient={Client} indexName="categories">
+      <Dialog
+        fullScreen={isMobile}
+        fullWidth={true}
+        maxWidth="xs"
+        open={props.isOpen}
+        PaperProps={{ sx: { minHeight: '60vh' }}}
+        onClose={props.onDismiss}>
+        <DialogSearchTitle
+          hasSearchFocus={searchMode}
+          onSearchFocusChanged={setSearchMode}>
+          {t("dialog.select_category")}
+        </DialogSearchTitle>
+        <DialogContent
+          dividers={true}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100%',
+            paddingX: 0,
+            '& .MuiList-padding': { padding: 0 }
+          }}>
+          {canRead
+            ? searchMode
+              ? <CategorySearchList onItemSelect={props.onSelectItem}/>
+              : props.categories.length > 0
+                ? <CategoryList categories={props.categories} onItemSelect={props.onSelectItem}/>
+                : <CategoryEmptyState/>
+            : <ErrorNoPermissionState/>
+          }
+        </DialogContent>
+      </Dialog>
+    </InstantSearch>
   )
 }
 

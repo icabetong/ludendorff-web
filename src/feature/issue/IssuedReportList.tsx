@@ -5,7 +5,7 @@ import { IssuedReport } from "./IssuedReport";
 type IssuedReportListProps = {
   reports: IssuedReport[],
   onItemSelect: (report: IssuedReport) => void,
-  onItemRemove: (report: IssuedReport) => void
+  onItemRemove?: (report: IssuedReport) => void
 }
 const IssuedReportList = (props: IssuedReportListProps) => {
   return (

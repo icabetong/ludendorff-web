@@ -10,10 +10,9 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/mate
 import { ArrowBackRounded } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import IssuedReportList from "./IssuedReportList";
-import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 import { isDev } from "../../shared/utils";
 
-type IssuedReportItemPickerListProps = PaginationControllerProps & {
+type IssuedReportItemPickerListProps = {
   reports: IssuedReport[],
   limit: number,
   onItemSelect: (report: IssuedReportItem[]) => void
@@ -62,19 +61,7 @@ const IssuedReportItemPickerList = (props: IssuedReportItemPickerListProps) => {
             })
           }
         </List>
-        : <>
-          <IssuedReportList
-            reports={props.reports}
-            onItemSelect={setReport}
-            onItemRemove={() => {}}/>
-          {props.canBack && props.reports.length > 0 && props.reports.length === props.limit &&
-            <PaginationController
-              canBack={props.canBack}
-              canForward={props.canForward}
-              onBackward={props.onBackward}
-              onForward={props.onForward}/>
-          }
-        </>
+        : <IssuedReportList reports={props.reports} onItemSelect={setReport}/>
       }
     </Box>
   )

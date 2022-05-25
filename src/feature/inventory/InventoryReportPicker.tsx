@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InventoryReport } from "./InventoryReport";
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,6 +11,7 @@ import {
 } from "@mui/material";
 import { InstantSearch } from "react-instantsearch-dom";
 import { collection, orderBy, query } from "firebase/firestore";
+import { usePagination } from "use-pagination-firestore";
 import { firestore } from "../../index";
 import { inventoryCollection, inventoryReportId } from "../../shared/const";
 import { usePermissions } from "../auth/AuthProvider";
@@ -22,9 +22,7 @@ import { ErrorNoPermissionState } from "../state/ErrorStates";
 import InventoryReportPickerList from "./InventoryReportPickerList";
 import InventoryReportViewer from "./InventoryReportViewer";
 import InventoryReportSearchList from "./InventoryReportSearchList";
-
 import Client from "../search/Client";
-import { usePagination } from "use-pagination-firestore";
 
 type InventoryReportPickerProps = {
   isOpen: boolean,
@@ -51,7 +49,8 @@ const InventoryReportPicker = (props: InventoryReportPickerProps) => {
         fullScreen={smBreakpoint}
         maxWidth="xs"
         open={props.isOpen}
-        PaperProps={{ sx: { minHeight: '60vh' }}}>
+        PaperProps={{ sx: { minHeight: '60vh' }}}
+        onClose={props.onDismiss}>
         <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
@@ -72,26 +71,21 @@ const InventoryReportPicker = (props: InventoryReportPickerProps) => {
                   onItemSelect={props.onItemSelected}/>
               : !isLoading
                 ? items.length > 0
-                  ? <>
-                    <InventoryReportPickerList
+                  ? <InventoryReportPickerList
                       reports={items}
                       onItemSelect={props.onItemSelected}
                       onItemView={setReport}/>
-                    { isStart && items.length > 0 && items.length === 25 &&
-                      <PaginationController
-                        canBack={isStart}
-                        canForward={isEnd}
-                        onBackward={getPrev}
-                        onForward={getNext}/>
-                    }
-                  </>
                   : <InventoryReportEmptyState/>
                 : <LinearProgress/>
             : <ErrorNoPermissionState/>
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={props.onDismiss}>{t("button.close")}</Button>
+          <PaginationController
+            canBack={isStart}
+            canForward={isEnd}
+            onBackward={getPrev}
+            onForward={getNext}/>
         </DialogActions>
       </Dialog>
       <InventoryReportViewer

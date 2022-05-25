@@ -41,6 +41,7 @@ const CategoryList = (props: CategoryListProps) => {
       <List sx={{ minHeight: '100%' }}>
         { props.categories.map((category) => (
             <CategoryListItem
+              key={category.categoryId}
               category={category}
               onItemSelect={props.onItemSelect}
               onItemRemove={onCategoryRemove}/>

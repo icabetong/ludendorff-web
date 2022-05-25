@@ -23,6 +23,7 @@ import Client from "../search/Client";
 import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
 import { usePagination } from "use-pagination-firestore";
+import { PaginationController } from "../../components/data/PaginationController";
 
 type IssuedReportPickerProps = {
   isOpen: boolean,
@@ -53,7 +54,8 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
         fullScreen={smBreakpoint}
         maxWidth="xs"
         open={props.isOpen}
-        PaperProps={{ sx: { minHeight: '60vh' }}}>
+        PaperProps={{ sx: { minHeight: '60vh' }}}
+        onClose={props.onDismiss}>
         <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
@@ -75,11 +77,7 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
                 ? items.length > 0
                   ? <IssuedReportItemPickerList
                       reports={items}
-                      canBack={isStart}
-                      canForward={isEnd}
                       limit={25}
-                      onBackward={getPrev}
-                      onForward={getNext}
                       onItemSelect={onItemSelected}/>
                   : <IssuedReportEmptyState/>
                 : <LinearProgress/>
@@ -87,7 +85,7 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={props.onDismiss}>{t("button.cancel")}</Button>
+          <PaginationController canBack={isStart} canForward={isEnd} onBackward={getPrev} onForward={getNext}/>
         </DialogActions>
       </Dialog>
     </InstantSearch>
