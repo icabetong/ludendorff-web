@@ -32,8 +32,8 @@ const CategoryPicker = (props: CategoryPickerProps) => {
   return (
     <InstantSearch searchClient={Client} indexName="categories">
       <Dialog
+        fullWidth
         fullScreen={isMobile}
-        fullWidth={true}
         maxWidth="xs"
         open={props.isOpen}
         PaperProps={{ sx: { minHeight: '60vh' }}}

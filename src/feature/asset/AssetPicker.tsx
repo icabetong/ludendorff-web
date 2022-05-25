@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -10,17 +11,15 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-
 import { Asset } from "./Asset";
 import AssetList from "./AssetList";
-
-import { ErrorNoPermissionState } from "../state/ErrorStates";
-import { usePermissions } from "../auth/AuthProvider";
-import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
-import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
-import Client from "../search/Client";
 import AssetSearchList from "./AssetSearchList";
 import { AssetEmptyState } from "./AssetEmptyState";
+import { usePermissions } from "../auth/AuthProvider";
+import { ErrorNoPermissionState } from "../state/ErrorStates";
+import Client from "../search/Client";
+import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
+import { PaginationController, PaginationControllerProps } from "../../components/data/PaginationController";
 
 type AssetPickerProps = PaginationControllerProps & {
   isOpen: boolean,
@@ -49,7 +48,8 @@ const AssetPicker = (props: AssetPickerProps) => {
         fullScreen={smBreakpoint}
         maxWidth="xs"
         open={props.isOpen}
-        PaperProps={{ sx: { minHeight: '60vh' }}}>
+        PaperProps={{ sx: { minHeight: '60vh' }}}
+        onClose={props.onDismiss}>
         <DialogSearchTitle
           hasSearchFocus={searchMode}
           onSearchFocusChanged={setSearchMode}>
@@ -58,6 +58,8 @@ const AssetPicker = (props: AssetPickerProps) => {
         <DialogContent
           dividers={true}
           sx={{
+            display: 'flex',
+            flexDirection: 'column',
             height: '100%',
             paddingX: 0,
             '& .MuiList-padding': { padding: 0 }
@@ -65,29 +67,20 @@ const AssetPicker = (props: AssetPickerProps) => {
           {canRead
             ? searchMode
               ? <AssetSearchList onItemSelect={onSelect}/>
-                : !props.isLoading
-                  ? props.assets.length > 0
-                    ? <>
-                      <AssetList
-                        assets={props.assets}
-                        onItemSelect={onSelect}/>
-                      {props.canForward && props.assets.length > 0 && props.assets.length === 25 &&
-                        <PaginationController
-                          canBack={props.canBack}
-                          canForward={props.canForward}
-                          onBackward={props.onBackward}
-                          onForward={props.onForward}/>
-                      }
-                    </>
-                : <AssetEmptyState/>
-              : <LinearProgress/>
+              : !props.isLoading
+                ? props.assets.length > 0
+                  ? <AssetList assets={props.assets} onItemSelect={onSelect}/>
+                  : <AssetEmptyState/>
+                : <LinearProgress/>
             : <ErrorNoPermissionState/>
           }
         </DialogContent>
         <DialogActions>
-          <Button
-            color="primary"
-            onClick={props.onDismiss}>{t("button.close")}</Button>
+          <PaginationController
+            canBack={props.canBack}
+            canForward={props.canForward}
+            onBackward={props.onBackward}
+            onForward={props.onForward}/>
         </DialogActions>
       </Dialog>
     </InstantSearch>
