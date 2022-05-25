@@ -47,7 +47,7 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
 
     setLoading(false);
     return () => unsubscribe();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onUpdateState = (documents: QuerySnapshot) => {
     if (!documents.empty) {

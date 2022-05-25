@@ -9,14 +9,14 @@ import {
   Stack,
 } from "@mui/material";
 import { FolderRounded } from "@mui/icons-material";
-import { query, collection, doc, where, getDocs, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { useSnackbar } from "notistack";
 import { AssetRepository } from "./Asset";
 import AssetImportDataGrid from "./AssetImportDataGrid";
 import { AssetImport } from "./AssetImport";
 import AssetImportEditor from "./AssetImportEditor";
-import { Category, CategoryCore, minimize } from "../category/Category";
+import { Category, minimize } from "../category/Category";
 import CategoryPicker from "../category/CategoryPicker";
 import { useCategories } from "../category/CategoryProvider";
 import { useDialog } from "../../components/dialog/DialogProvider";
@@ -25,7 +25,7 @@ import { EditorContent } from "../../components/editor/EditorContent";
 import { EditorRoot } from "../../components/editor/EditorRoot";
 import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
 import { firestore } from "../../index";
-import { assetCollection, categoryCollection, categoryName } from "../../shared/const";
+import { assetCollection } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import AssetImportDuplicate from "./AssetImportDuplicate";
 import { GroupedArray } from "../shared/types/GroupedArray";
@@ -164,20 +164,16 @@ const AssetImportScreen = (props: AssetImportScreenProps) => {
       let sheet = data.worksheets[0];
       let assets = [];
       for (let row = 1; row <= sheet.actualRowCount; row++) {
+        console.log(sheet.actualColumnCount)
         if (sheet.actualColumnCount >= 7) {
           const name = sheet.getCell(row, 3).text;
-          let category: CategoryCore | null = null;
-          let snapshot = await getDocs(query(collection(firestore, categoryCollection),
-              where(categoryName, "==", name)));
-          if (snapshot.docs.length > 0) {
-            category = minimize(snapshot.docs[0].data() as Category);
-          }
+          let category = categories.find((category) => category.categoryName === name);
 
           let asset: AssetImport = {
             id: newId(),
             stockNumber: sheet.getCell(row, 1).text,
             description: sheet.getCell(row, 2).text,
-            category: category ? category : undefined,
+            category: category ? minimize(category) : undefined,
             subcategory: sheet.getCell(row, 4).text,
             unitOfMeasure: sheet.getCell(row, 5).text,
             unitValue: parseFloat(sheet.getCell(row, 6).text),
