@@ -1,11 +1,11 @@
 import { useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
-import { Alert, Box, Fab, LinearProgress, Snackbar } from "@mui/material";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { InventoryReport, InventoryReportRepository } from "./InventoryReport";
 import { initialState, reducer, } from "./InventoryReportEditorReducer";
@@ -17,7 +17,6 @@ import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
 import { usePermissions } from "../auth/AuthProvider";
 import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
-import usePagination from "../shared/hooks/usePagination";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { ExportSpreadsheetDialog, ExportParameters } from "../shared/ExportSpreadsheetDialog";
 import { ScreenProps } from "../shared/types/ScreenProps";
@@ -31,6 +30,7 @@ import {
 import { isDev } from "../../shared/utils";
 import useSort from "../shared/hooks/useSort";
 import { firestore } from "../../index";
+import { usePagination } from "use-pagination-firestore";
 
 type InventoryReportScreenProps = ScreenProps
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
@@ -44,9 +44,8 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const { sortMethod, onSortMethodChange } = useSort('inventorySort');
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<InventoryReport>(
-    query(collection(firestore, inventoryCollection), orderBy(inventoryReportId, "asc"), limit(25)),
-    inventoryReportId, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<InventoryReport>(
+    query(collection(firestore, inventoryCollection), orderBy(inventoryReportId, "asc")), { limit: 25 }
   )
 
   const onInventoryReportRemove = async (report: InventoryReport) => {
@@ -120,11 +119,11 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                 items={items}
                 isLoading={isLoading}
                 isSearching={searchMode}
-                canBack={canBack}
-                canForward={canForward}
+                canBack={isStart}
+                canForward={isEnd}
                 sortMethod={sortMethod}
-                onBackward={onBackward}
-                onForward={onForward}
+                onBackward={getPrev}
+                onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
                 onRemoveInvoke={onInventoryReportRemove}
@@ -179,11 +178,6 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
       <Box sx={{ display: 'none' }}>
         <a ref={linkRef} href="https://captive.apple.com">{t("button.download")}</a>
       </Box>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }

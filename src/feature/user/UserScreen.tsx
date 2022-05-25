@@ -1,10 +1,12 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Box, Fab, LinearProgress, Snackbar } from "@mui/material";
+import { InstantSearch } from "react-instantsearch-dom";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { useSnackbar } from "notistack";
+import { usePagination } from "use-pagination-firestore";
 import { AddRounded } from "@mui/icons-material";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { getDataGridTheme } from "../core/Core";
 import { usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
@@ -14,12 +16,10 @@ import { initialState, reducer } from "./UserEditorReducer";
 import { userCollection, userId } from "../../shared/const";
 import UserEditor from "./UserEditor";
 import { firestore } from "../../index";
-import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { useDialog } from "../../components/dialog/DialogProvider";
 import { AdaptiveHeader } from "../../components/AdaptiveHeader";
-import usePagination from "../shared/hooks/usePagination";
 import { UserEmptyState } from "./UserEmptyState";
 import UserDataGrid from "./UserDataGrid";
 import useSort from "../shared/hooks/useSort";
@@ -34,8 +34,8 @@ const UserScreen = (props: UserScreenProps) => {
   const [searchMode, setSearchMode] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('userSort');
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<User>(
-    query(collection(firestore, userCollection), orderBy(userId, "asc"), limit(25)), userId, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<User>(
+    query(collection(firestore, userCollection), orderBy(userId, "asc")), { limit: 25 }
   );
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -103,13 +103,13 @@ const UserScreen = (props: UserScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: "none", sm: "block" }, ...getDataGridTheme(theme)})}>
               <UserDataGrid
                 items={items}
-                canBack={canBack}
-                canForward={canForward}
+                canBack={isStart}
+                canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
                 sortMethod={sortMethod}
-                onBackward={onBackward}
-                onForward={onForward}
+                onBackward={getPrev}
+                onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClick}
                 onRemoveInvoke={onUserRemove}
                 onModificationInvoke={onModificationInvoke}
@@ -140,11 +140,6 @@ const UserScreen = (props: UserScreenProps) => {
         isCreate={state.isCreate}
         user={state.user}
         onDismiss={onUserEditorDismiss}/>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

@@ -8,6 +8,7 @@ import {
   limit,
   limitToLast,
   startAfter,
+  startAt,
   endAt,
   onSnapshot,
   getDocs,
@@ -27,6 +28,7 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
   const [error, setError] = useState<FirestoreError | null>(null);
   const [items, setItems] = useState<T[]>([]);
   const [start, setStart] = useState<T | null>(null);
+  const [references, setReferences] = useState<QueryDocumentSnapshot[]>([]);
   const [firstVisible, setFirstVisible] = useState<QueryDocumentSnapshot | null>(null);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(null);
   let canBack = items.length > 0 && items.some((i) => i[field] === start![field]);
@@ -53,18 +55,26 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
     if (!documents.empty) {
       setItems(documents.docs.map((doc) => doc.data() as T));
     }
-    if (documents.docs[0]) setFirstVisible(documents.docs[0]);
-    if (documents.docs[documents.docs.length - 1]) setLastVisible(documents.docs[documents.docs.length - 1]);
+    // if (documents.docs[0]) {
+    //   setFirstVisible(documents.docs[0]);
+    //   references = references.concat(documents.docs[0]);
+    // }
+    //
     setLoading(false);
+
   }
 
   const onBackward = async () => {
     setLoading(true);
 
-    const first = firstVisible?.data() as T;
-    const newQuery = query(queryRef, endAt(first![field]), limitToLast(queryLimit));
-    const documents = await getDocs(newQuery);
-    onUpdateState(documents);
+    console.log(references);
+    const first = references.pop();
+    console.log(first);
+    if (first) {
+      const newQuery = query(queryRef, startAt(first), limit(queryLimit));
+      const documents = await getDocs(newQuery);
+      onUpdateState(documents);
+    }
   }
 
   const onForward = async () => {
@@ -74,6 +84,10 @@ function usePagination<T>(queryRef: Query, field: keyof T, queryLimit: number) {
     const newQuery = query(queryRef, startAfter(last![field]), limit(queryLimit));
     const documents = await getDocs(newQuery);
     onUpdateState(documents);
+    if (documents.docs[0]) {
+      setReferences((prevState: QueryDocumentSnapshot[]) => prevState.concat(documents.docs[0]));
+    }
+    if (documents.docs[documents.docs.length - 1]) setLastVisible(documents.docs[documents.docs.length - 1]);
   }
 
   return { items, isLoading, error, canBack, canForward, onForward, onBackward } as UsePaginationValue<T>

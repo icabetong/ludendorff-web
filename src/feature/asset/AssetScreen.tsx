@@ -1,11 +1,11 @@
 import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
-import { Alert, Box, Fab, LinearProgress, ListItemIcon, ListItemText, MenuItem, Snackbar } from "@mui/material";
+import { Box, Fab, LinearProgress, ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded, CategoryRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetDataGrid from "./AssetDataGrid";
@@ -28,7 +28,7 @@ import {
   assetStockNumber,
 } from "../../shared/const";
 import { firestore } from "../../index";
-import usePagination from "../shared/hooks/usePagination";
+import { usePagination } from "use-pagination-firestore";
 
 type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
@@ -42,8 +42,8 @@ const AssetScreen = (props: AssetScreenProps) => {
   const onImportInvoke = () => setImportMode(true);
   const onImportDismiss = () => setImportMode(false);
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc"), limit(25)), assetStockNumber, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
+    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), { limit: 25 }
   );
 
   const onAssetRemove = async (asset: Asset) => {
@@ -107,13 +107,13 @@ const AssetScreen = (props: AssetScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <AssetDataGrid
                 items={items}
-                canBack={canBack}
-                canForward={canForward}
+                canBack={isStart}
+                canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
                 sortMethod={sortMethod}
-                onBackward={onBackward}
-                onForward={onForward}
+                onBackward={getPrev}
+                onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onRemoveInvoke={onAssetRemove}
                 onTypesInvoke={onCategoryListView}
@@ -150,11 +150,6 @@ const AssetScreen = (props: AssetScreenProps) => {
       <CategoryScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

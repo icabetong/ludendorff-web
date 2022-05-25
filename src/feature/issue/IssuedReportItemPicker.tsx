@@ -2,17 +2,15 @@ import { useState } from "react";
 import { IssuedReport, IssuedReportItem } from "./IssuedReport";
 import { useTranslation } from "react-i18next";
 import {
-  Alert,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   LinearProgress,
-  Snackbar,
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { issuedCollection, issuedReportId } from "../../shared/const";
 
@@ -22,9 +20,9 @@ import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { InstantSearch } from "react-instantsearch-dom";
 import Client from "../search/Client";
-import usePagination from "../shared/hooks/usePagination";
 import { DialogSearchTitle } from "../../components/dialog/DialogSearchTitle";
 import IssuedReportItemSearchList from "./IssuedReportItemSearchList";
+import { usePagination } from "use-pagination-firestore";
 
 type IssuedReportPickerProps = {
   isOpen: boolean,
@@ -44,9 +42,8 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
     props.onDismiss();
   }
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<IssuedReport>(
-    query(collection(firestore, issuedCollection), orderBy(issuedReportId, "asc"), limit(25)),
-    issuedReportId, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
+    query(collection(firestore, issuedCollection), orderBy(issuedReportId, "asc")), { limit: 25 }
   )
 
   return (
@@ -78,11 +75,11 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
                 ? items.length > 0
                   ? <IssuedReportItemPickerList
                       reports={items}
-                      canBack={canBack}
-                      canForward={canForward}
+                      canBack={isStart}
+                      canForward={isEnd}
                       limit={25}
-                      onBackward={onBackward}
-                      onForward={onForward}
+                      onBackward={getPrev}
+                      onForward={getNext}
                       onItemSelect={onItemSelected}/>
                   : <IssuedReportEmptyState/>
                 : <LinearProgress/>
@@ -93,11 +90,6 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
           <Button onClick={props.onDismiss}>{t("button.cancel")}</Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </InstantSearch>
   )
 }

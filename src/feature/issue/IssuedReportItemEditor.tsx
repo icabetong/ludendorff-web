@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import {
-  Alert,
   Button,
   Container,
   Dialog,
@@ -11,18 +10,17 @@ import {
   DialogTitle,
   IconButton,
   InputAdornment,
-  Snackbar,
   TextField,
 } from "@mui/material";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { ArrowDropDown } from "@mui/icons-material";
 import { Asset } from "../asset/Asset";
 import AssetPicker from "../asset/AssetPicker";
 import { IssuedReportItem } from "./IssuedReport";
-import usePagination from "../shared/hooks/usePagination";
 import { assetCollection, assetStockNumber } from "../../shared/const";
 import { firestore } from "../../index";
 import { newId } from "../../shared/utils";
+import { usePagination } from "use-pagination-firestore";
 
 export type FormValues = {
   unitCost: number,
@@ -62,9 +60,8 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   const onPickerInvoke = () => setOpen(true);
   const onPickerDismiss = () => setOpen(false);
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc"), limit(25)),
-    assetStockNumber, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
+    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), { limit: 25 }
   );
 
   const onSubmit = (data: FormValues) => {
@@ -193,17 +190,12 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
         isOpen={isOpen}
         assets={items}
         isLoading={isLoading}
-        canBack={canBack}
-        canForward={canForward}
-        onBackward={onBackward}
-        onForward={onForward}
+        canBack={isStart}
+        canForward={isEnd}
+        onBackward={getPrev}
+        onForward={getNext}
         onDismiss={onPickerDismiss}
         onSelectItem={onAssetPicked}/>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </>
   )
 }

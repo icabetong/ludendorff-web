@@ -1,11 +1,11 @@
 import { useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-dom";
-import { Alert, Box, Fab, LinearProgress, Snackbar } from "@mui/material";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
-import { collection, orderBy, query, limit } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import * as Excel from "exceljs";
 import { IssuedReport, IssuedReportRepository } from "./IssuedReport";
 import IssuedReportEditor from "./IssuedReportEditor";
@@ -19,7 +19,6 @@ import { usePermissions } from "../auth/AuthProvider";
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
-import usePagination from "../shared/hooks/usePagination";
 import useSort from "../shared/hooks/useSort";
 import { ScreenProps } from "../shared/types/ScreenProps";
 import { useDialog } from "../../components/dialog/DialogProvider";
@@ -28,6 +27,7 @@ import { convertWorkbookToBlob, spreadsheetFileExtension } from "../../shared/sp
 import { issuedCollection, issuedReportId } from "../../shared/const";
 import { isDev } from "../../shared/utils";
 import { firestore } from "../../index";
+import { usePagination } from "use-pagination-firestore";
 
 type IssuedReportScreenProps = ScreenProps
 const IssuedReportScreen = (props: IssuedReportScreenProps) => {
@@ -41,9 +41,8 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const linkRef = useRef<HTMLAnchorElement | null>(null);
   const { sortMethod, onSortMethodChange } = useSort('issuedSort');
 
-  const { items, isLoading, error, canBack, canForward, onBackward, onForward } = usePagination<IssuedReport>(
-    query(collection(firestore, issuedCollection), orderBy(issuedReportId, 'asc'), limit(25)),
-    issuedReportId, 25
+  const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<IssuedReport>(
+    query(collection(firestore, issuedCollection), orderBy(issuedReportId, 'asc')), { limit: 25 }
   );
 
   const onIssuedReportRemove = async (report: IssuedReport) => {
@@ -113,13 +112,13 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: 'none', sm: 'block' }, ...getDataGridTheme(theme)})}>
               <IssuedReportDataGrid
                 items={items}
-                canBack={canBack}
-                canForward={canForward}
+                canBack={isStart}
+                canForward={isEnd}
                 isLoading={isLoading}
                 isSearching={searchMode}
                 sortMethod={sortMethod}
-                onBackward={onBackward}
-                onForward={onForward}
+                onBackward={getPrev}
+                onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
                 onExportSpreadsheet={onExportSpreadsheet}
                 onRemoveInvoke={onIssuedReportRemove}
@@ -174,11 +173,6 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
       <Box sx={{display: 'none'}}>
         <a ref={linkRef} href="https://capstive.apple.com">{t("button.download")}</a>
       </Box>
-      <Snackbar open={Boolean(error)}>
-        <Alert severity="error">
-          {error?.message}
-        </Alert>
-      </Snackbar>
     </Box>
   )
 }
