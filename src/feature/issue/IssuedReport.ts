@@ -8,7 +8,7 @@ export type IssuedReport = {
   entityName?: string,
   fundCluster?: string,
   serialNumber?: string,
-  date?: Timestamp,
+  date?: Timestamp | number,
   items: IssuedReportItem[],
 }
 

@@ -1,7 +1,8 @@
 import * as Excel from "exceljs";
 import { t } from "../../localization";
 import { InventoryReport } from "./InventoryReport";
-import { formatDate } from "../../shared/utils";
+import { formatDate, formatTimestamp } from "../../shared/utils";
+import { Timestamp } from "firebase/firestore";
 
 const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, name: string, inventoryReport: InventoryReport) => {
   const workSheet = workBook.addWorksheet(inventoryReport.fundCluster);
@@ -37,11 +38,21 @@ const convertInventoryReportToSpreadsheet = (workBook: Excel.Workbook, name: str
     t("field.fund_cluster"),
     inventoryReport.fundCluster
   ]);
+
+  let date = "";
+  if (inventoryReport.accountabilityDate) {
+    if (inventoryReport.accountabilityDate instanceof Timestamp) {
+      date = formatTimestamp(inventoryReport.accountabilityDate);
+    } else {
+      date = formatDate(new Date(inventoryReport.accountabilityDate));
+    }
+  } else date = "unknown";
+
   workSheet.addRow([
     t("template.inventory_entity", {
       name: inventoryReport.entityName,
       position: inventoryReport.entityPosition,
-      date: formatDate(inventoryReport.accountabilityDate)
+      date: date,
     })
   ]);
   workSheet.addRow([""]);

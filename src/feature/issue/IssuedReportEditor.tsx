@@ -66,7 +66,12 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
         fundCluster: props.report?.fundCluster ? props.report?.fundCluster : "",
         serialNumber: props.report?.serialNumber ? props.report?.serialNumber : ""
       });
-      setDate(props.report?.date ? props.report?.date.toDate() : null);
+      const reportDate = props.report?.date;
+      if (reportDate) {
+        if (reportDate instanceof Timestamp)
+          setDate(reportDate.toDate);
+        else setDate(new Date(reportDate));
+      }
     }
   }, [props.isOpen, props.report, reset])
 

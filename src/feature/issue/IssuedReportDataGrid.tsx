@@ -12,7 +12,8 @@ import { GridPaginationController } from "../../components/datagrid/GridPaginati
 import { GridToolbar } from "../../components/datagrid/GridToolbar";
 import { ExcelIcon } from "../../components/CustomIcons";
 import { date, fundCluster, serialNumber } from "../../shared/const";
-import { formatDate } from "../../shared/utils";
+import { formatDate, formatTimestamp } from "../../shared/utils";
+import { Timestamp } from "firebase/firestore";
 
 type IssuedReportDataGridProps = HitsProvided<IssuedReport> & DataGridProps<IssuedReport> & {
   onItemSelect: (params: GridRowParams) => void,
@@ -42,8 +43,12 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
       sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
-        const formatted = formatDate(params.row.date);
-        return t(formatted)
+        const date = params.row.date;
+        if (date) {
+          if (date instanceof Timestamp)
+            return formatTimestamp(date);
+          else return formatDate(new Date(date));
+        } else return t("unknown")
       }
     },
     {

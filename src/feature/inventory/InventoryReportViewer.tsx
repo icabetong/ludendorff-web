@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InventoryReport, InventoryReportItem, InventoryReportRepository } from "./InventoryReport";
-import { formatDate, isDev } from "../../shared/utils";
+import { formatDate, formatTimestamp, isDev } from "../../shared/utils";
 import {
   Button,
   Container,
@@ -18,6 +18,7 @@ import {
   useTheme
 } from "@mui/material";
 import { useEntity } from "../entity/UseEntity";
+import { Timestamp } from "firebase/firestore";
 
 type InventoryReportViewerProps = {
   isOpen: boolean,
@@ -42,6 +43,15 @@ const InventoryReportViewer = (props: InventoryReportViewerProps) => {
   }, [props.report, props.isOpen]);
 
   const inputProps = { readOnly: true }
+
+  const format = () => {
+    let date = props.report?.accountabilityDate;
+    if (date) {
+      if (date instanceof Timestamp)
+        return formatTimestamp(date);
+      else return formatDate(new Date(date));
+    } else return "";
+  }
 
   return (
     <Dialog open={props.isOpen} maxWidth="sm" fullWidth={true} onClose={props.onDismiss}>
@@ -72,7 +82,7 @@ const InventoryReportViewer = (props: InventoryReportViewerProps) => {
                 InputProps={inputProps}/>
               <TextField
                 fullWidth
-                value={formatDate(props.report?.accountabilityDate)}
+                value={format()}
                 label={t("field.accountability_date")}
                 InputProps={inputProps}/>
             </Grid>

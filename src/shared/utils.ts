@@ -35,10 +35,13 @@ export const newId = (): string => {
   }
   return id;
 }
-
-export const formatDate = (timestamp: Timestamp | undefined) => {
+export const formatDate = (date: Date | undefined) => {
   const options = { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' } as const;
-  return timestamp !== undefined ? timestamp?.toDate().toLocaleDateString(['en-PH'], options) : "unknown";
+  return date !== undefined ? date.toLocaleDateString(['en-PH'], options) : "unknown";
+}
+
+export const formatTimestamp = (timestamp: Timestamp | undefined) => {
+  return formatDate(timestamp?.toDate());
 }
 
 export function chunck<T>(arr: T[], size: number) {

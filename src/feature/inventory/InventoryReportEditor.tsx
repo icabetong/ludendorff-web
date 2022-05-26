@@ -69,7 +69,15 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       reset({
         fundCluster: props.report?.fundCluster ? props.report?.fundCluster : "",
       });
-      setDate(props.report?.accountabilityDate ? props.report?.accountabilityDate?.toDate() : null);
+
+      let accountabilityDate = props.report?.accountabilityDate;
+      if (accountabilityDate) {
+        if (accountabilityDate instanceof Timestamp) {
+          setDate(accountabilityDate.toDate());
+        } else {
+          setDate(new Date(accountabilityDate));
+        }
+      }
       setYearMonth(props.report?.yearMonth ? props.report?.yearMonth : null);
     }
   }, [props.isOpen, props.report, reset])

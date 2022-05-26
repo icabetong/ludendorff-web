@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InventoryReport } from "./InventoryReport";
 import {
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -81,11 +82,9 @@ const InventoryReportPicker = (props: InventoryReportPickerProps) => {
           }
         </DialogContent>
         <DialogActions>
-          <PaginationController
-            canBack={isStart}
-            canForward={isEnd}
-            onBackward={getPrev}
-            onForward={getNext}/>
+          <Collapse in={!searchMode}>
+            <PaginationController canBack={isStart} canForward={isEnd} onBackward={getPrev} onForward={getNext}/>
+          </Collapse>
         </DialogActions>
       </Dialog>
       <InventoryReportViewer

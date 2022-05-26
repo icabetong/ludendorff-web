@@ -21,12 +21,13 @@ import {
   reference,
   requestedQuantity
 } from "../../shared/const";
-import { escapeRegExp, formatDate } from "../../shared/utils";
+import { escapeRegExp, formatDate, formatTimestamp } from "../../shared/utils";
 import useDensity from "../shared/hooks/useDensity";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 
 import { Balances, Entry } from "../shared/types/Balances";
 import { currencyFormatter } from "../../shared/utils";
+import { Timestamp } from "firebase/firestore";
 
 type StockCardEntryDataGridProps = EditorDataGridProps<StockCardEntry> & {
   entries: StockCardEntry[],
@@ -51,8 +52,12 @@ const StockCardEntryDataGrid = (props: StockCardEntryDataGridProps) => {
       type: 'dateTime',
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
-        const formatted = formatDate(params.row.date);
-        return t(formatted)
+        const date = params.row.date;
+        if (date) {
+          if (date instanceof Timestamp)
+            return formatTimestamp(date);
+          else return formatDate(new Date(date))
+        } else return t("unknown")
       }
     },
     {

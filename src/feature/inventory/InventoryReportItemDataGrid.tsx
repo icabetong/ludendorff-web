@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
-import { EditRounded } from "@mui/icons-material";
 import {
   DataGrid,
   GridRowParams,
   GridSelectionModel,
   GridValueGetterParams,
-  GridActionsCellItem,
   GridLoadingOverlay
 } from "@mui/x-data-grid";
 import { InventoryReportItem } from "./InventoryReport";
@@ -76,16 +74,6 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         return currencyFormatter.format(item.unitValue * item.balancePerCard);
       }
     },
-    {
-      field: 'actions',
-      type: 'actions',
-      getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          icon={<EditRounded/>}
-          label={t("button.edit")}
-          onClick={() => props.onItemSelected(params.row as InventoryReportItem)}/>
-      ]
-    }
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryReportItemColumns', columns);
 
@@ -104,6 +92,10 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     } else setItems(props.items);
   }
 
+  const onRowSelected = (params: GridRowParams) => {
+    props.onItemSelected(params.row as InventoryReportItem)
+  }
+
   const onCheckedRowsChanged = (model: GridSelectionModel) => {
     setHasChecked(Array.from(model).length > 0)
     props.onCheckedRowsChanged(model);
@@ -113,6 +105,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme)})}>
       <DataGrid
         checkboxSelection
+        disableSelectionOnClick
         components={{
           LoadingOverlay: GridLoadingOverlay,
           Toolbar: EditorGridToolbar
@@ -130,6 +123,7 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         density={density}
         columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockNumber}
+        onRowDoubleClick={onRowSelected}
         onSelectionModelChange={onCheckedRowsChanged}
         onStateChange={(v) => onDensityChanged(v.density.value)}
         onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
 import {
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -74,11 +75,13 @@ const AssetPicker = (props: AssetPickerProps) => {
           }
         </DialogContent>
         <DialogActions>
-          <PaginationController
-            canBack={props.canBack}
-            canForward={props.canForward}
-            onBackward={props.onBackward}
-            onForward={props.onForward}/>
+          <Collapse in={!searchMode}>
+            <PaginationController
+              canBack={props.canBack}
+              canForward={props.canForward}
+              onBackward={props.onBackward}
+              onForward={props.onForward}/>
+          </Collapse>
         </DialogActions>
       </Dialog>
     </InstantSearch>

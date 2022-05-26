@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IssuedReport, IssuedReportItem } from "./IssuedReport";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,7 +13,6 @@ import {
 import { collection, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../index";
 import { issuedCollection, issuedReportId } from "../../shared/const";
-
 import IssuedReportItemPickerList from "./IssuedReportItemPickerList";
 import { usePermissions } from "../auth/AuthProvider";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
@@ -85,7 +84,9 @@ const IssuedReportItemPicker = (props: IssuedReportPickerProps) => {
           }
         </DialogContent>
         <DialogActions>
-          <PaginationController canBack={isStart} canForward={isEnd} onBackward={getPrev} onForward={getNext}/>
+          <Collapse in={!searchMode}>
+            <PaginationController canBack={isStart} canForward={isEnd} onBackward={getPrev} onForward={getNext}/>
+          </Collapse>
         </DialogActions>
       </Dialog>
     </InstantSearch>

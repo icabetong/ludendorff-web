@@ -36,7 +36,7 @@ const SearchBoxInputBase = (props: SearchBoxInputBaseProps) => {
           flexDirection: 'row',
           position: 'relative',
           padding: theme.spacing('4px', 1),
-          borderRadius: 2,
+          borderRadius: 1,
           backgroundColor: theme.palette.divider,
           marginLeft: 0,
           marginRight: theme.spacing(2),

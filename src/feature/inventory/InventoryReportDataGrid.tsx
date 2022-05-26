@@ -12,7 +12,8 @@ import { GridPaginationController } from "../../components/datagrid/GridPaginati
 import { GridToolbar } from "../../components/datagrid/GridToolbar";
 import { ExcelIcon } from "../../components/CustomIcons";
 import { accountabilityDate, fundCluster, yearMonth } from "../../shared/const";
-import { formatDate } from "../../shared/utils";
+import { formatDate, formatTimestamp } from "../../shared/utils";
+import { Timestamp } from "firebase/firestore";
 
 type InventoryReportDataGridProps = HitsProvided<InventoryReport> & DataGridProps<InventoryReport> & {
   onItemSelect: (params: GridRowParams) => void,
@@ -41,8 +42,13 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
       sortable: false,
       flex: 1,
       valueGetter: (params: GridValueGetterParams) => {
-        const formatted = formatDate(params.row.accountabilityDate);
-        return t(formatted)
+        const date = params.row.accountabilityDate;
+
+        if (date) {
+          if (date instanceof Timestamp)
+            return formatTimestamp(date);
+          else return formatDate(new Date(date));
+        } else return t("unknown")
       }
     },
     {

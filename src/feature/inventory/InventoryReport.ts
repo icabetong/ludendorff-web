@@ -10,7 +10,7 @@ export type InventoryReport = {
   entityName?: string,
   entityPosition?: string,
   yearMonth?: string,
-  accountabilityDate?: Timestamp,
+  accountabilityDate?: Timestamp | number,
   items: InventoryReportItem[],
 }
 
