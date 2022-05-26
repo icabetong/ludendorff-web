@@ -70,9 +70,10 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
   ];
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('issuedColumns', columns);
 
-  const hideFooter = props.isSearching
+  const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
+      disableColumnFilter
       hideFooter={hideFooter}
       hideFooterPagination={hideFooter}
       components={{

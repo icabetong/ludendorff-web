@@ -72,9 +72,10 @@ const StockCardDataGridCore = (props: StockCardDataGridProps) => {
   const { density, onDensityChanged } = useDensity('stockCardDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('stockCardColumns', columns);
 
-  const hideFooter = props.isSearching
+  const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
+      disableColumnFilter
       hideFooter={hideFooter}
       hideFooterPagination={hideFooter}
       components={{

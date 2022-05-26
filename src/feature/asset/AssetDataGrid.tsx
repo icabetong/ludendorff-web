@@ -94,9 +94,10 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { density, onDensityChanged } = useDensity('assetDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
-  const hideFooter = props.isSearching
+  const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
+      disableColumnFilter
       hideFooter={hideFooter}
       hideFooterPagination={hideFooter}
       components={{

@@ -71,9 +71,10 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { density, onDensityChanged } = useDensity('inventoryDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
 
-  const hideFooter = props.isSearching
+  const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
+      disableColumnFilter
       hideFooter={hideFooter}
       hideFooterPagination={hideFooter}
       components={{
