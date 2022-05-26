@@ -69,7 +69,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       const reportDate = props.report?.date;
       if (reportDate) {
         if (reportDate instanceof Timestamp)
-          setDate(reportDate.toDate);
+          setDate(reportDate.toDate());
         else setDate(new Date(reportDate));
       }
     }
