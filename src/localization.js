@@ -249,6 +249,7 @@ const resources = {
         stock_number_already_exists: "The stock number you entered already exists",
         subcategory_already_exists: "Subcategory already exists",
         duplicate_items_exists: "Duplicate items still exists",
+        cost_cannot_zero: "Item price or cost cannot be zero"
       },
       error: {
         no_permissions_header: "Insufficient Permissions",

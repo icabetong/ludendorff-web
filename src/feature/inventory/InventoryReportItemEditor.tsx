@@ -39,7 +39,7 @@ type InventoryReportItemEditorProps = {
 
 export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { handleSubmit, formState: { errors }, reset, control, setValue } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, reset, control, setValue, setError } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
 
@@ -68,6 +68,11 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
   }
 
   const onSubmit = (values: FormValues) => {
+    if (values.unitValue < 0.01) {
+      setError('unitValue', { type: 'focus', message: "feedback.cost_cannot_zero"});
+      return;
+    }
+
     if (asset) {
       let item: InventoryReportItem = {
         stockNumber: asset.stockNumber,
@@ -75,10 +80,10 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
         description: asset.description,
         category: asset.category,
         unitOfMeasure: asset.unitOfMeasure,
-        unitValue: asset.unitValue,
+        unitValue: values.unitValue,
         remarks: asset.remarks,
         balancePerCard: parseFloat(`${values.balancePerCard}`),
-        onHandCount: parseFloat(`${values.onHandCount}`)
+        onHandCount: parseFloat(`${values.onHandCount}`),
       }
       props.onSubmit(item);
     } else if (props.item) {

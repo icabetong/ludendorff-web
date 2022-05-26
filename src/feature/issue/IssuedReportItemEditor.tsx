@@ -38,7 +38,7 @@ type IssuedReportItemEditorProps = {
 
 export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   const { t } = useTranslation();
-  const { handleSubmit, formState: { errors }, reset, control, setValue } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, reset, control, setValue, setError } = useForm<FormValues>();
   const [asset, setAsset] = useState<Asset | undefined>(undefined);
   const [isOpen, setOpen] = useState(false);
 
@@ -66,6 +66,11 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
   );
 
   const onSubmit = (data: FormValues) => {
+    if (data.unitCost < 0.01) {
+      setError('unitCost', { type: 'focus', message: "feedback.cost_cannot_zero"});
+      return;
+    }
+
     if (asset) {
       let item: IssuedReportItem = {
         ...data,
@@ -73,7 +78,7 @@ export const IssuedReportItemEditor = (props: IssuedReportItemEditorProps) => {
         stockNumber: asset.stockNumber,
         description: asset.description,
         unitOfMeasure: asset.unitOfMeasure,
-        unitCost: asset.unitValue,
+        unitCost: data.unitCost,
         quantityIssued: parseInt(`${data.quantityIssued}`)
       }
       props.onSubmit(item);

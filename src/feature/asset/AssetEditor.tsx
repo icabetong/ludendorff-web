@@ -54,7 +54,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const categories = useCategories();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
-  const { handleSubmit, formState: { errors }, control, reset, setValue } = useForm<FormValues>();
+  const { handleSubmit, formState: { errors }, control, reset, setValue, setError } = useForm<FormValues>();
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -97,7 +97,9 @@ const AssetEditor = (props: AssetEditorProps) => {
 
   let previousTypeId: string | undefined = undefined;
   const onSubmit = async (data: FormValues) => {
-    if (!data.stockNumber) {
+    if (!data.stockNumber) return;
+    if (data.unitValue < 0.01) {
+      setError('unitValue', { type: 'focus', message: 'feedback.cost_cannot_zero' });
       return;
     }
 
