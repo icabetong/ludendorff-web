@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { InstantSearch } from "react-instantsearch-core";
 import {
-  Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
