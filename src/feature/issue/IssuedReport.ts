@@ -1,10 +1,7 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
-import axios from "axios";
-import { firestore } from "../../index";
+import { httpsCallable, HttpsCallableResult } from "firebase/functions";
+import { firestore, functions } from "../../index";
 import { issuedCollection, issuedItems as itemsCollection } from "../../shared/const";
-import { getIdTokenRefreshed } from "../user/User";
-
-import { SERVER_URL } from "../../shared/utils";
 
 export type IssuedReport = {
   issuedReportId: string,
@@ -46,7 +43,7 @@ export class IssuedReportRepository {
     });
   }
 
-  static async create(issued: IssuedReport): Promise<void> {
+  static async create(issued: IssuedReport): Promise<HttpsCallableResult> {
     const { items, ...report } = issued;
 
     let batch = writeBatch(firestore);
@@ -56,18 +53,16 @@ export class IssuedReportRepository {
     items.forEach((item) => {
       batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.issuedReportItemId), item);
     });
-
     await batch.commit();
 
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/issued-items`, {
-      token: token,
+    const indexIssued = httpsCallable(functions, 'indexIssued');
+    return await indexIssued({
       id: issued.issuedReportId,
-      items: items
+      entries: items,
     });
   }
 
-  static async update(issued: IssuedReport): Promise<void> {
+  static async update(issued: IssuedReport): Promise<HttpsCallableResult> {
     const { items, ...report } = issued;
 
     let docReference = doc(firestore, issuedCollection, report.issuedReportId);
@@ -86,11 +81,10 @@ export class IssuedReportRepository {
     });
     await batch.commit();
 
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/issued-items`, {
-      token: token,
+    const indexIssued = httpsCallable(functions, 'indexIssued');
+    return await indexIssued({
       id: issued.issuedReportId,
-      items: items
+      entries: items,
     });
   }
 

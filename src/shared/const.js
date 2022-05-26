@@ -30,7 +30,6 @@ export const entityName = "entityName"
 export const yearMonth = "yearMonth"
 export const accountabilityDate = "accountabilityDate"
 export const inventoryItems = "inventoryItems"
-export const items = "items"
 
 export const issuedReportId = "issuedReportId"
 export const serialNumber = "serialNumber"

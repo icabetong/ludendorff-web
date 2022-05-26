@@ -2,11 +2,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFunctions } from 'firebase/functions';
 import { initializeFirestore } from 'firebase/firestore';
-
 import { Ludendorff } from './feature/core/Core';
 import * as serviceWorker from "./serviceWorkerRegistration";
-
 import './index.css';
 import './localization';
 import { PreferenceProvider } from "./feature/settings/Preference";
@@ -22,8 +21,9 @@ const config = {
 }
 const firebaseApp = initializeApp(config);
 const auth = getAuth(firebaseApp);
+const functions = getFunctions(firebaseApp);
 const firestore = initializeFirestore(firebaseApp, { ignoreUndefinedProperties: true });
-export { firebaseApp, auth, firestore };
+export { firebaseApp, auth, firestore, functions };
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

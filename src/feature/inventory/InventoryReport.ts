@@ -1,10 +1,8 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
-import { firestore } from "../..";
+import { httpsCallable, HttpsCallableResult } from "firebase/functions";
+import { firestore, functions } from "../..";
 import { inventoryCollection, inventoryItems as itemsCollection } from "../../shared/const";
 import { CategoryCore } from "../category/Category";
-import { getIdTokenRefreshed } from "../user/User";
-import axios from "axios";
-import { SERVER_URL } from "../../shared/utils";
 
 export type InventoryReport = {
   inventoryReportId: string,
@@ -39,7 +37,7 @@ export class InventoryReportRepository {
     });
   }
 
-  static async create(report: InventoryReport): Promise<void> {
+  static async create(report: InventoryReport): Promise<HttpsCallableResult> {
     const { items, ...r } = report;
     let batch = writeBatch(firestore);
     let docReference = doc(firestore, inventoryCollection, report.inventoryReportId);
@@ -51,15 +49,14 @@ export class InventoryReportRepository {
     });
     await batch.commit();
 
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/inventory-items`, {
-      token: token,
+    const indexInventory = httpsCallable(functions, 'indexInventory');
+    return await indexInventory({
       id: r.inventoryReportId,
-      items: items,
+      entries: items,
     });
   }
 
-  static async update(report: InventoryReport): Promise<void> {
+  static async update(report: InventoryReport): Promise<HttpsCallableResult> {
     const { items, ...r } = report;
 
     let docReference = doc(firestore, inventoryCollection, report.inventoryReportId);
@@ -80,12 +77,10 @@ export class InventoryReportRepository {
     });
 
     await batch.commit();
-
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/inventory-items`, {
-      token: token,
+    const indexInventory = httpsCallable(functions, 'indexInventory');
+    return await indexInventory({
       id: r.inventoryReportId,
-      items: items,
+      entries: items,
     });
   }
 

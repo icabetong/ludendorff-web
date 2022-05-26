@@ -1,9 +1,7 @@
 import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firestore";
-import { firestore } from "../../index";
+import { httpsCallable, HttpsCallableResult } from "firebase/functions";
+import { firestore, functions } from "../../index";
 import { entries as entriesCollection, stockCardCollection } from "../../shared/const";
-import axios from "axios";
-import { getIdTokenRefreshed } from "../user/User";
-import { SERVER_URL } from "../../shared/utils";
 import { Balances } from "../shared/types/Balances";
 
 export type StockCard = {
@@ -39,7 +37,7 @@ export class StockCardRepository {
     })
   }
 
-  static async create(stockCard: StockCard): Promise<void> {
+  static async create(stockCard: StockCard): Promise<HttpsCallableResult> {
     const { entries, ...card } = stockCard;
 
     let batch = writeBatch(firestore);
@@ -53,15 +51,14 @@ export class StockCardRepository {
 
     await batch.commit();
 
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/stock-card-entries`, {
-      token: token,
+    const indexStockCard = httpsCallable(functions, 'indexStockCard');
+    return await indexStockCard({
       id: stockCard.stockCardId,
-      entries: entriesCollection,
+      entries: entries,
     });
   }
 
-  static async update(stockCard: StockCard): Promise<void> {
+  static async update(stockCard: StockCard): Promise<HttpsCallableResult> {
     const { entries, ...card } = stockCard;
 
     let batch = writeBatch(firestore);
@@ -81,9 +78,8 @@ export class StockCardRepository {
     });
 
     await batch.commit();
-    let token = await getIdTokenRefreshed();
-    return await axios.patch(`${SERVER_URL}/stock-card-entries`, {
-      token: token,
+    const indexStockCard = httpsCallable(functions, 'indexStockCard');
+    return await indexStockCard({
       id: stockCard.stockCardId,
       entries: entries,
     });
