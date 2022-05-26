@@ -84,6 +84,7 @@ export const InventoryReportItemEditor = (props: InventoryReportItemEditorProps)
     } else if (props.item) {
       let item: InventoryReportItem = {
         ...props.item,
+        ...values,
         balancePerCard: parseFloat(`${values.balancePerCard}`),
         onHandCount: parseFloat(`${values.onHandCount}`)
       }
