@@ -10,14 +10,15 @@ type InventoryReportSearchListProps = HitsProvided<InventoryReport> & {
 const InventoryReportSearchListCore = (props: InventoryReportSearchListProps) => {
   return (
     <List>
-      { props.hits.map((report) => {
-        return (
-          <InventoryReportSearchListItem
-            key={report.inventoryReportId}
-            report={report}
-            onItemSelect={props.onItemSelect}/>
-        )
-      })
+      {
+        props.hits.map((report) => {
+          return (
+            <InventoryReportSearchListItem
+              key={report.inventoryReportId}
+              report={report}
+              onItemSelect={props.onItemSelect}/>
+          )
+        })
       }
     </List>
   )

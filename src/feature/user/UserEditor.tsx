@@ -89,7 +89,6 @@ const UserEditor = (props: UserEditorProps) => {
     if (data.permissionDelete) permissions.push(Permission.DELETE)
     if (data.permissionManageUsers) permissions.push(Permission.MANAGE_USERS)
     if (data.permissionAdmin) permissions.push(Permission.ADMINISTRATIVE)
-    console.log(permissions)
 
     if (props.user?.permissions) {
       const current = permissions;

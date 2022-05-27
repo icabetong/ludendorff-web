@@ -13,6 +13,7 @@ import { LoadingButton } from "@mui/lab";
 import { reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
 import { updateDoc, doc } from "firebase/firestore";
 import { auth, firestore } from "../../index";
+import { PasswordInput } from "../../components/input/PasswordInput";
 import { userCollection } from "../../shared/const";
 
 type FormData = {
@@ -68,9 +69,8 @@ const FinishAccountDialog = (props: FinishAccountDialogProps) => {
             name="new"
             control={control}
             render={({ field: { ref, ...inputProps } }) => (
-              <TextField
+              <PasswordInput
                 {...inputProps}
-                type="password"
                 inputRef={ref}
                 disabled={hasBackgroundWork}
                 label={t("field.new_password")}
@@ -85,9 +85,8 @@ const FinishAccountDialog = (props: FinishAccountDialogProps) => {
             name="confirm"
             control={control}
             render={({ field: { ref, ...inputProps } }) => (
-              <TextField
+              <PasswordInput
                 {...inputProps}
-                type="password"
                 inputRef={ref}
                 disabled={hasBackgroundWork}
                 label={t("field.confirm_password")}

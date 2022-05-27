@@ -11,14 +11,15 @@ type AssetSearchListProps = HitsProvided<Asset> & {
 const AssetSearchListCore = (props: AssetSearchListProps) => {
   return (
     <List>
-      { props.hits.map((asset) => {
-        return (
-          <AssetSearchListItem
-            key={asset.stockNumber}
-            asset={asset}
-            onItemSelect={props.onItemSelect}/>
-        )
-      })
+      {
+        props.hits.map((asset) => {
+          return (
+            <AssetSearchListItem
+              key={asset.stockNumber}
+              asset={asset}
+              onItemSelect={props.onItemSelect}/>
+          )
+        })
       }
     </List>
   )
@@ -29,10 +30,10 @@ type AssetSearchListItemProps = {
   onItemSelect: (asset: Asset) => void,
 }
 const AssetSearchListItem = (props: AssetSearchListItemProps) => {
-  const onHandleItemClick = () => props.onItemSelect(props.asset);
+  const onHandleItemSelect = () => props.onItemSelect(props.asset);
 
   return (
-    <ListItemButton onClick={onHandleItemClick}>
+    <ListItemButton onClick={onHandleItemSelect}>
       <ListItemText
         primary={<Highlight hit={props.asset} attribute={assetDescription}/>}
         secondary={<Highlight hit={props.asset} attribute={assetStockNumber}/>}/>

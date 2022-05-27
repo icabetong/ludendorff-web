@@ -1,4 +1,4 @@
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 import { StockCardEntry } from "./StockCard";
 
 type StockCardEntryListProps = {
@@ -9,13 +9,15 @@ type StockCardEntryListProps = {
 const StockCardEntryList = (props: StockCardEntryListProps) => {
   return (
     <>
-      {props.entries && props.entries.map((entry: StockCardEntry) => {
-        return (
-          <StockCardEntryListItem
-            entry={entry}
-            onItemSelected={props.onItemSelected}/>
-        )
-      })}
+      {
+        props.entries && props.entries.map((entry: StockCardEntry) => {
+          return (
+            <StockCardEntryListItem
+              entry={entry}
+              onItemSelected={props.onItemSelected}/>
+          )
+        })
+      }
     </>
   )
 }
@@ -26,16 +28,16 @@ type StockCardEntryListItemProps = {
 }
 
 const StockCardEntryListItem = (props: StockCardEntryListItemProps) => {
-  const onListItemClick = () => {
-    props.onItemSelected(props.entry)
-  }
+  const onHandleItemClick = () => props.onItemSelected(props.entry);
 
   return (
-    <ListItem button key={props.entry.stockCardEntryId} onClick={onListItemClick}>
+    <ListItemButton
+      key={props.entry.stockCardEntryId}
+      onClick={onHandleItemClick}>
       <ListItemText
         primary={props.entry.reference}
         secondary={props.entry.issueOffice}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

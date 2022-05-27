@@ -1,5 +1,5 @@
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 
 import { User } from "./User";
@@ -11,7 +11,8 @@ type UserListProps = {
 
 const UserList = (props: UserListProps) => {
   return (
-    <List>{
+    <List>
+    {
       props.users.map((user: User) => {
         return (
           <UserItem
@@ -20,7 +21,8 @@ const UserList = (props: UserListProps) => {
             onItemSelect={props.onItemSelect}/>
         );
       })
-    }</List>
+    }
+    </List>
   )
 }
 
@@ -30,15 +32,16 @@ type UserItemProps = {
 }
 
 const UserItem = (props: UserItemProps) => {
+  const onHandleItemClick = () => props.onItemSelect(props.user);
+
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.user.userId}
-      onClick={() => props.onItemSelect(props.user)}>
+      onClick={onHandleItemClick}>
       <ListItemText
         primary={`${props.user.firstName} ${props.user.lastName}`}
         secondary={props.user.email}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

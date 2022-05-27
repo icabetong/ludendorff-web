@@ -12,15 +12,16 @@ type InventoryReportPickerListProps = {
 const InventoryReportPickerList = (props: InventoryReportPickerListProps) => {
   return (
     <List>
-      { props.reports.map((report) => {
-        return (
-          <InventoryReportPickerListItem
-            key={report.inventoryReportId}
-            report={report}
-            onItemSelect={props.onItemSelect}
-            onItemView={props.onItemView}/>
-        )
-      })
+      {
+        props.reports.map((report) => {
+          return (
+            <InventoryReportPickerListItem
+              key={report.inventoryReportId}
+              report={report}
+              onItemSelect={props.onItemSelect}
+              onItemView={props.onItemView}/>
+          )
+        })
       }
     </List>
   )

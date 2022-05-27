@@ -1,7 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
-import { DeleteOutlineRounded, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { Chip } from "@mui/material";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRenderCellParams,
+  GridRowParams, GridSortModel, GridState,
+  GridValueGetterParams
+} from "@mui/x-data-grid";
+import { DeleteOutlineRounded, VisibilityOffOutlined, VisibilityOutlined, InfoOutlined } from "@mui/icons-material";
 import { User } from "./User";
 import { UserDataGridEmptyState } from "./UserEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
@@ -10,7 +17,7 @@ import { DataGridProps } from "../shared/types/DataGridProps";
 import { GridLinearProgress } from "../../components/datagrid/GridLinearProgress";
 import { GridPaginationController } from "../../components/datagrid/GridPaginationController";
 import { GridToolbar } from "../../components/datagrid/GridToolbar";
-import { email, firstName, lastName, position, userId } from "../../shared/const";
+import { disabled, email, firstName, lastName, position, userId } from "../../shared/const";
 
 type UserDataGridProps = HitsProvided<User> & DataGridProps<User> & {
   onItemSelect: (params: GridRowParams) => void,
@@ -49,9 +56,24 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       field: position,
       headerName: t("field.position"),
       flex: 1,
+      sortable: false,
       valueGetter: (params: GridValueGetterParams) => {
         let user = params.row as User;
         return user.position === undefined ? t("unknown") : user.position;
+      }
+    },
+    {
+      field: disabled,
+      headerName: t("field.status"),
+      flex: 1,
+      renderCell: (params: GridRenderCellParams<boolean>) => {
+        return (
+          <Chip
+            color={params.value ? "warning" : "success"}
+            label={t(params.value ? "info.user_status_disabled" : "info.user_status_normal")}
+            icon={<InfoOutlined/>}
+            size={density === "compact" ? 'small' : 'medium'}/>
+        )
       }
     },
     {
@@ -76,6 +98,9 @@ const UserDataGridCore = (props: UserDataGridProps) => {
     },
   ]
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('userColumns', columns);
+
+  const onHandleSortModelChange = (model: GridSortModel) => props.onSortMethodChanged && props.onSortMethodChanged(model);
+  const onHandleGridStateChange = (state: GridState) => onDensityChanged(state.density.value);
 
   const hideFooter = props.isSearching || props.items.length === 0
   return (
@@ -104,12 +129,10 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       density={density}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.userId}
-      onSortModelChange={(m, d) => {
-        props?.onSortMethodChanged && props?.onSortMethodChanged(m)
-      }}
+      onSortModelChange={onHandleSortModelChange}
       onRowDoubleClick={props.onItemSelect}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}/>
+      onStateChange={onHandleGridStateChange}
+      onColumnVisibilityModelChange={onVisibilityChange}/>
   )
 }
 

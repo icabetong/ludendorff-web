@@ -63,14 +63,15 @@ type IssuedReportSearchListBaseProps = {
 const IssuedReportSearchListBase = (props: IssuedReportSearchListBaseProps) => {
   return (
     <List>
-      { props.reports.map((report) => {
-        return (
-          <IssuedReportSearchListBaseItem
-            key={report.issuedReportId}
-            report={report}
-            onItemSelect={props.onItemSelect}/>
-        );
-      })
+      {
+        props.reports.map((report) => {
+          return (
+            <IssuedReportSearchListBaseItem
+              key={report.issuedReportId}
+              report={report}
+              onItemSelect={props.onItemSelect}/>
+          );
+        })
       }
     </List>
   )
@@ -97,6 +98,7 @@ type IssuedReportItemPickerListItemProps = {
   onItemSelect: (item: IssuedReportItem[]) => void,
 }
 const IssuedReportItemPickerListItem = (props: IssuedReportItemPickerListItemProps) => {
+  const onHandleItemClick = () => props.onItemSelect(props.item);
   const getDescription = () => {
     if (props.item.length > 0) {
       return props.item[0].description;
@@ -104,7 +106,7 @@ const IssuedReportItemPickerListItem = (props: IssuedReportItemPickerListItemPro
   }
 
   return (
-    <ListItemButton onClick={() => props.onItemSelect(props.item)}>
+    <ListItemButton onClick={onHandleItemClick}>
       <ListItemText
         primary={props.stockNumber}
         secondary={getDescription()}/>

@@ -42,8 +42,10 @@ const UserScreen = (props: UserScreenProps) => {
   const onModificationInvoke = async (user: User) => {
     try {
       let result = await show({
-        title: user?.disabled ? "dialog.user_enable" : "dialog.user_disable",
-        description: user?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"
+        title: t(user?.disabled ? "dialog.user_enable_title" : "dialog.user_disable_title"),
+        description: t(user?.disabled ? "dialog.user_enable_summary" : "dialog.user_disable_summary"),
+        confirmButtonText: t("button.continue"),
+        dismissButtonText: t("button.cancel"),
       });
       if (result) {
         await UserRepository.modify(user.userId, !user.disabled)

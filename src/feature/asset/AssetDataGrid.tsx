@@ -1,7 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
 import { Button } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowParams,
+  GridSortModel,
+  GridState,
+  GridValueGetterParams
+} from "@mui/x-data-grid";
 import { DeleteOutlineRounded, CategoryRounded, UploadRounded } from "@mui/icons-material";
 import { Asset } from "./Asset";
 import { AssetDataGridEmptyState } from "./AssetEmptyState";
@@ -94,6 +101,9 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
   const { density, onDensityChanged } = useDensity('assetDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('assetColumns', columns);
 
+  const onHandleSortModelChange = (model: GridSortModel) => props.onSortMethodChanged && props.onSortMethodChanged(model);
+  const onHandleGridStateChange = (state: GridState) => onDensityChanged(state.density.value);
+
   const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
@@ -142,12 +152,10 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       sortModel={props.sortMethod}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.stockNumber}
-      onSortModelChange={(m, d) => {
-        props?.onSortMethodChanged && props?.onSortMethodChanged(m)
-      }}
+      onSortModelChange={onHandleSortModelChange}
       onRowDoubleClick={props.onItemSelect}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}
+      onStateChange={onHandleGridStateChange}
+      onColumnVisibilityModelChange={onVisibilityChange}
     />
   )
 }

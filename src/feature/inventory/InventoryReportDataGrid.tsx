@@ -1,6 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
-import { DataGrid, GridActionsCellItem, GridRowParams, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowParams,
+  GridSortModel,
+  GridState,
+  GridValueGetterParams
+} from "@mui/x-data-grid";
 import { DeleteOutlineRounded } from "@mui/icons-material";
 import { InventoryReport } from "./InventoryReport";
 import { InventoryReportDataGridEmptyState } from "./InventoryReportEmptyState";
@@ -71,6 +78,9 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
   const { density, onDensityChanged } = useDensity('inventoryDensity');
   const { visibleColumns, onVisibilityChange } = useColumnVisibilityModel('inventoryColumns', columns);
 
+  const onHandleSortModelChange = (model: GridSortModel) => props.onSortMethodChanged && props.onSortMethodChanged(model);
+  const onHandleGridStateChange = (state: GridState) => onDensityChanged(state.density.value);
+
   const hideFooter = props.isSearching || props.items.length === 0
   return (
     <DataGrid
@@ -99,12 +109,10 @@ const InventoryReportDataGridCore = (props: InventoryReportDataGridProps) => {
       sortModel={props.sortMethod}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.inventoryReportId}
-      onSortModelChange={(m, d) => {
-        props?.onSortMethodChanged && props?.onSortMethodChanged(m);
-      }}
+      onSortModelChange={onHandleSortModelChange}
       onRowDoubleClick={props.onItemSelect}
-      onStateChange={(v) => onDensityChanged(v.density.value)}
-      onColumnVisibilityModelChange={(c) => onVisibilityChange(c)}/>
+      onStateChange={onHandleGridStateChange}
+      onColumnVisibilityModelChange={onVisibilityChange}/>
   )
 }
 

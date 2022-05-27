@@ -39,7 +39,8 @@ const CategoryList = (props: CategoryListProps) => {
   if (props.categories.length > 0) {
     return (
       <List sx={{ minHeight: '100%' }}>
-        { props.categories.map((category) => (
+        {
+          props.categories.map((category) => (
             <CategoryListItem
               key={category.categoryId}
               category={category}
@@ -63,12 +64,15 @@ const CategoryListItem = (props: CategoryListItemProps) => {
   const { t } = useTranslation();
   const { canDelete } = usePermissions();
 
+  const onHandleItemClick = () => props.onItemSelect(props.category);
+  const onHandleItemRemove = () => props.onItemRemove(props.category);
+
   const deleteButton = (
     <IconButton
       edge="end"
       disabled={props.category.count > 0}
       aria-label={t("delete")}
-      onClick={() => props.onItemRemove(props.category)}
+      onClick={onHandleItemRemove}
       size="large">
       <DeleteOutlineRounded/>
     </IconButton>
@@ -92,7 +96,7 @@ const CategoryListItem = (props: CategoryListItemProps) => {
     <ListItem
       button
       key={props.category.categoryId}
-      onClick={() => props.onItemSelect(props.category)}>
+      onClick={onHandleItemClick}>
       <ListItemText
         primary={props.category.categoryName}
         secondary={getSecondaryListText(props.category.subcategories)}/>

@@ -1,43 +1,43 @@
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItemButton, ListItemText } from "@mui/material";
 
 import { Asset } from "./Asset";
 
 type AssetListProps = {
   assets: Asset[],
   onItemSelect: (asset: Asset) => void,
-  onItemRemove?: (asset: Asset) => void,
 }
 const AssetList = (props: AssetListProps) => {
   return (
-    <List>{
+    <List>
+    {
       props.assets.map((asset: Asset) => {
         return (
           <AssetItem
             key={asset.stockNumber}
             asset={asset}
-            onItemSelect={props.onItemSelect}
-            onItemRemove={props.onItemRemove}/>
+            onItemSelect={props.onItemSelect}/>
         )
       })
-    }</List>
+    }
+    </List>
   )
 }
 
 type AssetItemProps = {
   asset: Asset,
   onItemSelect: (asset: Asset) => void,
-  onItemRemove?: (asset: Asset) => void,
 }
 const AssetItem = (props: AssetItemProps) => {
+  const onHandleItemSelect = () => props.onItemSelect(props.asset);
+
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.asset.stockNumber}
-      onClick={() => props.onItemSelect(props.asset)}>
+      onClick={onHandleItemSelect}>
       <ListItemText
         primary={props.asset.description}
         secondary={props.asset.category?.categoryName}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

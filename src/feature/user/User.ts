@@ -1,9 +1,7 @@
-import axios, { AxiosResponse } from "axios";
 import { doc, writeBatch } from "firebase/firestore";
-import { auth, firestore } from "../../index";
+import { httpsCallable, HttpsCallableResult } from "firebase/functions";
+import { auth, firestore, functions } from "../../index";
 import { userCollection, } from "../../shared/const";
-import { getIdToken, onAuthStateChanged } from "firebase/auth";
-import { SERVER_URL } from "../../shared/utils";
 
 export enum Permission {
   READ = 1,
@@ -11,20 +9,6 @@ export enum Permission {
   DELETE = 4,
   MANAGE_USERS = 8,
   ADMINISTRATIVE = 16
-}
-
-export const getIdTokenRefreshed = async (): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      unsubscribe();
-      if (user) {
-        const token = await getIdToken(user)
-        return resolve(token)
-      } else {
-        reject()
-      }
-    }, reject)
-  })
 }
 
 export const hasPermission = (user: User, permission: Permission): boolean => {
@@ -36,17 +20,6 @@ export const hasPermission = (user: User, permission: Permission): boolean => {
     user.permissions.includes(permission);
 }
 
-export const minimize = (user: User): UserCore => {
-  return {
-    userId: user.userId,
-    name: `${user.firstName} ${user.lastName}`,
-    email: user.email,
-    imageUrl: user.imageUrl,
-    position: user.position,
-    deviceToken: user.deviceToken
-  }
-}
-
 export type User = {
   userId: string,
   firstName?: string,
@@ -55,28 +28,20 @@ export type User = {
   imageUrl?: string,
   permissions: number[],
   position?: string,
-  deviceToken?: string,
   disabled: boolean,
   setupCompleted: boolean,
 }
 
-export type UserCore = {
-  userId: string,
-  name?: string,
-  email?: string,
-  imageUrl?: string,
-  position?: string,
-  deviceToken?: string
-}
-
 export class UserRepository {
 
-  static async create(user: User): Promise<AxiosResponse<any>> {
+  static async create(user: User): Promise<HttpsCallableResult> {
     let idToken = await auth.currentUser?.getIdToken(false);
+    const { userId, disabled, setupCompleted, ...others } = user;
 
-    return await axios.post(`${SERVER_URL}/create-user`, {
+    const createUser = httpsCallable(functions, 'createUser');
+    return await createUser({
       token: idToken,
-      ...user
+      ...others,
     });
   }
 
@@ -88,24 +53,24 @@ export class UserRepository {
     await batch.commit()
   }
 
-  static async modify(userId: string, status: boolean): Promise<AxiosResponse<any>> {
+  static async modify(userId: string, status: boolean): Promise<HttpsCallableResult> {
     let idToken = await auth.currentUser?.getIdToken(false);
 
-    return await axios.patch(`${SERVER_URL}/modify-user`, {
+    const modifyUser = httpsCallable(functions, 'modifyUser');
+    return await modifyUser({
       token: idToken,
       userId: userId,
-      disabled: status
-    })
+      disabled: status,
+    });
   }
 
-  static async remove(user: User): Promise<AxiosResponse<any>> {
+  static async remove(user: User): Promise<HttpsCallableResult> {
     let idToken = await auth.currentUser?.getIdToken(false);
 
-    return await axios.delete(`${SERVER_URL}/remove-user`, {
-      data: {
-        token: idToken,
-        userId: user.userId
-      }
+    const deleteUser = httpsCallable(functions, 'deleteUser');
+    return await deleteUser({
+      token: idToken,
+      userId: user.userId
     })
   }
 }

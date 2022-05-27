@@ -40,10 +40,12 @@ type ProfileActionItemProps = {
 }
 const ProfileActionItem = (props: ProfileActionItemProps) => {
   const { t } = useTranslation();
+  const onHandleClick = () => props.action.action();
+
   return (
     <ListItemButton
       key={props.action.key}
-      onClick={() => props.action.action()}>
+      onClick={onHandleClick}>
       <ListItemIcon>
         {React.createElement(props.action.icon)}
       </ListItemIcon>

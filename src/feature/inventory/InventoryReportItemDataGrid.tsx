@@ -6,7 +6,7 @@ import {
   GridRowParams,
   GridSelectionModel,
   GridValueGetterParams,
-  GridLoadingOverlay
+  GridLoadingOverlay, GridSortModel, GridState, GridColumnVisibilityModel
 } from "@mui/x-data-grid";
 import { InventoryReportItem } from "./InventoryReport";
 import { Asset } from "../asset/Asset";
@@ -101,6 +101,8 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
     props.onCheckedRowsChanged(model);
   }
 
+  const onHandleGridStateChange = (state: GridState) => onDensityChanged(state.density.value);
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing(1), height: '100%', ...getEditorDataGridTheme(theme)})}>
       <DataGrid
@@ -125,8 +127,8 @@ const InventoryReportItemDataGrid = (props: InventoryReportItemDataGridProps) =>
         getRowId={(row) => row.stockNumber}
         onRowDoubleClick={onRowSelected}
         onSelectionModelChange={onCheckedRowsChanged}
-        onStateChange={(v) => onDensityChanged(v.density.value)}
-        onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
+        onStateChange={onHandleGridStateChange}
+        onColumnVisibilityModelChange={onVisibilityChange}/>
     </Box>
   )
 }

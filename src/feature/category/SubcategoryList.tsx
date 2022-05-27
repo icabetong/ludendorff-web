@@ -10,15 +10,16 @@ type SubcategoryListProps = {
 const SubcategoryList = (props: SubcategoryListProps) => {
   return (
     <List>
-      { props.subcategories.map((subcategory) => {
-        return (
-          <SubcategoryListItem
-            key={subcategory}
-            subcategory={subcategory}
-            onItemSelect={props.onItemSelect}
-            onItemRemove={props.onItemRemove}/>
-        )
-      })
+      {
+        props.subcategories.map((subcategory) => {
+          return (
+            <SubcategoryListItem
+              key={subcategory}
+              subcategory={subcategory}
+              onItemSelect={props.onItemSelect}
+              onItemRemove={props.onItemRemove}/>
+          )
+        })
       }
     </List>
   )

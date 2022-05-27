@@ -23,6 +23,7 @@ export const firstName = "firstName";
 export const lastName = "lastName";
 export const email = "email";
 export const position = "position";
+export const disabled = "disabled";
 
 export const inventoryReportId = "inventoryReportId"
 export const fundCluster = "fundCluster"

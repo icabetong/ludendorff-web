@@ -1,5 +1,5 @@
 import { InventoryReportItem } from "./InventoryReport";
-import { ListItem, ListItemText } from "@mui/material";
+import { ListItemButton, ListItemText } from "@mui/material";
 
 type InventoryReportItemListProps = {
   items?: InventoryReportItem[],
@@ -9,14 +9,15 @@ type InventoryReportItemListProps = {
 const InventoryReportItemList = (props: InventoryReportItemListProps) => {
   return (
     <>
-      {props.items && props.items.map((item: InventoryReportItem) => {
-        return (
-          <InventoryReportItemListItem
-            key={item.stockNumber}
-            item={item}
-            onItemSelected={props.onItemSelected}/>
-        )
-      })
+      {
+        props.items && props.items.map((item: InventoryReportItem) => {
+          return (
+            <InventoryReportItemListItem
+              key={item.stockNumber}
+              item={item}
+              onItemSelected={props.onItemSelected}/>
+          )
+        })
       }
     </>
   )
@@ -28,18 +29,16 @@ type InventoryReportItemListItemProps = {
 }
 
 const InventoryReportItemListItem = (props: InventoryReportItemListItemProps) => {
-  const onListItemClick = () => {
-    props.onItemSelected(props.item)
-  }
+  const onHandleItemSelect = () => props.onItemSelected(props.item)
+
   return (
-    <ListItem
-      button
+    <ListItemButton
       key={props.item.stockNumber}
-      onClick={onListItemClick}>
+      onClick={onHandleItemSelect}>
       <ListItemText
         primary={props.item.description}
         secondary={props.item.article}/>
-    </ListItem>
+    </ListItemButton>
   )
 }
 

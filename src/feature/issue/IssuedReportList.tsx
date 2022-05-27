@@ -32,10 +32,12 @@ type IssuedReportListItemProps = {
   onItemRemove?: (report: IssuedReport) => void,
 }
 const IssuedReportListItem = (props: IssuedReportListItemProps) => {
+  const onHandleItemClick = () => props.onItemSelect(props.report);
+
   return (
     <ListItemButton
       selected={props.active}
-      onClick={() => props.onItemSelect(props.report)}>
+      onClick={onHandleItemClick}>
       <ListItemText
         primary={props.report.serialNumber}
         secondary={props.report.fundCluster}/>

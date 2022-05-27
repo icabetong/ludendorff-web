@@ -1,4 +1,4 @@
-import { Timestamp } from "@firebase/firestore-types";
+import { Timestamp } from "firebase/firestore";
 
 export type OperatingSystem = 'Linux' | 'Android' | 'Windows' | 'macOS' | 'iOS' | 'unknown';
 export function getHostOperatingSystem(): OperatingSystem {
@@ -24,7 +24,6 @@ export function getHostOperatingSystem(): OperatingSystem {
 }
 
 export const currencyFormatter = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
-export const SERVER_URL = "https://deshi-production.up.railway.app";
 export const isDev = process.env.NODE_ENV === 'development'
 
 export const newId = (): string => {

@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Box, Button, Chip, Tooltip } from "@mui/material";
 import {
   DataGrid,
-  GridActionsCellItem,
+  GridActionsCellItem, GridColumnVisibilityModel,
   GridLoadingOverlay,
   GridRenderCellParams, GridRowId,
   GridRowParams,
-  GridSelectionModel,
+  GridSelectionModel, GridSortModel, GridState,
   GridValueGetterParams
 } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, CategoryRounded, WarningRounded } from "@mui/icons-material";
@@ -135,6 +135,7 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
     setHasChecked(Array.from(model).length > 0);
     props.onItemsChecked(model.map((id: GridRowId) => `${id}`));
   }
+  const onHandleGridStateChange = (state: GridState) => onDensityChanged(state.density.value);
 
   const onRowDoubleClick = (params: GridRowParams) => props.onItemSelect(params.row as AssetImport);
 
@@ -175,9 +176,9 @@ const AssetImportDataGrid = (props: AssetImportDataGridProps) => {
         columnVisibilityModel={visibleColumns}
         getRowId={(row) => row.stockNumber}
         onSelectionModelChange={onCheckedRowsChanged}
-        onStateChange={(v) => onDensityChanged(v.density.value)}
+        onStateChange={onHandleGridStateChange}
         onRowDoubleClick={onRowDoubleClick}
-        onColumnVisibilityModelChange={(m) => onVisibilityChange(m)}/>
+        onColumnVisibilityModelChange={onVisibilityChange}/>
     </Box>
   )
 }

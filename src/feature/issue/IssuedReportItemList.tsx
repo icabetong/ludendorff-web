@@ -9,13 +9,14 @@ type IssuedReportItemListProps = {
 const IssuedReportItemList = (props: IssuedReportItemListProps) => {
   return (
     <>
-      {props.items && props.items.map((item: IssuedReportItem) => {
-        return (
-          <IssuedReportItemListItem
-            item={item}
-            onItemSelected={props.onItemSelected}/>
-        )
-      })
+      {
+        props.items && props.items.map((item: IssuedReportItem) => {
+          return (
+            <IssuedReportItemListItem
+              item={item}
+              onItemSelected={props.onItemSelected}/>
+          )
+        })
       }
     </>
   )
@@ -27,13 +28,12 @@ type IssuedReportItemListItemProps = {
 }
 
 const IssuedReportItemListItem = (props: IssuedReportItemListItemProps) => {
-  const onListItemClick = () => {
-    props.onItemSelected(props.item)
-  }
+  const onHandleItemClick = () => props.onItemSelected(props.item)
+
   return (
     <ListItemButton
       key={props.item.stockNumber}
-      onClick={onListItemClick}>
+      onClick={onHandleItemClick}>
       <ListItemText
         primary={props.item.description}
         secondary={props.item.stockNumber}/>

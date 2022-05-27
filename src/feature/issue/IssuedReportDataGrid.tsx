@@ -95,7 +95,7 @@ const IssuedReportDataGridCore = (props: IssuedReportDataGridProps) => {
       columns={columns}
       density={density}
       sortModel={props.sortMethod}
-      onSortModelChange={(m, d) => {
+      onSortModelChange={(m) => {
         props?.onSortMethodChanged && props?.onSortMethodChanged(m);
       }}
       columnVisibilityModel={visibleColumns}

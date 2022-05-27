@@ -11,14 +11,15 @@ type CategorySearchListProps = HitsProvided<Category> & {
 const CategorySearchListCore = (props: CategorySearchListProps) => {
   return (
     <List>
-      { props.hits.map((category: Category) => {
-        return (
-          <CategorySearchListItem
-            key={category.categoryId}
-            category={category}
-            onItemSelect={props.onItemSelect}/>
-        );
-      })
+      {
+        props.hits.map((category: Category) => {
+          return (
+            <CategorySearchListItem
+              key={category.categoryId}
+              category={category}
+              onItemSelect={props.onItemSelect}/>
+          );
+        })
       }
     </List>
   )

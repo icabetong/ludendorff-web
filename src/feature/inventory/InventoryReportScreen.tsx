@@ -135,8 +135,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
                   ? <InventoryReportEmptyState/>
                   : <InventoryReportList
                       reports={items}
-                      onItemSelect={onInventoryReportSelected}
-                      onItemRemove={onInventoryReportRemove}/>
+                      onItemSelect={onInventoryReportSelected}/>
                 : <LinearProgress/>
               }
               <Fab

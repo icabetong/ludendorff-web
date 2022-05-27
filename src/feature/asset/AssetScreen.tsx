@@ -126,8 +126,7 @@ const AssetScreen = (props: AssetScreenProps) => {
                   ? <AssetEmptyState/>
                   : <AssetList
                       assets={items}
-                      onItemSelect={onAssetSelected}
-                      onItemRemove={onAssetRemove}/>
+                      onItemSelect={onAssetSelected}/>
                 : <LinearProgress/>
               }
               <Fab

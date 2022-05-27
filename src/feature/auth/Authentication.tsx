@@ -24,6 +24,7 @@ import PasswordReset from "./PasswordReset";
 import { DialogSVGFeedback } from "../../components/dialog/DialogSVGFeedback";
 import { ReactComponent as EmailSent } from "../../shared/message_sent.svg";
 import { isDev } from "../../shared/utils";
+import { PasswordInput } from "../../components/input/PasswordInput";
 
 type FormData = {
   email: string,
@@ -136,9 +137,8 @@ const Authentication = () => {
                   name="password"
                   control={control}
                   render={({ field: { ref, ...inputProps }}) => (
-                    <TextField
+                    <PasswordInput
                       {...inputProps}
-                      type="password"
                       inputRef={ref}
                       placeholder={t("field.password")}
                       error={errors.password !== undefined}
