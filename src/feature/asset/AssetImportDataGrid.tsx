@@ -3,11 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Box, Button, Chip, Tooltip } from "@mui/material";
 import {
   DataGrid,
-  GridActionsCellItem, GridColumnVisibilityModel,
+  GridActionsCellItem,
   GridLoadingOverlay,
-  GridRenderCellParams, GridRowId,
+  GridRenderCellParams,
+  GridRowId,
   GridRowParams,
-  GridSelectionModel, GridSortModel, GridState,
+  GridSelectionModel,
+  GridState,
   GridValueGetterParams
 } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, CategoryRounded, WarningRounded } from "@mui/icons-material";

@@ -6,7 +6,8 @@ import {
   GridRowParams,
   GridSelectionModel,
   GridValueGetterParams,
-  GridLoadingOverlay, GridSortModel, GridState, GridColumnVisibilityModel
+  GridLoadingOverlay,
+  GridState,
 } from "@mui/x-data-grid";
 import { InventoryReportItem } from "./InventoryReport";
 import { Asset } from "../asset/Asset";
