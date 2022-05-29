@@ -203,8 +203,8 @@ const convertIssuedReportToSpreadsheet = (workBook: Excel.Workbook, name: string
     workSheet.mergeCells(row.number, 8, row.number + 1, 8);
   }
 
-  if (issuedReport.items) {
-    let sorted = issuedReport.items.sort((a, b): number => {
+  if (issuedReport.issuedItems) {
+    let sorted = issuedReport.issuedItems.sort((a, b): number => {
       if (a.responsibilityCenter && b.responsibilityCenter) {
         if (a.responsibilityCenter < b.responsibilityCenter) return -1;
         if (a.responsibilityCenter > b.responsibilityCenter) return 1;

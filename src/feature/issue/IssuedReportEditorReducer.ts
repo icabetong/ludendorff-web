@@ -13,7 +13,7 @@ type State = {
 }
 
 export const initialState: State = {
-  report: { issuedReportId: newId(), items: [] },
+  report: { issuedReportId: newId(), issuedItems: [] },
   isCreate: true,
   isOpen: false,
 }

@@ -9,7 +9,7 @@ export type IssuedReport = {
   fundCluster?: string,
   serialNumber?: string,
   date?: Timestamp | number,
-  items: IssuedReportItem[],
+  issuedItems: IssuedReportItem[],
 }
 
 export type IssuedReportItem = {
@@ -44,13 +44,13 @@ export class IssuedReportRepository {
   }
 
   static async create(issued: IssuedReport): Promise<HttpsCallableResult> {
-    const { items, ...report } = issued;
+    const { issuedItems, ...report } = issued;
 
     let batch = writeBatch(firestore);
     let docReference = doc(firestore, issuedCollection, report.issuedReportId);
 
     batch.set(docReference, report);
-    items.forEach((item) => {
+    issuedItems.forEach((item) => {
       batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.issuedReportItemId), item);
     });
     await batch.commit();
@@ -58,12 +58,12 @@ export class IssuedReportRepository {
     const indexIssued = httpsCallable(functions, 'indexIssued');
     return await indexIssued({
       id: issued.issuedReportId,
-      entries: items,
+      entries: issuedItems,
     });
   }
 
   static async update(issued: IssuedReport): Promise<HttpsCallableResult> {
-    const { items, ...report } = issued;
+    const { issuedItems, ...report } = issued;
 
     let docReference = doc(firestore, issuedCollection, report.issuedReportId);
     let batch = writeBatch(firestore);
@@ -76,7 +76,7 @@ export class IssuedReportRepository {
     });
 
     batch.set(docReference, report);
-    items.forEach((item) => {
+    issuedItems.forEach((item) => {
       batch.set(doc(firestore, issuedCollection, report.issuedReportId, itemsCollection, item.issuedReportItemId), item);
     });
     await batch.commit();
@@ -84,12 +84,12 @@ export class IssuedReportRepository {
     const indexIssued = httpsCallable(functions, 'indexIssued');
     return await indexIssued({
       id: issued.issuedReportId,
-      entries: items,
+      entries: issuedItems,
     });
   }
 
   static async remove(issued: IssuedReport): Promise<void> {
-    const { items, ...r } = issued;
+    const { issuedItems, ...r } = issued;
 
     let docReference = doc(firestore, issuedCollection, r.issuedReportId);
     let batch = writeBatch(firestore);

@@ -129,7 +129,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
     setWriting(true);
     const issuedReport: IssuedReport = {
       ...data,
-      items: items,
+      issuedItems: items,
       issuedReportId: props.report ? props.report.issuedReportId : newId(),
       date: Timestamp.fromDate(date),
       entityName: entity?.entityName,

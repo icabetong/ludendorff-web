@@ -70,7 +70,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const onExport = async (params: ExportParameters) => {
     if (toExport) {
       setBackgroundWork(true);
-      toExport.items = await IssuedReportRepository.fetch(toExport.issuedReportId);
+      toExport.issuedItems = await IssuedReportRepository.fetch(toExport.issuedReportId);
       const workBook = new Excel.Workbook();
       convertIssuedReportToSpreadsheet(workBook, params.worksheetName, toExport);
 

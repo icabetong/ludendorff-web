@@ -22,7 +22,7 @@ const IssuedReportSearchListCore = (props: IssuedReportSearchListProps) => {
 
   useEffect(() => {
     if (report) {
-      setItems(groupIssuedReportItemsByStockNumber(report.items));
+      setItems(groupIssuedReportItemsByStockNumber(report.issuedItems));
     }
   }, [report]);
 
