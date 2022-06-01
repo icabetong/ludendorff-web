@@ -15,13 +15,14 @@ import {
   Inventory2Outlined,
   LocalAtmOutlined,
   PeopleOutlineRounded,
-  UploadFileOutlined
+  UploadFileOutlined,
+  QueryStatsRounded
 } from "@mui/icons-material";
 import { useAuthState } from "../auth/AuthProvider";
 import { NavigationList, NavigationListItem } from "./NavigationList";
 import { getHostOperatingSystem } from "../../shared/utils";
 
-export type Destination = "assets" | "inventories" | "issued" | "stockCards" | "users" | "account" | "settings";
+export type Destination = "assets" | "inventories" | "issued" | "stockCards" | "auditLogs" | "users" | "account" | "settings";
 
 type NavigationItemType = {
   icon: string | FunctionComponent<any> | ComponentClass<any, any>,
@@ -40,6 +41,7 @@ const destinations: NavigationItemType[] = [
   { icon: Inventory2Outlined, title: "navigation.inventories", destination: "inventories" },
   { icon: UploadFileOutlined, title: "navigation.issued", destination: "issued" },
   { icon: LocalAtmOutlined, title: "navigation.stock_cards", destination: "stockCards" },
+  { icon: QueryStatsRounded, title: "navigation.audit_logs", destination: "auditLogs" },
   { icon: PeopleOutlineRounded, title: "navigation.users", destination: "users" },
 ]
 

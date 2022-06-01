@@ -29,7 +29,7 @@ import {
 } from "../../shared/const";
 import { isDev } from "../../shared/utils";
 import { firestore } from "../../index";
-import { usePermissions } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { usePagination } from "use-pagination-firestore";
 
 type StockCardScreenProps = ScreenProps
@@ -37,6 +37,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
+  const { user } = useAuthState();
   const { canRead, canWrite } = usePermissions();
   const [searchMode, setSearchMode] = useState(false);
   const [hasBackgroundWork, setBackgroundWork] = useState(false);
@@ -50,6 +51,16 @@ const StockCardScreen = (props: StockCardScreenProps) => {
 
   const onRemoveInvoke = async (stockCard: StockCard) => {
     try {
+      if (!user) return;
+      let combined: StockCard = {
+        ...stockCard,
+        auth: {
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email!
+        }
+      }
+
       let result = await show({
         title: t("dialog.stock_card_remove"),
         description: t("dialog.stock_card_remove_summary"),
@@ -57,7 +68,7 @@ const StockCardScreen = (props: StockCardScreenProps) => {
         dismissButtonText: t("button.cancel")
       });
       if (result) {
-        await StockCardRepository.remove(stockCard);
+        await StockCardRepository.remove(combined);
         enqueueSnackbar(t("feedback.stock_card_removed"));
       }
     } catch (error) {

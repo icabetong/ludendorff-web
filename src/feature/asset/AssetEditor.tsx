@@ -31,6 +31,7 @@ import { firestore } from "../../index";
 import { isDev } from "../../shared/utils";
 import { ArrowDropDownOutlined } from "@mui/icons-material";
 import { CurrencyFormatCustom } from "../../components/input/CurrencyFormatCustom";
+import { useAuthState } from "../auth/AuthProvider";
 
 type AssetEditorProps = {
   isOpen: boolean,
@@ -55,6 +56,7 @@ const AssetEditor = (props: AssetEditorProps) => {
   const categories = useCategories();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, control, reset, setValue, setError } = useForm<FormValues>();
+  const { user } = useAuthState();
   const [category, setCategory] = useState<CategoryCore | undefined>(props.asset?.category);
   const [subcategories, setSubcategories] = useState<string[]>([]);
   const [isPickerOpen, setPickerOpen] = useState(false);
@@ -97,6 +99,7 @@ const AssetEditor = (props: AssetEditorProps) => {
 
   let previousTypeId: string | undefined = undefined;
   const onSubmit = async (data: FormValues) => {
+    if (!user) return;
     if (!data.stockNumber) return;
     if (data.unitValue < 0.01) {
       setError('unitValue', { type: 'focus', message: 'feedback.cost_cannot_zero' });
@@ -107,7 +110,12 @@ const AssetEditor = (props: AssetEditorProps) => {
       ...data,
       stockNumber: props.asset ? props.asset?.stockNumber : data.stockNumber,
       category: category !== undefined ? category : undefined,
-      unitValue: parseFloat(`${data.unitValue}`)
+      unitValue: parseFloat(`${data.unitValue}`),
+      auth: {
+        userId: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email!
+      }
     }
 
     if (props.isCreate) {

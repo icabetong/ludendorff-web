@@ -7,6 +7,7 @@ const AssetScreen = lazy(() => import("../asset/AssetScreen"));
 const InventoryReportScreen = lazy(() => import("../inventory/InventoryReportScreen"));
 const IssuedReportScreen = lazy(() => import("../issue/IssuedReportScreen"));
 const StockCardScreen = lazy(() => import("../stockcard/StockCardScreen"));
+const AuditScreen = lazy(() => import("../audit/AuditScreen"));
 const UserScreen = lazy(() => import("../user/UserScreen"));
 const ProfileScreen = lazy(() => import("../profile/ProfileScreen"));
 const SettingsScreen = lazy(() => import("../settings/SettingsScreen"));
@@ -25,6 +26,8 @@ const Pages = (props: ContentSwitcherProps) => {
       return <IssuedReportScreen onDrawerToggle={props.onDrawerToggle}/>
     case "stockCards":
       return <StockCardScreen onDrawerToggle={props.onDrawerToggle}/>
+    case "auditLogs":
+      return <AuditScreen onDrawerToggle={props.onDrawerToggle}/>
     case "users":
       return <UserScreen onDrawerToggle={props.onDrawerToggle}/>
     case "account":

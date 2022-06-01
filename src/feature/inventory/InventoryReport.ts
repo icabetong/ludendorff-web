@@ -3,6 +3,7 @@ import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { firestore, functions } from "../..";
 import { inventoryCollection, inventoryItems as itemsCollection } from "../../shared/const";
 import { CategoryCore } from "../category/Category";
+import { AuthData } from "../shared/types/AuthData";
 
 export type InventoryReport = {
   inventoryReportId: string,
@@ -11,6 +12,7 @@ export type InventoryReport = {
   entityPosition?: string,
   yearMonth?: string,
   accountabilityDate?: Timestamp | number,
+  auth?: AuthData,
   items: InventoryReportItem[],
 }
 

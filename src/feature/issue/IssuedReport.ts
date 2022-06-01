@@ -2,6 +2,7 @@ import { collection, doc, getDocs, Timestamp, writeBatch } from "firebase/firest
 import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { firestore, functions } from "../../index";
 import { issuedCollection, issuedItems as itemsCollection } from "../../shared/const";
+import { AuthData } from "../shared/types/AuthData";
 
 export type IssuedReport = {
   issuedReportId: string,
@@ -10,6 +11,7 @@ export type IssuedReport = {
   serialNumber?: string,
   date?: Timestamp | number,
   issuedItems: IssuedReportItem[],
+  auth?: AuthData,
 }
 
 export type IssuedReportItem = {

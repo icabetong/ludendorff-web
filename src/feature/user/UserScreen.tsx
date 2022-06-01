@@ -8,7 +8,7 @@ import { usePagination } from "use-pagination-firestore";
 import { AddRounded } from "@mui/icons-material";
 import { collection, orderBy, query } from "firebase/firestore";
 import { getDataGridTheme } from "../core/Core";
-import { usePermissions } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
 import { User, UserRepository } from "./User";
 import UserList from "./UserList";
@@ -29,8 +29,9 @@ type UserScreenProps = ScreenProps
 const UserScreen = (props: UserScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const { user: authUser } = useAuthState();
   const show = useDialog();
-  const { canRead, canManageUsers } = usePermissions();
+  const { canRead, isAdmin } = usePermissions();
   const [searchMode, setSearchMode] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('userSort');
 
@@ -59,6 +60,16 @@ const UserScreen = (props: UserScreenProps) => {
 
   const onUserRemove = async (user: User) => {
     try {
+      if (!authUser) return;
+
+      let combined: User = {
+        ...user,
+        auth: {
+          userId: authUser.userId,
+          name: `${authUser.firstName} ${authUser.lastName}`,
+          email: authUser.email!
+        }
+      }
       let result = await show({
         title: t("dialog.user_remove"),
         description: t("dialog.user_remove_summary"),
@@ -66,7 +77,7 @@ const UserScreen = (props: UserScreenProps) => {
         dismissButtonText: t("button.cancel")
       });
       if (result) {
-        await UserRepository.remove(user);
+        await UserRepository.remove(combined);
         enqueueSnackbar(t("feedback.user_removed"));
       }
     } catch (error) {
@@ -96,11 +107,11 @@ const UserScreen = (props: UserScreenProps) => {
         indexName="users">
         <AdaptiveHeader
           title={t("navigation.users")}
-          actionText={canManageUsers ? t("button.create_user") : undefined}
+          actionText={isAdmin ? t("button.create_user") : undefined}
           onActionEvent={onUserEditorView}
           onDrawerTriggered={props.onDrawerToggle}
           onSearchFocusChanged={setSearchMode}/>
-        {canRead || canManageUsers
+        {canRead || isAdmin
           ? <>
             <Box sx={(theme) => ({ flex: 1, padding: 3, display: { xs: "none", sm: "block" }, ...getDataGridTheme(theme)})}>
               <UserDataGrid

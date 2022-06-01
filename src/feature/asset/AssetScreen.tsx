@@ -6,7 +6,7 @@ import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded, CategoryRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
-import { usePermissions } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetDataGrid from "./AssetDataGrid";
 import AssetEditor from "./AssetEditor";
@@ -34,6 +34,7 @@ type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuthState();
   const { canRead, canWrite } = usePermissions();
   const [searchMode, setSearchMode] = useState(false);
   const [importMode, setImportMode] = useState(false);
@@ -48,6 +49,17 @@ const AssetScreen = (props: AssetScreenProps) => {
 
   const onAssetRemove = async (asset: Asset) => {
     try {
+      if (!user) return;
+
+      let combined: Asset = {
+        ...asset,
+        auth: {
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email!
+        }
+      }
+
       let result = await show({
         title: t("dialog.asset_remove"),
         description: t("dialog.asset_remove_summary"),
@@ -55,7 +67,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         dismissButtonText: t("button.cancel")
       });
       if (result) {
-        await AssetRepository.remove(asset);
+        await AssetRepository.remove(combined);
         enqueueSnackbar(t("feedback.asset_removed"));
       }
     } catch (error) {

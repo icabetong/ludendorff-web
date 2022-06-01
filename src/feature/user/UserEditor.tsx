@@ -25,6 +25,7 @@ import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { Permission, User, UserRepository } from "./User";
 import { isDev, newId } from "../../shared/utils";
+import { useAuthState } from "../auth/AuthProvider";
 
 type UserEditorProps = {
   isOpen: boolean,
@@ -48,6 +49,7 @@ type FormValues = {
 const UserEditor = (props: UserEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { user: authUser } = useAuthState();
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { register, handleSubmit, formState: { errors }, control, reset, watch } = useForm<FormValues>();
@@ -68,7 +70,6 @@ const UserEditor = (props: UserEditorProps) => {
         permissionRead: props.user ? hasPermission(Permission.READ) : false,
         permissionWrite: props.user ? hasPermission(Permission.WRITE) : false,
         permissionDelete: props.user ? hasPermission(Permission.DELETE) : false,
-        permissionManageUsers: props.user ? hasPermission(Permission.MANAGE_USERS) : false,
         permissionAdmin: props.user ? hasPermission(Permission.ADMINISTRATIVE) : false
       })
     }
@@ -82,12 +83,12 @@ const UserEditor = (props: UserEditorProps) => {
 
   const onSubmit = (data: FormValues) => {
     setWritePending(true);
+    if (!authUser) return;
 
     let permissions: number[] = [];
     if (data.permissionRead) permissions.push(Permission.READ)
     if (data.permissionWrite) permissions.push(Permission.WRITE)
     if (data.permissionDelete) permissions.push(Permission.DELETE)
-    if (data.permissionManageUsers) permissions.push(Permission.MANAGE_USERS)
     if (data.permissionAdmin) permissions.push(Permission.ADMINISTRATIVE)
 
     if (props.user?.permissions) {
@@ -105,6 +106,11 @@ const UserEditor = (props: UserEditorProps) => {
       position: data.position,
       permissions: permissions,
       setupCompleted: props.user !== undefined ? props.user?.setupCompleted : false,
+      auth: {
+        userId: authUser.userId,
+        name: `${authUser.firstName} ${authUser.lastName}`,
+        email: authUser.email!
+      }
     }
 
     if (props.isCreate) {
@@ -226,20 +232,6 @@ const UserEditor = (props: UserEditorProps) => {
                       control={
                         <Controller
                           name="permissionDelete"
-                          control={control}
-                          render={({ field: { ref, value, onChange } }) => (
-                            <Checkbox
-                              checked={value}
-                              onChange={onChange}
-                              inputRef={ref}
-                              disabled={isWritePending}/>
-                          )}/>
-                      }/>
-                    <FormControlLabel
-                      label={t("permission.manage_users")}
-                      control={
-                        <Controller
-                          name="permissionManageUsers"
                           control={control}
                           render={({ field: { ref, value, onChange } }) => (
                             <Checkbox

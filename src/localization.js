@@ -16,6 +16,7 @@ const resources = {
         inventories: "Inventory Reports",
         issued: "Issued Reports",
         stock_cards: "Stock Cards",
+        audit_logs: "Audit Logs",
         users: "Users",
         categories: "Categories",
         profile: "Profile",
@@ -103,6 +104,14 @@ const resources = {
         worksheet_name: "Worksheet name",
         duplicate_items: "Duplicate Items",
         inventory_report_source: "Inventory Report Source",
+        log_entry_id: "Log ID",
+        data_type: "Data Type",
+        identifier: "Identifier",
+        data: "Data",
+        before: "Before",
+        after: "After",
+        operation: "Operation",
+        timestamp: "Timestamp"
       },
       placeholder: {
         none: "None",
@@ -327,6 +336,7 @@ const resources = {
         stock_card_update: "Update Existing Stock Card",
         stock_card_entry_create: "Create New Entry",
         stock_card_entry_update: "Update Existing Entry",
+        audit_log_view: "View Log",
         entity_update: "Update Entity",
         select_category: "Select Category",
         select_asset: "Select Asset",
@@ -350,7 +360,9 @@ const resources = {
         duplicate_asset_items: "Duplicate Items",
         duplicate_asset_items_summary: "There are duplicate items found on the data read from the selected spreadsheet file. Resolve these conflicts first to continue.",
         data_missing: "Some data are missing",
-        data_missing_summary: "There are some fields or entries that have missing values. Are you sure you want to proceed saving this record?"
+        data_missing_summary: "There are some fields or entries that have missing values. Are you sure you want to proceed saving this record?",
+        audit_log_remove: "Remove log entry?",
+        audit_log_remove_summary: "This will permanently remove this log entry from the system and cannot be recovered later. Are you sure you want to remove this log entry?"
       },
       template: {
         full_name: "{{first}} {{last}}",
@@ -359,7 +371,8 @@ const resources = {
         inventory_entity: "For which, {{name}}, {{position}}, Central Luzon State University, is accountable, having assumed such accountability on {{date}}",
         subcategories_include: "Subcategories include: {{includes}}",
         subcategories_include_over_10: "Subcategories include: {{includes}} and {{count}} more others",
-        entity: "{{name}}, ({{position}})"
+        entity: "{{name}}, ({{position}})",
+        audit_log_operation_data: "{{operation}}-{{type}} with ID: {{id}}"
       },
       empty: {
         asset_header: "No Assets Added",
@@ -380,7 +393,23 @@ const resources = {
         issued_reports_summary: "There are no Supplies and Materials Issued Reports that are available on the database.",
         subcategories: "No subcategories added",
         no_duplicates_header: "No Duplicates Detected",
-        no_duplicates_summary: "There are no duplicate records detected"
+        no_duplicates_summary: "There are no duplicate records detected",
+        audit_logs_header: "No Logs Recorded",
+        audit_logs_summary: "There have been no recorded logs yet, or they may have been removed.",
+        no_before_data: "Data doesn't exist before",
+        no_after_data: "Data have been deleted"
+      },
+      types: {
+        asset: "Asset",
+        inventory: "Inventory Report",
+        issued: "Issued Report",
+        stockCard: "Stock Card",
+        user: "User Data"
+      },
+      operation: {
+        create: "Create",
+        update: "Modify",
+        remove: "Remove"
       },
       document: {
         stock_card: "Stock Card",

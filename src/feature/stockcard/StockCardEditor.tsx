@@ -38,6 +38,7 @@ import { SlideUpTransition } from "../../components/transition/SlideUpTransition
 import { assetStockNumber, inventoryCollection, inventoryItems } from "../../shared/const";
 import { isDev, newId } from "../../shared/utils";
 import { firestore } from "../../index";
+import { useAuthState } from "../auth/AuthProvider";
 
 type StockCardEditorProps = {
   isOpen: boolean,
@@ -49,6 +50,7 @@ type StockCardEditorProps = {
 export const StockCardEditor = (props: StockCardEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { user } = useAuthState();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const [stockCard, setStockCard] = useState<StockCard | undefined>(props.stockCard);
   const [isOpen, setOpen] = useState(false);
@@ -135,6 +137,8 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       if (!result) return;
     }
 
+    if (!user) return;
+
     if (!stockCard && !props.stockCard) {
       return;
     }
@@ -145,7 +149,12 @@ export const StockCardEditor = (props: StockCardEditorProps) => {
       unitPrice: props.stockCard ? props.stockCard.unitPrice : 0,
       entityName: entity?.entityName,
       balances: balances,
-      entries: entries
+      entries: entries,
+      auth: {
+        userId: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email!
+      }
     }
 
     if (props.isCreate) {

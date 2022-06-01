@@ -2,13 +2,13 @@ import { doc, writeBatch } from "firebase/firestore";
 import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { auth, firestore, functions } from "../../index";
 import { userCollection, } from "../../shared/const";
+import { AuthData } from "../shared/types/AuthData";
 
 export enum Permission {
   READ = 1,
   WRITE = 2,
   DELETE = 4,
-  MANAGE_USERS = 8,
-  ADMINISTRATIVE = 16
+  ADMINISTRATIVE = 8
 }
 
 export const hasPermission = (user: User, permission: Permission): boolean => {
@@ -30,6 +30,7 @@ export type User = {
   position?: string,
   disabled: boolean,
   setupCompleted: boolean,
+  auth?: AuthData,
 }
 
 export class UserRepository {

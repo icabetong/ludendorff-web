@@ -32,6 +32,7 @@ import { EditorRoot } from "../../components/editor/EditorRoot";
 import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
 import { isDev, newId } from "../../shared/utils";
 import { format } from "date-fns";
+import { useAuthState } from "../auth/AuthProvider";
 
 type InventoryReportEditorProps = {
   isOpen: boolean,
@@ -48,6 +49,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuthState();
   const { entity } = useEntity();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>();
@@ -125,6 +127,7 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
   }
 
   const onSubmit = (data: FormValues) => {
+    if (!user) return;
     if (!yearMonth) {
       enqueueSnackbar(t("feedback.empty_year_month"));
       return;
@@ -140,7 +143,12 @@ const InventoryReportEditor = (props: InventoryReportEditorProps) => {
       ...data,
       items: items,
       yearMonth: format(Date.parse(yearMonth), "MMMM yyyy"),
-      accountabilityDate: Timestamp.fromDate(date)
+      accountabilityDate: Timestamp.fromDate(date),
+      auth: {
+        userId: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email!
+      }
     }
 
     if (props.isCreate) {

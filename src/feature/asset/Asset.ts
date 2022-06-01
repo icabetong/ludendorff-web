@@ -3,6 +3,7 @@ import { firestore } from "../../index";
 
 import { CategoryCore } from '../category/Category';
 import { assetCollection, categoryCollection, categoryCount } from "../../shared/const";
+import { AuthData } from "../shared/types/AuthData";
 
 export type Asset = {
   stockNumber: string,
@@ -12,6 +13,7 @@ export type Asset = {
   unitOfMeasure?: string,
   unitValue: number,
   remarks?: string,
+  auth?: AuthData
 }
 
 export class AssetRepository {

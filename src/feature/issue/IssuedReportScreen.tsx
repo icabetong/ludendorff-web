@@ -15,7 +15,7 @@ import IssuedReportDataGrid from "./IssuedReportDataGrid";
 import { IssuedReportEmptyState } from "./IssuedReportEmptyState";
 import { convertIssuedReportToSpreadsheet } from "./IssuedReportSheet";
 import { getDataGridTheme } from "../core/Core";
-import { usePermissions } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { ExportParameters, ExportSpreadsheetDialog } from "../shared/ExportSpreadsheetDialog";
 import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
@@ -34,6 +34,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const show = useDialog();
+  const { user } = useAuthState();
   const { canRead, canWrite } = usePermissions();
   const [toExport, setToExport] = useState<IssuedReport | undefined>(undefined);
   const [searchMode, setSearchMode] = useState(false);
@@ -47,6 +48,17 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
 
   const onIssuedReportRemove = async (report: IssuedReport) => {
     try {
+      if (!user) return;
+
+      let combined: IssuedReport = {
+        ...report,
+        auth: {
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email!
+        }
+      }
+
       let result = await show({
         title: t("dialog.issued_report_remove"),
         description: t("dialog.issued_report_remove_summary"),
@@ -54,7 +66,7 @@ const IssuedReportScreen = (props: IssuedReportScreenProps) => {
         dismissButtonText: t("button.cancel")
       });
       if (result) {
-        await IssuedReportRepository.remove(report);
+        await IssuedReportRepository.remove(combined);
         enqueueSnackbar(t("feedback.issued_report_removed"));
       }
     } catch (error) {

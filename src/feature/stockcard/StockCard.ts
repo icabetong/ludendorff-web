@@ -3,6 +3,7 @@ import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { firestore, functions } from "../../index";
 import { entries as entriesCollection, stockCardCollection } from "../../shared/const";
 import { Balances } from "../shared/types/Balances";
+import { AuthData } from "../shared/types/AuthData";
 
 export type StockCard = {
   stockCardId: string,
@@ -12,12 +13,13 @@ export type StockCard = {
   unitPrice: number,
   unitOfMeasure?: string,
   balances: Balances,
-  entries: StockCardEntry[]
+  entries: StockCardEntry[],
+  auth?: AuthData,
 }
 
 export type StockCardEntry = {
   stockCardEntryId: string,
-  date?: Timestamp,
+  date?: Timestamp, // add number
   reference?: string,
   receivedQuantity: number,
   requestedQuantity: number,

@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
-import { Chip } from "@mui/material";
+import { Chip, Stack } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
   GridRenderCellParams,
-  GridRowParams, GridSortModel, GridState,
+  GridRowParams,
+  GridSortModel,
+  GridState,
   GridValueGetterParams
 } from "@mui/x-data-grid";
 import { DeleteOutlineRounded, VisibilityOffOutlined, VisibilityOutlined, InfoOutlined } from "@mui/icons-material";
@@ -17,7 +19,7 @@ import { DataGridProps } from "../shared/types/DataGridProps";
 import { GridLinearProgress } from "../../components/datagrid/GridLinearProgress";
 import { GridPaginationController } from "../../components/datagrid/GridPaginationController";
 import { GridToolbar } from "../../components/datagrid/GridToolbar";
-import { disabled, email, firstName, lastName, position, userId } from "../../shared/const";
+import { disabled, email, firstName, lastName, position } from "../../shared/const";
 
 type UserDataGridProps = HitsProvided<User> & DataGridProps<User> & {
   onItemSelect: (params: GridRowParams) => void,
@@ -29,11 +31,6 @@ const UserDataGridCore = (props: UserDataGridProps) => {
   const { density, onDensityChanged } = useDensity('userDensity');
 
   const columns = [
-    {
-      field: userId,
-      headerName: t("field.id"),
-      sortable: false,
-    },
     {
       field: lastName,
       headerName: t("field.last_name"),
@@ -60,6 +57,46 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       valueGetter: (params: GridValueGetterParams) => {
         let user = params.row as User;
         return user.position === undefined ? t("unknown") : user.position;
+      }
+    },
+    {
+      field: "permissions",
+      headerName: t("field.permissions"),
+      flex: 1.5,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams<number[]>) => {
+        const getPermissionName = (permission: number): string => {
+          switch(permission) {
+            case 1:
+              return "permission.read";
+            case 2:
+              return "permission.write";
+            case 4:
+              return "permission.delete";
+            case 8:
+              return "permission.administrative";
+            default:
+              return ""
+          }
+        }
+
+        const userData = params.row as User;
+        let permissions = userData.permissions;
+        permissions = permissions.filter((p) => p === 1 || p === 2 || p === 4 || p === 8);
+        permissions.sort((a, b) => a - b);
+        return (
+          <Stack direction="row" spacing={1}>
+            {
+              permissions.map((permission) => {
+                return (
+                  <Chip
+                    label={t(getPermissionName(permission))}
+                    size={density === 'compact' ? 'small' : 'medium'}/>
+                )
+              })
+            }
+          </Stack>
+        )
       }
     },
     {
@@ -125,7 +162,7 @@ const UserDataGridCore = (props: UserDataGridProps) => {
       sortingMode="server"
       sortModel={props.sortMethod}
       columns={columns}
-      rows={props.hits}
+      rows={props.isSearching ? props.hits : props.items}
       density={density}
       columnVisibilityModel={visibleColumns}
       getRowId={(r) => r.userId}

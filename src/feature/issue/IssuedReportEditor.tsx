@@ -32,6 +32,7 @@ import { EditorAppBar } from "../../components/editor/EditorAppBar";
 import { EditorContent } from "../../components/editor/EditorContent";
 import { EditorRoot } from "../../components/editor/EditorRoot";
 import { SlideUpTransition } from "../../components/transition/SlideUpTransition";
+import { useAuthState } from "../auth/AuthProvider";
 
 type IssuedReportEditorProps = {
   isOpen: boolean,
@@ -51,6 +52,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { entity } = useEntity();
+  const { user } = useAuthState();
   const smBreakpoint = useMediaQuery(theme.breakpoints.down('sm'));
   const { handleSubmit, formState: { errors }, control, reset } = useForm<FormValues>();
   const [date, setDate] = useState<Date | null>(new Date());
@@ -122,6 +124,7 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
   }
 
   const onSubmit = (data: FormValues) => {
+    if (!user) return;
     if (!date) {
       return;
     }
@@ -133,6 +136,11 @@ const IssuedReportEditor = (props: IssuedReportEditorProps) => {
       issuedReportId: props.report ? props.report.issuedReportId : newId(),
       date: Timestamp.fromDate(date),
       entityName: entity?.entityName,
+      auth: {
+        userId: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email!
+      }
     }
 
     if (props.isCreate) {

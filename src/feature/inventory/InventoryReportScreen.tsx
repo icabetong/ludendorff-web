@@ -14,7 +14,7 @@ import { InventoryReportEmptyState } from "./InventoryReportEmptyState";
 import InventoryReportList from "./InventoryReportList";
 import InventoryReportEditor from "./InventoryReportEditor";
 import { convertInventoryReportToSpreadsheet} from "./InventoryReportSheet";
-import { usePermissions } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { getDataGridTheme } from "../core/Core";
 import Client from "../search/Client";
 import { ErrorNoPermissionState } from "../state/ErrorStates";
@@ -36,6 +36,7 @@ type InventoryReportScreenProps = ScreenProps
 const InventoryReportScreen = (props: InventoryReportScreenProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuthState();
   const show = useDialog();
   const { canRead, canWrite } = usePermissions();
   const [toExport, setToExport] = useState<InventoryReport | undefined>(undefined);
@@ -50,6 +51,17 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
 
   const onInventoryReportRemove = async (report: InventoryReport) => {
     try {
+      if (!user) return;
+
+      let combined: InventoryReport = {
+        ...report,
+        auth: {
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email!
+        }
+      }
+
       let result = await show({
         title: t("dialog.inventory_remove"),
         description: t("dialog.inventory_remove_summary"),
@@ -57,7 +69,7 @@ const InventoryReportScreen = (props: InventoryReportScreenProps) => {
         dismissButtonText: t("button.cancel")
       });
       if (result) {
-        await InventoryReportRepository.remove(report);
+        await InventoryReportRepository.remove(combined);
         enqueueSnackbar(t("feedback.inventory_removed"));
       }
     } catch (error) {
