@@ -19,7 +19,7 @@ import { AuthError, signInWithEmailAndPassword, sendPasswordResetEmail } from "f
 import { auth } from "../../index";
 import { LoadingButton } from "@mui/lab";
 import { LockOutlined, MailOutlineRounded } from "@mui/icons-material";
-import { ReactComponent as Logo } from "../../shared/icon.svg";
+import logo from "../../shared/clsu.png";
 import PasswordReset from "./PasswordReset";
 import { DialogSVGFeedback } from "../../components/dialog/DialogSVGFeedback";
 import { ReactComponent as EmailSent } from "../../shared/message_sent.svg";
@@ -93,13 +93,15 @@ const Authentication = () => {
                 alignItems: 'center',
                 justifyContent: 'center' }}>
                 <Box
-                  component={Logo}
+                  component="img"
                   sx={{
                     width: '6em',
                     height: '6em',
                     marginBottom: 4,
                     color: (theme) => theme.palette.text.primary
                   }}
+                  alt={t("alt.clsu_logo")}
+                  src={logo}
                 />
                 <Typography variant="h5" align="center">{t("auth.title")}</Typography>
                 <Typography variant="body1" align="center" sx={{ marginTop: 2 }}>{t("auth.summary")}</Typography>

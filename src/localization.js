@@ -6,7 +6,7 @@ const resources = {
     translation: {
       app_name: "Ludendorff",
       auth: {
-        title: "Log in to Ludendorff",
+        title: "Log-in to CLSU Property and Supplies Office",
         summary: "Enter your email address and password"
       },
       navigation: {
@@ -112,6 +112,9 @@ const resources = {
         after: "After",
         operation: "Operation",
         timestamp: "Timestamp"
+      },
+      alt: {
+        clsu_logo: "The official logo of Central Luzon State University"
       },
       placeholder: {
         none: "None",

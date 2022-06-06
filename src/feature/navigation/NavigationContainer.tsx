@@ -18,7 +18,7 @@ import {
   UploadFileOutlined,
   QueryStatsRounded
 } from "@mui/icons-material";
-import { useAuthState } from "../auth/AuthProvider";
+import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { NavigationList, NavigationListItem } from "./NavigationList";
 import { getHostOperatingSystem } from "../../shared/utils";
 
@@ -47,6 +47,7 @@ const destinations: NavigationItemType[] = [
 
 export const NavigationContainer = (props: NavigationContainerProps) => {
   const { user } = useAuthState();
+  const { isAdmin } = usePermissions();
   const { t } = useTranslation();
 
   const onAccountBoxClicked = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => props.onSignOut(e.currentTarget);
@@ -72,6 +73,10 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
         <Box sx={{ flex: 1, marginTop: 2 }}>
           {
             destinations.map((item) => {
+              console.log(item.destination === 'users' && isAdmin)
+              if ((item.destination === 'users' || item.destination === 'auditLogs') && !isAdmin)
+                return (<></>)
+
               return (
                 <NavigationListItem
                   key={item.destination}
