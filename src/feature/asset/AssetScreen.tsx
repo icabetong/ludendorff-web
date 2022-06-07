@@ -6,6 +6,7 @@ import { GridRowParams } from "@mui/x-data-grid";
 import { AddRounded, CategoryRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { collection, orderBy, query } from "firebase/firestore";
+import ArchivedScreen from "../archived/ArchivedScreen";
 import { useAuthState, usePermissions } from "../auth/AuthProvider";
 import { Asset, AssetRepository } from "./Asset";
 import AssetDataGrid from "./AssetDataGrid";
@@ -30,6 +31,7 @@ import {
 import { firestore } from "../../index";
 import { usePagination } from "use-pagination-firestore";
 
+
 type AssetScreenProps = ScreenProps
 const AssetScreen = (props: AssetScreenProps) => {
   const { t } = useTranslation();
@@ -38,14 +40,48 @@ const AssetScreen = (props: AssetScreenProps) => {
   const { canRead, canWrite } = usePermissions();
   const [searchMode, setSearchMode] = useState(false);
   const [importMode, setImportMode] = useState(false);
+  const [archived, setArchived] = useState(false);
   const { sortMethod, onSortMethodChange } = useSort('assetSort');
   const show = useDialog();
   const onImportInvoke = () => setImportMode(true);
   const onImportDismiss = () => setImportMode(false);
 
+  const onArchivedView = () => setArchived(true);
+  const onArchivedDismiss = () => setArchived(false);
+
   const { items, isLoading, isStart, isEnd, getPrev, getNext } = usePagination<Asset>(
-    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")), { limit: 25 }
+    query(collection(firestore, assetCollection), orderBy(assetStockNumber, "asc")),
+    { limit: 25 }
   );
+
+  const onAssetArchive = async (asset: Asset) => {
+    try {
+      if (!user) return;
+
+      let combined: Asset = {
+        ...asset,
+        auth: {
+          userId: user.userId,
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email!
+        }
+      }
+
+      let result = await show({
+        title: t("dialog.asset_archive"),
+        description: t("dialog.asset_archive_summary"),
+        confirmButtonText: t("button.archive"),
+        dismissButtonText: t("button.cancel")
+      });
+      if (result) {
+        await AssetRepository.archive(combined);
+        enqueueSnackbar(t("feedback.asset_archived"));
+      }
+    } catch (error) {
+      enqueueSnackbar(t("feedback.asset_archive_error"))
+      if (isDev) console.log(error)
+    }
+  }
 
   const onAssetRemove = async (asset: Asset) => {
     try {
@@ -127,10 +163,12 @@ const AssetScreen = (props: AssetScreenProps) => {
                 onBackward={getPrev}
                 onForward={getNext}
                 onItemSelect={onDataGridRowDoubleClicked}
-                onRemoveInvoke={onAssetRemove}
+                onArchive={onAssetArchive}
+                onRemove={onAssetRemove}
                 onTypesInvoke={onCategoryListView}
                 onImportsInvoke={onImportInvoke}
-                onSortMethodChanged={onSortMethodChange}/>
+                onSortMethodChanged={onSortMethodChange}
+                onArchivedInvoke={onArchivedView}/>
             </Box>
             <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 'inherit' }}>
               {!isLoading
@@ -158,6 +196,7 @@ const AssetScreen = (props: AssetScreenProps) => {
         asset={state.asset}
         onDismiss={onAssetEditorDismiss}/>
       <AssetImportScreen isOpen={importMode} onDismiss={onImportDismiss}/>
+      <ArchivedScreen isOpen={archived} onDismiss={onArchivedDismiss}/>
       <CategoryScreen
         isOpen={isCategoryOpen}
         onDismiss={onCategoryListDismiss}/>

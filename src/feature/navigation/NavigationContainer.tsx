@@ -73,7 +73,6 @@ export const NavigationContainer = (props: NavigationContainerProps) => {
         <Box sx={{ flex: 1, marginTop: 2 }}>
           {
             destinations.map((item) => {
-              console.log(item.destination === 'users' && isAdmin)
               if ((item.destination === 'users' || item.destination === 'auditLogs') && !isAdmin)
                 return (<></>)
 

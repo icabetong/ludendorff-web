@@ -21,7 +21,8 @@ const resources = {
         categories: "Categories",
         profile: "Profile",
         settings: "Settings",
-        reports: "Reports"
+        reports: "Reports",
+        archived: "Archived",
       },
       field: {
         email: "Email",
@@ -180,7 +181,9 @@ const resources = {
         choose_file: "Choose File",
         set_category: "Set Category",
         forgot_password: "Forgot Password?",
-        send: "Send"
+        send: "Send",
+        archive: "Archive",
+        archived: "Archived",
       },
       feedback: {
         error_generic: "An internal error occurred",
@@ -214,6 +217,7 @@ const resources = {
         asset_created: "Asset created successfully",
         asset_updated: "Asset updated successfully",
         asset_removed: "Asset removed successfully",
+        asset_archived: "Asset archived successfully",
         asset_imported: "Assets imported successfully",
         asset_saved: "Asset saved successfully",
         category_created: "Category created successfully",
@@ -235,6 +239,7 @@ const resources = {
         asset_create_error: "Error creating asset",
         asset_update_error: "Error updating asset",
         asset_remove_error: "Error removing asset",
+        asset_archive_error: "Error archiving asset",
         asset_import_error: "Error importing assets",
         category_create_error: "Error creating category",
         category_update_error: "Error updating category",
@@ -299,6 +304,10 @@ const resources = {
       dialog: {
         sign_out: "Log out?",
         sign_out_summary: "Are you sure you want to end your session? You will need to enter your credentials again next time.",
+        asset_archive: "Archive asset?",
+        asset_archive_summary: "Do you want to archive this asset?",
+        asset_remove_from_archive: "Remove asset from archive?",
+        asset_remove_from_archive_summary: "Do you want to remove this asset from archive?",
         asset_remove: "Remove asset?",
         asset_remove_summary: "Do you want to remove this asset? Once finished, this action cannot be undone.",
         category_remove: "Remove category?",
@@ -380,6 +389,8 @@ const resources = {
       empty: {
         asset_header: "No Assets Added",
         asset_summary: "There are no assets available.",
+        archived_header: "No Assets Added",
+        archived_summary: "There are no assets available.",
         asset_import_header: "No Data Available",
         asset_import_summary: "Once the data from the spreadsheet is available to be imported, they will show up here.",
         category_header: "No Categories Added",

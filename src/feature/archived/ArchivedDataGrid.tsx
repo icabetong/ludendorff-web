@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { HitsProvided, connectHits } from "react-instantsearch-core";
-import { Button } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -9,9 +8,12 @@ import {
   GridState,
   GridValueGetterParams
 } from "@mui/x-data-grid";
-import { DeleteOutlineRounded, CategoryRounded, UploadRounded, ArchiveOutlined } from "@mui/icons-material";
-import { Asset } from "./Asset";
-import { AssetDataGridEmptyState } from "./AssetEmptyState";
+import {
+  DeleteOutlineRounded,
+  UnarchiveOutlined
+} from "@mui/icons-material";
+import { Asset } from "../asset/Asset";
+import { AssetDataGridEmptyState } from "../asset/AssetEmptyState";
 import useColumnVisibilityModel from "../shared/hooks/useColumnVisibilityModel";
 import useDensity from "../shared/hooks/useDensity";
 import { DataGridProps } from "../shared/types/DataGridProps";
@@ -27,18 +29,16 @@ import {
 } from "../../shared/const";
 import { currencyFormatter } from "../../shared/utils";
 import { usePermissions } from "../auth/AuthProvider";
+import { ArchivedDataGridEmptyState } from "./ArchivedEmptyState";
 
-type AssetDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
+type ArchivedDataGridProps = HitsProvided<Asset> & DataGridProps<Asset> & {
   onScroll?: () => void,
   onItemSelect: (params: GridRowParams) => void,
   onArchive: (asset: Asset) => void,
   onRemove: (asset: Asset) => void,
-  onTypesInvoke: () => void,
-  onImportsInvoke: () => void,
-  onArchivedInvoke: () => void,
 }
 
-const AssetDataGridCore = (props: AssetDataGridProps) => {
+const ArchivedDataGridCore = (props: ArchivedDataGridProps) => {
   const { t } = useTranslation();
   const { isAdmin } = usePermissions();
   const columns = [
@@ -96,8 +96,8 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       flex: 0.5,
       getActions: (params: GridRowParams) => [
         <GridActionsCellItem
-          icon={<ArchiveOutlined/>}
-          label={t("button.archive")}
+          icon={<UnarchiveOutlined/>}
+          label={t("button.unarchive")}
           onClick={() => props.onArchive(params.row as Asset)}/>,
         // conditionally add the option to remove if it is admin
         ...(isAdmin ? [
@@ -124,39 +124,11 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
       hideFooterPagination={hideFooter}
       components={{
         LoadingOverlay: GridLinearProgress,
-        NoRowsOverlay: AssetDataGridEmptyState,
+        NoRowsOverlay: ArchivedDataGridEmptyState,
         Toolbar: GridToolbar,
         Pagination: hideFooter ? null : GridPaginationController
       }}
       componentsProps={{
-        toolbar: {
-          destinations: [
-            <Button
-              key="archived"
-              color="primary"
-              size="small"
-              startIcon={<ArchiveOutlined/>}
-              onClick={props.onArchivedInvoke}>
-              {t("button.archived")}
-            </Button>,
-            <Button
-              key="types"
-              color="primary"
-              size="small"
-              startIcon={<CategoryRounded fontSize="small"/>}
-              onClick={props.onTypesInvoke}>
-              {t("navigation.categories")}
-            </Button>,
-            <Button
-              key="imports"
-              color="primary"
-              size="small"
-              startIcon={<UploadRounded/>}
-              onClick={props.onImportsInvoke}>
-              {t("button.import")}
-            </Button>
-          ]
-        },
         pagination: {
           canBack: props.canBack,
           canForward: props.canForward,
@@ -179,5 +151,5 @@ const AssetDataGridCore = (props: AssetDataGridProps) => {
     />
   )
 }
-const AssetDataGrid = connectHits<AssetDataGridProps, Asset>(AssetDataGridCore);
-export default AssetDataGrid;
+const ArchivedDataGrid = connectHits<ArchivedDataGridProps, Asset>(ArchivedDataGridCore);
+export default ArchivedDataGrid;

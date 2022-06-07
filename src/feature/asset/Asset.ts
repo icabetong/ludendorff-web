@@ -1,4 +1,4 @@
-import { doc, increment, writeBatch, collection, getDocs } from "firebase/firestore";
+import { doc, increment, writeBatch, collection, getDocs, updateDoc } from "firebase/firestore";
 import { firestore } from "../../index";
 
 import { CategoryCore } from '../category/Category';
@@ -13,7 +13,8 @@ export type Asset = {
   unitOfMeasure?: string,
   unitValue: number,
   remarks?: string,
-  auth?: AuthData
+  archived?: boolean,
+  auth?: AuthData,
 }
 
 export class AssetRepository {
@@ -50,6 +51,25 @@ export class AssetRepository {
     }
 
     return await batch.commit()
+  }
+
+  static async unArchive(asset: Asset): Promise<void> {
+    let batch = writeBatch(firestore);
+
+    batch.set(doc(firestore, "assets", asset.stockNumber), asset);
+    batch.delete(doc(firestore, "archived", asset.stockNumber));
+
+    return await batch.commit();
+  }
+
+
+  static async archive(asset: Asset): Promise<void> {
+    let batch = writeBatch(firestore);
+
+    batch.set(doc(firestore, "archived", asset.stockNumber), asset);
+    batch.delete(doc(firestore, assetCollection, asset.stockNumber));
+
+    return await batch.commit();
   }
 
   static async update(asset: Asset, previousCategoryId?: string): Promise<void> {
